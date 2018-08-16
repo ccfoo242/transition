@@ -287,59 +287,42 @@ namespace Transition
 
     public class EngrConverter : IValueConverter
     {
+        public bool AllowNegativeNumber { get; set; }
+        public bool ShortString { get; set; }
+
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             //number to string
             if (value == null) return "";
             EngrNumber engrNumber = (EngrNumber)value;
-
-            return engrNumber.ToString();
-
+            
+            return ShortString ? engrNumber.ToShortString() : engrNumber.ToString();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             //string to number
             String valueString = (String)value;
+
             if (valueString == "")
                 return EngrNumber.one();
             else
             {
+                EngrNumber output;
                 try
                 {
-                    return EngrNumber.ConvertFromString(valueString);
+                    output = EngrNumber.ConvertFromString(valueString);
                 }
-                catch { return EngrNumber.one(); }
+                catch { output = EngrNumber.one(); }
+
+              
+                if (!AllowNegativeNumber) output.makePositiveSign();
+
+                return output;
             }
         }
     }
-
-    public class EngrShortConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            //number to string
-            if (value == null) return "";
-            EngrNumber engrNumber = (EngrNumber)value;
-
-            return engrNumber.ToShortString();
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            //string to number
-            String valueString = (String)value;
-            if (valueString == "")
-                return EngrNumber.one();
-            else
-            {
-                try
-                {
-                    return EngrNumber.ConvertFromString(valueString);
-                }
-                catch { return EngrNumber.one(); }
-            }
-        }
-    }
+    
+    
 
 }

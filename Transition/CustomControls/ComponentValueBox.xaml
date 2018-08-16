@@ -11,7 +11,7 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
-        <local1:EngrShortConverter x:Key="engrConverter"/>
+        <local1:EngrConverter x:Key="engrConverter" ShortString="True" AllowNegativeNumber="False"/>
     </UserControl.Resources>
 
     <Grid>

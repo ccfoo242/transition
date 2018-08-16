@@ -33,6 +33,17 @@ namespace Transition.CustomControls
         DependencyProperty.Register("VariableName",
             typeof(String), typeof(EngrNumberBoxDialog), new PropertyMetadata(""));
 
+        public String Unit
+        {
+            get { return (String)GetValue(UnitProperty); }
+            set { SetValue(UnitProperty, value); }
+        }
+
+        public static readonly DependencyProperty UnitProperty =
+            DependencyProperty.Register("Unit",
+                typeof(String), typeof(EngrNumberBoxDialog), new PropertyMetadata(""));
+
+
         public EngrNumber Value
         {
             get { return (EngrNumber)GetValue(ValueProperty); }
@@ -48,6 +59,7 @@ namespace Transition.CustomControls
             DependencyProperty.Register("Value",
                 typeof(EngrNumber), typeof(EngrNumberBoxDialog), new PropertyMetadata(EngrNumber.one()));
 
+        public bool AllowNegativeNumber { get; set; }
 
 
         public EngrNumberBoxDialog()
@@ -59,13 +71,14 @@ namespace Transition.CustomControls
         private async void changeValue(object sender, RoutedEventArgs e)
         {
             StackPanel stk = new StackPanel()
-            { Orientation = Orientation.Horizontal };
+                { Orientation = Orientation.Horizontal };
 
             stk.Children.Add(new TextBlock()
-            { Text = "New Value:", Margin = new Thickness(5) });
+                { Text = "New Value:", Margin = new Thickness(4) });
 
             EngrNumberBox box = new EngrNumberBox()
-            { Value = this.Value, Margin = new Thickness(5) };
+                { Value = this.Value, Margin = new Thickness(4) };
+
             stk.Children.Add(box);
 
 

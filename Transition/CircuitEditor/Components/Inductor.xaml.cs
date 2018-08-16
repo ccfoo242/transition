@@ -147,7 +147,7 @@ namespace Transition.CircuitEditor.Components
             {
                 Path = new PropertyPath("InductorValue"),
                 Source = this,
-                Converter = new EngrShortConverter(),
+                Converter = new EngrConverter() { ShortString = true },
                 Mode = BindingMode.OneWay
             };
             txtInductanceValue.SetBinding(TextBlock.TextProperty, b2);

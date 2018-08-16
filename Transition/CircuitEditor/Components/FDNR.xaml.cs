@@ -86,7 +86,7 @@ namespace Transition.CircuitEditor.Components
             {
                 Path = new PropertyPath("FdnrValue"),
                 Source = this,
-                Converter = new EngrShortConverter(),
+                Converter = new EngrConverter() { ShortString = true },
                 Mode = BindingMode.OneWay
             };
             txtFdnrValue.SetBinding(TextBlock.TextProperty, b2);

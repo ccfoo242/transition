@@ -36,10 +36,12 @@ namespace Transition.CustomControls
             DependencyProperty.Register("Value",
                 typeof(EngrNumber), typeof(EngrNumberBox), new PropertyMetadata(EngrNumber.one()));
 
+        public bool AllowNegativeNumber { get; set; } 
 
         public EngrNumberBox()
         {
             this.InitializeComponent();
+
         }
     }
 }

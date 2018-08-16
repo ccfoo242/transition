@@ -144,7 +144,7 @@ namespace Transition.CircuitEditor.Components
             {
                 Path = new PropertyPath("ResistorValue"),
                 Source = this,
-                Converter = new EngrShortConverter(),
+                Converter = new EngrConverter() { ShortString = true },
                 Mode = BindingMode.OneWay
             };
             txtResistanceValue.SetBinding(TextBlock.TextProperty, b2);

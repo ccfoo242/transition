@@ -76,7 +76,7 @@ namespace Transition.CustomControls
                 Path = new PropertyPath("ComponentValue"),
                 Source = this,
                 Mode = BindingMode.TwoWay,
-                Converter = new EngrShortConverter()
+                Converter = new EngrConverter() { ShortString = true }
             };
 
             this.InitializeComponent();
@@ -104,11 +104,6 @@ namespace Transition.CustomControls
 
             ComponentValue = new EngrNumber(getNextOrEqualValue(), ComponentValue.Prefix);
 
-            /*   if (selectedComponentPrecision == ComponentPrecision.Arbitrary)
-                   numberBox.SetBinding(TextBox.TextProperty, bindLongString);
-               else
-                   numberBox.SetBinding(TextBox.TextProperty, bindShortString);
-                   */
         }
 
         private void showUpDownButtons()

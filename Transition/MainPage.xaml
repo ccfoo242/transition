@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local1="using:Transition.CircuitEditor"
+    xmlns:local2="using:Transition.CustomControls"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -17,6 +18,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Visible" VerticalScrollMode="Enabled" >
 
             <StackPanel Orientation="Vertical" Grid.Column="0">
+               
                 <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
                         Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
                         x:Name="brdGround" Tag="ground" Height="50" Width="50">

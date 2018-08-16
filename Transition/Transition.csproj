@@ -126,6 +126,7 @@
     <Compile Include="CircuitEditor\Wire.xaml.cs">
       <DependentUpon>Wire.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common.cs" />
     <Compile Include="CustomControls\ComponentValueBox.xaml.cs">
       <DependentUpon>ComponentValueBox.xaml</DependentUpon>
     </Compile>

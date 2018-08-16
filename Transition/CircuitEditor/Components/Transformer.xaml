@@ -34,7 +34,8 @@
 
                 </StackPanel>
             </customcontrols:GroupBox.CustomContent>
-            <customcontrols:GroupBox Header="Inductance">
+        </customcontrols:GroupBox>
+        <customcontrols:GroupBox Header="Inductance">
                 <customcontrols:GroupBox.CustomContent>
                     <StackPanel Orientation="Vertical">
                         <customcontrols:EngrNumberBoxDialog ValueManuallyChanged="changeLpri"
@@ -62,10 +63,10 @@
 
                         <TextBlock Text="Ls Leakeage" Grid.Row="2" Grid.Column="0"/>
                         <customcontrols:EngrNumberBox Value="{x:Bind LsLeak, Mode=OneWay}"
-                                                    Grid.Row="2" Grid.Column="1" />
+                                                    Grid.Row="2" Grid.Column="1"/>
                     </StackPanel>
                 </customcontrols:GroupBox.CustomContent>
             </customcontrols:GroupBox>
-        </customcontrols:GroupBox>
+        
     </StackPanel>
 </UserControl>

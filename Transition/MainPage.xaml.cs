@@ -47,5 +47,6 @@ namespace Transition
 
             circuitEditor.addElement(element);
         }
+        
     }
 }

@@ -8,11 +8,9 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
-
-
+    
     <UserControl.Resources>
-        <local:EngrConverter xmlns="using:Transition" x:Key="engrConverter"/>
-        
+        <local:EngrConverter x:Key="engrConverter"/>
     </UserControl.Resources>
     <StackPanel Orientation="Horizontal">
         <TextBlock VerticalAlignment="Center"
@@ -20,7 +18,7 @@
                    HorizontalAlignment="Right"/>
         <TextBox Style="{StaticResource EngrNumberBoxStyle}"
                  Text="{x:Bind Value, Mode=TwoWay, Converter={StaticResource engrConverter}}" 
-                 Margin="5,5,0,5" IsReadOnly="True"
+                 Margin="4,4,0,4" IsReadOnly="True"
                  Width="100"/>
         <Button Content="..." Click="changeValue" Margin="0,5,5,5"/>
     </StackPanel>

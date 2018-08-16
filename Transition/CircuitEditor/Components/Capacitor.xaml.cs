@@ -161,7 +161,7 @@ namespace Transition.CircuitEditor.Components
             {
                 Path = new PropertyPath("CapacitorValue"),
                 Source = this,
-                Converter = new EngrShortConverter(),
+                Converter = new EngrConverter() { ShortString = true },
                 Mode = BindingMode.OneWay
             };
             txtCapacitanceValue.SetBinding(TextBlock.TextProperty, b2);

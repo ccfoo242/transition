@@ -108,7 +108,7 @@ namespace Transition.CircuitEditor.Components
                 Path = new PropertyPath("PotentiometerValue"),
                 Source = this,
                 Mode = BindingMode.OneWay,
-                Converter = new EngrShortConverter()
+                Converter = new EngrConverter() { ShortString = true }
             };
             txtResistanceValue.SetBinding(TextBlock.TextProperty, b2);
             txtResistanceValue.RenderTransform = new TranslateTransform() { };
