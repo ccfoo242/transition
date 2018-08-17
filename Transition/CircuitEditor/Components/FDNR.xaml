@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:customcontrols="using:Transition.CustomControls"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
@@ -25,12 +26,11 @@
             <TextBox Margin="4" Text="{x:Bind ComponentName, Mode=TwoWay}"/>
         </StackPanel>
 
-        <customcontrols:GroupBox Header="FDNR Value">
-            <customcontrols:GroupBox.CustomContent>
-                <customcontrols:ComponentValueBox Unit="Farad²" HorizontalAlignment="Left"
+        <controls:Expander Header="FDNR Value" ExpandDirection="Down"
+                           IsExpanded="True">
+            <customcontrols:ComponentValueBox Unit="Farad²" HorizontalAlignment="Left"
                                           ValueChanged="changeD" Margin="4"
-                                          x:Name="ComponentValueBox"/>
-            </customcontrols:GroupBox.CustomContent>
-        </customcontrols:GroupBox>
+                                          x:Name="componentValueBox"/>
+        </controls:Expander>
     </StackPanel>
 </UserControl>

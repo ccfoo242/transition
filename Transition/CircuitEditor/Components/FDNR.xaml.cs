@@ -64,7 +64,7 @@ namespace Transition.CircuitEditor.Components
 
         private void init()
         {
-            ComponentValueBox.ComponentValue = EngrNumber.one();
+            componentValueBox.ComponentValue = EngrNumber.one();
 
             CnvLabels = new Canvas();
 
@@ -148,7 +148,7 @@ namespace Transition.CircuitEditor.Components
 
         private void changeD(object sender, PropertyChangedEventArgs e)
         {
-            FdnrValue = ComponentValueBox.ComponentValue;
+            FdnrValue = componentValueBox.ComponentValue;
         }
 
 

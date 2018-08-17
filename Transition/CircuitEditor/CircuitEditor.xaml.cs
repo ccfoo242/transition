@@ -61,9 +61,15 @@ namespace Transition.CircuitEditor
 
         private void clickDeleteComponent(object sender, RoutedEventArgs e)
         {
+            bool deleted = false;
             foreach (IElectricElement element in selectedElements)
                 if (cnvCircuit.Children.Contains((UIElement)element))
+                {
                     cnvCircuit.Children.Remove((UIElement)element);
+                    deleted = true;
+                }
+
+            if (deleted) selectedElements.Clear();
         }
 
         public void refreshSelectedElements(object sender, NotifyCollectionChangedEventArgs e)
@@ -112,14 +118,7 @@ namespace Transition.CircuitEditor
 
         }
 
-        public void deleteComponent(ElectricComponent component)
-        {
-            if (component != null)
-                if (cnvCircuit.Children.Contains(component))
-                    cnvCircuit.Children.Remove(component);
-
-        }
-
+        
         public void addElement(String element)
         {
             //tap event invoques an element on center of drawboard

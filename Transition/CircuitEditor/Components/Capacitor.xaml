@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:customcontrols="using:Transition.CustomControls"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
@@ -24,73 +25,71 @@
             <TextBox Margin="4" Text="{x:Bind ComponentName, Mode=TwoWay}"/>
         </StackPanel>
 
-        <customcontrols:GroupBox Header="Capacitor Value">
-            <customcontrols:GroupBox.CustomContent>
-                <customcontrols:ComponentValueBox Unit="Farad" Margin="4" HorizontalAlignment="Left"
+        <controls:Expander Header="Capacitor Value" ExpandDirection="Down"
+                           IsExpanded="True">
+            <customcontrols:ComponentValueBox Unit="Farad" Margin="4" HorizontalAlignment="Left"
                                           x:Name="componentValueBox"
                                           ValueChanged="changeC"/>
-            </customcontrols:GroupBox.CustomContent>
-        </customcontrols:GroupBox>
-        <customcontrols:GroupBox>
-            <customcontrols:GroupBox.CustomContent>
-                <Grid HorizontalAlignment="Stretch" Margin="4">
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
+        </controls:Expander>
+        <controls:Expander Header="Capacitor Model" ExpandDirection="Down"
+                           IsExpanded="True">
+            <Grid HorizontalAlignment="Stretch" Margin="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
 
-                    <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Stretch">
-                        <TextBlock Text="Model" Margin="4" VerticalAlignment="Center"/>
-                        <ComboBox VerticalAlignment="Center"
+                <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Stretch">
+                    <TextBlock Text="Model" Margin="4" VerticalAlignment="Center"/>
+                    <ComboBox VerticalAlignment="Center"
                                   HorizontalAlignment="Center"
                                   Margin="4" Width="150" 
                                   SelectedIndex="{x:Bind selectedCapacitorModel, Mode=TwoWay}"
                                   SelectionChanged="modelCapacitorChanged">
-                            <ComboBox.Items>
-                                <ComboBoxItem Content="Ideal"/>
-                                <ComboBoxItem Content="Parasitic"/>
-                                <ComboBoxItem Content="Exponent"/>
-                            </ComboBox.Items>
-                        </ComboBox>
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical" x:Name="pnlExponential"
+                        <ComboBox.Items>
+                            <ComboBoxItem Content="Ideal"/>
+                            <ComboBoxItem Content="Parasitic"/>
+                            <ComboBoxItem Content="Exponent"/>
+                        </ComboBox.Items>
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" x:Name="pnlExponential"
                                 Grid.Row="1" HorizontalAlignment="Stretch">
-                        <customcontrols:EngrNumberBoxDialog VariableName="Eω" Margin="4"/>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Capacitance function: C(ω) = C · ω"/>
-                            <TextBlock Text="Eω" FontSize="10" VerticalAlignment="Top"/>
-                        </StackPanel>
+                    <customcontrols:EngrNumberBoxDialog VariableName="Eω" Margin="4"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Capacitance function: C(ω) = C · ω"/>
+                        <TextBlock Text="Eω" FontSize="10" VerticalAlignment="Top"/>
                     </StackPanel>
-                    <StackPanel Orientation="Vertical" Grid.Row="1"
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Grid.Row="1"
                                 x:Name="pnlParasitic" HorizontalAlignment="Stretch">
-                        <TextBlock Text="Equivalent Capacitor Model" Margin="4"
+                    <TextBlock Text="Equivalent Capacitor Model" Margin="4"
                                    VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <Viewbox MaxHeight="80" MaxWidth="160" HorizontalAlignment="Center">
-                            <ContentControl ContentTemplate="{StaticResource capacitorParasiticModelCircuit}"/>
-                        </Viewbox>
-                        <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
+                    <Viewbox MaxHeight="80" MaxWidth="160" HorizontalAlignment="Center">
+                        <ContentControl ContentTemplate="{StaticResource capacitorParasiticModelCircuit}"/>
+                    </Viewbox>
+                    <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
                                 ValueManuallyChanged="changeLs"
                                 x:Name="BoxLs" Value="{x:Bind Ls, Mode = OneWay}"
                                 VariableName="Ls (Henry)"/>
-                        <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
+                    <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
                                 ValueManuallyChanged="changeRp"
                                 x:Name="BoxRp" Value="{x:Bind Rp, Mode = OneWay}"
                                 VariableName="Rp (Ohm)" />
-                        <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
+                    <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
                                 ValueManuallyChanged="changeRs"
                                 x:Name="BoxRs" Value="{x:Bind Rs, Mode = OneWay}"
                                 VariableName="Rs (Ohm)" />
-                        <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
+                    <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
                                 ValueManuallyChanged="changeFo"
                                 x:Name="BoxFo" Value="{x:Bind Fo, Mode = OneWay}"
                                 VariableName="Fo (Hz)" />
-                        <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
+                    <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
                                 ValueManuallyChanged="changeQ"
                                 x:Name="BoxQ" Value="{x:Bind Q, Mode = OneWay}"
                                 VariableName="Q"/>
-                    </StackPanel>
-                </Grid>
-            </customcontrols:GroupBox.CustomContent>
-        </customcontrols:GroupBox>
+                </StackPanel>
+            </Grid>
+        </controls:Expander>
     </StackPanel>
 </UserControl>

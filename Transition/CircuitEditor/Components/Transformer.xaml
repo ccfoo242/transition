@@ -6,8 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:customcontrols="using:Transition.CustomControls"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
-    d:DesignHeight="300"
     d:DesignWidth="400">
 
 
@@ -24,49 +24,57 @@
             <TextBlock Margin="4" Text="Component Name: "/>
             <TextBox Margin="4" Text="{x:Bind ComponentName, Mode=TwoWay}"/>
         </StackPanel>
-        <customcontrols:GroupBox Header="Coupling">
-            <customcontrols:GroupBox.CustomContent>
-                <StackPanel Orientation="Vertical">
-                    <customcontrols:EngrNumberBoxDialog ValueManuallyChanged="changeTR"
-                         HorizontalAlignment="Right" VariableName="Turns Ratio" Margin="4"/>
-                    <customcontrols:EngrNumberBoxDialog ValueManuallyChanged="changeKc"
-                         HorizontalAlignment="Right" VariableName="K Coupling Coef." Margin="4"/>
-
+        <controls:Expander Header="Coupling" ExpandDirection="Down"
+                           IsExpanded="True">
+            <StackPanel Orientation="Vertical">
+                <customcontrols:EngrNumberBoxDialog ValueManuallyChanged="changeTR"
+                         HorizontalAlignment="Right" VariableName="Turns Ratio" Margin="4"
+                                x:Name="boxTR"  Value="{x:Bind TurnsRatio, Mode=OneWay}"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="K Coupling Coefficient" Margin="4"
+                               VerticalAlignment="Center"/>
+                    <Slider Minimum="0" Maximum="1" StepFrequency="0.01" Width="140"
+                            VerticalAlignment="Center" x:Name="sldKCouplingCoef"
+                            ValueChanged="changeK"/>
                 </StackPanel>
-            </customcontrols:GroupBox.CustomContent>
-        </customcontrols:GroupBox>
-        <customcontrols:GroupBox Header="Inductance">
-                <customcontrols:GroupBox.CustomContent>
-                    <StackPanel Orientation="Vertical">
-                        <customcontrols:EngrNumberBoxDialog ValueManuallyChanged="changeLpri"
-                         HorizontalAlignment="Right" VariableName="Primary Inductance" Margin="4"/>
-                        <customcontrols:EngrNumberBoxDialog ValueManuallyChanged="changeLsec"
-                         HorizontalAlignment="Right" VariableName="Secondary Inductance" Margin="4"/>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
-                        </Grid>
-                        <TextBlock Text="Mutual Inductance" Grid.Row="0" Grid.Column="0"/>
-                        <customcontrols:EngrNumberBox Value="{x:Bind MutualL, Mode=OneWay}"
-                                                    Grid.Row="0" Grid.Column="1" />
+            </StackPanel>
+        </controls:Expander>
+        <controls:Expander Header="Inductance" ExpandDirection="Down"
+                           IsExpanded="True">
+            <StackPanel Orientation="Vertical">
+                <customcontrols:EngrNumberBoxDialog ValueManuallyChanged="changeLpri" x:Name="BoxLpri"
+                         HorizontalAlignment="Right" VariableName="Primary Inductance" Margin="4"
+                                                    Value="{x:Bind Lpri, Mode=OneWay}"/>
+                <customcontrols:EngrNumberBoxDialog ValueManuallyChanged="changeLsec" x:Name="BoxLsec"
+                         HorizontalAlignment="Right" VariableName="Secondary Inductance" Margin="4"
+                                                    Value="{x:Bind Lsec, Mode=OneWay}"/>
+                <NavigationViewItemSeparator/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="145"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
 
-                        <TextBlock Text="Lp Leakeage" Grid.Row="1" Grid.Column="0"/>
-                        <customcontrols:EngrNumberBox Value="{x:Bind LpLeak, Mode=OneWay}"
-                                                    Grid.Row="1" Grid.Column="1" />
+                    <TextBlock Text="Mutual Inductance" Grid.Row="0" Grid.Column="0" Margin="4" HorizontalAlignment="Right"/>
+                    <customcontrols:EngrNumberBox Value="{x:Bind MutualL, Mode=OneWay}" Margin="4" 
+                                                    Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" />
 
-                        <TextBlock Text="Ls Leakeage" Grid.Row="2" Grid.Column="0"/>
-                        <customcontrols:EngrNumberBox Value="{x:Bind LsLeak, Mode=OneWay}"
-                                                    Grid.Row="2" Grid.Column="1"/>
-                    </StackPanel>
-                </customcontrols:GroupBox.CustomContent>
-            </customcontrols:GroupBox>
-        
+                    <TextBlock Text="Lp Leakeage" Grid.Row="1" Grid.Column="0"  Margin="4" HorizontalAlignment="Right"/>
+                    <customcontrols:EngrNumberBox Value="{x:Bind LpLeak, Mode=OneWay}" Margin="4" 
+                                                    Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left"/>
+
+                    <TextBlock Text="Ls Leakeage" Grid.Row="2" Grid.Column="0" Margin="4"  HorizontalAlignment="Right"/>
+                    <customcontrols:EngrNumberBox Value="{x:Bind LsLeak, Mode=OneWay}" Margin="4" 
+                                                    Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left"/>
+                </Grid>
+
+            </StackPanel>
+        </controls:Expander>
+
     </StackPanel>
 </UserControl>

@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:customcontrols="using:Transition.CustomControls"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
@@ -22,47 +23,50 @@
             <TextBlock Margin="4" Text="Component Name: "/>
             <TextBox Margin="4" Text="{x:Bind ComponentName, Mode=TwoWay}"/>
         </StackPanel>
-        <customcontrols:GroupBox Header="Potentiometer total Resistance and position">
-            <customcontrols:GroupBox.CustomContent>
-                <StackPanel Orientation="Vertical">
-                    <customcontrols:ComponentValueBox Unit="Ohm" HorizontalAlignment="Left"
+        <controls:Expander Header="Potentiometer total Resistance and position"
+                           IsExpanded="True" ExpandDirection="Down" HorizontalContentAlignment="Stretch">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
+                <customcontrols:ComponentValueBox Unit="Ohm" HorizontalAlignment="Left"
                                          ValueChanged="changeR" Margin="4"
                                          x:Name="componentValueBox"/>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="Position:" Grid.Column="0"
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Position:" Grid.Column="0"
                                    HorizontalAlignment="Right" Margin="4"
                                    VerticalAlignment="Center"/>
-                        <Slider Grid.Column="1" Margin="4" ValueChanged="positionChange"
+                    <StackPanel Orientation="Horizontal" Grid.Column="1"
+                                HorizontalAlignment="Stretch">
+                        <TextBlock Text="CCW" Margin="4" VerticalAlignment="Center"/>
+                        <Slider Margin="4" ValueChanged="positionChange"
                                 VerticalAlignment="Center" x:Name="sldPosition"
-                                Value="0" TickFrequency="0.1"/>
-                    </Grid>
+                                Value="0" TickFrequency="0.1" Width="150"/>
+                        <TextBlock Text="CW" Margin="4" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
 
-                        <Button Content="CCW" Margin="4" Grid.Column="0"
+                    <Button Content="CCW" Margin="4" Grid.Column="0"
                                 HorizontalAlignment="Center" Click="ClickCCW"/>
-                        <Button Content="Center" Margin="4" Grid.Column="1"
+                    <Button Content="Center" Margin="4" Grid.Column="1"
                                 HorizontalAlignment="Center" Click="ClickCenter"/>
-                        <Button Content="CW" Margin="4" Grid.Column="2" 
+                    <Button Content="CW" Margin="4" Grid.Column="2" 
                                 HorizontalAlignment="Center" Click="ClickCW"/>
-                        <TextBox Grid.Column="3"  Width="50"
+                    <TextBox Grid.Column="3"  Width="50"
                                  Style="{StaticResource EngrNumberBoxStyle}"
                                  Text="{Binding Path=Value, ElementName=sldPosition, Mode=TwoWay}"/>
-                    </Grid>
-                </StackPanel>
-            </customcontrols:GroupBox.CustomContent>
-        </customcontrols:GroupBox>
-
-
+                </Grid>
+            </StackPanel>
+        </controls:Expander>
+       
     </StackPanel>
 </UserControl>

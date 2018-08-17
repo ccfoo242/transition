@@ -77,7 +77,8 @@ namespace Transition.CustomControls
                 { Text = "New Value:", Margin = new Thickness(4) });
 
             EngrNumberBox box = new EngrNumberBox()
-                { Value = this.Value, Margin = new Thickness(4) };
+            { Value = this.Value, Margin = new Thickness(4),
+                AllowNegativeNumber = AllowNegativeNumber };
 
             stk.Children.Add(box);
 

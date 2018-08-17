@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:customcontrols="using:Transition.CustomControls"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
@@ -24,69 +25,66 @@
             <TextBlock Margin="4" Text="Component Name: "/>
             <TextBox Margin="4" Text="{x:Bind ComponentName, Mode=TwoWay}"/>
         </StackPanel>
-
-        <customcontrols:GroupBox Header="Inductor Value">
-            <customcontrols:GroupBox.CustomContent>
-                <customcontrols:ComponentValueBox Unit="Henry" HorizontalAlignment="Left"
+        <controls:Expander Header="Inductor Value" ExpandDirection="Down"
+                           IsExpanded="True">
+            <customcontrols:ComponentValueBox Unit="Henry" HorizontalAlignment="Left"
                                           ValueChanged="changeL" Margin="4"
                                           x:Name="ComponentValueBox"/>
-            </customcontrols:GroupBox.CustomContent>
-        </customcontrols:GroupBox>
+        </controls:Expander>
+        <controls:Expander Header="Inductor Model" ExpandDirection="Down"
+                           IsExpanded="True">
+            <Grid HorizontalAlignment="Stretch" Margin="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
 
-        <customcontrols:GroupBox Header="Inductor Model">
-            <customcontrols:GroupBox.CustomContent>
-                <Grid HorizontalAlignment="Stretch" Margin="4">
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-
-                    <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Stretch">
-                        <TextBlock Text="Model" Margin="4" VerticalAlignment="Center"/>
-                        <ComboBox HorizontalAlignment="Center" 
+                <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Stretch">
+                    <TextBlock Text="Model" Margin="4" VerticalAlignment="Center"/>
+                    <ComboBox HorizontalAlignment="Center" 
                           VerticalAlignment="Center"
                           SelectionChanged="modelInductorChanged"
                           Margin="4" Width="150" SelectedIndex="{x:Bind selectedInductorModel, Mode=TwoWay}">
-                            <ComboBox.Items>
-                                <ComboBoxItem Content="Ideal"/>
-                                <ComboBoxItem Content="Parasitic"/>
-                                <ComboBoxItem Content="Exponent"/>
-                            </ComboBox.Items>
-                        </ComboBox>
-                    </StackPanel>
+                        <ComboBox.Items>
+                            <ComboBoxItem Content="Ideal"/>
+                            <ComboBoxItem Content="Parasitic"/>
+                            <ComboBoxItem Content="Exponent"/>
+                        </ComboBox.Items>
+                    </ComboBox>
+                </StackPanel>
 
-                    <StackPanel Orientation="Vertical" x:Name="pnlExponential"
+                <StackPanel Orientation="Vertical" x:Name="pnlExponential"
                                     Grid.Row="1" HorizontalAlignment="Stretch">
-                        <customcontrols:EngrNumberBoxDialog VariableName="Eω" Margin="4"/>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Inductance function: L(ω) = L · ω"/>
-                            <TextBlock Text="Eω" FontSize="10" VerticalAlignment="Top"/>
-                        </StackPanel>
+                    <customcontrols:EngrNumberBoxDialog VariableName="Eω" Margin="4"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Inductance function: L(ω) = L · ω"/>
+                        <TextBlock Text="Eω" FontSize="10" VerticalAlignment="Top"/>
                     </StackPanel>
-                    <StackPanel Orientation="Vertical" x:Name="pnlParasitic"
+                </StackPanel>
+                <StackPanel Orientation="Vertical" x:Name="pnlParasitic"
                                 Grid.Row="1" HorizontalAlignment="Stretch">
-                        <TextBlock Text="Equivalent Inductor Model"
+                    <TextBlock Text="Equivalent Inductor Model"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center"
                                        Margin="5"/>
-                        <Viewbox MaxHeight="80" MaxWidth="160" HorizontalAlignment="Center">
-                            <ContentControl ContentTemplate="{StaticResource inductorParasiticModelCircuit}"/>
-                        </Viewbox>
-                        <customcontrols:EngrNumberBoxDialog VariableName="Rs (Ohm)" 
+                    <Viewbox MaxHeight="80" MaxWidth="160" HorizontalAlignment="Center">
+                        <ContentControl ContentTemplate="{StaticResource inductorParasiticModelCircuit}"/>
+                    </Viewbox>
+                    <customcontrols:EngrNumberBoxDialog VariableName="Rs (Ohm)" 
                                ValueManuallyChanged="changeRs" HorizontalAlignment="Right"
                                x:Name="BoxRs" Value="{x:Bind Rs, Mode = OneWay}"/>
-                        <customcontrols:EngrNumberBoxDialog  VariableName="Cp (Farad)"
+                    <customcontrols:EngrNumberBoxDialog  VariableName="Cp (Farad)"
                                ValueManuallyChanged="changeCp" HorizontalAlignment="Right"
                                x:Name="BoxCp" Value="{x:Bind Cp, Mode = OneWay}"/>
-                        <customcontrols:EngrNumberBoxDialog  VariableName="Fo (Hz)"
+                    <customcontrols:EngrNumberBoxDialog  VariableName="Fo (Hz)"
                                ValueManuallyChanged="changeFo" HorizontalAlignment="Right"
                                x:Name="BoxFo" Value="{x:Bind Fo, Mode = OneWay}"/>
-                        <customcontrols:EngrNumberBoxDialog  VariableName="Q"
+                    <customcontrols:EngrNumberBoxDialog  VariableName="Q"
                                ValueManuallyChanged="changeQ" HorizontalAlignment="Right"
                                x:Name="BoxQ" Value="{x:Bind Q, Mode = OneWay}"/>
-                    </StackPanel>
-                </Grid>
-            </customcontrols:GroupBox.CustomContent>
-        </customcontrols:GroupBox>
+                </StackPanel>
+            </Grid>
+        </controls:Expander>
+
     </StackPanel>
 </UserControl>

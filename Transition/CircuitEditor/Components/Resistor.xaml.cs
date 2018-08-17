@@ -189,6 +189,11 @@ namespace Transition.CircuitEditor.Components
                 leftRV = 80;
             }
 
+            /* I use a Transform because it allows to position the visual objects
+             outside de Canvas (or other layouts) without affecting the
+             layout itself, that is useful if it is required to position
+             a textbox outside the control itself. */
+
             ((TranslateTransform)txtComponentName.RenderTransform).X = leftCN;
             ((TranslateTransform)txtComponentName.RenderTransform).Y = topCN;
 
