@@ -28,8 +28,8 @@
         <controls:Expander Header="Inductor Value" ExpandDirection="Down"
                            IsExpanded="True">
             <customcontrols:ComponentValueBox Unit="Henry" HorizontalAlignment="Left"
-                                          ValueChanged="changeL" Margin="4"
-                                          x:Name="ComponentValueBox"/>
+                                              UnitShort="H" ValueChanged="changeL" Margin="4"
+                                              x:Name="ComponentValueBox"/>
         </controls:Expander>
         <controls:Expander Header="Inductor Model" ExpandDirection="Down"
                            IsExpanded="True">

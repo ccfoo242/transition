@@ -159,9 +159,8 @@ namespace Transition.CircuitEditor.Components
             txtCapacitanceValue = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b2 = new Binding()
             {
-                Path = new PropertyPath("CapacitorValue"),
-                Source = this,
-                Converter = new EngrConverter() { ShortString = true },
+                Path = new PropertyPath("ValueString"),
+                Source = componentValueBox,
                 Mode = BindingMode.OneWay
             };
             txtCapacitanceValue.SetBinding(TextBlock.TextProperty, b2);

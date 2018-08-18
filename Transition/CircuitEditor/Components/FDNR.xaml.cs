@@ -84,9 +84,8 @@ namespace Transition.CircuitEditor.Components
             txtFdnrValue = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b2 = new Binding()
             {
-                Path = new PropertyPath("FdnrValue"),
-                Source = this,
-                Converter = new EngrConverter() { ShortString = true },
+                Path = new PropertyPath("ValueString"),
+                Source = componentValueBox,
                 Mode = BindingMode.OneWay
             };
             txtFdnrValue.SetBinding(TextBlock.TextProperty, b2);

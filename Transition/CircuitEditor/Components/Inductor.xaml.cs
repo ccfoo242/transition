@@ -145,9 +145,8 @@ namespace Transition.CircuitEditor.Components
             txtInductanceValue = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b2 = new Binding()
             {
-                Path = new PropertyPath("InductorValue"),
-                Source = this,
-                Converter = new EngrConverter() { ShortString = true },
+                Path = new PropertyPath("ValueString"),
+                Source = ComponentValueBox,
                 Mode = BindingMode.OneWay
             };
             txtInductanceValue.SetBinding(TextBlock.TextProperty, b2);

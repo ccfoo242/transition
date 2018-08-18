@@ -81,8 +81,7 @@ namespace Transition.CircuitEditor
                     break;
 
                 case "generator":
-                    grd.Width = 120;
-                    grd.Height = 140;
+                    parameters = new Components.VoltageSource();
                     break;
 
                 case "impedance":

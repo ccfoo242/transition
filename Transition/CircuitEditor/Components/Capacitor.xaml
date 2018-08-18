@@ -28,7 +28,7 @@
         <controls:Expander Header="Capacitor Value" ExpandDirection="Down"
                            IsExpanded="True">
             <customcontrols:ComponentValueBox Unit="Farad" Margin="4" HorizontalAlignment="Left"
-                                          x:Name="componentValueBox"
+                             UnitShort="F" x:Name="componentValueBox"
                                           ValueChanged="changeC"/>
         </controls:Expander>
         <controls:Expander Header="Capacitor Model" ExpandDirection="Down"

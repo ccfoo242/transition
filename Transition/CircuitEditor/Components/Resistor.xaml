@@ -29,7 +29,7 @@
         <controls:Expander Header="Resistor Value" ExpandDirection="Down"
                            IsExpanded="True">
             <customcontrols:ComponentValueBox Unit="Ohm" HorizontalAlignment="Left"
-                                         ValueChanged="changeR" Margin="4"
+                            UnitShort="Ω" ValueChanged="changeR" Margin="4"
                                          x:Name="componentValueBox"/>
         </controls:Expander>
 

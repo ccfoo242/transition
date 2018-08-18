@@ -36,9 +36,10 @@ namespace Transition.CircuitEditor.Components
             }
         }
 
-    
+
         private double actualRotation = 0;
         private bool flipX;
+        private bool flipY;
 
         public string ComponentLetter { get { return "T"; } }
         public Canvas CnvLabels { get; set; }
@@ -57,23 +58,19 @@ namespace Transition.CircuitEditor.Components
             {
                 turnsRatio = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TurnsRatio"));
-               
+
             }
         }
         private EngrNumber turnsRatio;
-
-        public double KCouplingCoef
+        
+        private decimal kCouplingCoef;
+        public decimal KCouplingCoef
         {
-            get { return (double)GetValue(KCouplingCoefProperty); }
-            set { SetValue(KCouplingCoefProperty, value);
-               
-            }
+            get { return kCouplingCoef;}
+            set { kCouplingCoef = value;
+                  PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("KCouplingCoef"));
+                }
         }
-
-        public static readonly DependencyProperty KCouplingCoefProperty =
-        DependencyProperty.Register("KCouplingCoef",
-            typeof(double), typeof(Transformer), new PropertyMetadata(0));
-
 
 
         public EngrNumber Lpri
@@ -144,20 +141,9 @@ namespace Transition.CircuitEditor.Components
 
         private void init()
         {
-            Binding b0 = new Binding()
-            {
-                Path = new PropertyPath("Value"),
-                Source = sldKCouplingCoef,
-                Mode = BindingMode.TwoWay
-            };
-            this.SetBinding(KCouplingCoefProperty, b0);
-
-            KCouplingCoef = 1;
+         
             CnvLabels = new Canvas();
-
-            Lpri = EngrNumber.one();
-            Lsec = EngrNumber.one();
-            
+  
             txtComponentName = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b1 = new Binding()
             {
@@ -180,7 +166,7 @@ namespace Transition.CircuitEditor.Components
             {
                 Path = new PropertyPath("TurnsRatio"),
                 Source = this,
-                Converter = new EngrConverter() { ShortString = true, AllowNegativeNumber = false },
+                Converter = new EngrConverter() { ShortString = false, AllowNegativeNumber = false },
                 Mode = BindingMode.OneWay
             };
             txtTurnsRatio.SetBinding(TextBlock.TextProperty, b2);
@@ -203,6 +189,14 @@ namespace Transition.CircuitEditor.Components
             };
             CnvLabels.Children.Add(txtSec);
 
+            KCouplingCoef = 1;
+            sldKCouplingCoef.Value = 1;
+            TurnsRatio = EngrNumber.one();
+            
+            Lpri = EngrNumber.one();
+            Lsec = EngrNumber.one();
+
+            updateM();
 
             setPositionTextBoxes();
         }
@@ -215,6 +209,8 @@ namespace Transition.CircuitEditor.Components
 
         public void setFlipY(bool flip)
         {
+            flipY = flip;
+            setPositionTextBoxes();
         }
 
         public void setPositionTextBoxes(double rotation)
@@ -250,6 +246,12 @@ namespace Transition.CircuitEditor.Components
                     leftPri = 100;
                     leftSec = 0;
                 }
+                if (flipY)
+                {
+                    topCN -= 20; topTR -= 20;
+                    topPri -= 20; topSec -= 20;
+                }
+               
             }
             else if (actualRotation == 90)
             {
@@ -270,6 +272,11 @@ namespace Transition.CircuitEditor.Components
                 {
                     topPri = 100;
                     topSec = 0;
+                }
+                if (flipY)
+                {
+                    leftCN += 20; leftTR += 20;
+                    leftPri += 20; leftSec += 20;
                 }
             }
             else if (actualRotation == 180)
@@ -292,6 +299,11 @@ namespace Transition.CircuitEditor.Components
                     leftPri = 0;
                     leftSec = 100;
                 }
+                if (flipY)
+                {
+                    topCN += 20; topTR += 20;
+                    topPri += 20; topSec += 20;
+                }
 
             }
             else
@@ -313,6 +325,11 @@ namespace Transition.CircuitEditor.Components
                 {
                     topPri = 0;
                     topSec = 100;
+                }
+                if (flipY)
+                {
+                    leftCN -= 20; leftTR -= 20;
+                    leftPri -= 20; leftSec -= 20;
                 }
             }
 
@@ -368,13 +385,16 @@ namespace Transition.CircuitEditor.Components
         {
             double lp = Lpri.ValueDouble;
             double ls = Lsec.ValueDouble;
-            double k = KCouplingCoef;
+            double k = (double)KCouplingCoef;
 
             MutualL = new EngrNumber(k * Math.Sqrt(lp * ls));
+            LpLeak = new EngrNumber(lp * (1 - k));
+            LsLeak = new EngrNumber(ls * (1 - k));
         }
 
         private void changeK(object sender, RangeBaseValueChangedEventArgs e)
         {
+            KCouplingCoef = decimal.Round((decimal)sldKCouplingCoef.Value, 2);
             updateM();
         }
     }

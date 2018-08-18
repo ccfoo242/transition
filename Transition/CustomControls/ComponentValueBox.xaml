@@ -11,7 +11,9 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
-        <local1:EngrConverter x:Key="engrConverter" ShortString="True" AllowNegativeNumber="False"/>
+        <local1:EngrConverter x:Key="engrConverterShort" ShortString="True" AllowNegativeNumber="False"/>
+        <local1:EngrConverter x:Key="engrConverter" ShortString="False" AllowNegativeNumber="False"/>
+        <local1:BooleanToVisibilityConverter x:Key="boolVisibilityConverter"/>
     </UserControl.Resources>
 
     <Grid>
@@ -40,11 +42,19 @@
             </Grid.RowDefinitions>
 
             <TextBox Style="{StaticResource EngrNumberBoxStyle}" 
-                 x:Name="numberBox"  
+                 x:Name="numberBoxShort"  Visibility="{x:Bind AnyPrecisionSelected, Mode=OneWay, Converter = {StaticResource boolVisibilityConverter}, ConverterParameter=Reverse}"
                  IsSpellCheckEnabled="False"
                  IsTextPredictionEnabled="False" Width="100"
                  AllowDrop="False"  InputScope="AlphanumericFullWidth"
-                 Text="{x:Bind ComponentValue, Mode=TwoWay, Converter={StaticResource engrConverter}}"  />
+                 Text="{x:Bind ComponentValue, Mode=TwoWay, Converter = {StaticResource engrConverterShort}}"  />
+            
+            <TextBox Style="{StaticResource EngrNumberBoxStyle}" 
+                 x:Name="numberBox"  Visibility="{x:Bind AnyPrecisionSelected, Mode=OneWay, Converter = {StaticResource boolVisibilityConverter}}"
+                 IsSpellCheckEnabled="False"
+                 IsTextPredictionEnabled="False" Width="100"
+                 AllowDrop="False"  InputScope="AlphanumericFullWidth"
+                 Text="{x:Bind ComponentValue, Mode=TwoWay, Converter = {StaticResource engrConverter}}"  />
+
             <StackPanel Orientation="Vertical" Grid.Column="1"
                         x:Name="stkButtonsIncDec" HorizontalAlignment="Left">
                 <RepeatButton x:Name="btnIncrease" Height="20" Click="increaseClick">

@@ -85,7 +85,8 @@ namespace Transition.CustomControls
 
             ContentDialog dialog = new ContentDialog()
             {
-                Title = "Enter new Value",
+                Title = "Enter new Value" + Environment.NewLine +
+                VariableName,
                 Content = stk,
                 CloseButtonText = "Cancel",
                 PrimaryButtonText = "OK"

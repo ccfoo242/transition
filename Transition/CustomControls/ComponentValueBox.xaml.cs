@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Transition.CustomControls
 {
-    public sealed partial class ComponentValueBox : UserControl
+    public sealed partial class ComponentValueBox : UserControl, INotifyPropertyChanged
     {
         public enum ComponentPrecision { Arbitrary, p05, p1, p2, p5, p10, p20, p50 }
         
@@ -36,6 +36,7 @@ namespace Transition.CustomControls
             DependencyProperty.Register("Unit",
                 typeof(String), typeof(ComponentValueBox), new PropertyMetadata(""));
 
+        public String UnitShort { get;set; }
 
         public EngrNumber ComponentValue
         {
@@ -55,31 +56,30 @@ namespace Transition.CustomControls
 
         public ComponentPrecision selectedComponentPrecision { get; set; }
 
+        private bool anyPrecisionSelected;
+        public bool AnyPrecisionSelected
+        {
+            get { return anyPrecisionSelected; }
+            set { anyPrecisionSelected = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AnyPrecisionSelected"));
+            }
+        }
+        
         public event PropertyChangedEventHandler PropertyChanged;
         public event PropertyChangedEventHandler ValueChanged;
 
-        public Binding bindShortString;
-        public Binding bindLongString;
+        private String valueString;
+        public String ValueString { get { return valueString; }
+            set { valueString = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ValueString"));
+            }
+        }
+        
 
         public ComponentValueBox()
         {
-            bindLongString = new Binding()
-            {
-                Path = new PropertyPath("ComponentValue"),
-                Source = this,
-                Mode = BindingMode.TwoWay,
-                Converter = new EngrConverter()
-            };
-
-            bindShortString = new Binding()
-            {
-                Path = new PropertyPath("ComponentValue"),
-                Source = this,
-                Mode = BindingMode.TwoWay,
-                Converter = new EngrConverter() { ShortString = true }
-            };
-
             this.InitializeComponent();
+            ValueChanged += updateValueString;
 
         }
 
@@ -96,13 +96,18 @@ namespace Transition.CustomControls
         private void changedPrecision(object sender, SelectionChangedEventArgs e)
         {
             if (cmbPrecision.SelectedIndex == (int)ComponentPrecision.Arbitrary)
+            {
                 hideUpDownButtons();
+                AnyPrecisionSelected = true;
+            }
             else
-                showUpDownButtons();
+            { showUpDownButtons();
+                AnyPrecisionSelected = false;
+            }
 
             selectedComponentPrecision = (ComponentPrecision)cmbPrecision.SelectedIndex;
 
-            ComponentValue = new EngrNumber(getNextOrEqualValue(), ComponentValue.Prefix);
+            if (!AnyPrecisionSelected) ComponentValue = new EngrNumber(getNextOrEqualValue(), ComponentValue.Prefix);
 
         }
 
@@ -127,7 +132,7 @@ namespace Transition.CustomControls
                     return (number * multiplier);
             }
 
-            return 10M * multiplier;
+            return 10M * arraySelectedPrecision()[0] * multiplier;
         }
 
         public decimal getNextValue()
@@ -141,7 +146,7 @@ namespace Transition.CustomControls
                     return (number * multiplier);
             }
 
-            return 10M * multiplier;
+            return 10M * arraySelectedPrecision()[0] * multiplier;
         }
 
         public decimal getPreviousValue()
@@ -158,6 +163,19 @@ namespace Transition.CustomControls
             }
 
             return (reversed[0] / 10) * multiplier;
+        }
+
+        private void updateValueString(object sender, PropertyChangedEventArgs e)
+        {
+            EngrConverter conv = new EngrConverter() { ShortString = false };
+            EngrConverter convShort = new EngrConverter() { ShortString = true };
+
+            if (AnyPrecisionSelected)
+                ValueString = (String)conv.Convert(ComponentValue, typeof(String), null, "");
+            else
+                ValueString = (String)convShort.Convert(ComponentValue, typeof(String), null, "");
+
+            if (UnitShort != null) ValueString += " " + UnitShort;
         }
 
         public decimal[] arraySelectedPrecision()

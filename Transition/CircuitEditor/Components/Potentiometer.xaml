@@ -27,7 +27,7 @@
                            IsExpanded="True" ExpandDirection="Down" HorizontalContentAlignment="Stretch">
             <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
                 <customcontrols:ComponentValueBox Unit="Ohm" HorizontalAlignment="Left"
-                                         ValueChanged="changeR" Margin="4"
+                                 UnitShort="Ω" ValueChanged="changeR" Margin="4"
                                          x:Name="componentValueBox"/>
                 <Grid>
                     <Grid.ColumnDefinitions>

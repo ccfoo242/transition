@@ -142,9 +142,8 @@ namespace Transition.CircuitEditor.Components
             txtResistanceValue = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b2 = new Binding()
             {
-                Path = new PropertyPath("ResistorValue"),
-                Source = this,
-                Converter = new EngrConverter() { ShortString = true },
+                Path = new PropertyPath("ValueString"),
+                Source = componentValueBox,
                 Mode = BindingMode.OneWay
             };
             txtResistanceValue.SetBinding(TextBlock.TextProperty, b2);

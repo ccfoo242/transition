@@ -275,6 +275,8 @@ namespace Transition
                     }
                 }
             }
+
+            Mantissa = decimal.Round(Mantissa, 4);
         }
     }
 
