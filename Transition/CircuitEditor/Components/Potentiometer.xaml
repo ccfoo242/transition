@@ -42,7 +42,7 @@
                         <TextBlock Text="CCW" Margin="4" VerticalAlignment="Center"/>
                         <Slider Margin="4" ValueChanged="positionChange"
                                 VerticalAlignment="Center" x:Name="sldPosition"
-                                Value="0" TickFrequency="0.1" Width="150"/>
+                                Value="0" StepFrequency="0.1" Width="150"/>
                         <TextBlock Text="CW" Margin="4" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Grid>

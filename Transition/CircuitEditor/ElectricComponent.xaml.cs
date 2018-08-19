@@ -132,8 +132,7 @@ namespace Transition.CircuitEditor
             grd.Width = this.Width;
 
             CompositeTransform t = (CompositeTransform)grd.RenderTransform;
-            t.CenterX = Statics.round20(this.Width / 2);
-            t.CenterY = Statics.round20(this.Height / 2);
+          
 
             parameters.ComponentName = parameters.ComponentLetter + ce.getNextNumberLetter(parameters.ComponentLetter);
             labelsgrd.Children.Add(parameters.CnvLabels);
@@ -204,13 +203,36 @@ namespace Transition.CircuitEditor
         public void Rotate()
         {
             CompositeTransform t = (CompositeTransform)grd.RenderTransform;
+            if (((t.Rotation % 360) == 90) || ((t.Rotation % 360) == 270))
+            {
+                t.CenterX = this.Width / 2;
+                t.CenterY = this.Height / 2;
+            }
+            else
+            {
+                t.CenterX = Statics.round20(this.Width / 2);
+                t.CenterY = Statics.round20(this.Height / 2);
+            }
+
             t.Rotation += 90;
             parameters.setPositionTextBoxes(t.Rotation);
+
         }
 
         public void FlipX()
         {
             CompositeTransform t = (CompositeTransform)grd.RenderTransform;
+            if (((t.Rotation % 360) == 90) || ((t.Rotation % 360) == 270))
+            {
+                t.CenterX = Statics.round20(this.Width / 2);
+                t.CenterY = Statics.round20(this.Height / 2);
+               
+            }
+            else
+            {
+                t.CenterX = this.Width / 2;
+                t.CenterY = this.Height / 2;
+            }
             t.ScaleX *= -1;
             parameters.setFlipX(t.ScaleX == -1);
         }
@@ -218,6 +240,17 @@ namespace Transition.CircuitEditor
         public void FlipY()
         {
             CompositeTransform t = (CompositeTransform)grd.RenderTransform;
+            if (((t.Rotation % 360) == 90) || ((t.Rotation % 360) == 270))
+            {
+                t.CenterX = Statics.round20(this.Width / 2);
+                t.CenterY = Statics.round20(this.Height / 2);
+
+            }
+            else
+            {
+                t.CenterX = this.Width / 2;
+                t.CenterY = this.Height / 2;
+            }
             t.ScaleY *= -1;
             parameters.setFlipY(t.ScaleY == -1);
         }

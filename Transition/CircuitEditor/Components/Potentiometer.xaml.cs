@@ -395,7 +395,10 @@ namespace Transition.CircuitEditor.Components
 
         private void positionChange(object sender, RangeBaseValueChangedEventArgs e)
         {
-            PositionValue = sldPosition.Value.ToString() + " %";
+            decimal val = (decimal)sldPosition.Value;
+            val = decimal.Round(val, 2);
+
+            PositionValue = val.ToString() + " %";
         }
 
         private void ClickCenter(object sender, RoutedEventArgs e)

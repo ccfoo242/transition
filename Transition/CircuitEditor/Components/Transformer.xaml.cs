@@ -246,11 +246,6 @@ namespace Transition.CircuitEditor.Components
                     leftPri = 100;
                     leftSec = 0;
                 }
-                if (flipY)
-                {
-                    topCN -= 20; topTR -= 20;
-                    topPri -= 20; topSec -= 20;
-                }
                
             }
             else if (actualRotation == 90)
@@ -273,21 +268,16 @@ namespace Transition.CircuitEditor.Components
                     topPri = 100;
                     topSec = 0;
                 }
-                if (flipY)
-                {
-                    leftCN += 20; leftTR += 20;
-                    leftPri += 20; leftSec += 20;
-                }
             }
             else if (actualRotation == 180)
             {
                 leftCN = (SchematicWidth / 2) - (txtComponentName.ActualWidth / 2);
-                topCN = -40;
+                topCN = -20;
                 leftTR = (SchematicWidth / 2) - (txtTurnsRatio.ActualWidth / 2);
-                topTR = -20;
+                topTR = 0;
 
-                topPri = (SchematicHeight / 2) - (txtPri.ActualHeight / 2) - 20;
-                topSec = (SchematicHeight / 2) - (txtSec.ActualHeight / 2) - 20;
+                topPri = (SchematicHeight / 2) - (txtPri.ActualHeight / 2) ;
+                topSec = (SchematicHeight / 2) - (txtSec.ActualHeight / 2) ;
 
                 if (!flipX)
                 {
@@ -298,11 +288,6 @@ namespace Transition.CircuitEditor.Components
                 {
                     leftPri = 0;
                     leftSec = 100;
-                }
-                if (flipY)
-                {
-                    topCN += 20; topTR += 20;
-                    topPri += 20; topSec += 20;
                 }
 
             }
@@ -325,11 +310,6 @@ namespace Transition.CircuitEditor.Components
                 {
                     topPri = 0;
                     topSec = 100;
-                }
-                if (flipY)
-                {
-                    leftCN -= 20; leftTR -= 20;
-                    leftPri -= 20; leftSec -= 20;
                 }
             }
 
