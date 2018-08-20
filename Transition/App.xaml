@@ -28,71 +28,71 @@
         </DataTemplate>
 
         <DataTemplate x:Key="symbolResistor">
-            <Canvas Background="Transparent" Width="100" Height="40">
-                <Polyline Points="00,20 15,20 20,10 30,30 40,10 50,30 60,10 70,30 80,10 85,20 100,20"
+            <Canvas Background="Transparent" Width="80" Height="40">
+                <Polyline Points="00,20 12,20 16,10 24,30 32,10 40,30 48,10 56,30 64,10 68,20 80,20"
                    Stroke="Black" StrokeLineJoin="Round"
                    StrokeThickness="4"/>
             </Canvas>
         </DataTemplate>
 
         <DataTemplate x:Key="symbolCapacitor">
-            <Canvas Background="Transparent" Width="100" Height="40">
-                <Polyline Points="00,20 45,20"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="55,20 100,20" Stroke="Black" StrokeThickness="4"/>
+            <Canvas Background="Transparent" Width="80" Height="40">
+                <Polyline Points="00,20 35,20"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="45,20 80,20" Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="35,10 35,30"  Stroke="Black" StrokeThickness="4"/>
                 <Polyline Points="45,10 45,30"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="55,10 55,30"  Stroke="Black" StrokeThickness="4"/>
             </Canvas>
         </DataTemplate>
 
         <DataTemplate x:Key="symbolFdnr">
-            <Canvas Background="Transparent" Width="100" Height="40">
-                <Polyline Points="00,20 35,20"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="65,20 100,20" Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="35,10 35,30"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="45,10 45,30"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="55,10 55,30"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="65,10 65,30"  Stroke="Black" StrokeThickness="4"/>
+            <Canvas Background="Transparent" Width="80" Height="40">
+                <Polyline Points="00,20 28,20"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="52,20 80,20" Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="28,10 28,30"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="36,10 36,30"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="44,10 44,30"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="52,10 52,30"  Stroke="Black" StrokeThickness="4"/>
             </Canvas>
         </DataTemplate>
 
         <DataTemplate x:Key="symbolInductor">
-            <Canvas Background="Transparent" Width="100" Height="40">
-                <Polyline Points="00,20 10,20"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="90,20 100,20"  Stroke="Black" StrokeThickness="4"/>
+            <Canvas Background="Transparent" Width="80" Height="40">
+                <Polyline Points="00,20 8,20"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="72,20 80,20"  Stroke="Black" StrokeThickness="4"/>
 
                 <Path Stroke="Black" StrokeThickness="4">
                     <Path.Data>
                         <PathGeometry>
                             <PathGeometry.Figures>
-                                <PathFigure StartPoint="10,20">
+                                <PathFigure StartPoint="8,20">
                                     <PathFigure.Segments>
-                                        <ArcSegment Size="10,10"  
-                                                    Point="30,20"
+                                        <ArcSegment Size="8,8"  
+                                                    Point="24,20"
                                                     SweepDirection="Clockwise"/>
 
                                     </PathFigure.Segments>
                                 </PathFigure>
 
-                                <PathFigure StartPoint="30,20">
+                                <PathFigure StartPoint="24,20">
                                     <PathFigure.Segments>
-                                        <ArcSegment Size="10,10"  
-                                                    Point="50,20"
+                                        <ArcSegment Size="8,8"  
+                                                    Point="40,20"
                                                     SweepDirection="Clockwise"/>
                                     </PathFigure.Segments>
                                 </PathFigure>
 
-                                <PathFigure StartPoint="50,20">
+                                <PathFigure StartPoint="40,20">
                                     <PathFigure.Segments>
-                                        <ArcSegment Size="10,10"  
-                                                    Point="70,20"
+                                        <ArcSegment Size="8,8"  
+                                                    Point="56,20"
                                                     SweepDirection="Clockwise"/>
                                     </PathFigure.Segments>
                                 </PathFigure>
 
-                                <PathFigure StartPoint="70,20">
+                                <PathFigure StartPoint="56,20">
                                     <PathFigure.Segments>
-                                        <ArcSegment Size="10,10"  
-                                                    Point="90,20"
+                                        <ArcSegment Size="8,8"  
+                                                    Point="72,20"
                                                     SweepDirection="Clockwise"/>
                                     </PathFigure.Segments>
                                 </PathFigure>
@@ -106,12 +106,12 @@
 
         <DataTemplate x:Key="symbolTransformer">
 
-            <Canvas Background="Transparent" Width="80" Height="100">
-                <Polyline Points="0,0 20,00 20,10"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="20,90 20,100 0,100"  Stroke="Black" StrokeThickness="4"/>
+            <Canvas Background="Transparent" Width="80" Height="80">
+                <Polyline Points="0,0 20,00 20,8"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="20,72 20,80 0,80"  Stroke="Black" StrokeThickness="4"/>
 
-                <Polyline Points="80,0 60,00 60,10"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="60,90 60,100 80,100"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="80,0 60,00 60,8"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="60,72 60,80 80,80"  Stroke="Black" StrokeThickness="4"/>
 
                 <!-- two dots -->
                 <Ellipse Width="6" Height="6" Stroke="Black"
@@ -128,69 +128,69 @@
                     <Path.Data>
                         <PathGeometry>
                             <PathGeometry.Figures>
-                                <PathFigure StartPoint="20,10">
+                                <PathFigure StartPoint="20,8">
                                     <PathFigure.Segments>
-                                        <ArcSegment Size="10,10"  
-                                                    Point="20,30"
+                                        <ArcSegment Size="8,8"  
+                                                    Point="20,24"
                                                     SweepDirection="Clockwise"/>
 
                                     </PathFigure.Segments>
                                 </PathFigure>
 
-                                <PathFigure StartPoint="20,30">
+                                <PathFigure StartPoint="20,24">
                                     <PathFigure.Segments>
-                                        <ArcSegment Size="10,10"  
-                                                    Point="20,50"
+                                        <ArcSegment Size="8,8"  
+                                                    Point="20,40"
                                                     SweepDirection="Clockwise"/>
                                     </PathFigure.Segments>
                                 </PathFigure>
 
-                                <PathFigure StartPoint="20,50">
+                                <PathFigure StartPoint="20,40">
                                     <PathFigure.Segments>
-                                        <ArcSegment Size="10,10"  
-                                                    Point="20,70"
+                                        <ArcSegment Size="8,8"  
+                                                    Point="20,56"
                                                     SweepDirection="Clockwise"/>
                                     </PathFigure.Segments>
                                 </PathFigure>
 
-                                <PathFigure StartPoint="20,70">
+                                <PathFigure StartPoint="20,56">
                                     <PathFigure.Segments>
-                                        <ArcSegment Size="10,10"  
-                                                    Point="20,90"
+                                        <ArcSegment Size="8,8"  
+                                                    Point="20,72"
                                                     SweepDirection="Clockwise"/>
                                     </PathFigure.Segments>
                                 </PathFigure>
 
 
-                                <PathFigure StartPoint="60,10">
+                                <PathFigure StartPoint="60,8">
                                     <PathFigure.Segments>
-                                        <ArcSegment Size="10,10"  
-                                                    Point="60,30"
+                                        <ArcSegment Size="8,8"  
+                                                    Point="60,24"
                                                     SweepDirection="Counterclockwise"/>
 
                                     </PathFigure.Segments>
                                 </PathFigure>
 
-                                <PathFigure StartPoint="60,30">
+                                <PathFigure StartPoint="60,24">
                                     <PathFigure.Segments>
-                                        <ArcSegment Size="10,10"  
-                                                    Point="60,50"
+                                        <ArcSegment Size="8,8"  
+                                                    Point="60,40"
                                                     SweepDirection="Counterclockwise"/>
                                     </PathFigure.Segments>
                                 </PathFigure>
 
-                                <PathFigure StartPoint="60,50">
+                                <PathFigure StartPoint="60,40">
                                     <PathFigure.Segments>
-                                        <ArcSegment Size="10,10"  
-                                                    Point="60,70"
+                                        <ArcSegment Size="8,8"  
+                                                    Point="60,56"
                                                     SweepDirection="Counterclockwise"/>
                                     </PathFigure.Segments>
                                 </PathFigure>
 
-                                <PathFigure StartPoint="60,70">
+                                <PathFigure StartPoint="60,56">
                                     <PathFigure.Segments>
-                                        <ArcSegment Size="10,10"  
-                                                    Point="60,90"
+                                        <ArcSegment Size="8,8"  
+                                                    Point="60,72"
                                                     SweepDirection="Counterclockwise"/>
                                     </PathFigure.Segments>
                                 </PathFigure>
@@ -216,24 +216,24 @@
         </DataTemplate>
 
         <DataTemplate x:Key="symbolGenerator">
-            <Canvas Background="Transparent" Width="80" Height="100">
-                <Polyline Points="40,00 40,20"
+            <Canvas Background="Transparent" Width="80" Height="80">
+                <Polyline Points="40,00 40,16"
                    Stroke="Black" StrokeLineJoin="Round"
                    StrokeThickness="4"/>
 
-                <Polyline Points="40,80 40,100"
+                <Polyline Points="40,64 40,80"
                    Stroke="Black" StrokeLineJoin="Round"
                    StrokeThickness="4"/>
 
-                <Ellipse Width="60" Height="60" Stroke="Black"
+                <Ellipse Width="48" Height="48" Stroke="Black"
                          StrokeThickness="4"
-                         Canvas.Left="10"
-                         Canvas.Top="20"
+                         Canvas.Left="16"
+                         Canvas.Top="16"
                          Fill="Transparent"/>
                 <!-- dot -->
                 <Ellipse Width="6" Height="6" Stroke="Black"
                          Canvas.Left="37"
-                         Canvas.Top="30"
+                         Canvas.Top="24"
                          Fill="Black"/>
 
                 <!-- two semicircles -->
@@ -241,19 +241,19 @@
                     <Path.Data>
                         <PathGeometry>
                             <PathGeometry.Figures>
-                                <PathFigure StartPoint="20,50">
+                                <PathFigure StartPoint="24,40">
                                     <PathFigure.Segments>
-                                        <ArcSegment Size="10,10"  
-                                                    Point="40,50"
+                                        <ArcSegment Size="8,8"  
+                                                    Point="40,40"
                                                     SweepDirection="Clockwise"/>
 
                                     </PathFigure.Segments>
                                 </PathFigure>
 
-                                <PathFigure StartPoint="40,50">
+                                <PathFigure StartPoint="40,40">
                                     <PathFigure.Segments>
-                                        <ArcSegment Size="10,10"  
-                                                    Point="60,50"
+                                        <ArcSegment Size="8,8"  
+                                                    Point="56,40"
                                                     SweepDirection="Counterclockwise"/>
                                     </PathFigure.Segments>
                                 </PathFigure>
@@ -265,19 +265,19 @@
         </DataTemplate>
 
         <DataTemplate x:Key="symbolImpedance">
-            <Canvas Background="Transparent" Width="100" Height="40">
+            <Canvas Background="Transparent" Width="80" Height="40">
                 <Polyline Points="00,20 10,20"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="90,20 100,20"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="10,5 90,5 90,35 10,35 10,5"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="70,20 80,20"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="10,5 70,5 70,35 10,35 10,5"  Stroke="Black" StrokeThickness="4"/>
 
             </Canvas>
         </DataTemplate>
 
         <DataTemplate x:Key="symbolSCN">
-            <Canvas Background="Transparent" Width="100" Height="40">
+            <Canvas Background="Transparent" Width="80" Height="40">
                 <Polyline Points="00,20 10,20"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="90,20 100,20"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="10,5 90,5 90,35 10,35 10,5"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="70,20 80,20"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="10,5 70,5 70,35 10,35 10,5"  Stroke="Black" StrokeThickness="4"/>
 
             </Canvas>
         </DataTemplate>

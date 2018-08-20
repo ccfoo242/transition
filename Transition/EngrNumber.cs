@@ -13,31 +13,35 @@ namespace Transition
     {
         /* this struct stores numbers in engineering notation */
 
+        public static readonly EngrNumber One = new EngrNumber(1, "");
+
         public decimal Mantissa { get; set; }
         public String Prefix { get; set; }
 
         public bool NegativeSign { get { return Mantissa < 0; } }
+        public bool IsZero { get { return Mantissa == 0; } }
+
         public double ValueDouble { get { return (double)Mantissa * Math.Pow(10, getExponent(Prefix)); } }
 
         public static Dictionary<String, int> mapPrefixes =
             new Dictionary<string, int> {
-                {"Y", 24 },
-                {"Z", 21 },
-                {"E", 18 },
-                {"P", 15 },
-                {"T", 12 },
-                {"G", 9 },
-                {"M", 6 },
-                {"K", 3 },
-                {"", 0 },
-                {"m", -3 },
-                {"u", -6 },
-                {"n", -9 },
-                {"p", -12 },
-                {"f", -15 },
-                {"a", -18 },
-                {"z", -21 },
-                {"y", -24 }
+                { "Y", 24 },
+                { "Z", 21 },
+                { "E", 18 },
+                { "P", 15 },
+                { "T", 12 },
+                { "G", 9 },
+                { "M", 6 },
+                { "K", 3 },
+                { "", 0 },
+                { "m", -3 },
+                { "u", -6 },
+                { "n", -9 },
+                { "p", -12 },
+                { "f", -15 },
+                { "a", -18 },
+                { "z", -21 },
+                { "y", -24 }
             };
 
         public EngrNumber(decimal mantissa, String prefix)
@@ -65,12 +69,7 @@ namespace Transition
             return (this.ValueDouble < other.ValueDouble) ? -1 :
                    ((this.ValueDouble > other.ValueDouble) ? 1 : 0);
         }
-
-        public static EngrNumber one()
-        {
-            return new EngrNumber(1, "");
-        }
-
+        
         public EngrNumber(decimal input)
         {
             Mantissa = input;
@@ -232,6 +231,7 @@ namespace Transition
                e.g. :
                 0.01234  ==> 12.3400m
                 1234567K ==>  1.2346G
+               this operation does not alter the total value of the struct
             */
             if (Prefix == null) Prefix = "";
 
@@ -280,6 +280,7 @@ namespace Transition
         }
     }
 
+
     public class EngrNumberHolder
     {
         public EngrNumber Value { get; set; }
@@ -307,7 +308,7 @@ namespace Transition
             String valueString = (String)value;
 
             if (valueString == "")
-                return EngrNumber.one();
+                return EngrNumber.One;
             else
             {
                 EngrNumber output;
@@ -315,7 +316,7 @@ namespace Transition
                 {
                     output = EngrNumber.ConvertFromString(valueString);
                 }
-                catch { output = EngrNumber.one(); }
+                catch { output = EngrNumber.One; }
 
               
                 if (!AllowNegativeNumber) output.makePositiveSign();

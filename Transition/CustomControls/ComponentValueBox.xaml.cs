@@ -51,7 +51,7 @@ namespace Transition.CustomControls
 
         public static readonly DependencyProperty ComponentValueProperty =
           DependencyProperty.Register("ComponentValue",
-              typeof(EngrNumber), typeof(ComponentValueBox), new PropertyMetadata(EngrNumber.one()));
+              typeof(EngrNumber), typeof(ComponentValueBox), new PropertyMetadata(EngrNumber.One));
 
 
         public ComponentPrecision selectedComponentPrecision { get; set; }

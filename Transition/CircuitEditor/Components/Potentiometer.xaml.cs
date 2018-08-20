@@ -86,7 +86,7 @@ namespace Transition.CircuitEditor.Components
 
         public void init()
         {
-            componentValueBox.ComponentValue = EngrNumber.one();
+            componentValueBox.ComponentValue = EngrNumber.One;
 
             CnvLabels = new Canvas();
 
@@ -374,7 +374,7 @@ namespace Transition.CircuitEditor.Components
 
         }
 
-        public void setPositionTextBoxes(double rotation)
+        public void setRotation(double rotation)
         {
             rotation = rotation % 360;
             actualRotation = rotation;

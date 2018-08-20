@@ -23,7 +23,7 @@ namespace Transition.CircuitEditor.Components
     {
 
         public double SchematicWidth { get { return 120; } }
-        public double SchematicHeight { get { return 140; } }
+        public double SchematicHeight { get { return 120; } }
 
         private String componentName;
         public String ComponentName
@@ -191,10 +191,10 @@ namespace Transition.CircuitEditor.Components
 
             KCouplingCoef = 1;
             sldKCouplingCoef.Value = 1;
-            TurnsRatio = EngrNumber.one();
+            TurnsRatio = EngrNumber.One;
             
-            Lpri = EngrNumber.one();
-            Lsec = EngrNumber.one();
+            Lpri = EngrNumber.One;
+            Lsec = EngrNumber.One;
 
             updateM();
 
@@ -213,7 +213,7 @@ namespace Transition.CircuitEditor.Components
             setPositionTextBoxes();
         }
 
-        public void setPositionTextBoxes(double rotation)
+        public void setRotation(double rotation)
         {
             actualRotation = rotation % 360;
             setPositionTextBoxes();
@@ -250,13 +250,13 @@ namespace Transition.CircuitEditor.Components
             }
             else if (actualRotation == 90)
             {
-                leftCN = -1 * txtComponentName.ActualWidth;
-                topCN = (SchematicHeight / 2) - (txtComponentName.ActualHeight / 2) - 10;
+                leftCN = (-1 * txtComponentName.ActualWidth) + 20;
+                topCN = (SchematicHeight / 2) - (txtComponentName.ActualHeight / 2) ;
                 leftTR = 100;
-                topTR = (SchematicHeight / 2) - (txtTurnsRatio.ActualHeight / 2) - 10;
+                topTR = (SchematicHeight / 2) - (txtTurnsRatio.ActualHeight / 2);
 
-                leftPri = (SchematicWidth / 2) - (txtPri.ActualWidth / 2) - 10;
-                leftSec = (SchematicWidth / 2) - (txtSec.ActualWidth / 2) - 10;
+                leftPri = (SchematicWidth / 2) - (txtPri.ActualWidth / 2) ;
+                leftSec = (SchematicWidth / 2) - (txtSec.ActualWidth / 2) ;
 
                 if (!flipX)
                 {
@@ -294,12 +294,12 @@ namespace Transition.CircuitEditor.Components
             else
             {
                 leftCN = (-1 * txtComponentName.ActualWidth) + 20;
-                topCN = (SchematicHeight / 2) - (txtComponentName.ActualHeight / 2) - 10;
-                leftTR = 120;
-                topTR = (SchematicHeight / 2) - (txtTurnsRatio.ActualHeight / 2) - 10;
+                topCN = (SchematicHeight / 2) - (txtComponentName.ActualHeight / 2) ;
+                leftTR = 100;
+                topTR = (SchematicHeight / 2) - (txtTurnsRatio.ActualHeight / 2) ;
 
-                leftPri = (SchematicWidth / 2) - (txtPri.ActualWidth / 2) + 10;
-                leftSec = (SchematicWidth / 2) - (txtSec.ActualWidth / 2) + 10;
+                leftPri = (SchematicWidth / 2) - (txtPri.ActualWidth / 2) ;
+                leftSec = (SchematicWidth / 2) - (txtSec.ActualWidth / 2) ;
 
                 if (!flipX)
                 {

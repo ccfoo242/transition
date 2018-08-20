@@ -23,7 +23,7 @@ namespace Transition.CircuitEditor.Components
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public double SchematicWidth { get { return 140; } }
+        public double SchematicWidth { get { return 120; } }
         public double SchematicHeight { get { return 80; } }
         public String ComponentLetter { get { return "L"; } }
 
@@ -125,7 +125,7 @@ namespace Transition.CircuitEditor.Components
         {
             Rs = new EngrNumber(1, "p");
             Cp = new EngrNumber(1, "p");
-            ComponentValueBox.ComponentValue = EngrNumber.one();
+            ComponentValueBox.ComponentValue = EngrNumber.One;
 
             CnvLabels = new Canvas();
 
@@ -162,32 +162,18 @@ namespace Transition.CircuitEditor.Components
             double leftRV; double topRV;
             double leftCN; double topCN;
 
-            if (actualRotation == 0)
+            if ((actualRotation == 0) || (actualRotation == 180))
             {
                 topCN = 0;
                 leftCN = (SchematicWidth / 2) - (txtComponentName.ActualWidth / 2);
                 topRV = 60;
                 leftRV = (SchematicWidth / 2) - (txtInductanceValue.ActualWidth / 2);
             }
-            else if (actualRotation == 90)
+            else 
             {
-                topCN = 40;
+                topCN = 40 - (txtComponentName.ActualHeight / 2) ;
                 leftCN = 40 - (txtComponentName.ActualWidth);
-                topRV = 40;
-                leftRV = 80;
-            }
-            else if (actualRotation == 180)
-            {
-                topCN = 0;
-                leftCN = -20 + (SchematicWidth / 2) - (txtComponentName.ActualWidth / 2);
-                topRV = 60;
-                leftRV = -20 + (SchematicWidth / 2) - (txtInductanceValue.ActualWidth / 2);
-            }
-            else
-            {
-                topCN = 20;
-                leftCN = 40 - (txtComponentName.ActualWidth);
-                topRV = 20;
+                topRV = 40 - (txtInductanceValue.ActualHeight / 2);
                 leftRV = 80;
             }
 
@@ -198,7 +184,7 @@ namespace Transition.CircuitEditor.Components
             ((TranslateTransform)txtInductanceValue.RenderTransform).Y = topRV;
         }
 
-        public void setPositionTextBoxes(double rotation)
+        public void setRotation(double rotation)
         {
             rotation = rotation % 360;
             actualRotation = rotation;

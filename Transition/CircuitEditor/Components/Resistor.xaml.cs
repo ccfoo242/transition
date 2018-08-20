@@ -21,11 +21,14 @@ namespace Transition.CircuitEditor.Components
 {
     public sealed partial class Resistor : UserControl, IComponentParameter, INotifyPropertyChanged
     {
-        public double SchematicWidth { get { return 140; } }
+        public double SchematicWidth { get { return 120; } }
         public double SchematicHeight { get { return 80; } }
         public Canvas CnvLabels { get; set; }
 
-        public double actualRotation;
+        private double actualRotation;
+        private bool flipX;
+        private bool flipY;
+
         private ElectricComponent ec;
         public string ComponentLetter { get { return "R"; } }
 
@@ -122,24 +125,32 @@ namespace Transition.CircuitEditor.Components
         {
             Ls = new EngrNumber(1, "p");
             Cp = new EngrNumber(1, "p");
-            componentValueBox.ComponentValue = EngrNumber.one();
+            componentValueBox.ComponentValue = EngrNumber.One;
 
             CnvLabels = new Canvas();
 
-            txtComponentName = new TextBlock() { FontWeight = FontWeights.ExtraBold };
+            txtComponentName = new TextBlock()
+            {
+                FontWeight = FontWeights.ExtraBold,
+                RenderTransform = new TranslateTransform()
+            };
+
             Binding b1 = new Binding()
             {
                 Path = new PropertyPath("ComponentName"),
                 Source = this,
-                Mode = BindingMode.OneWay
+                Mode = BindingMode.OneWay                
             };
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
-            txtComponentName.RenderTransform = new TranslateTransform() { };
             txtComponentName.SizeChanged += delegate { setPositionTextBoxes(); };
             CnvLabels.Children.Add(txtComponentName);
 
 
-            txtResistanceValue = new TextBlock() { FontWeight = FontWeights.ExtraBold };
+            txtResistanceValue = new TextBlock()
+            {
+                FontWeight = FontWeights.ExtraBold,
+                RenderTransform = new TranslateTransform()
+            };
             Binding b2 = new Binding()
             {
                 Path = new PropertyPath("ValueString"),
@@ -147,7 +158,6 @@ namespace Transition.CircuitEditor.Components
                 Mode = BindingMode.OneWay
             };
             txtResistanceValue.SetBinding(TextBlock.TextProperty, b2);
-            txtResistanceValue.RenderTransform = new TranslateTransform() { };
             txtResistanceValue.SizeChanged += delegate { setPositionTextBoxes(); };
             CnvLabels.Children.Add(txtResistanceValue);
 
@@ -159,48 +169,31 @@ namespace Transition.CircuitEditor.Components
             double leftRV; double topRV;
             double leftCN; double topCN;
 
-            if (actualRotation == 0)
+            if ((actualRotation == 0) || (actualRotation == 180))
             {
                 topCN = 0;
                 leftCN = (SchematicWidth / 2) - (txtComponentName.ActualWidth / 2);
                 topRV = 60;
                 leftRV = (SchematicWidth / 2) - (txtResistanceValue.ActualWidth / 2);
             }
-            else if (actualRotation == 90)
+            else 
             {
-                topCN = 40;
+                topCN = 40 - (txtComponentName.ActualHeight / 2);
                 leftCN = 40 - (txtComponentName.ActualWidth);
-                topRV = 40;
-                leftRV = 80;
+                topRV = 40 - (txtResistanceValue.ActualHeight / 2);
+                leftRV = SchematicHeight;
             }
-            else if (actualRotation == 180)
-            {
-                topCN = 0;
-                leftCN = -20 + (SchematicWidth / 2) - (txtComponentName.ActualWidth / 2);
-                topRV = 60;
-                leftRV = -20 + (SchematicWidth / 2) - (txtResistanceValue.ActualWidth / 2);
-            }
-            else
-            {
-                topCN = 20;
-                leftCN = 40 - (txtComponentName.ActualWidth);
-                topRV = 20;
-                leftRV = 80;
-            }
-
-            /* I use a Transform because it allows to position the visual objects
-             outside de Canvas (or other layouts) without affecting the
-             layout itself, that is useful if it is required to position
-             a textbox outside the control itself. */
 
             ((TranslateTransform)txtComponentName.RenderTransform).X = leftCN;
             ((TranslateTransform)txtComponentName.RenderTransform).Y = topCN;
 
             ((TranslateTransform)txtResistanceValue.RenderTransform).X = leftRV;
             ((TranslateTransform)txtResistanceValue.RenderTransform).Y = topRV;
+
+
         }
 
-        public void setPositionTextBoxes(double rotation)
+        public void setRotation(double rotation)
         {
             rotation = rotation % 360;
 
@@ -210,12 +203,15 @@ namespace Transition.CircuitEditor.Components
 
         public void setFlipX(bool flip)
         {
+            flipX = flip;
+            setPositionTextBoxes();
         }
 
         public void setFlipY(bool flip)
         {
+            flipY = flip;
+            setPositionTextBoxes();
         }
-        
 
         private void changeLs(object sender, PropertyChangedEventArgs e)
         {

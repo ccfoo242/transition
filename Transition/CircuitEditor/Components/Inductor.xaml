@@ -13,7 +13,7 @@
     
     <UserControl.Resources>
         <DataTemplate x:Key="SchematicComponentLayout">
-            <Canvas Width="100" Height="40">
+            <Canvas Width="80" Height="40">
                 <ContentControl ContentTemplate="{StaticResource symbolInductor}"/>
             </Canvas>
         </DataTemplate>

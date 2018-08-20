@@ -34,7 +34,7 @@ namespace Transition.CustomControls
 
         public static readonly DependencyProperty ValueProperty =
             DependencyProperty.Register("Value",
-                typeof(EngrNumber), typeof(EngrNumberBox), new PropertyMetadata(EngrNumber.one()));
+                typeof(EngrNumber), typeof(EngrNumberBox), new PropertyMetadata(EngrNumber.One));
 
         public bool AllowNegativeNumber { get; set; } 
 

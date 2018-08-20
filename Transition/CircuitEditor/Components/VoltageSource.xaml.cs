@@ -22,7 +22,7 @@ namespace Transition.CircuitEditor.Components
     {
        
         public double SchematicWidth  { get { return 120; } }
-        public double SchematicHeight { get { return 140; } }
+        public double SchematicHeight { get { return 120; } }
 
 
         private String componentName;
@@ -69,7 +69,7 @@ namespace Transition.CircuitEditor.Components
             setPositionTextBoxes();
         }
 
-        public void setPositionTextBoxes(double rotation)
+        public void setRotation(double rotation)
         {
             actualRotation = rotation % 360;
             setPositionTextBoxes();

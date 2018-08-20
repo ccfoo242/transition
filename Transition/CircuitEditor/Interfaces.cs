@@ -30,7 +30,7 @@ namespace Transition
         String ComponentLetter { get; }
 
         Canvas CnvLabels { get; set; }
-        void setPositionTextBoxes(double rotation);
+        void setRotation(double rotation);
         void setFlipX(bool flip);
         void setFlipY(bool flip);
 

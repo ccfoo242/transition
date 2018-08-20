@@ -54,7 +54,7 @@ namespace Transition.CircuitEditor.Components
         {
         }
 
-        public void setPositionTextBoxes(double rotation)
+        public void setRotation(double rotation)
         {
         }
     }
