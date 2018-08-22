@@ -21,20 +21,12 @@ namespace Transition.CustomControls
     public sealed partial class ComponentValueBox : UserControl, INotifyPropertyChanged
     {
         public enum ComponentPrecision { Arbitrary, p05, p1, p2, p5, p10, p20, p50 }
-        
-        public String Unit
-        {
-            get { return (String)GetValue(UnitProperty); }
-            set
-            {
-                SetValue(UnitProperty, value);
-                Header.Text = "Value: (" + value + ")";
-            }
-        }
 
-        public static readonly DependencyProperty UnitProperty =
-            DependencyProperty.Register("Unit",
-                typeof(String), typeof(ComponentValueBox), new PropertyMetadata(""));
+        private String unit;
+        public String Unit { get { return unit; }
+            set { unit = value;
+                Header.Text = "Value (" + value + "): ";
+            } }
 
         public String UnitShort { get;set; }
 
@@ -71,7 +63,7 @@ namespace Transition.CustomControls
         private String valueString;
         public String ValueString { get { return valueString; }
             set { valueString = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ValueString"));
+                  PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ValueString"));
             }
         }
         
@@ -101,7 +93,8 @@ namespace Transition.CustomControls
                 AnyPrecisionSelected = true;
             }
             else
-            { showUpDownButtons();
+            {
+                showUpDownButtons();
                 AnyPrecisionSelected = false;
             }
 

@@ -23,25 +23,8 @@ namespace Transition.CustomControls
         public event PropertyChangedEventHandler PropertyChanged;
         public event PropertyChangedEventHandler ValueManuallyChanged;
 
-        public String VariableName
-        {
-            get { return (String)GetValue(VariableNameProperty); }
-            set { SetValue(VariableNameProperty, value); }
-        }
-
-        public static readonly DependencyProperty VariableNameProperty =
-        DependencyProperty.Register("VariableName",
-            typeof(String), typeof(EngrNumberBoxDialog), new PropertyMetadata(""));
-
-        public String Unit
-        {
-            get { return (String)GetValue(UnitProperty); }
-            set { SetValue(UnitProperty, value); }
-        }
-
-        public static readonly DependencyProperty UnitProperty =
-            DependencyProperty.Register("Unit",
-                typeof(String), typeof(EngrNumberBoxDialog), new PropertyMetadata(""));
+        public String VariableName { get; set; }
+        public String Unit { get; set; }
 
 
         public EngrNumber Value
@@ -51,7 +34,6 @@ namespace Transition.CustomControls
             {
                 SetValue(ValueProperty, value);
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Value"));
-
             }
         }
 

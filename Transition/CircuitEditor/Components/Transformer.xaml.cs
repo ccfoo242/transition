@@ -324,7 +324,7 @@ namespace Transition.CircuitEditor.Components
 
             ((TranslateTransform)txtSec.RenderTransform).X = leftSec;
             ((TranslateTransform)txtSec.RenderTransform).Y = topSec;
-
+           
         }
 
         private void changeTR(object sender, PropertyChangedEventArgs e)

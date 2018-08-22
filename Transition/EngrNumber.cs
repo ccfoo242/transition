@@ -8,35 +8,36 @@ using Windows.UI.Xaml.Data;
 namespace Transition
 {
 
-    [Windows.Foundation.Metadata.CreateFromString(MethodName = "Transition.EngrNumber.ConvertFromString")]
-    public struct EngrNumber : IComparable
+    [Windows.Foundation.Metadata.CreateFromString(MethodName = "Transition.EngrNumber.Parse")]
+    public struct EngrNumber : IComparable, IEquatable<EngrNumber>, IComparable<EngrNumber>
     {
         /* this struct stores numbers in engineering notation */
 
-        public static readonly EngrNumber One = new EngrNumber(1, "");
+        public static readonly EngrNumber One = new EngrNumber(1M, "");
 
-        public decimal Mantissa { get; set; }
-        public String Prefix { get; set; }
+        public decimal Mantissa { get;  }
+        public String Prefix { get; }
 
         public bool NegativeSign { get { return Mantissa < 0; } }
         public bool IsZero { get { return Mantissa == 0; } }
 
         public double ValueDouble { get { return (double)Mantissa * Math.Pow(10, getExponent(Prefix)); } }
-
-        public static Dictionary<String, int> mapPrefixes =
+        public decimal ValueDecimal { get { return Mantissa * (decimal)Math.Pow(10, getExponent(Prefix)); } }
+        
+        public static readonly Dictionary<String, int> mapPrefixes =
             new Dictionary<string, int> {
-                { "Y", 24 },
-                { "Z", 21 },
-                { "E", 18 },
-                { "P", 15 },
-                { "T", 12 },
-                { "G", 9 },
-                { "M", 6 },
-                { "K", 3 },
-                { "", 0 },
-                { "m", -3 },
-                { "u", -6 },
-                { "n", -9 },
+                { "Y",  24 },
+                { "Z",  21 },
+                { "E",  18 },
+                { "P",  15 },
+                { "T",  12 },
+                { "G",   9 },
+                { "M",   6 },
+                { "K",   3 },
+                { "" ,   0 },
+                { "m",  -3 },
+                { "u",  -6 },
+                { "n",  -9 },
                 { "p", -12 },
                 { "f", -15 },
                 { "a", -18 },
@@ -46,14 +47,63 @@ namespace Transition
 
         public EngrNumber(decimal mantissa, String prefix)
         {
+            
+            if (prefix == null) prefix = "";
+            
             this.Mantissa = mantissa;
+            this.Prefix = prefix;
 
-            if (prefix == null)
-                this.Prefix = "";
-            else
-                this.Prefix = prefix;
+            /* Normalize the number, 
+            this must be done in the constructor only
+           
+            normalize means to have one, two or three digits
+             in the left side of the point, and adjust the prefix accordingly
+             e.g. :
+              0.01234  ==> 12.3400m
+              1234567K ==>  1.2346G
+             this operation does not alter the total value of the struct
+            */
+            if (Mantissa == 0) return;
 
-            normalize();
+             if (!NegativeSign)
+             {
+                 //positive sign
+                 while ((Mantissa < 1) || (Mantissa >= 1000))
+                 {
+                     if (Mantissa < 1)
+                     {
+                         Prefix = getPrefix(getExponent() - 3);
+                         Mantissa *= 1000;
+                     }
+
+                     if (Mantissa >= 1000)
+                     {
+                         Prefix = getPrefix(getExponent() + 3);
+                         Mantissa /= 1000;
+                     }
+                 }
+             }
+             else
+             {
+                 //negative sign
+                 while ((Mantissa > -1) || (Mantissa <= -1000))
+                 {
+                     if (Mantissa > -1)
+                     {
+                         Prefix = getPrefix(getExponent() - 3);
+                         Mantissa *= 1000;
+                     }
+
+                     if (Mantissa <= -1000)
+                     {
+                         Prefix = getPrefix(getExponent() + 3);
+                         Mantissa /= 1000;
+                     }
+                 }
+             }
+
+             Mantissa = decimal.Round(Mantissa, 4);
+             
         }
 
         public int CompareTo(Object obj)
@@ -69,37 +119,12 @@ namespace Transition
             return (this.ValueDouble < other.ValueDouble) ? -1 :
                    ((this.ValueDouble > other.ValueDouble) ? 1 : 0);
         }
+
+        public EngrNumber(decimal input) : this(input, "") { }
+        public EngrNumber(int input) : this((decimal)input, "") { }
+        public EngrNumber(double input) : this((decimal)input, "") { }
+    
         
-        public EngrNumber(decimal input)
-        {
-            Mantissa = input;
-            Prefix = "";
-            normalize();
-        }
-
-        public EngrNumber(int input)
-        {
-            Mantissa = input;
-            Prefix = "";
-            normalize();
-        }
-
-        public EngrNumber(double input)
-        {
-            if (double.IsInfinity(input)) input = 1;
-            if (double.IsNaN(input)) input = 1;
-
-            Mantissa = (decimal)input;
-            Prefix = "";
-            normalize();
-        }
-
-
-        public void makePositiveSign()
-        {
-            if (NegativeSign) Mantissa *= -1;
-        }
-
         public override string ToString()
         {
             if (Prefix == null)
@@ -122,10 +147,10 @@ namespace Transition
             {
                 foreach (KeyValuePair<String, int> pair in mapPrefixes)
                     if (pair.Value == exponent) return pair.Key;
-                return null;
+                throw new ArgumentException() ;
             }
             else
-                return null;
+                throw new ArgumentException();
         }
 
         public static int getExponent(String prefix)
@@ -135,7 +160,15 @@ namespace Transition
             if (mapPrefixes.Keys.Contains(prefix))
                 return mapPrefixes[prefix];
             else
-                return 0;
+                throw new ArgumentException();
+        }
+
+        public static String getInversePrefix(String prefix)
+        {
+            if (!mapPrefixes.Keys.Contains(prefix))
+                throw new ArgumentException();
+
+            return getPrefix(getExponent(prefix) * -1);
         }
 
         public int getExponent()
@@ -144,21 +177,8 @@ namespace Transition
                 return getExponent(Prefix);
             else return 0;
         }
-
-        public void set(decimal mantissa, String prefix)
-        {
-            this.Mantissa = mantissa;
-            this.Prefix = prefix;
-
-            normalize();
-        }
-
-        public void set(decimal mantissa)
-        {
-            this.Mantissa = mantissa;
-            normalize();
-        }
-
+        
+        
         public decimal getOneDigitMantissa()
         {
             decimal output = Mantissa;
@@ -183,7 +203,7 @@ namespace Transition
             return output;
         }
 
-        public static EngrNumber ConvertFromString(String rawString)
+        public static EngrNumber Parse(String rawString)
         {
             rawString.Trim();
 
@@ -219,65 +239,77 @@ namespace Transition
             if (!EngrNumber.mapPrefixes.Keys.Contains(prefix))
                 throw new ArgumentException();
 
-            EngrNumber output = new EngrNumber(parsedMantissa, prefix);
-
-            return output;
+            return new EngrNumber(parsedMantissa, prefix);
+            
         }
 
-        public void normalize()
+        public bool Equals(EngrNumber other)
         {
-            /* normalize means to have one, two or three digits
-               in the left side of the point, and adjust the prefix accordingly
-               e.g. :
-                0.01234  ==> 12.3400m
-                1234567K ==>  1.2346G
-               this operation does not alter the total value of the struct
-            */
-            if (Prefix == null) Prefix = "";
+            if (other.Mantissa.Equals(Mantissa))
+                if (other.Prefix == Prefix)
+                    return true;
 
-            String originalPrefix = Prefix;
-
-            if (Mantissa == 0) return;
-
-            if (!NegativeSign)
-            {
-                //positive sign
-                while ((Mantissa < 1) || (Mantissa >= 1000))
-                {
-                    if (Mantissa < 1)
-                    {
-                        Prefix = getPrefix(getExponent() - 3);
-                        Mantissa *= 1000;
-                    }
-
-                    if (Mantissa >= 1000)
-                    {
-                        Prefix = getPrefix(getExponent() + 3);
-                        Mantissa /= 1000;
-                    }
-                }
-            }
-            else
-            {
-                //negative sign
-                while ((Mantissa > -1) || (Mantissa <= -1000))
-                {
-                    if (Mantissa > -1)
-                    {
-                        Prefix = getPrefix(getExponent() - 3);
-                        Mantissa *= 1000;
-                    }
-
-                    if (Mantissa <= -1000)
-                    {
-                        Prefix = getPrefix(getExponent() + 3);
-                        Mantissa /= 1000;
-                    }
-                }
-            }
-
-            Mantissa = decimal.Round(Mantissa, 4);
+            return false;
         }
+
+        public override bool Equals(object obj)
+        {
+            return ((obj is EngrNumber) && Equals((EngrNumber)obj));
+        }
+
+        public static EngrNumber Add(EngrNumber n1, EngrNumber n2)
+        {
+            return new EngrNumber(n1.ValueDecimal + n2.ValueDecimal);
+        }
+
+        public static EngrNumber Multiply(EngrNumber n1, EngrNumber n2)
+        {
+            return new EngrNumber(n1.ValueDecimal * n2.ValueDecimal);
+        }
+
+        public static EngrNumber Substract(EngrNumber n1, EngrNumber n2)
+        {
+            return Add(n1, Negate(n2));
+        }
+
+        public static EngrNumber Divide(EngrNumber n1, EngrNumber n2)
+        {
+            return Multiply(n1, Reciprocal(n2));
+        }
+
+        public static EngrNumber Negate(EngrNumber n)
+        {
+            return new EngrNumber(n.Mantissa * -1, n.Prefix);
+        }
+
+        public static EngrNumber Reciprocal(EngrNumber n)
+        {
+            return new EngrNumber(n.Mantissa, getInversePrefix(n.Prefix));
+        }
+
+        public static EngrNumber operator + (EngrNumber n1, EngrNumber n2) { return Add(n1, n2); }
+        public static EngrNumber operator - (EngrNumber n1, EngrNumber n2) { return Substract(n1, n2); }
+        public static EngrNumber operator * (EngrNumber n1, EngrNumber n2) { return Multiply(n1, n2); }
+        public static EngrNumber operator / (EngrNumber n1, EngrNumber n2) { return Divide(n1, n2); }
+        public static bool operator == (EngrNumber n1, EngrNumber n2) { return n1.Equals(n2); }
+        public static bool operator != (EngrNumber n1, EngrNumber n2) { return !n1.Equals(n2); }
+        public static bool operator < (EngrNumber n1, EngrNumber n2) { return (n1.CompareTo(n2) < 0); }
+        public static bool operator > (EngrNumber n1, EngrNumber n2) { return (n1.CompareTo(n2) > 0); }
+        public static bool operator <= (EngrNumber n1, EngrNumber n2){ return (n1.CompareTo(n2) <= 0); }
+        public static bool operator >= (EngrNumber n1, EngrNumber n2){ return (n1.CompareTo(n2) >= 0); }
+
+        public static explicit operator decimal(EngrNumber n1) { return n1.ValueDecimal; }
+        public static explicit operator double(EngrNumber n1)  { return n1.ValueDouble; }
+
+        public static implicit operator EngrNumber(decimal n1) { return new EngrNumber(n1); }
+        public static implicit operator EngrNumber(double n1)  { return new EngrNumber(n1); }
+        public static implicit operator EngrNumber(int n1)     { return new EngrNumber(n1); }
+
+        public override int GetHashCode()
+        {
+            return Mantissa.GetHashCode() ^ getExponent(Prefix).GetHashCode();
+        }
+
     }
 
 
@@ -314,12 +346,12 @@ namespace Transition
                 EngrNumber output;
                 try
                 {
-                    output = EngrNumber.ConvertFromString(valueString);
+                    output = EngrNumber.Parse(valueString);
                 }
                 catch { output = EngrNumber.One; }
 
               
-                if (!AllowNegativeNumber) output.makePositiveSign();
+                if (!AllowNegativeNumber && output.NegativeSign) output = output * -1;
 
                 return output;
             }

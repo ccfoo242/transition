@@ -123,6 +123,7 @@ namespace Transition.CircuitEditor.Components
 
         private void init()
         {
+            ResistorValue = new EngrNumber(1);
             Ls = new EngrNumber(1, "p");
             Cp = new EngrNumber(1, "p");
             componentValueBox.ComponentValue = EngrNumber.One;
