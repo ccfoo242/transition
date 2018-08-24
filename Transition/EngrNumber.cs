@@ -211,6 +211,8 @@ namespace Transition
                 throw new ArgumentException();
 
             String lastChar = rawString.Substring(rawString.Length - 1, 1);
+            if (lastChar == "k") lastChar = "K";
+
             bool prefixExists = mapPrefixes.Keys.Contains(lastChar);
 
             String stringMantissa;
@@ -228,6 +230,7 @@ namespace Transition
                 prefix = "";
             }
 
+        
             decimal parsedMantissa = 0;
 
             try { parsedMantissa = decimal.Parse(stringMantissa); }
