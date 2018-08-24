@@ -36,6 +36,10 @@ namespace Transition.CustomControls
             set
             {
                 SetValue(ComponentValueProperty, value);
+                if (selectedComponentPrecision != ComponentPrecision.Arbitrary)
+                    if (!isValueAdjustedToPrecision())
+                        ComponentValue = new EngrNumber(getNextValue(), ComponentValue.Prefix);
+
                 ValueChanged?.Invoke(this, new PropertyChangedEventArgs("ComponentValue"));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ComponentValue"));
             }
@@ -128,6 +132,18 @@ namespace Transition.CustomControls
             return 10M * arraySelectedPrecision()[0] * multiplier;
         }
 
+        public bool isValueAdjustedToPrecision()
+        {
+            if (selectedComponentPrecision != ComponentPrecision.Arbitrary)
+            {
+                EngrNumber nextEqualValue = new EngrNumber(getNextOrEqualValue(), ComponentValue.Prefix);
+
+                return (ComponentValue == nextEqualValue);
+            }
+            return true;
+
+        }
+
         public decimal getNextValue()
         {
             decimal currentOneDigitMantissa = ComponentValue.getOneDigitMantissa();
@@ -160,6 +176,8 @@ namespace Transition.CustomControls
 
         private void updateValueString(object sender, PropertyChangedEventArgs e)
         {
+            // this one sets de String for the component in the schematic window
+
             EngrConverter conv = new EngrConverter() { ShortString = false };
             EngrConverter convShort = new EngrConverter() { ShortString = true };
 
