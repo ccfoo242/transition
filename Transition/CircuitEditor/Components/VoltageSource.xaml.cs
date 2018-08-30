@@ -4,8 +4,10 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Transition.Functions;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -46,6 +48,16 @@ namespace Transition.CircuitEditor.Components
         private bool flipY;
         private double actualRotation;
 
+        public Function OutputVoltageFrequencyFunction;
+        public Function OutputImpedanceFrequencyFunction;
+
+        private int selectedVoltageFunctionType { get; set; }
+        private int selectedImpedanceFunctionType { get; set; }
+
+        public TextBlock txtComponentName;
+        public TextBlock txtVoltage;
+        public TextBlock txtImpedance;
+
         public VoltageSource()
         {
             this.InitializeComponent();
@@ -55,6 +67,34 @@ namespace Transition.CircuitEditor.Components
         public void init()
         {
             CnvLabels = new Canvas();
+
+            OutputVoltageFrequencyFunction = new ConstantValueFunction(1);
+            OutputImpedanceFrequencyFunction = new ConstantValueFunction(1E-6);
+
+            boxConstVoltage.Value = new EngrNumber(1);
+            boxConstImpedance.Value = new EngrNumber(1, "u");
+
+            txtComponentName = new TextBlock() { FontWeight = FontWeights.ExtraBold };
+            Binding b1 = new Binding()
+            {
+                Path = new PropertyPath("ComponentName"),
+                Source = this,
+                Mode = BindingMode.OneWay
+            };
+            txtComponentName.SetBinding(TextBlock.TextProperty, b1);
+            txtComponentName.RenderTransform = new TranslateTransform() { };
+            txtComponentName.SizeChanged += delegate { setPositionTextBoxes(); };
+            CnvLabels.Children.Add(txtComponentName);
+
+            txtVoltage = new TextBlock()
+            {
+
+            };
+
+            txtImpedance = new TextBlock()
+            {
+
+            };
         }
 
         public void setFlipX(bool flip)
@@ -77,8 +117,41 @@ namespace Transition.CircuitEditor.Components
 
         public void setPositionTextBoxes()
         {
+            
+        }
+        
+        private void voltageFunctionTypeChanged(object sender, SelectionChangedEventArgs e)
+        {
+            pnlVoltageConstant.Visibility = Visibility.Collapsed;
+            pnlVoltageLibraryCurve.Visibility = Visibility.Collapsed;
 
+            if (selectedVoltageFunctionType == 0)
+                pnlVoltageConstant.Visibility = Visibility.Visible;
+            else
+                pnlVoltageLibraryCurve.Visibility = Visibility.Visible;
+        }
 
+        private void impedanceFunctionTypeChanged(object sender, SelectionChangedEventArgs e)
+        {
+            pnlImpedanceConstant.Visibility = Visibility.Collapsed;
+            pnlImpedanceLibraryCurve.Visibility = Visibility.Collapsed;
+
+            if (selectedImpedanceFunctionType == 0)
+                pnlImpedanceConstant.Visibility = Visibility.Visible;
+            else
+                pnlImpedanceLibraryCurve.Visibility = Visibility.Visible;
+        }
+
+        private void changeConstVoltage(object sender, PropertyChangedEventArgs e)
+        {
+            OutputVoltageFrequencyFunction = new ConstantValueFunction(
+                boxConstVoltage.Value.ValueDouble);
+        }
+
+        private void changeConstImpedance(object sender, PropertyChangedEventArgs e)
+        {
+            OutputImpedanceFrequencyFunction = new ConstantValueFunction(
+                boxConstImpedance.Value.ValueDouble);
         }
     }
 }

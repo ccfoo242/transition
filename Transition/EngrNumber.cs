@@ -16,7 +16,7 @@ namespace Transition
         public static readonly EngrNumber One = new EngrNumber(1M, "");
 
         public decimal Mantissa { get;  }
-        public String Prefix { get; }
+        public string Prefix { get; }
 
         public bool NegativeSign { get { return Mantissa < 0; } }
         public bool IsZero { get { return Mantissa == 0; } }

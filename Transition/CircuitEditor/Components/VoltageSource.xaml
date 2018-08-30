@@ -5,6 +5,8 @@
     xmlns:local="using:Transition.CircuitEditor.Components"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:customcontrols="using:Transition.CustomControls"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
@@ -21,5 +23,67 @@
             <TextBlock Margin="4" Text="Component Name: "/>
             <TextBox Margin="4" Text="{x:Bind ComponentName, Mode=TwoWay}"/>
         </StackPanel>
+        <controls:Expander Header="Output Voltage">
+            <Grid HorizontalAlignment="Stretch" Margin="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                
+                <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Stretch">
+                    <TextBlock Text="Frequency Function" Margin="4" VerticalAlignment="Center"/>
+                    <ComboBox HorizontalAlignment="Center" 
+                          VerticalAlignment="Center"
+                          SelectionChanged="voltageFunctionTypeChanged"
+                          Margin="4" Width="150" SelectedIndex="{x:Bind selectedVoltageFunctionType, Mode=TwoWay}">
+                        <ComboBox.Items>
+                            <ComboBoxItem Content="Constant Value"/>
+                            <ComboBoxItem Content="Curve From Library"/>
+                        </ComboBox.Items>
+                    </ComboBox>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Grid.Row="1" HorizontalAlignment="Stretch"
+                            x:Name="pnlVoltageConstant">
+                    <customcontrols:EngrNumberBoxDialog x:Name="boxConstVoltage"
+                                                        ValueManuallyChanged="changeConstVoltage"/>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Grid.Row="1" HorizontalAlignment="Stretch"
+                            x:Name="pnlVoltageLibraryCurve">
+                </StackPanel>
+
+            </Grid>
+        </controls:Expander>
+        <controls:Expander Header="Output Impedance">
+            <Grid HorizontalAlignment="Stretch" Margin="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Stretch">
+                    <TextBlock Text="Frequency Function" Margin="4" VerticalAlignment="Center"/>
+                    <ComboBox HorizontalAlignment="Center" 
+                          VerticalAlignment="Center"
+                          SelectionChanged="impedanceFunctionTypeChanged"
+                          Margin="4" Width="150" SelectedIndex="{x:Bind selectedImpedanceFunctionType, Mode=TwoWay}">
+                        <ComboBox.Items>
+                            <ComboBoxItem Content="Constant Value"/>
+                            <ComboBoxItem Content="Curve From Library"/>
+                        </ComboBox.Items>
+                    </ComboBox>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Grid.Row="1" HorizontalAlignment="Stretch"
+                            x:Name="pnlImpedanceConstant">
+                    <customcontrols:EngrNumberBoxDialog x:Name="boxConstImpedance"
+                                                        ValueManuallyChanged="changeConstImpedance"/>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Grid.Row="1" HorizontalAlignment="Stretch"
+                            x:Name="pnlImpedanceLibraryCurve">
+                </StackPanel>
+
+            </Grid>
+        </controls:Expander>
     </StackPanel>
 </UserControl>

@@ -166,7 +166,8 @@ namespace Transition.CircuitEditor.Components
             {
                 Path = new PropertyPath("TurnsRatio"),
                 Source = this,
-                Converter = new EngrConverter() { ShortString = false, AllowNegativeNumber = false },
+                Converter = new EngrConverter()
+                    { ShortString = false, AllowNegativeNumber = false },
                 Mode = BindingMode.OneWay
             };
             txtTurnsRatio.SetBinding(TextBlock.TextProperty, b2);
