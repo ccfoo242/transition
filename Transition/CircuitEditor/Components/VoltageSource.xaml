@@ -23,7 +23,9 @@
             <TextBlock Margin="4" Text="Component Name: "/>
             <TextBox Margin="4" Text="{x:Bind ComponentName, Mode=TwoWay}"/>
         </StackPanel>
-        <controls:Expander Header="Output Voltage">
+        <controls:Expander Header="Output Voltage" 
+                           ExpandDirection="Down"
+                           IsExpanded="True">
             <Grid HorizontalAlignment="Stretch" Margin="4">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
@@ -54,7 +56,9 @@
 
             </Grid>
         </controls:Expander>
-        <controls:Expander Header="Output Impedance">
+        <controls:Expander Header="Output Impedance" 
+                           ExpandDirection="Down"
+                           IsExpanded="True">
             <Grid HorizontalAlignment="Stretch" Margin="4">
                 <Grid.RowDefinitions>
                     <RowDefinition/>

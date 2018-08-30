@@ -37,8 +37,8 @@ namespace Transition.CircuitEditor.Components
 
         public int selectedResistorModel = 0;
 
-        private String componentName;
-        public String ComponentName
+        private string componentName;
+        public string ComponentName
         {
             get { return componentName; }
             set
@@ -152,6 +152,7 @@ namespace Transition.CircuitEditor.Components
                 FontWeight = FontWeights.ExtraBold,
                 RenderTransform = new TranslateTransform()
             };
+
             Binding b2 = new Binding()
             {
                 Path = new PropertyPath("ValueString"),
@@ -292,5 +293,9 @@ namespace Transition.CircuitEditor.Components
                 pnlExponential.Visibility = Visibility.Visible;
         }
 
+        private void changeEw(object sender, PropertyChangedEventArgs e)
+        {
+
+        }
     }
 }

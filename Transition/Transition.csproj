@@ -126,6 +126,8 @@
       <DependentUpon>ElectricComponent.xaml</DependentUpon>
     </Compile>
     <Compile Include="CircuitEditor\Interfaces.cs" />
+    <Compile Include="CircuitEditor\Serializable\ParameterBase.cs" />
+    <Compile Include="CircuitEditor\Serializable\ResistorParameters.cs" />
     <Compile Include="CircuitEditor\Wire.xaml.cs">
       <DependentUpon>Wire.xaml</DependentUpon>
     </Compile>
