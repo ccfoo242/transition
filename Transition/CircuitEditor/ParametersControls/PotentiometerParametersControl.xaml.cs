@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Transition.CircuitEditor.Components
 {
-    public sealed partial class Potentiometer : UserControl, IComponentParameter, INotifyPropertyChanged
+    public sealed partial class PotentiometerParametersControl : UserControl, IComponentParameterControl, INotifyPropertyChanged
     {
         public double SchematicWidth { get { return 120; } }
         public double SchematicHeight { get { return 160; } }
@@ -78,7 +78,7 @@ namespace Transition.CircuitEditor.Components
         public event PropertyChangedEventHandler PropertyChanged;
 
 
-        public Potentiometer()
+        public PotentiometerParametersControl()
         {
             this.InitializeComponent();
             init();

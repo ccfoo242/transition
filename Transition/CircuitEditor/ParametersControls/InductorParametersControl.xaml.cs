@@ -19,51 +19,53 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Transition.CircuitEditor.Components
 {
-    public sealed partial class Resistor : UserControl, IComponentParameter, INotifyPropertyChanged
+    public sealed partial class InductorParametersControl : UserControl, IComponentParameterControl, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public double SchematicWidth { get { return 120; } }
         public double SchematicHeight { get { return 80; } }
-        public Canvas CnvLabels { get; set; }
+        public String ComponentLetter { get { return "L"; } }
 
-        private double actualRotation;
-        private bool flipX;
-        private bool flipY;
-
-        private ElectricComponent ec;
-        public string ComponentLetter { get { return "R"; } }
+        public ElectricComponent ec;
 
         public TextBlock txtComponentName;
-        public TextBlock txtResistanceValue;
+        public TextBlock txtInductanceValue;
 
-        public int selectedResistorModel = 0;
+        private double actualRotation = 0;
 
-        private string componentName;
-        public string ComponentName
+        private String componentName;
+        public String ComponentName
         {
             get { return componentName; }
             set
             {
                 componentName = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ComponentName"));
-            }
-        }
-        
-        private EngrNumber resistorValue;
-        public EngrNumber ResistorValue
-        {
-            get { return resistorValue; }
-            set
-            {
-                resistorValue = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ResistorValue"));
+
             }
         }
 
+        private EngrNumber inductorValue;
+        public EngrNumber InductorValue
+        {
+            get { return inductorValue; }
+            set
+            {
+                inductorValue = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("InductorValue"));
+            }
+        }
+        // 0 = ideal, 1 = parasitic, 2 = exponent
+        public int selectedInductorModel = 0;
+
+        public Canvas CnvLabels { get; set; }
+
         private EngrNumber fo;
-        private EngrNumber ls;
+        private EngrNumber rs;
         private EngrNumber cp;
         private EngrNumber q;
-        
+
         public EngrNumber Fo
         {
             get { return fo; }
@@ -84,13 +86,13 @@ namespace Transition.CircuitEditor.Components
             }
         }
 
-        public EngrNumber Ls
+        public EngrNumber Rs
         {
-            get { return ls; }
+            get { return rs; }
             set
             {
-                ls = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Ls"));
+                rs = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Rs"));
             }
         }
 
@@ -104,69 +106,58 @@ namespace Transition.CircuitEditor.Components
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public Resistor()
+        public InductorParametersControl()
         {
             this.InitializeComponent();
             init();
+
         }
 
-        public Resistor(ElectricComponent ec)
+        public InductorParametersControl(ElectricComponent ec)
         {
             this.InitializeComponent();
 
             this.ec = ec;
             init();
-
         }
 
         private void init()
         {
-            ResistorValue = new EngrNumber(1);
-            Ls = new EngrNumber(1, "p");
+            Rs = new EngrNumber(1, "p");
             Cp = new EngrNumber(1, "p");
-            componentValueBox.ComponentValue = EngrNumber.One;
+            ComponentValueBox.ComponentValue = EngrNumber.One;
 
             CnvLabels = new Canvas();
 
-            txtComponentName = new TextBlock()
-            {
-                FontWeight = FontWeights.ExtraBold,
-                RenderTransform = new TranslateTransform()
-            };
-
+            txtComponentName = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b1 = new Binding()
             {
                 Path = new PropertyPath("ComponentName"),
                 Source = this,
-                Mode = BindingMode.OneWay                
+                Mode = BindingMode.OneWay
             };
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
+            txtComponentName.RenderTransform = new TranslateTransform() { };
             txtComponentName.SizeChanged += delegate { setPositionTextBoxes(); };
             CnvLabels.Children.Add(txtComponentName);
 
 
-            txtResistanceValue = new TextBlock()
-            {
-                FontWeight = FontWeights.ExtraBold,
-                RenderTransform = new TranslateTransform()
-            };
-
+            txtInductanceValue = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b2 = new Binding()
             {
                 Path = new PropertyPath("ValueString"),
-                Source = componentValueBox,
+                Source = ComponentValueBox,
                 Mode = BindingMode.OneWay
             };
-            txtResistanceValue.SetBinding(TextBlock.TextProperty, b2);
-            txtResistanceValue.SizeChanged += delegate { setPositionTextBoxes(); };
-            CnvLabels.Children.Add(txtResistanceValue);
+            txtInductanceValue.SetBinding(TextBlock.TextProperty, b2);
+            txtInductanceValue.RenderTransform = new TranslateTransform() { };
+            txtInductanceValue.SizeChanged += delegate { setPositionTextBoxes(); };
+            CnvLabels.Children.Add(txtInductanceValue);
 
             setPositionTextBoxes();
         }
 
-        public void setPositionTextBoxes()
+        private void setPositionTextBoxes()
         {
             double leftRV; double topRV;
             double leftCN; double topCN;
@@ -176,80 +167,63 @@ namespace Transition.CircuitEditor.Components
                 topCN = 0;
                 leftCN = (SchematicWidth / 2) - (txtComponentName.ActualWidth / 2);
                 topRV = 60;
-                leftRV = (SchematicWidth / 2) - (txtResistanceValue.ActualWidth / 2);
+                leftRV = (SchematicWidth / 2) - (txtInductanceValue.ActualWidth / 2);
             }
             else 
             {
-                topCN = 40 - (txtComponentName.ActualHeight / 2);
+                topCN = 40 - (txtComponentName.ActualHeight / 2) ;
                 leftCN = 40 - (txtComponentName.ActualWidth);
-                topRV = 40 - (txtResistanceValue.ActualHeight / 2);
-                leftRV = SchematicHeight;
+                topRV = 40 - (txtInductanceValue.ActualHeight / 2);
+                leftRV = 80;
             }
 
             ((TranslateTransform)txtComponentName.RenderTransform).X = leftCN;
             ((TranslateTransform)txtComponentName.RenderTransform).Y = topCN;
 
-            ((TranslateTransform)txtResistanceValue.RenderTransform).X = leftRV;
-            ((TranslateTransform)txtResistanceValue.RenderTransform).Y = topRV;
-
-
+            ((TranslateTransform)txtInductanceValue.RenderTransform).X = leftRV;
+            ((TranslateTransform)txtInductanceValue.RenderTransform).Y = topRV;
         }
 
         public void setRotation(double rotation)
         {
             rotation = rotation % 360;
-
             actualRotation = rotation;
             setPositionTextBoxes();
         }
 
-        public void setFlipX(bool flip)
+        private void changeRs(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            flipX = flip;
-            setPositionTextBoxes();
-        }
-
-        public void setFlipY(bool flip)
-        {
-            flipY = flip;
-            setPositionTextBoxes();
-        }
-
-        private void changeLs(object sender, PropertyChangedEventArgs e)
-        {
-            Ls = BoxLs.Value;
+            Rs = BoxRs.Value;
             calculateFoQ();
         }
 
-        private void changeCp(object sender, PropertyChangedEventArgs e)
+        private void changeCp(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             Cp = BoxCp.Value;
             calculateFoQ();
         }
 
-        private void changeFo(object sender, PropertyChangedEventArgs e)
+        private void changeFo(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             Fo = BoxFo.Value;
-            calculateLsCp();
+            calculateRsCp();
         }
 
-        private void changeQ(object sender, PropertyChangedEventArgs e)
+        private void changeQ(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             Q = BoxQ.Value;
-            calculateLsCp();
+            calculateRsCp();
         }
 
         private void calculateFoQ()
         {
-            double dR = ResistorValue.ValueDouble;
-            double dLs = Ls.ValueDouble;
+            double dL = inductorValue.ValueDouble;
+            double dRs = Rs.ValueDouble;
             double dCp = Cp.ValueDouble;
 
-            //  double dWo = Math.Sqrt(Math.Abs((1 / (dLs * dCp)) - Math.Pow(dR / dLs, 2)));
-            double dWop = Math.Sqrt(1 / (dLs * dCp));
+            double dWop = Math.Sqrt(1 / (dL * dCp));
 
-
-            double dQ = (dWop * dLs) / dR;
+            double dQ = (dWop * dL) / dRs;
             double dFo = dWop / (2 * Math.PI);
 
             Fo = new EngrNumber(dFo);
@@ -257,45 +231,46 @@ namespace Transition.CircuitEditor.Components
 
         }
 
-        private void calculateLsCp()
+        private void calculateRsCp()
         {
             double dQ = Q.ValueDouble;
             double dFo = Fo.ValueDouble;
-            double dR = ResistorValue.ValueDouble;
+            double dL = inductorValue.ValueDouble;
 
             double dWo = 2 * Math.PI * dFo;
 
-            //  double dLs = Math.Sqrt(Math.Abs( ((dQ * dQ * dR * dR) - (dR * dR)) / Math.Pow(dWo, 2) ));
-            double dLs = dR * dQ / dWo;
-            double dCp = dLs / (dQ * dQ * dR * dR);
+            double dRs = (dWo * dL) / dQ;
+            double dCp = 1 / (dL * dWo * dWo);
 
-            Ls = new EngrNumber(dLs);
+            Rs = new EngrNumber(dRs);
             Cp = new EngrNumber(dCp);
 
         }
 
-        private void changeR(object sender, PropertyChangedEventArgs e)
+        private void changeL(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            ResistorValue = componentValueBox.ComponentValue;
+            InductorValue = ComponentValueBox.ComponentValue;
             calculateFoQ();
         }
 
-
-        private void modelResistorChanged(object sender, SelectionChangedEventArgs e)
+        private void modelInductorChanged(object sender, SelectionChangedEventArgs e)
         {
             pnlExponential.Visibility = Visibility.Collapsed;
             pnlParasitic.Visibility = Visibility.Collapsed;
 
-            if (selectedResistorModel == 1)
+            if (selectedInductorModel == 1)
                 pnlParasitic.Visibility = Visibility.Visible;
 
-            if (selectedResistorModel == 2)
+            if (selectedInductorModel == 2)
                 pnlExponential.Visibility = Visibility.Visible;
         }
 
-        private void changeEw(object sender, PropertyChangedEventArgs e)
+        public void setFlipX(bool flip)
         {
+        }
 
+        public void setFlipY(bool flip)
+        {
         }
     }
 }

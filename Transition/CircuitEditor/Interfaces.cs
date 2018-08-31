@@ -5,7 +5,7 @@ using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Shapes;
 
-namespace Transition
+namespace Transition.CircuitEditor
 { 
     public interface IElectricElement
     {
@@ -22,7 +22,7 @@ namespace Transition
     }
     
 
-    public interface IComponentParameter
+    public interface IComponentParameterControl
     {
         double SchematicWidth { get; }
         double SchematicHeight { get; }

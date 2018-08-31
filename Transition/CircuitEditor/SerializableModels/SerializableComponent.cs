@@ -7,7 +7,7 @@ using Transition.Common;
 
 namespace Transition.CircuitEditor.Serializable
 {
-    public class ParameterBase : BindableBase
+    public class SerializableComponent : BindableBase
     {
         public int Rotation { get; set; }
         public bool FlipX { get; set; }

@@ -8,7 +8,7 @@ using Transition.CircuitEditor.Components;
 
 namespace Transition.CircuitEditor.Serializable
 {
-    public class ResistorParameters : ParameterBase
+    public class ResistorParameters : SerializableComponent
     {
 
         private EngrNumber resistanceValue;

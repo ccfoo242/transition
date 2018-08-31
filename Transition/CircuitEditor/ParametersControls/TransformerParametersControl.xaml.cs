@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Transition.CircuitEditor.Components
 {
-    public sealed partial class Transformer : UserControl, IComponentParameter, INotifyPropertyChanged
+    public sealed partial class TransformerParametersControl : UserControl, IComponentParameterControl, INotifyPropertyChanged
     {
 
         public double SchematicWidth { get { return 120; } }
@@ -133,7 +133,7 @@ namespace Transition.CircuitEditor.Components
         private EngrNumber lsLeak;
 
 
-        public Transformer()
+        public TransformerParametersControl()
         {
             this.InitializeComponent();
             init();

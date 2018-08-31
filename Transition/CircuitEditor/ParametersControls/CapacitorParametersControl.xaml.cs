@@ -19,20 +19,15 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Transition.CircuitEditor.Components
 {
-    public sealed partial class Inductor : UserControl, IComponentParameter, INotifyPropertyChanged
+    public sealed partial class CapacitorParametersControl : UserControl, IComponentParameterControl, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
         public double SchematicWidth { get { return 120; } }
         public double SchematicHeight { get { return 80; } }
-        public String ComponentLetter { get { return "L"; } }
+        public String ComponentLetter { get { return "C"; } }
 
         public ElectricComponent ec;
-
-        public TextBlock txtComponentName;
-        public TextBlock txtInductanceValue;
-
-        private double actualRotation = 0;
 
         private String componentName;
         public String ComponentName
@@ -46,25 +41,30 @@ namespace Transition.CircuitEditor.Components
             }
         }
 
-        private EngrNumber inductorValue;
-        public EngrNumber InductorValue
+        private EngrNumber capacitorValue;
+        public EngrNumber CapacitorValue
         {
-            get { return inductorValue; }
+            get { return capacitorValue; }
             set
             {
-                inductorValue = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("InductorValue"));
+                capacitorValue = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CapacitorValue"));
             }
         }
+
         // 0 = ideal, 1 = parasitic, 2 = exponent
-        public int selectedInductorModel = 0;
+        public int selectedCapacitorModel = 0;
 
-        public Canvas CnvLabels { get; set; }
+        public TextBlock txtComponentName;
+        public TextBlock txtCapacitanceValue;
 
-        private EngrNumber fo;
+        private double actualRotation = 0;
+
+        private EngrNumber ls;
+        private EngrNumber rp;
         private EngrNumber rs;
-        private EngrNumber cp;
         private EngrNumber q;
+        private EngrNumber fo;
 
         public EngrNumber Fo
         {
@@ -86,6 +86,16 @@ namespace Transition.CircuitEditor.Components
             }
         }
 
+        public EngrNumber Ls
+        {
+            get { return ls; }
+            set
+            {
+                ls = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Ls"));
+            }
+        }
+
         public EngrNumber Rs
         {
             get { return rs; }
@@ -96,24 +106,25 @@ namespace Transition.CircuitEditor.Components
             }
         }
 
-        public EngrNumber Cp
+        public EngrNumber Rp
         {
-            get { return cp; }
+            get { return rp; }
             set
             {
-                cp = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Cp"));
+                rp = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Rp"));
             }
         }
 
-        public Inductor()
+        public Canvas CnvLabels { get; set; }
+
+        public CapacitorParametersControl()
         {
             this.InitializeComponent();
             init();
-
         }
 
-        public Inductor(ElectricComponent ec)
+        public CapacitorParametersControl(ElectricComponent ec)
         {
             this.InitializeComponent();
 
@@ -123,9 +134,12 @@ namespace Transition.CircuitEditor.Components
 
         private void init()
         {
-            Rs = new EngrNumber(1, "p");
-            Cp = new EngrNumber(1, "p");
-            ComponentValueBox.ComponentValue = EngrNumber.One;
+
+            Ls = new EngrNumber(1, "p");
+            Rp = new EngrNumber(1, "T");
+            Rs = new EngrNumber(1, "u");
+            componentValueBox.ComponentValue = EngrNumber.One;
+
 
             CnvLabels = new Canvas();
 
@@ -142,17 +156,17 @@ namespace Transition.CircuitEditor.Components
             CnvLabels.Children.Add(txtComponentName);
 
 
-            txtInductanceValue = new TextBlock() { FontWeight = FontWeights.ExtraBold };
+            txtCapacitanceValue = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b2 = new Binding()
             {
                 Path = new PropertyPath("ValueString"),
-                Source = ComponentValueBox,
+                Source = componentValueBox,
                 Mode = BindingMode.OneWay
             };
-            txtInductanceValue.SetBinding(TextBlock.TextProperty, b2);
-            txtInductanceValue.RenderTransform = new TranslateTransform() { };
-            txtInductanceValue.SizeChanged += delegate { setPositionTextBoxes(); };
-            CnvLabels.Children.Add(txtInductanceValue);
+            txtCapacitanceValue.SetBinding(TextBlock.TextProperty, b2);
+            txtCapacitanceValue.RenderTransform = new TranslateTransform() { };
+            txtCapacitanceValue.SizeChanged += delegate { setPositionTextBoxes(); };
+            CnvLabels.Children.Add(txtCapacitanceValue);
 
             setPositionTextBoxes();
         }
@@ -167,101 +181,106 @@ namespace Transition.CircuitEditor.Components
                 topCN = 0;
                 leftCN = (SchematicWidth / 2) - (txtComponentName.ActualWidth / 2);
                 topRV = 60;
-                leftRV = (SchematicWidth / 2) - (txtInductanceValue.ActualWidth / 2);
+                leftRV = (SchematicWidth / 2) - (txtCapacitanceValue.ActualWidth / 2);
             }
             else 
             {
-                topCN = 40 - (txtComponentName.ActualHeight / 2) ;
+                topCN = 40 - (txtComponentName.ActualHeight / 2);
                 leftCN = 40 - (txtComponentName.ActualWidth);
-                topRV = 40 - (txtInductanceValue.ActualHeight / 2);
+                topRV = 40 - (txtCapacitanceValue.ActualHeight / 2); 
                 leftRV = 80;
             }
 
             ((TranslateTransform)txtComponentName.RenderTransform).X = leftCN;
             ((TranslateTransform)txtComponentName.RenderTransform).Y = topCN;
 
-            ((TranslateTransform)txtInductanceValue.RenderTransform).X = leftRV;
-            ((TranslateTransform)txtInductanceValue.RenderTransform).Y = topRV;
+            ((TranslateTransform)txtCapacitanceValue.RenderTransform).X = leftRV;
+            ((TranslateTransform)txtCapacitanceValue.RenderTransform).Y = topRV;
         }
 
         public void setRotation(double rotation)
         {
             rotation = rotation % 360;
+
             actualRotation = rotation;
             setPositionTextBoxes();
         }
 
-        private void changeRs(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void changeLs(object sender, PropertyChangedEventArgs e)
+        {
+            Ls = BoxLs.Value;
+            calculateFoQ();
+        }
+
+        private void changeRp(object sender, PropertyChangedEventArgs e)
+        {
+            Rp = BoxRp.Value;
+        }
+
+        private void changeRs(object sender, PropertyChangedEventArgs e)
         {
             Rs = BoxRs.Value;
             calculateFoQ();
         }
 
-        private void changeCp(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            Cp = BoxCp.Value;
-            calculateFoQ();
-        }
-
-        private void changeFo(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void changeFo(object sender, PropertyChangedEventArgs e)
         {
             Fo = BoxFo.Value;
-            calculateRsCp();
+            calculateRsLs();
         }
 
-        private void changeQ(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void changeQ(object sender, PropertyChangedEventArgs e)
         {
             Q = BoxQ.Value;
-            calculateRsCp();
+            calculateRsLs();
         }
 
         private void calculateFoQ()
         {
-            double dL = inductorValue.ValueDouble;
+            double dC = capacitorValue.ValueDouble;
+            double dLs = Ls.ValueDouble;
             double dRs = Rs.ValueDouble;
-            double dCp = Cp.ValueDouble;
 
-            double dWop = Math.Sqrt(1 / (dL * dCp));
+            double dWo = Math.Sqrt(1 / (dLs * dC));
 
-            double dQ = (dWop * dL) / dRs;
-            double dFo = dWop / (2 * Math.PI);
+            double dQ = (dWo * dLs) / dRs;
+            double dFo = dWo / (2 * Math.PI);
 
             Fo = new EngrNumber(dFo);
             Q = new EngrNumber(dQ);
-
         }
 
-        private void calculateRsCp()
+        private void calculateRsLs()
         {
             double dQ = Q.ValueDouble;
             double dFo = Fo.ValueDouble;
-            double dL = inductorValue.ValueDouble;
+            double dC = capacitorValue.ValueDouble;
 
             double dWo = 2 * Math.PI * dFo;
 
-            double dRs = (dWo * dL) / dQ;
-            double dCp = 1 / (dL * dWo * dWo);
+            //  double dLs = Math.Sqrt(Math.Abs( ((dQ * dQ * dR * dR) - (dR * dR)) / Math.Pow(dWo, 2) ));
+            double dRs = 1 / (dQ * dWo * dC);
+            double dLs = 1 / (dC * dWo * dWo);
 
+            Ls = new EngrNumber(dLs);
             Rs = new EngrNumber(dRs);
-            Cp = new EngrNumber(dCp);
-
         }
 
-        private void changeL(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void changeC(object sender, PropertyChangedEventArgs e)
         {
-            InductorValue = ComponentValueBox.ComponentValue;
+            CapacitorValue = componentValueBox.ComponentValue;
             calculateFoQ();
         }
 
-        private void modelInductorChanged(object sender, SelectionChangedEventArgs e)
+        private void modelCapacitorChanged(object sender, SelectionChangedEventArgs e)
         {
             pnlExponential.Visibility = Visibility.Collapsed;
             pnlParasitic.Visibility = Visibility.Collapsed;
 
-            if (selectedInductorModel == 1)
+            if (selectedCapacitorModel == 1)
                 pnlParasitic.Visibility = Visibility.Visible;
 
-            if (selectedInductorModel == 2)
+            if (selectedCapacitorModel == 2)
                 pnlExponential.Visibility = Visibility.Visible;
         }
 

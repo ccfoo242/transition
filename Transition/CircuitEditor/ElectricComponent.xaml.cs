@@ -22,9 +22,8 @@ namespace Transition.CircuitEditor
     public sealed partial class ElectricComponent : UserControl, IElectricElement
     {
         public Point PressedPoint;
-
-        public CircuitEditor ce;
-        public IComponentParameter parameters { get; set; }
+        
+        public IComponentParameterControl parameters { get; set; }
 
         public String elementName
         {
@@ -41,28 +40,27 @@ namespace Transition.CircuitEditor
             this.InitializeComponent();
         }
 
-        public ElectricComponent(String tipoElto, CircuitEditor ce)
+        public ElectricComponent(String tipoElto)
         {
             InitializeComponent();
-
-            this.ce = ce;
+            
             grd.RenderTransform = new CompositeTransform();
             labelsgrd.RenderTransform = new CompositeTransform();
 
-            parameters = new Components.Resistor();
+            parameters = new Components.ResistorParametersControl();
 
             switch (tipoElto)
             {
                 case "resistor":
-                    parameters = new Components.Resistor();
+                    parameters = new Components.ResistorParametersControl();
                     break;
 
                 case "capacitor":
-                    parameters = new Components.Capacitor();
+                    parameters = new Components.CapacitorParametersControl();
                     break;
 
                 case "inductor":
-                    parameters = new Components.Inductor();
+                    parameters = new Components.InductorParametersControl();
                     break;
 
                 case "ground":
@@ -70,19 +68,19 @@ namespace Transition.CircuitEditor
                     break;
 
                 case "fdnr":
-                    parameters = new Components.FDNR();
+                    parameters = new Components.FDNRParametersControl();
                     break;
 
                 case "potentiometer":
-                    parameters = new Components.Potentiometer();
+                    parameters = new Components.PotentiometerParametersControl();
                     break;
 
                 case "transformer":
-                    parameters = new Components.Transformer();
+                    parameters = new Components.TransformerParametersControl();
                     break;
 
                 case "generator":
-                    parameters = new Components.VoltageSource();
+                    parameters = new Components.VoltageSourceComponentParameters();
                     break;
 
                 case "impedance":
@@ -199,7 +197,7 @@ namespace Transition.CircuitEditor
 
         private void rightTap(object sender, RightTappedRoutedEventArgs e)
         {
-            ce.showParameters(this);
+            CircuitEditor.currentInstance.showParameters(this);
         }
 
         public void Rotate()

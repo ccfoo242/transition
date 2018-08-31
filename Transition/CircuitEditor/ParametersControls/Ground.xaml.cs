@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Transition.CircuitEditor.Components
 {
-    public sealed partial class Ground : UserControl, IComponentParameter, INotifyPropertyChanged
+    public sealed partial class Ground : UserControl, IComponentParameterControl, INotifyPropertyChanged
     {
         public Ground()
         {

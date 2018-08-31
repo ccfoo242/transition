@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Transition.CircuitEditor.Components
 {
-    public sealed partial class FDNR : UserControl, IComponentParameter, INotifyPropertyChanged
+    public sealed partial class FDNRParametersControl : UserControl, IComponentParameterControl, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -56,7 +56,7 @@ namespace Transition.CircuitEditor.Components
 
         private double actualRotation;
 
-        public FDNR()
+        public FDNRParametersControl()
         {
             this.InitializeComponent();
             init();

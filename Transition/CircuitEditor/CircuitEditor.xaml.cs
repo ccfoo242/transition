@@ -26,6 +26,8 @@ namespace Transition.CircuitEditor
 {
     public sealed partial class CircuitEditor : UserControl
     {
+        public static CircuitEditor currentInstance;
+
         public ObservableCollection<IElectricElement> selectedElements;
         public List<Line> gridLines;
 
@@ -57,6 +59,8 @@ namespace Transition.CircuitEditor
                 FontStyle = Windows.UI.Text.FontStyle.Italic,
                 Margin = new Thickness(4)
             });
+
+            CircuitEditor.currentInstance = this;   //XAML constructed singleton?
         }
 
         private void clickDeleteComponent(object sender, RoutedEventArgs e)
