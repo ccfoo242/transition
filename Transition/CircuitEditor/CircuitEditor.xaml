@@ -83,7 +83,7 @@
                         VerticalAlignment="Stretch" Width="1080" Height="720"
                         SizeChanged="reDrawCanvas">
 
-                    <!-- here is where the grid lines are placed. -->
+                    <!-- cnvGeneral is where the grid lines are placed. -->
                     <Canvas x:Name="cnvCircuit" AllowDrop="True" 
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"  
@@ -95,7 +95,7 @@
                             PointerReleased="cnvPointerReleased"
                             Canvas.ZIndex="1"/>
 
-                    <!-- this Canvas is where the elements (Wires and Components) are placed -->
+                    <!-- cnvCircuit is where the elements (Wires and Components) are placed -->
 
                 </Canvas>
             </ScrollViewer>

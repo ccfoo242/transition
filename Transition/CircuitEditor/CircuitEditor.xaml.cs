@@ -190,10 +190,10 @@ namespace Transition.CircuitEditor
 
         private async void drop(object sender, DragEventArgs e)
         {
-            List<String> a = new List<String>();
-            a.AddRange(e.DataView.AvailableFormats  );
+        //  List<string> a = new List<string>();
+        //  a.AddRange(e.DataView.AvailableFormats);
 
-            String element = await e.DataView.GetTextAsync();
+            string element = await e.DataView.GetTextAsync();
             Point ptCanvas = e.GetPosition(cnvCircuit);
 
             addElement(element, ptCanvas);
@@ -365,7 +365,7 @@ namespace Transition.CircuitEditor
 
         private void cnvPointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            clickElement = null;
+            clickedElement = null;
             manipulatingPnt1 = null;
             manipulatingPnt2 = null;
 

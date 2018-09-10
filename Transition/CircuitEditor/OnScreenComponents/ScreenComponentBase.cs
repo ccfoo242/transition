@@ -11,7 +11,12 @@ using Windows.UI.Xaml.Input;
 
 namespace Transition.CircuitEditor.OnScreenComponents
 {
-    public abstract class ScreenComponentBase : FrameworkElement
+    public abstract class ScreenElementBase : FrameworkElement
+    {
+
+    }
+
+    public abstract class ScreenComponentBase : ScreenElementBase
     {
         public Canvas ComponentCanvas { get; }
         public SerializableComponent SerializableComponent { get; }
@@ -49,7 +54,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 if (prop.IsRightButtonPressed) return;
                 if (prop.IsMiddleButtonPressed) return;
             }
-            CircuitEditor.currentInstance.clickElement(this.ser);
+            CircuitEditor.currentInstance.clickElement(this.SerializableComponent);
         }
         
     }
