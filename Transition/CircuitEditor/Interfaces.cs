@@ -24,8 +24,6 @@ namespace Transition.CircuitEditor
 
     public interface IComponentParameterControl
     {
-        double SchematicWidth { get; }
-        double SchematicHeight { get; }
         String ComponentName { get; set; }
         String ComponentLetter { get; }
 

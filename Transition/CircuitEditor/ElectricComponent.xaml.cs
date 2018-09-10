@@ -178,17 +178,6 @@ namespace Transition.CircuitEditor
         }
         
 
-        private void Element_PointerPressed(object sender, PointerRoutedEventArgs e)
-        {
-            if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
-            {
-                var prop = e.GetCurrentPoint(this).Properties;
-                if (prop.IsRightButtonPressed) return;
-                if (prop.IsMiddleButtonPressed) return;
-            }
-
-            ce.clickElement = this;
-        }
 
         public void updateOriginPoint()
         {

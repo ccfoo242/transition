@@ -12,6 +12,7 @@ namespace Transition
     public struct EngrNumber : IComparable, IEquatable<EngrNumber>, IComparable<EngrNumber>
     {
         /* this struct stores numbers in engineering notation */
+        // it is immutable
 
         public static readonly EngrNumber One = new EngrNumber(1M, "");
 
@@ -141,7 +142,7 @@ namespace Transition
                 return Mantissa.ToString() + Prefix;
         }
 
-        public static String getPrefix(int exponent)
+        public static string getPrefix(int exponent)
         {
             if (mapPrefixes.Values.Contains(exponent))
             {
@@ -153,7 +154,7 @@ namespace Transition
                 throw new ArgumentException();
         }
 
-        public static int getExponent(String prefix)
+        public static int getExponent(string prefix)
         {
             if (prefix == null) return 0;
 
@@ -163,7 +164,7 @@ namespace Transition
                 throw new ArgumentException();
         }
 
-        public static String getInversePrefix(String prefix)
+        public static string getInversePrefix(String prefix)
         {
             if (!mapPrefixes.Keys.Contains(prefix))
                 throw new ArgumentException();
@@ -210,13 +211,13 @@ namespace Transition
             if (rawString.Length == 0)
                 throw new ArgumentException();
 
-            String lastChar = rawString.Substring(rawString.Length - 1, 1);
+            string lastChar = rawString.Substring(rawString.Length - 1, 1);
             if (lastChar == "k") lastChar = "K";
 
             bool prefixExists = mapPrefixes.Keys.Contains(lastChar);
 
-            String stringMantissa;
-            String prefix;
+            string stringMantissa;
+            string prefix;
 
             if (prefixExists)
             {

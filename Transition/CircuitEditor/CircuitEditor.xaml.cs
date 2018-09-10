@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Transition.CircuitEditor.Serializable;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -31,7 +32,7 @@ namespace Transition.CircuitEditor
         public ObservableCollection<IElectricElement> selectedElements;
         public List<Line> gridLines;
 
-        public IElectricElement clickElement;
+        public SerializableComponent clickedElement;
 
         public Wire manipulatingPnt1;
         public Wire manipulatingPnt2;
@@ -122,7 +123,11 @@ namespace Transition.CircuitEditor
 
         }
 
-        
+        public void clickElement(SerializableComponent component)
+        {
+            clickedElement = component;
+        }
+
         public void addElement(String element)
         {
             //tap event invoques an element on center of drawboard

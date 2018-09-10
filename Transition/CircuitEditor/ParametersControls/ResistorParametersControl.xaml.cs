@@ -21,8 +21,6 @@ namespace Transition.CircuitEditor.Components
 {
     public sealed partial class ResistorParametersControl : UserControl, IComponentParameterControl, INotifyPropertyChanged
     {
-        public double SchematicWidth { get { return 120; } }
-        public double SchematicHeight { get { return 80; } }
         public Canvas CnvLabels { get; set; }
 
         private double actualRotation;
@@ -32,8 +30,6 @@ namespace Transition.CircuitEditor.Components
         private ElectricComponent ec;
         public string ComponentLetter { get { return "R"; } }
 
-        public TextBlock txtComponentName;
-        public TextBlock txtResistanceValue;
 
         public int selectedResistorModel = 0;
 
@@ -129,91 +125,10 @@ namespace Transition.CircuitEditor.Components
             componentValueBox.ComponentValue = EngrNumber.One;
 
             CnvLabels = new Canvas();
-
-            txtComponentName = new TextBlock()
-            {
-                FontWeight = FontWeights.ExtraBold,
-                RenderTransform = new TranslateTransform()
-            };
-
-            Binding b1 = new Binding()
-            {
-                Path = new PropertyPath("ComponentName"),
-                Source = this,
-                Mode = BindingMode.OneWay                
-            };
-            txtComponentName.SetBinding(TextBlock.TextProperty, b1);
-            txtComponentName.SizeChanged += delegate { setPositionTextBoxes(); };
-            CnvLabels.Children.Add(txtComponentName);
-
-
-            txtResistanceValue = new TextBlock()
-            {
-                FontWeight = FontWeights.ExtraBold,
-                RenderTransform = new TranslateTransform()
-            };
-
-            Binding b2 = new Binding()
-            {
-                Path = new PropertyPath("ValueString"),
-                Source = componentValueBox,
-                Mode = BindingMode.OneWay
-            };
-            txtResistanceValue.SetBinding(TextBlock.TextProperty, b2);
-            txtResistanceValue.SizeChanged += delegate { setPositionTextBoxes(); };
-            CnvLabels.Children.Add(txtResistanceValue);
-
-            setPositionTextBoxes();
+            
         }
 
-        public void setPositionTextBoxes()
-        {
-            double leftRV; double topRV;
-            double leftCN; double topCN;
-
-            if ((actualRotation == 0) || (actualRotation == 180))
-            {
-                topCN = 0;
-                leftCN = (SchematicWidth / 2) - (txtComponentName.ActualWidth / 2);
-                topRV = 60;
-                leftRV = (SchematicWidth / 2) - (txtResistanceValue.ActualWidth / 2);
-            }
-            else 
-            {
-                topCN = 40 - (txtComponentName.ActualHeight / 2);
-                leftCN = 40 - (txtComponentName.ActualWidth);
-                topRV = 40 - (txtResistanceValue.ActualHeight / 2);
-                leftRV = SchematicHeight;
-            }
-
-            ((TranslateTransform)txtComponentName.RenderTransform).X = leftCN;
-            ((TranslateTransform)txtComponentName.RenderTransform).Y = topCN;
-
-            ((TranslateTransform)txtResistanceValue.RenderTransform).X = leftRV;
-            ((TranslateTransform)txtResistanceValue.RenderTransform).Y = topRV;
-
-
-        }
-
-        public void setRotation(double rotation)
-        {
-            rotation = rotation % 360;
-
-            actualRotation = rotation;
-            setPositionTextBoxes();
-        }
-
-        public void setFlipX(bool flip)
-        {
-            flipX = flip;
-            setPositionTextBoxes();
-        }
-
-        public void setFlipY(bool flip)
-        {
-            flipY = flip;
-            setPositionTextBoxes();
-        }
+        
 
         private void changeLs(object sender, PropertyChangedEventArgs e)
         {

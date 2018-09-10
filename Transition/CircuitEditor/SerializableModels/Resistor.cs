@@ -8,7 +8,7 @@ using Transition.CircuitEditor.Components;
 
 namespace Transition.CircuitEditor.Serializable
 {
-    public class ResistorParameters : SerializableComponent
+    public class Resistor : SerializableComponent
     {
 
         private EngrNumber resistanceValue;
@@ -16,7 +16,7 @@ namespace Transition.CircuitEditor.Serializable
         {
             get { return resistanceValue; }
             set { SetProperty(ref resistanceValue, value); }
-        }
+        } 
 
         private int resistorModel;
         public int ResistorModel
@@ -46,6 +46,14 @@ namespace Transition.CircuitEditor.Serializable
             set { SetProperty(ref ew, value); }
         }
 
+        public Resistor()
+        {
+            ResistanceValue = EngrNumber.One;
+            ResistorModel = 0;
+
+            ParametersControl = new ResistorParametersControl();
+            OnScreenComponent = new OnScreenComponents.ResistorScreen(this);
+        }
       
     }
 }

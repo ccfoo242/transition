@@ -98,6 +98,8 @@
     <Compile Include="CircuitEditor\CircuitEditor.xaml.cs">
       <DependentUpon>CircuitEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CircuitEditor\OnScreenComponents\ResistorScreen.cs" />
+    <Compile Include="CircuitEditor\OnScreenComponents\ScreenComponentBase.cs" />
     <Compile Include="CircuitEditor\ParametersControls\CapacitorParametersControl.xaml.cs">
       <DependentUpon>CapacitorParametersControl.xaml</DependentUpon>
     </Compile>
@@ -127,7 +129,7 @@
     </Compile>
     <Compile Include="CircuitEditor\Interfaces.cs" />
     <Compile Include="CircuitEditor\SerializableModels\SerializableComponent.cs" />
-    <Compile Include="CircuitEditor\SerializableModels\ResistorParameters.cs" />
+    <Compile Include="CircuitEditor\SerializableModels\Resistor.cs" />
     <Compile Include="CircuitEditor\Wire.xaml.cs">
       <DependentUpon>Wire.xaml</DependentUpon>
     </Compile>
@@ -251,9 +253,7 @@
       <Version>4.0.0</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="CircuitEditor\OnScreenComponents\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
