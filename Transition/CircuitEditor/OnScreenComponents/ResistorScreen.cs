@@ -17,7 +17,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public TextBlock txtComponentName;
         public TextBlock txtResistanceValue;
         
-        public ResistorScreen(SerializableComponent component) : base(component)
+        public ResistorScreen(Resistor resistor) : base(resistor)
         {
             SchematicWidth = 120;
             SchematicHeight = 80;
@@ -36,6 +36,12 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 Path = new PropertyPath("ComponentName"),
                 Mode = BindingMode.OneWay
             };
+
+            txtComponentName = new TextBlock()
+            {
+                FontWeight = FontWeights.ExtraBold,
+                RenderTransform = new TranslateTransform()
+            };
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
             txtComponentName.SizeChanged += delegate { setPositionTextBoxes(); };
             ComponentCanvas.Children.Add(txtComponentName);
@@ -51,7 +57,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             {
                 Path = new PropertyPath("ResistanceValue"),
                 Mode = BindingMode.OneWay,
-                Converter = new EngrConverter()
+                Converter = new EngrConverter() { AllowNegativeNumber = false }
             };
             txtResistanceValue.SetBinding(TextBlock.TextProperty, b2);
             txtResistanceValue.SizeChanged += delegate { setPositionTextBoxes(); };

@@ -7,6 +7,9 @@
 
     <Application.Resources>
 
+        <local:EngrConverter x:Key="EngrConverterComponentValue" 
+                             AllowNegativeNumber="False"/>
+
         <DataTemplate x:Key="symbolGround">
             <Canvas Background="Transparent" Width="40" Height="40">
                 <Polyline Points="20,00 20,20 0,20 40,20 20,40 0,20" 

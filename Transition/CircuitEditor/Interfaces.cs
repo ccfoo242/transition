@@ -21,17 +21,4 @@ namespace Transition.CircuitEditor
 
     }
     
-
-    public interface IComponentParameterControl
-    {
-        String ComponentName { get; set; }
-        String ComponentLetter { get; }
-
-        Canvas CnvLabels { get; set; }
-        void setRotation(double rotation);
-        void setFlipX(bool flip);
-        void setFlipY(bool flip);
-
-        event PropertyChangedEventHandler PropertyChanged;
-    }
 }

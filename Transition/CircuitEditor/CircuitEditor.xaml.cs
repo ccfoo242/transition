@@ -261,7 +261,7 @@ namespace Transition.CircuitEditor
         {
             clickPoint = e.GetCurrentPoint(cnvCircuit).Position;
 
-            if ((clickElement == null) && (manipulatingPnt1 == null) &&
+            if ((clickedElement == null) && (manipulatingPnt1 == null) &&
                 (manipulatingPnt2 == null))
             {
                 if (rectGroupSelect != null)
@@ -285,13 +285,13 @@ namespace Transition.CircuitEditor
                 cnvGeneral.Children.Add(rectGroupSelect);
             }
 
-            if (clickElement != null)
+            if (clickedElement != null)
             {
-                if (selectedElements.Contains(clickElement))
+                if (selectedElements.Contains(clickedElement))
                 { }
                 else
                 {
-                    selectElement(clickElement);
+                    selectElement(clickedElement);
                 }
             }
         }

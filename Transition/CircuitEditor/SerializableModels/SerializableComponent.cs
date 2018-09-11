@@ -8,7 +8,7 @@ using Transition.Common;
 
 namespace Transition.CircuitEditor.Serializable
 {
-    public class SerializableComponent : BindableBase
+    public abstract class SerializableComponent : BindableBase
     {
         private int rotation;
         public int Rotation { get { return rotation; }
@@ -37,5 +37,6 @@ namespace Transition.CircuitEditor.Serializable
         public IComponentParameterControl ParametersControl { get; set; }
         public ScreenComponentBase OnScreenComponent { get; set; }
 
+        public abstract string ComponentLetter { get; }
     }
 }
