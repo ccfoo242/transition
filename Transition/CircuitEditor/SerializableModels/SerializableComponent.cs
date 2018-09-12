@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.OnScreenComponents;
 using Transition.Common;
+using Windows.UI.Xaml.Controls;
 
 namespace Transition.CircuitEditor.Serializable
 {
@@ -34,7 +35,16 @@ namespace Transition.CircuitEditor.Serializable
         public string ComponentName { get { return componentName; }
             set { SetProperty(ref componentName, value); } }
 
-        public IComponentParameterControl ParametersControl { get; set; }
+        // ParametersControl is the UI Control that allows user to
+        // configure the component parameters
+        public UserControl ParametersControl { get; set; }
+
+        // OnScreenComponent is the class that has responsability
+        // for showing the component on screen of the CircuitEditor
+        // it manages position of textboxes like component values, names
+        // or other parameters.
+        // it has a Canvas that must be added to the canvas of CircuitEditor
+        // 
         public ScreenComponentBase OnScreenComponent { get; set; }
 
         public abstract string ComponentLetter { get; }

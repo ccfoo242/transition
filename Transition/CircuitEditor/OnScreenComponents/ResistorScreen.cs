@@ -12,24 +12,27 @@ using Windows.UI.Xaml.Media;
 
 namespace Transition.CircuitEditor.OnScreenComponents
 {
-    class ResistorScreen : ScreenComponentBase
+    public class ResistorScreen : ScreenComponentBase
     {
         public TextBlock txtComponentName;
         public TextBlock txtResistanceValue;
-        
+
+        public override double SchematicWidth => 120;
+        public override double SchematicHeight => 80;
+
+        public ContentControl SymbolResistor { get; }
+
         public ResistorScreen(Resistor resistor) : base(resistor)
         {
-            SchematicWidth = 120;
-            SchematicHeight = 80;
             
-            ContentControl symbolResistor = new ContentControl()
+            SymbolResistor = new ContentControl()
             {
                 ContentTemplate = (DataTemplate)Application.Current.Resources["symbolResistor"]
             };
 
-            ComponentCanvas.Children.Add(symbolResistor);
-            Canvas.SetTop(symbolResistor, 20);
-            Canvas.SetLeft(symbolResistor, 20);
+            ComponentCanvas.Children.Add(SymbolResistor);
+            Canvas.SetTop(SymbolResistor, 20);
+            Canvas.SetLeft(SymbolResistor, 20);
 
             Binding b1 = new Binding()
             {
@@ -55,7 +58,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
             Binding b2 = new Binding()
             {
-                Path = new PropertyPath("ResistanceValue"),
+                Path = new PropertyPath("ResistorValue"),
                 Mode = BindingMode.OneWay,
                 Converter = new EngrConverter() { AllowNegativeNumber = false }
             };
@@ -68,7 +71,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
         }
 
 
-        public void setPositionTextBoxes()
+        public override void setPositionTextBoxes()
         {
             double leftRV; double topRV;
             double leftCN; double topCN;

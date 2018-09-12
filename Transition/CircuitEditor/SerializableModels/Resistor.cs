@@ -83,8 +83,7 @@ namespace Transition.CircuitEditor.Serializable
             double dR = ResistorValue.ValueDouble;
             double dLs = Ls.ValueDouble;
             double dCp = Cp.ValueDouble;
-
-            //  double dWo = Math.Sqrt(Math.Abs((1 / (dLs * dCp)) - Math.Pow(dR / dLs, 2)));
+            
             double dWop = Math.Sqrt(1 / (dLs * dCp));
             
             double dQ = (dWop * dLs) / dR;

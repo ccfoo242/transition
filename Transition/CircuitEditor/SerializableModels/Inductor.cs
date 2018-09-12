@@ -7,32 +7,36 @@ using Transition.CircuitEditor.Serializable;
 
 namespace Transition.CircuitEditor.SerializableModels
 {
-    public class Capacitor : SerializableComponent
+    public class Inductor : SerializableComponent
     {
-        public override string ComponentLetter => "C";
-
-
-        private EngrNumber capacitorValue;
-        public EngrNumber CapacitorValue
+        public override string ComponentLetter => "L";
+        
+        private EngrNumber inductorValue;
+        public EngrNumber InductorValue
         {
-            get { return capacitorValue; }
-            set { SetProperty(ref capacitorValue, value); }
-        }
-
-        private int capacitorModel;
-        public int CapacitorModel
-        {
-            get { return capacitorModel; }
-            set { SetProperty(ref capacitorModel, value); }
-        }
-
-        private EngrNumber ls;
-        public EngrNumber Ls
-        {
-            get { return ls; }
+            get { return inductorValue; }
             set
             {
-                SetProperty(ref ls, value);
+                inductorValue = value;
+                SetProperty(ref inductorValue, value);
+            }
+        }
+
+        private int inductorModel;
+        public int InductorModel
+        {
+            get { return inductorModel; }
+            set { SetProperty(ref inductorModel, value); }
+        }
+
+
+        private EngrNumber rs;
+        public EngrNumber Rs
+        {
+            get { return rs; }
+            set
+            {
+                SetProperty(ref rs, value);
                 calculateFoQ();
             }
         }
@@ -62,7 +66,7 @@ namespace Transition.CircuitEditor.SerializableModels
             set
             {
                 SetProperty(ref fo, value);
-                calculateRsLs();
+                calculateRsCp();
             }
         }
 
@@ -73,45 +77,42 @@ namespace Transition.CircuitEditor.SerializableModels
             set
             {
                 SetProperty(ref q, value);
-                calculateRsLs();
+                calculateRsCp();
             }
         }
-
-        public Capacitor()
-        { }
 
 
         private void calculateFoQ()
         {
-            double dC = capacitorValue.ValueDouble;
-            double dLs = Ls.ValueDouble;
+            double dL = inductorValue.ValueDouble;
             double dRs = Rs.ValueDouble;
+            double dCp = Cp.ValueDouble;
 
-            double dWo = Math.Sqrt(1 / (dLs * dC));
+            double dWop = Math.Sqrt(1 / (dL * dCp));
 
-            double dQ = (dWo * dLs) / dRs;
-            double dFo = dWo / (2 * Math.PI);
+            double dQ = (dWop * dL) / dRs;
+            double dFo = dWop / (2 * Math.PI);
 
             Fo = new EngrNumber(dFo);
             Q = new EngrNumber(dQ);
+
         }
 
-        private void calculateRsLs()
+        private void calculateRsCp()
         {
             double dQ = Q.ValueDouble;
             double dFo = Fo.ValueDouble;
-            double dC = capacitorValue.ValueDouble;
+            double dL = inductorValue.ValueDouble;
 
             double dWo = 2 * Math.PI * dFo;
 
-            //  double dLs = Math.Sqrt(Math.Abs( ((dQ * dQ * dR * dR) - (dR * dR)) / Math.Pow(dWo, 2) ));
-            double dRs = 1 / (dQ * dWo * dC);
-            double dLs = 1 / (dC * dWo * dWo);
+            double dRs = (dWo * dL) / dQ;
+            double dCp = 1 / (dL * dWo * dWo);
 
-            Ls = new EngrNumber(dLs);
             Rs = new EngrNumber(dRs);
-        }
+            Cp = new EngrNumber(dCp);
 
+        }
 
     }
 }

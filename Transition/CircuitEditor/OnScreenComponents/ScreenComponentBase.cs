@@ -8,6 +8,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace Transition.CircuitEditor.OnScreenComponents
 {
@@ -19,21 +20,39 @@ namespace Transition.CircuitEditor.OnScreenComponents
     public abstract class ScreenComponentBase : ScreenElementBase
     {
         public Canvas ComponentCanvas { get; }
+        public CompositeTransform ComponentTransform { get; }
+        public Canvas TextCanvas { get; }
+
         public SerializableComponent SerializableComponent { get; }
 
-        public double SchematicWidth { get; set; }
-        public double SchematicHeight { get; set; }
+        public abstract double SchematicWidth { get; }
+        public abstract double SchematicHeight { get; }
         
         public double ActualRotation { get { return SerializableComponent.Rotation; } }
         public bool FlipX { get { return SerializableComponent.FlipX; } } 
         public bool FlipY { get { return SerializableComponent.FlipY; } }
 
+        public abstract void setPositionTextBoxes();
+        
         public ScreenComponentBase(SerializableComponent component)
         {
             SerializableComponent = component;
 
+            ComponentTransform = new CompositeTransform();
+            ComponentTransform.CenterX = SchematicWidth / 2;
+            ComponentTransform.CenterY = SchematicHeight / 2;
+
             ComponentCanvas = new Canvas()
-                { IsTapEnabled = true };
+            {
+                IsTapEnabled = true,
+                Width = SchematicWidth,
+                Height = SchematicHeight,
+                RenderTransform = ComponentTransform
+            };
+
+            TextCanvas = new Canvas();
+            TextCanvas.Children.Add(ComponentCanvas);
+            
 
             ComponentCanvas.PointerPressed += Element_PointerPressed;
             DataContext = SerializableComponent;

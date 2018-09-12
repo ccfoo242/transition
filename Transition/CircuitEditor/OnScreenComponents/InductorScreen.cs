@@ -12,30 +12,31 @@ using Windows.UI.Xaml.Media;
 
 namespace Transition.CircuitEditor.OnScreenComponents
 {
-    public class CapacitorScreen : ScreenComponentBase
+    public class InductorScreen : ScreenComponentBase
     {
-        public TextBlock txtComponentName;
-        public TextBlock txtCapacitorValue;
-
+        
         public override double SchematicWidth => 120;
         public override double SchematicHeight => 80;
 
-        public CapacitorScreen(Capacitor capacitor) : base(capacitor)
-        {
+        public TextBlock txtComponentName;
+        public TextBlock txtInductorValue;
 
-            ContentControl symbolCapacitor = new ContentControl()
+        public InductorScreen(Inductor inductor) : base(inductor)
+        {
+            ContentControl symbolInductor = new ContentControl()
             {
-                ContentTemplate = (DataTemplate)Application.Current.Resources["symbolCapacitor"]
+                ContentTemplate = (DataTemplate)Application.Current.Resources["symbolInductor"]
             };
 
-            ComponentCanvas.Children.Add(symbolCapacitor);
-            Canvas.SetTop(symbolCapacitor, 20);
-            Canvas.SetLeft(symbolCapacitor, 20);
-
+            ComponentCanvas.Children.Add(symbolInductor);
+            Canvas.SetTop(symbolInductor, 20);
+            Canvas.SetLeft(symbolInductor, 20);
+            
             txtComponentName = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b1 = new Binding()
             {
                 Path = new PropertyPath("ComponentName"),
+                Source = this,
                 Mode = BindingMode.OneWay
             };
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
@@ -44,18 +45,16 @@ namespace Transition.CircuitEditor.OnScreenComponents
             ComponentCanvas.Children.Add(txtComponentName);
 
 
-            txtCapacitorValue = new TextBlock() { FontWeight = FontWeights.ExtraBold };
+            txtInductorValue = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b2 = new Binding()
             {
-                Path = new PropertyPath("CapacitorValue"),
+                Path = new PropertyPath("InductorValue"),
                 Mode = BindingMode.OneWay
             };
-            txtCapacitorValue.SetBinding(TextBlock.TextProperty, b2);
-            txtCapacitorValue.RenderTransform = new TranslateTransform() { };
-            txtCapacitorValue.SizeChanged += delegate { setPositionTextBoxes(); };
-            ComponentCanvas.Children.Add(txtCapacitorValue);
-
-            setPositionTextBoxes();
+            txtInductorValue.SetBinding(TextBlock.TextProperty, b2);
+            txtInductorValue.RenderTransform = new TranslateTransform() { };
+            txtInductorValue.SizeChanged += delegate { setPositionTextBoxes(); };
+            ComponentCanvas.Children.Add(txtInductorValue);
         }
 
 
@@ -69,22 +68,23 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 topCN = 0;
                 leftCN = (SchematicWidth / 2) - (txtComponentName.ActualWidth / 2);
                 topRV = 60;
-                leftRV = (SchematicWidth / 2) - (txtCapacitorValue.ActualWidth / 2);
+                leftRV = (SchematicWidth / 2) - (txtInductorValue.ActualWidth / 2);
             }
             else
             {
                 topCN = 40 - (txtComponentName.ActualHeight / 2);
                 leftCN = 40 - (txtComponentName.ActualWidth);
-                topRV = 40 - (txtCapacitorValue.ActualHeight / 2);
+                topRV = 40 - (txtInductorValue.ActualHeight / 2);
                 leftRV = 80;
             }
 
             ((TranslateTransform)txtComponentName.RenderTransform).X = leftCN;
             ((TranslateTransform)txtComponentName.RenderTransform).Y = topCN;
 
-            ((TranslateTransform)txtCapacitorValue.RenderTransform).X = leftRV;
-            ((TranslateTransform)txtCapacitorValue.RenderTransform).Y = topRV;
-        }
+            ((TranslateTransform)txtInductorValue.RenderTransform).X = leftRV;
+            ((TranslateTransform)txtInductorValue.RenderTransform).Y = topRV;
 
+
+        }
     }
 }
