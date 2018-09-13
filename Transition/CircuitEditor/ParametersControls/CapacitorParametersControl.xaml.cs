@@ -20,10 +20,11 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Transition.CircuitEditor.Components
 {
-    public sealed partial class CapacitorParametersControl : UserControl, IComponentParameterControl, INotifyPropertyChanged
+    public sealed partial class CapacitorParametersControl : UserControl, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
         private Capacitor SerializableCapacitor { get; }
+        private int SelectedCapacitorModel { get { return SerializableCapacitor.CapacitorModel; } }
 
         public CapacitorParametersControl()
         {
@@ -47,10 +48,10 @@ namespace Transition.CircuitEditor.Components
             pnlExponential.Visibility = Visibility.Collapsed;
             pnlParasitic.Visibility = Visibility.Collapsed;
 
-            if (selectedCapacitorModel == 1)
+            if (SelectedCapacitorModel == 1)
                 pnlParasitic.Visibility = Visibility.Visible;
 
-            if (selectedCapacitorModel == 2)
+            if (SelectedCapacitorModel == 2)
                 pnlExponential.Visibility = Visibility.Visible;
         }
         

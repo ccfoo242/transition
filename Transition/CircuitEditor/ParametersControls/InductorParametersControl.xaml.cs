@@ -24,7 +24,8 @@ namespace Transition.CircuitEditor.Components
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public Inductor SerializableInductor { get; }
-        
+        private int SelectedInductorModel { get { return SerializableInductor.InductorModel; } }
+
         public InductorParametersControl()
         {
             this.InitializeComponent();
@@ -38,31 +39,16 @@ namespace Transition.CircuitEditor.Components
             
            
         }
-
-        private void init()
-        {
-
-            setPositionTextBoxes();
-        }
-
-        private void setPositionTextBoxes()
-        {
-            
-        }
         
-        
-       
-        
-
         private void modelInductorChanged(object sender, SelectionChangedEventArgs e)
         {
             pnlExponential.Visibility = Visibility.Collapsed;
             pnlParasitic.Visibility = Visibility.Collapsed;
 
-            if (selectedInductorModel == 1)
+            if (SelectedInductorModel == 1)
                 pnlParasitic.Visibility = Visibility.Visible;
 
-            if (selectedInductorModel == 2)
+            if (SelectedInductorModel == 2)
                 pnlExponential.Visibility = Visibility.Visible;
         }
         

@@ -110,6 +110,6 @@ namespace Transition.CircuitEditor.Serializable
             SetProperty(ref cp, new EngrNumber(dCp));
 
         }
-
+        
     }
 }

@@ -12,26 +12,27 @@ using Windows.UI.Xaml.Media;
 
 namespace Transition.CircuitEditor.OnScreenComponents
 {
-    public class InductorScreen : ScreenComponentBase
+    public class FDNRScreen : ScreenComponentBase
     {
-        
         public override double SchematicWidth => 120;
         public override double SchematicHeight => 80;
-
+        
         public TextBlock txtComponentName;
-        public TextBlock txtInductorValue;
+        public TextBlock txtFdnrValue;
 
-        public InductorScreen(Inductor inductor) : base(inductor)
+        public ContentControl SymbolFdnr { get; }
+
+        public FDNRScreen(FDNR fdnr) : base(fdnr)
         {
-            ContentControl symbolInductor = new ContentControl()
+            SymbolFdnr = new ContentControl()
             {
-                ContentTemplate = (DataTemplate)Application.Current.Resources["symbolInductor"]
+                ContentTemplate = (DataTemplate)Application.Current.Resources["symbolFdnr"]
             };
 
-            ComponentCanvas.Children.Add(symbolInductor);
-            Canvas.SetTop(symbolInductor, 20);
-            Canvas.SetLeft(symbolInductor, 20);
-            
+            ComponentCanvas.Children.Add(SymbolFdnr);
+            Canvas.SetTop(SymbolFdnr, 20);
+            Canvas.SetLeft(SymbolFdnr, 20);
+
             txtComponentName = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b1 = new Binding()
             {
@@ -45,20 +46,19 @@ namespace Transition.CircuitEditor.OnScreenComponents
             TextCanvas.Children.Add(txtComponentName);
 
 
-            txtInductorValue = new TextBlock() { FontWeight = FontWeights.ExtraBold };
+            txtFdnrValue = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b2 = new Binding()
             {
-                Path = new PropertyPath("InductorValue"),
+                Path = new PropertyPath("ValueString"),
                 Mode = BindingMode.OneWay
             };
-            txtInductorValue.SetBinding(TextBlock.TextProperty, b2);
-            txtInductorValue.RenderTransform = new TranslateTransform() { };
-            txtInductorValue.SizeChanged += delegate { setPositionTextBoxes(); };
-            TextCanvas.Children.Add(txtInductorValue);
+            txtFdnrValue.SetBinding(TextBlock.TextProperty, b2);
+            txtFdnrValue.RenderTransform = new TranslateTransform() { };
+            txtFdnrValue.SizeChanged += delegate { setPositionTextBoxes(); };
+            TextCanvas.Children.Add(txtFdnrValue);
 
             postConstruct();
         }
-
 
         public override void setPositionTextBoxes()
         {
@@ -70,23 +70,21 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 topCN = 0;
                 leftCN = (SchematicWidth / 2) - (txtComponentName.ActualWidth / 2);
                 topRV = 60;
-                leftRV = (SchematicWidth / 2) - (txtInductorValue.ActualWidth / 2);
+                leftRV = (SchematicWidth / 2) - (txtFdnrValue.ActualWidth / 2);
             }
             else
             {
-                topCN = 40 - (txtComponentName.ActualHeight / 2);
+                topCN = (SchematicHeight / 2) - (txtComponentName.ActualHeight / 2);
                 leftCN = 40 - (txtComponentName.ActualWidth);
-                topRV = 40 - (txtInductorValue.ActualHeight / 2);
+                topRV = (SchematicHeight / 2) - (txtFdnrValue.ActualHeight / 2);
                 leftRV = 80;
             }
 
             ((TranslateTransform)txtComponentName.RenderTransform).X = leftCN;
             ((TranslateTransform)txtComponentName.RenderTransform).Y = topCN;
 
-            ((TranslateTransform)txtInductorValue.RenderTransform).X = leftRV;
-            ((TranslateTransform)txtInductorValue.RenderTransform).Y = topRV;
-
-
+            ((TranslateTransform)txtFdnrValue.RenderTransform).X = leftRV;
+            ((TranslateTransform)txtFdnrValue.RenderTransform).Y = topRV;
         }
     }
 }

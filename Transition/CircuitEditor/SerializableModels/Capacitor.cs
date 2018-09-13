@@ -37,13 +37,13 @@ namespace Transition.CircuitEditor.SerializableModels
             }
         }
 
-        private EngrNumber cp;
-        public EngrNumber Cp
+        private EngrNumber rs;
+        public EngrNumber Rs
         {
-            get { return cp; }
+            get { return rs; }
             set
             {
-                SetProperty(ref cp, value);
+                SetProperty(ref rs, value);
                 calculateFoQ();
             }
         }
@@ -78,7 +78,12 @@ namespace Transition.CircuitEditor.SerializableModels
         }
 
         public Capacitor()
-        { }
+        {
+            CapacitorValue = EngrNumber.One;
+
+            CapacitorModel = 0;
+
+        }
 
 
         private void calculateFoQ()
@@ -92,8 +97,8 @@ namespace Transition.CircuitEditor.SerializableModels
             double dQ = (dWo * dLs) / dRs;
             double dFo = dWo / (2 * Math.PI);
 
-            Fo = new EngrNumber(dFo);
-            Q = new EngrNumber(dQ);
+            SetProperty(ref fo, dFo);
+            SetProperty(ref q, dQ);
         }
 
         private void calculateRsLs()

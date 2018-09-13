@@ -99,6 +99,7 @@
       <DependentUpon>CircuitEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="CircuitEditor\OnScreenComponents\CapacitorScreen.cs" />
+    <Compile Include="CircuitEditor\OnScreenComponents\FDNRScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\InductorScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\ResistorScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\ScreenComponentBase.cs" />
@@ -131,6 +132,7 @@
     </Compile>
     <Compile Include="CircuitEditor\Interfaces.cs" />
     <Compile Include="CircuitEditor\SerializableModels\Capacitor.cs" />
+    <Compile Include="CircuitEditor\SerializableModels\FDNR.cs" />
     <Compile Include="CircuitEditor\SerializableModels\Inductor.cs" />
     <Compile Include="CircuitEditor\SerializableModels\SerializableComponent.cs" />
     <Compile Include="CircuitEditor\SerializableModels\Resistor.cs" />

@@ -56,6 +56,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             ComponentCanvas.Children.Add(txtCapacitorValue);
 
             setPositionTextBoxes();
+
+            postConstruct();
         }
 
 
