@@ -20,9 +20,8 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Transition.CircuitEditor.Components
 {
-    public sealed partial class InductorParametersControl : UserControl, INotifyPropertyChanged
+    public sealed partial class InductorParametersControl : UserControl
     {
-        public event PropertyChangedEventHandler PropertyChanged;
         public Inductor SerializableInductor { get; }
         private int SelectedInductorModel { get { return SerializableInductor.InductorModel; } }
 
@@ -35,6 +34,8 @@ namespace Transition.CircuitEditor.Components
         public InductorParametersControl(Inductor inductor)
         {
             SerializableInductor = inductor;
+            DataContext = inductor;
+
             this.InitializeComponent();
             
            

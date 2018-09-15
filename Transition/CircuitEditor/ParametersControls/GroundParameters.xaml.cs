@@ -7,7 +7,6 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Transition.CircuitEditor.SerializableModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -20,27 +19,21 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Transition.CircuitEditor.Components
 {
-    public sealed partial class TransformerParametersControl : UserControl
+    public sealed partial class GroundParameters : UserControl
     {
+        private Ground SerializableGround { get; }
 
-        private Transformer SerializableTransformer { get; }
-
-
-        public TransformerParametersControl()
+        public GroundParameters()
         {
-            this.InitializeComponent();
-         
-        }
-
-        public TransformerParametersControl(Transformer trans)
-        {
-            SerializableTransformer = trans;
-            DataContext = trans;
-
             this.InitializeComponent();
         }
 
-
+        public GroundParameters(Ground g)
+        {
+            SerializableGround = g;
+            DataContext = g;
+        }
+        
         
     }
 }

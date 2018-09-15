@@ -20,14 +20,13 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Transition.CircuitEditor.Components
 {
-    public sealed partial class ResistorParametersControl : UserControl, INotifyPropertyChanged
+    public sealed partial class ResistorParametersControl : UserControl
     {
         
         private Resistor SerializableResistor { get; }
        
         private int SelectedResistorModel { get { return SerializableResistor.ResistorModel; } }
-        public event PropertyChangedEventHandler PropertyChanged;
-
+    
         public ResistorParametersControl()
         {
             InitializeComponent();

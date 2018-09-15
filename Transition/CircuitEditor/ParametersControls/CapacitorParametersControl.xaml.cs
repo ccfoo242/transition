@@ -20,10 +20,10 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Transition.CircuitEditor.Components
 {
-    public sealed partial class CapacitorParametersControl : UserControl, INotifyPropertyChanged
+    public sealed partial class CapacitorParametersControl : UserControl
     {
-        public event PropertyChangedEventHandler PropertyChanged;
         private Capacitor SerializableCapacitor { get; }
+
         private int SelectedCapacitorModel { get { return SerializableCapacitor.CapacitorModel; } }
 
         public CapacitorParametersControl()

@@ -64,7 +64,7 @@ namespace Transition.CircuitEditor
                     break;
 
                 case "ground":
-                    parameters = new Components.Ground();
+                    parameters = new Components.GroundParameters();
                     break;
 
                 case "fdnr":

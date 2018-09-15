@@ -100,17 +100,21 @@
     </Compile>
     <Compile Include="CircuitEditor\OnScreenComponents\CapacitorScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\FDNRScreen.cs" />
+    <Compile Include="CircuitEditor\OnScreenComponents\GroundScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\InductorScreen.cs" />
+    <Compile Include="CircuitEditor\OnScreenComponents\PotentiometerScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\ResistorScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\ScreenComponentBase.cs" />
+    <Compile Include="CircuitEditor\OnScreenComponents\TransformerScreen.cs" />
+    <Compile Include="CircuitEditor\OnScreenComponents\VoltageSourceScreen.cs" />
     <Compile Include="CircuitEditor\ParametersControls\CapacitorParametersControl.xaml.cs">
       <DependentUpon>CapacitorParametersControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="CircuitEditor\ParametersControls\FDNRParametersControl.xaml.cs">
       <DependentUpon>FDNRParametersControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CircuitEditor\ParametersControls\Ground.xaml.cs">
-      <DependentUpon>Ground.xaml</DependentUpon>
+    <Compile Include="CircuitEditor\ParametersControls\GroundParameters.xaml.cs">
+      <DependentUpon>GroundParameters.xaml</DependentUpon>
     </Compile>
     <Compile Include="CircuitEditor\ParametersControls\InductorParametersControl.xaml.cs">
       <DependentUpon>InductorParametersControl.xaml</DependentUpon>
@@ -133,9 +137,13 @@
     <Compile Include="CircuitEditor\Interfaces.cs" />
     <Compile Include="CircuitEditor\SerializableModels\Capacitor.cs" />
     <Compile Include="CircuitEditor\SerializableModels\FDNR.cs" />
+    <Compile Include="CircuitEditor\SerializableModels\Ground.cs" />
     <Compile Include="CircuitEditor\SerializableModels\Inductor.cs" />
+    <Compile Include="CircuitEditor\SerializableModels\Potentiometer.cs" />
     <Compile Include="CircuitEditor\SerializableModels\SerializableComponent.cs" />
     <Compile Include="CircuitEditor\SerializableModels\Resistor.cs" />
+    <Compile Include="CircuitEditor\SerializableModels\Transformer.cs" />
+    <Compile Include="CircuitEditor\SerializableModels\VoltageSource.cs" />
     <Compile Include="CircuitEditor\Wire.xaml.cs">
       <DependentUpon>Wire.xaml</DependentUpon>
     </Compile>
@@ -198,7 +206,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CircuitEditor\ParametersControls\Ground.xaml">
+    <Page Include="CircuitEditor\ParametersControls\GroundParameters.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

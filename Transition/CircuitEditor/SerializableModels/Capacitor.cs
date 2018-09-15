@@ -113,8 +113,9 @@ namespace Transition.CircuitEditor.SerializableModels
             double dRs = 1 / (dQ * dWo * dC);
             double dLs = 1 / (dC * dWo * dWo);
 
-            Ls = new EngrNumber(dLs);
-            Rs = new EngrNumber(dRs);
+            SetProperty(ref ls, dLs);
+            SetProperty(ref rs, dRs);
+            
         }
 
 

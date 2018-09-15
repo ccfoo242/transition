@@ -20,9 +20,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Transition.CircuitEditor.Components
 {
-    public sealed partial class FDNRParametersControl : UserControl, INotifyPropertyChanged
+    public sealed partial class FDNRParametersControl : UserControl
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+
         private FDNR SerializableFDNR { get; }
 
         public FDNRParametersControl(FDNR fdnr)

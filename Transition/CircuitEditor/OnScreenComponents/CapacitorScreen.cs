@@ -41,7 +41,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
             txtComponentName.RenderTransform = new TranslateTransform() { };
             txtComponentName.SizeChanged += delegate { setPositionTextBoxes(); };
-            ComponentCanvas.Children.Add(txtComponentName);
+            TextCanvas.Children.Add(txtComponentName);
 
 
             txtCapacitorValue = new TextBlock() { FontWeight = FontWeights.ExtraBold };
@@ -53,7 +53,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             txtCapacitorValue.SetBinding(TextBlock.TextProperty, b2);
             txtCapacitorValue.RenderTransform = new TranslateTransform() { };
             txtCapacitorValue.SizeChanged += delegate { setPositionTextBoxes(); };
-            ComponentCanvas.Children.Add(txtCapacitorValue);
+            TextCanvas.Children.Add(txtCapacitorValue);
 
             setPositionTextBoxes();
 

@@ -93,9 +93,9 @@ namespace Transition.CircuitEditor.SerializableModels
             double dQ = (dWop * dL) / dRs;
             double dFo = dWop / (2 * Math.PI);
 
-            Fo = new EngrNumber(dFo);
-            Q = new EngrNumber(dQ);
-
+            SetProperty(ref fo, dFo);
+            SetProperty(ref q, dQ);
+            
         }
 
         private void calculateRsCp()
@@ -109,8 +109,8 @@ namespace Transition.CircuitEditor.SerializableModels
             double dRs = (dWo * dL) / dQ;
             double dCp = 1 / (dL * dWo * dWo);
 
-            Rs = new EngrNumber(dRs);
-            Cp = new EngrNumber(dCp);
+            SetProperty(ref rs, dRs);
+            SetProperty(ref cp, dCp);
 
         }
 
