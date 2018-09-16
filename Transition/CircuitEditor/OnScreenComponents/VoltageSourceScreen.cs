@@ -30,8 +30,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 ContentTemplate = (DataTemplate)Application.Current.Resources["symbolGenerator"]
             };
             ComponentCanvas.Children.Add(SymbolGenerator);
-            Canvas.SetTop(SymbolGenerator, 20);
-            Canvas.SetLeft(SymbolGenerator, 20);
+            SetTop(SymbolGenerator, 20);
+            SetLeft(SymbolGenerator, 20);
 
             txtComponentName = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b1 = new Binding()
@@ -42,19 +42,19 @@ namespace Transition.CircuitEditor.OnScreenComponents
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
             txtComponentName.RenderTransform = new TranslateTransform() { };
             txtComponentName.SizeChanged += delegate { setPositionTextBoxes(); };
-            TextCanvas.Children.Add(txtComponentName);
+            Children.Add(txtComponentName);
 
             txtVoltage = new TextBlock()
             {
 
             };
-            TextCanvas.Children.Add(txtVoltage);
+            Children.Add(txtVoltage);
 
             txtImpedance = new TextBlock()
             {
 
             };
-            TextCanvas.Children.Add(txtImpedance);
+            Children.Add(txtImpedance);
         }
 
         public override void setPositionTextBoxes()

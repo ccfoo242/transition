@@ -31,8 +31,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
 
             ComponentCanvas.Children.Add(SymbolResistor);
-            Canvas.SetTop(SymbolResistor, 20);
-            Canvas.SetLeft(SymbolResistor, 20);
+            SetTop(SymbolResistor, 20);
+            SetLeft(SymbolResistor, 20);
 
             Binding b1 = new Binding()
             {
@@ -47,7 +47,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
             txtComponentName.SizeChanged += delegate { setPositionTextBoxes(); };
-            TextCanvas.Children.Add(txtComponentName);
+            Children.Add(txtComponentName);
 
 
             txtResistanceValue = new TextBlock()
@@ -64,7 +64,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
             txtResistanceValue.SetBinding(TextBlock.TextProperty, b2);
             txtResistanceValue.SizeChanged += delegate { setPositionTextBoxes(); };
-            TextCanvas.Children.Add(txtResistanceValue);
+            Children.Add(txtResistanceValue);
             
             postConstruct();
 

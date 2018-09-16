@@ -12,17 +12,12 @@ using Windows.UI.Xaml.Media;
 
 namespace Transition.CircuitEditor.OnScreenComponents
 {
-    public abstract class ScreenElementBase : FrameworkElement
-    {
-
-    }
-
-    public abstract class ScreenComponentBase : ScreenElementBase
+ 
+    public abstract class ScreenComponentBase : Canvas
     {
         public Canvas ComponentCanvas { get; }
         public CompositeTransform ComponentTransform { get; }
-        public Canvas TextCanvas { get; }
-
+      
         public SerializableComponent SerializableComponent { get; }
 
         public abstract double SchematicWidth { get; }
@@ -34,7 +29,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public abstract void setPositionTextBoxes();
         
-        public ScreenComponentBase(SerializableComponent component)
+        public ScreenComponentBase(SerializableComponent component) : base()
         {
             SerializableComponent = component;
 
@@ -49,11 +44,9 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 Height = SchematicHeight,
                 RenderTransform = ComponentTransform
             };
-
-            TextCanvas = new Canvas();
-            TextCanvas.Children.Add(ComponentCanvas);
             
-
+            Children.Add(ComponentCanvas);
+            
             ComponentCanvas.PointerPressed += Element_PointerPressed;
             DataContext = SerializableComponent;
 

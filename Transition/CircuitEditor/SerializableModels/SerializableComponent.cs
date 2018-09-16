@@ -9,7 +9,19 @@ using Windows.UI.Xaml.Controls;
 
 namespace Transition.CircuitEditor.Serializable
 {
-    public abstract class SerializableComponent : BindableBase
+    public abstract class SerializableElement : BindableBase
+    {
+        private string elementName;
+        public string ElementName
+        {
+            get { return elementName; }
+            set { SetProperty(ref elementName, value); }
+        }
+
+        public abstract string ComponentLetter { get; }
+    }
+
+    public abstract class SerializableComponent : SerializableElement
     {
         private int rotation;
         public int Rotation { get { return rotation; }
@@ -31,10 +43,7 @@ namespace Transition.CircuitEditor.Serializable
         public int PositionY { get { return positionY; }
             set { SetProperty(ref positionY, value); } }
 
-        private string componentName;
-        public string ComponentName { get { return componentName; }
-            set { SetProperty(ref componentName, value); } }
-
+      
         // ParametersControl is the UI Control that allows user to
         // configure the component parameters
         public UserControl ParametersControl { get; set; }
@@ -47,6 +56,6 @@ namespace Transition.CircuitEditor.Serializable
         // 
         public ScreenComponentBase OnScreenComponent { get; set; }
 
-        public abstract string ComponentLetter { get; }
+       
     }
 }

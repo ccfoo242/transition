@@ -107,6 +107,7 @@
     <Compile Include="CircuitEditor\OnScreenComponents\ScreenComponentBase.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\TransformerScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\VoltageSourceScreen.cs" />
+    <Compile Include="CircuitEditor\OnScreenComponents\WireScreen.cs" />
     <Compile Include="CircuitEditor\ParametersControls\CapacitorParametersControl.xaml.cs">
       <DependentUpon>CapacitorParametersControl.xaml</DependentUpon>
     </Compile>
@@ -144,6 +145,7 @@
     <Compile Include="CircuitEditor\SerializableModels\Resistor.cs" />
     <Compile Include="CircuitEditor\SerializableModels\Transformer.cs" />
     <Compile Include="CircuitEditor\SerializableModels\VoltageSource.cs" />
+    <Compile Include="CircuitEditor\SerializableModels\Wire.cs" />
     <Compile Include="CircuitEditor\Wire.xaml.cs">
       <DependentUpon>Wire.xaml</DependentUpon>
     </Compile>
@@ -164,8 +166,8 @@
     <Compile Include="CustomControls\GroupBox.xaml.cs">
       <DependentUpon>GroupBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Design\Design.cs" />
-    <Compile Include="EngrNumber.cs" />
+    <Compile Include="Design\UserDesign.cs" />
+    <Compile Include="Common\EngrNumber.cs" />
     <Compile Include="Function\Function.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>

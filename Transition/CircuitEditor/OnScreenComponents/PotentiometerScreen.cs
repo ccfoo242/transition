@@ -32,8 +32,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 ContentTemplate = (DataTemplate)Application.Current.Resources["symbolPotentiometer"]
             };
             ComponentCanvas.Children.Add(SymbolPotentiometer);
-            Canvas.SetTop(SymbolPotentiometer, 20);
-            Canvas.SetLeft(SymbolPotentiometer, 20);
+            SetTop(SymbolPotentiometer, 20);
+            SetLeft(SymbolPotentiometer, 20);
 
             txtComponentName = new TextBlock()
             {
@@ -59,7 +59,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 RenderTransform = new TranslateTransform(),
                 Text = "CW"
             };
-            TextCanvas.Children.Add(txtCW);
+            Children.Add(txtCW);
 
             txtCCW = new TextBlock()
             {
@@ -67,7 +67,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 RenderTransform = new TranslateTransform(),
                 Text = "CCW"
             };
-            TextCanvas.Children.Add(txtCCW);
+            Children.Add(txtCCW);
 
             Binding b1 = new Binding()
             {
@@ -76,7 +76,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
             txtComponentName.SizeChanged += delegate { setPositionTextBoxes(); };
-            TextCanvas.Children.Add(txtComponentName);
+            Children.Add(txtComponentName);
 
 
             Binding b2 = new Binding()
@@ -87,7 +87,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
             txtResistanceValue.SetBinding(TextBlock.TextProperty, b2);
             txtResistanceValue.SizeChanged += delegate { setPositionTextBoxes(); };
-            TextCanvas.Children.Add(txtResistanceValue);
+            Children.Add(txtResistanceValue);
 
 
             Binding b3 = new Binding()
@@ -98,7 +98,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
             txtPositionValue.SetBinding(TextBlock.TextProperty, b3);
             txtPositionValue.SizeChanged += delegate { setPositionTextBoxes(); };
-            TextCanvas.Children.Add(txtPositionValue);
+            Children.Add(txtPositionValue);
 
             postConstruct();
         }

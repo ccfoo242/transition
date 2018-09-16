@@ -22,15 +22,14 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public CapacitorScreen(Capacitor capacitor) : base(capacitor)
         {
-
             ContentControl symbolCapacitor = new ContentControl()
             {
                 ContentTemplate = (DataTemplate)Application.Current.Resources["symbolCapacitor"]
             };
 
             ComponentCanvas.Children.Add(symbolCapacitor);
-            Canvas.SetTop(symbolCapacitor, 20);
-            Canvas.SetLeft(symbolCapacitor, 20);
+            SetTop(symbolCapacitor, 20);
+            SetLeft(symbolCapacitor, 20);
 
             txtComponentName = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b1 = new Binding()
@@ -41,7 +40,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
             txtComponentName.RenderTransform = new TranslateTransform() { };
             txtComponentName.SizeChanged += delegate { setPositionTextBoxes(); };
-            TextCanvas.Children.Add(txtComponentName);
+            Children.Add(txtComponentName);
 
 
             txtCapacitorValue = new TextBlock() { FontWeight = FontWeights.ExtraBold };
@@ -53,7 +52,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             txtCapacitorValue.SetBinding(TextBlock.TextProperty, b2);
             txtCapacitorValue.RenderTransform = new TranslateTransform() { };
             txtCapacitorValue.SizeChanged += delegate { setPositionTextBoxes(); };
-            TextCanvas.Children.Add(txtCapacitorValue);
+            Children.Add(txtCapacitorValue);
 
             setPositionTextBoxes();
 

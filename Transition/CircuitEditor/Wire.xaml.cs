@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Transition.CircuitEditor
 {
-    public sealed partial class Wire : UserControl, IElectricElement
+    public sealed partial class OldWire : UserControl, IElectricElement
     {
         public double distXPoint1;
         public double distYPoint1;
@@ -32,12 +32,12 @@ namespace Transition.CircuitEditor
         
         public CircuitEditor ce;
 
-        public Wire()
+        public OldWire()
         {
             this.InitializeComponent();
         }
 
-        public Wire(CircuitEditor ce)
+        public OldWire(CircuitEditor ce)
         {
             this.InitializeComponent();
             this.ce = ce;

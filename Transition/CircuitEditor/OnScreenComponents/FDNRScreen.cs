@@ -30,8 +30,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
 
             ComponentCanvas.Children.Add(SymbolFdnr);
-            Canvas.SetTop(SymbolFdnr, 20);
-            Canvas.SetLeft(SymbolFdnr, 20);
+            SetTop(SymbolFdnr, 20);
+            SetLeft(SymbolFdnr, 20);
 
             txtComponentName = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b1 = new Binding()
@@ -43,7 +43,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
             txtComponentName.RenderTransform = new TranslateTransform() { };
             txtComponentName.SizeChanged += delegate { setPositionTextBoxes(); };
-            TextCanvas.Children.Add(txtComponentName);
+            Children.Add(txtComponentName);
 
 
             txtFdnrValue = new TextBlock() { FontWeight = FontWeights.ExtraBold };
@@ -55,7 +55,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             txtFdnrValue.SetBinding(TextBlock.TextProperty, b2);
             txtFdnrValue.RenderTransform = new TranslateTransform() { };
             txtFdnrValue.SizeChanged += delegate { setPositionTextBoxes(); };
-            TextCanvas.Children.Add(txtFdnrValue);
+            Children.Add(txtFdnrValue);
 
             postConstruct();
         }

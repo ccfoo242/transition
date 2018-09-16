@@ -32,8 +32,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 ContentTemplate = (DataTemplate)Application.Current.Resources["symbolTransformer"]
             };
             ComponentCanvas.Children.Add(SymbolTransformer);
-            Canvas.SetTop(SymbolTransformer, 20);
-            Canvas.SetLeft(SymbolTransformer, 20);
+            SetTop(SymbolTransformer, 20);
+            SetLeft(SymbolTransformer, 20);
 
 
             txtComponentName = new TextBlock() { FontWeight = FontWeights.ExtraBold };
@@ -46,7 +46,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
             txtComponentName.RenderTransform = new TranslateTransform() { };
             txtComponentName.SizeChanged += delegate { setPositionTextBoxes(); };
-            TextCanvas.Children.Add(txtComponentName);
+            Children.Add(txtComponentName);
 
 
             txtTurnsRatio = new TextBlock()
@@ -64,7 +64,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
             txtTurnsRatio.SetBinding(TextBlock.TextProperty, b2);
             txtTurnsRatio.SizeChanged += delegate { setPositionTextBoxes(); };
-            TextCanvas.Children.Add(txtTurnsRatio);
+            Children.Add(txtTurnsRatio);
 
             txtPri = new TextBlock()
             {
@@ -72,7 +72,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 Text = "Pri",
                 RenderTransform = new TranslateTransform()
             };
-            TextCanvas.Children.Add(txtPri);
+            Children.Add(txtPri);
 
             txtSec = new TextBlock()
             {
@@ -80,7 +80,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 Text = "Sec",
                 RenderTransform = new TranslateTransform()
             };
-            TextCanvas.Children.Add(txtSec);
+            Children.Add(txtSec);
 
             postConstruct();
 

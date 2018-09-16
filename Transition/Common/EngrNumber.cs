@@ -35,6 +35,7 @@ namespace Transition
                 { "G",   9 },
                 { "M",   6 },
                 { "K",   3 },
+                { "k" ,  3 },
                 { "" ,   0 },
                 { "m",  -3 },
                 { "u",  -6 },
@@ -45,10 +46,13 @@ namespace Transition
                 { "z", -21 },
                 { "y", -24 }
             };
-
-        public EngrNumber(decimal mantissa, String prefix)
+        /* if you notice that the prefix Kilo appears two times,
+           it is because both upper and lower case are allowed
+           k and K, in case of inverse function, (getting prefix
+           from exponent), upper case character K is returned.             
+        */
+        public EngrNumber(decimal mantissa, string prefix)
         {
-            
             if (prefix == null) prefix = "";
             
             this.Mantissa = mantissa;
@@ -60,9 +64,10 @@ namespace Transition
             normalize means to have one, two or three digits
              in the left side of the point, and adjust the prefix accordingly
              e.g. :
-              0.01234  ==> 12.3400m
-              1234567K ==>  1.2346G
-             this operation does not alter the total value of the struct
+              0.01234  ==>  12.3400m
+              1234567K ==>   1.2346G
+              12345    ==>  12.3450K
+             this operation does not alter the total value of the number
             */
             if (Mantissa == 0) return;
 
@@ -134,7 +139,7 @@ namespace Transition
                 return Mantissa.ToString("##0.0000") + Prefix;
         }
 
-        public String ToShortString()
+        public string ToShortString()
         {
             if (Prefix == null)
                 return Mantissa.ToString();
@@ -148,7 +153,7 @@ namespace Transition
             {
                 foreach (KeyValuePair<String, int> pair in mapPrefixes)
                     if (pair.Value == exponent) return pair.Key;
-                throw new ArgumentException() ;
+                throw new ArgumentException();
             }
             else
                 throw new ArgumentException();
@@ -156,17 +161,22 @@ namespace Transition
 
         public static int getExponent(string prefix)
         {
-            if (prefix == null) return 0;
+            if (!validPrefix(prefix)) throw new ArgumentException();
 
-            if (mapPrefixes.Keys.Contains(prefix))
-                return mapPrefixes[prefix];
-            else
-                throw new ArgumentException();
+            return mapPrefixes[prefix];
+           
         }
 
-        public static string getInversePrefix(String prefix)
+        public static bool validPrefix(string prefix)
         {
-            if (!mapPrefixes.Keys.Contains(prefix))
+            if (prefix == null) return false;
+
+            return mapPrefixes.Keys.Contains(prefix);
+        }
+
+        public static string getInversePrefix(string prefix)
+        {
+            if (!validPrefix(prefix))
                 throw new ArgumentException();
 
             return getPrefix(getExponent(prefix) * -1);
@@ -204,7 +214,7 @@ namespace Transition
             return output;
         }
 
-        public static EngrNumber Parse(String rawString)
+        public static EngrNumber Parse(string rawString)
         {
             rawString.Trim();
 
@@ -212,9 +222,8 @@ namespace Transition
                 throw new ArgumentException();
 
             string lastChar = rawString.Substring(rawString.Length - 1, 1);
-            if (lastChar == "k") lastChar = "K";
-
-            bool prefixExists = mapPrefixes.Keys.Contains(lastChar);
+           
+            bool prefixExists = validPrefix(lastChar);
 
             string stringMantissa;
             string prefix;
@@ -230,17 +239,13 @@ namespace Transition
                 stringMantissa = rawString;
                 prefix = "";
             }
-
-        
+            
             decimal parsedMantissa = 0;
 
-            try { parsedMantissa = decimal.Parse(stringMantissa); }
-            catch
-            {
-                throw new ArgumentException();
-            }
+            try   { parsedMantissa = decimal.Parse(stringMantissa); }
+            catch { throw new ArgumentException(); }
 
-            if (!EngrNumber.mapPrefixes.Keys.Contains(prefix))
+            if (!validPrefix(prefix))
                 throw new ArgumentException();
 
             return new EngrNumber(parsedMantissa, prefix);

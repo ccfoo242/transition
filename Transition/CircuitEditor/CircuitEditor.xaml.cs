@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Transition.CircuitEditor.Serializable;
+using Transition.Design;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -29,13 +30,15 @@ namespace Transition.CircuitEditor
     {
         public static CircuitEditor currentInstance;
 
+        public UserDesign currentDesign { get; set; }
+
         public ObservableCollection<IElectricElement> selectedElements;
         public List<Line> gridLines;
 
         public SerializableComponent clickedElement;
 
-        public Wire manipulatingPnt1;
-        public Wire manipulatingPnt2;
+        public OldWire manipulatingPnt1;
+        public OldWire manipulatingPnt2;
 
         public bool groupSelect = false;
         public Point pointStartGroupSelect;
@@ -47,7 +50,7 @@ namespace Transition.CircuitEditor
 
         public CircuitEditor()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             selectedElements = new ObservableCollection<IElectricElement>();
             selectedElements.CollectionChanged += refreshSelectedElements;
             gridLines = new List<Line>();
@@ -139,7 +142,7 @@ namespace Transition.CircuitEditor
 
             if (element == "wire")
             {
-                Wire elto = new Wire(this);
+                OldWire elto = new OldWire(this);
                 cnvCircuit.Children.Add(elto);
                 Canvas.SetLeft(elto, 0);
                 Canvas.SetTop(elto, 0);
