@@ -9,7 +9,9 @@ namespace Transition.CircuitEditor.SerializableModels
 {
     public class VoltageSource : SerializableComponent
     {
-        public override string ComponentLetter => "V";
+        public override string ElementLetter => "V";
+
+        public override int QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
 
     }
 }

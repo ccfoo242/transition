@@ -12,23 +12,24 @@ using Windows.UI.Xaml.Media;
 
 namespace Transition.CircuitEditor.OnScreenComponents
 {
- 
+
     public abstract class ScreenComponentBase : Canvas
     {
         public Canvas ComponentCanvas { get; }
         public CompositeTransform ComponentTransform { get; }
-      
+
         public SerializableComponent SerializableComponent { get; }
 
         public abstract double SchematicWidth { get; }
         public abstract double SchematicHeight { get; }
-        
+
         public double ActualRotation { get { return SerializableComponent.Rotation; } }
-        public bool FlipX { get { return SerializableComponent.FlipX; } } 
+        public bool FlipX { get { return SerializableComponent.FlipX; } }
         public bool FlipY { get { return SerializableComponent.FlipY; } }
 
         public abstract void setPositionTextBoxes();
-        
+        public abstract int[,] TerminalPositions { get; }
+
         public ScreenComponentBase(SerializableComponent component) : base()
         {
             SerializableComponent = component;

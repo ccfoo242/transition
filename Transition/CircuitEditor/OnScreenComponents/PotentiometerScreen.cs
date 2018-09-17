@@ -17,6 +17,20 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public override double SchematicWidth => 120;
         public override double SchematicHeight => 160;
 
+        public override int[,] TerminalPositions { get {
+                if (QuantityOfTerminals == 3)
+                { return new int[,] { }; }
+                else
+                if (QuantityOfTerminals == 4)
+                { return new int[,] { }; }
+                else
+                if (QuantityOfTerminals == 5)
+                { return new int[,] { }; }
+                else /* 6 */
+                { return new int[,] { }; }
+            }
+        } 
+    
         public TextBlock txtCW;
         public TextBlock txtCCW;
         public TextBlock txtResistanceValue;
@@ -24,6 +38,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public TextBlock txtComponentName;
 
         public ContentControl SymbolPotentiometer { get; }
+        public int QuantityOfTerminals { get { return SerializableComponent.QuantityOfTerminals; } }
+
 
         public PotentiometerScreen(Potentiometer pot) : base(pot)
         {

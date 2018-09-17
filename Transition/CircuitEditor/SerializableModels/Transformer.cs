@@ -9,7 +9,7 @@ namespace Transition.CircuitEditor.SerializableModels
 {
     public class Transformer : SerializableComponent
     {
-        public override string ComponentLetter => "T";
+        public override string ElementLetter => "T";
 
 
         private EngrNumber turnsRatio;
@@ -61,7 +61,9 @@ namespace Transition.CircuitEditor.SerializableModels
         private EngrNumber lsLeak;
         public EngrNumber LsLeak { get { return lsLeak; }}
 
-        
+        public override int QuantityOfTerminals { get => 4; set => throw new NotImplementedException(); }
+
+
         private void changeTR()
         {
             double tr = TurnsRatio.ValueDouble;

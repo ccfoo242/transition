@@ -9,7 +9,7 @@ namespace Transition.CircuitEditor.SerializableModels
 {
     public class Inductor : SerializableComponent
     {
-        public override string ComponentLetter => "L";
+        public override string ElementLetter => "L";
         
         private EngrNumber inductorValue;
         public EngrNumber InductorValue
@@ -80,6 +80,8 @@ namespace Transition.CircuitEditor.SerializableModels
                 calculateRsCp();
             }
         }
+
+        public override int QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
 
 
         private void calculateFoQ()

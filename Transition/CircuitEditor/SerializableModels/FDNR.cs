@@ -9,7 +9,7 @@ namespace Transition.CircuitEditor.SerializableModels
 {
     public class FDNR : SerializableComponent
     {
-        public override string ComponentLetter => "D";
+        public override string ElementLetter => "D";
         
         private EngrNumber fdnrValue;
         public EngrNumber FdnrValue
@@ -17,5 +17,8 @@ namespace Transition.CircuitEditor.SerializableModels
             get { return fdnrValue; }
             set { SetProperty(ref fdnrValue, value); }
         }
+
+        public override int QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
+
     }
 }

@@ -12,6 +12,11 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public override double SchematicWidth => 80;
         public override double SchematicHeight => 80;
 
+        public override int[,] TerminalPositions
+        {
+            get => new int[,] { { 40, 20 } };
+        }
+
         public GroundScreen(Ground ground) : base(ground)
         {
 

@@ -18,6 +18,11 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public override double SchematicWidth => 120;
         public override double SchematicHeight => 80;
 
+        public override int[,] TerminalPositions
+        {
+            get => new int[,] { { 20, 40 }, { 100, 40 } };
+        }
+
         public TextBlock txtComponentName;
         public TextBlock txtInductorValue;
 

@@ -10,7 +10,7 @@ namespace Transition.CircuitEditor.Serializable
 {
     public class Resistor : SerializableComponent
     {
-        public override string ComponentLetter => "R";
+        public override string ElementLetter => "R";
 
         private EngrNumber resistorValue;
         public EngrNumber ResistorValue
@@ -65,6 +65,7 @@ namespace Transition.CircuitEditor.Serializable
                   calculateLsCp(); }
         }
 
+        public override int QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
 
         public Resistor() : base()
         {

@@ -9,9 +9,8 @@ namespace Transition.CircuitEditor.SerializableModels
 {
     public class Potentiometer : SerializableComponent
     {
-        public override string ComponentLetter => "P";
-
-
+        public override string ElementLetter => "P";
+        
         private EngrNumber resistanceValue;
         public EngrNumber ResistanceValue
         {
@@ -31,6 +30,13 @@ namespace Transition.CircuitEditor.SerializableModels
                 positionValue = value;
                 SetProperty(ref positionValue, value);
             }
+        }
+
+        public override int QuantityOfTerminals { get; set; }
+
+        public Potentiometer() : base()
+        {
+
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public TextBlock txtImpedance;
 
         public ContentControl SymbolGenerator;
-
+  
         public VoltageSourceScreen(VoltageSource vs) : base(vs)
         {
             SymbolGenerator = new ContentControl()

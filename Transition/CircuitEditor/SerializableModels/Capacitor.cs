@@ -9,7 +9,7 @@ namespace Transition.CircuitEditor.SerializableModels
 {
     public class Capacitor : SerializableComponent
     {
-        public override string ComponentLetter => "C";
+        public override string ElementLetter => "C";
 
 
         private EngrNumber capacitorValue;
@@ -76,13 +76,13 @@ namespace Transition.CircuitEditor.SerializableModels
                 calculateRsLs();
             }
         }
+        
+        public override int QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
 
         public Capacitor()
         {
             CapacitorValue = EngrNumber.One;
-
             CapacitorModel = 0;
-
         }
 
 

@@ -29,7 +29,9 @@ namespace Transition.CircuitEditor.SerializableModels
             get { return y2; }
             set { SetProperty(ref y2, value); } }
 
-        public override string ComponentLetter => "W";
+        public override string ElementLetter => "W";
+
+        public override int QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
 
         public SerializableElement Bind1 { get; set; }
         public byte BoundedTerminal1 { get; set; }

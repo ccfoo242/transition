@@ -18,7 +18,8 @@ namespace Transition.CircuitEditor.Serializable
             set { SetProperty(ref elementName, value); }
         }
 
-        public abstract string ComponentLetter { get; }
+        public abstract string ElementLetter { get; }
+        public abstract int QuantityOfTerminals { get; set; }
     }
 
     public abstract class SerializableComponent : SerializableElement
@@ -52,7 +53,7 @@ namespace Transition.CircuitEditor.Serializable
         // for showing the component on screen of the CircuitEditor
         // it manages position of textboxes like component values, names
         // or other parameters.
-        // it has a Canvas that must be added to the canvas of CircuitEditor
+        // it is a Canvas that must be added to the canvas of CircuitEditor
         // 
         public ScreenComponentBase OnScreenComponent { get; set; }
 
