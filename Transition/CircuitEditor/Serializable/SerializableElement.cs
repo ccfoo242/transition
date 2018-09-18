@@ -20,6 +20,8 @@ namespace Transition.CircuitEditor.Serializable
 
         public abstract string ElementLetter { get; }
         public abstract int QuantityOfTerminals { get; set; }
+        public ScreenComponentBase OnScreenComponent { get; set; }
+
     }
 
     public abstract class SerializableComponent : SerializableElement
@@ -55,8 +57,7 @@ namespace Transition.CircuitEditor.Serializable
         // or other parameters.
         // it is a Canvas that must be added to the canvas of CircuitEditor
         // 
-        public ScreenComponentBase OnScreenComponent { get; set; }
-
+      
        
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Transition.CircuitEditor.SerializableModels;
+using Transition.CircuitEditor.Serializable;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -34,8 +34,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
 
             ComponentCanvas.Children.Add(symbolInductor);
-            SetTop(symbolInductor, 20);
-            SetLeft(symbolInductor, 20);
+            Canvas.SetTop(symbolInductor, 20);
+            Canvas.SetLeft(symbolInductor, 20);
             
             txtComponentName = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b1 = new Binding()

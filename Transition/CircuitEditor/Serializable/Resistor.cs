@@ -74,7 +74,7 @@ namespace Transition.CircuitEditor.Serializable
             ResistorModel = 0;
             Ls = new EngrNumber(1, "p");
             Cp = new EngrNumber(1, "p");
-
+            
             ParametersControl = new ResistorParametersControl();
             OnScreenComponent = new OnScreenComponents.ResistorScreen(this);
         }

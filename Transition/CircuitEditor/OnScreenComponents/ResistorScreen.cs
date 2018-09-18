@@ -36,8 +36,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
 
             ComponentCanvas.Children.Add(SymbolResistor);
-            SetTop(SymbolResistor, 20);
-            SetLeft(SymbolResistor, 20);
+            Canvas.SetTop(SymbolResistor, 20);
+            Canvas.SetLeft(SymbolResistor, 20);
 
             Binding b1 = new Binding()
             {

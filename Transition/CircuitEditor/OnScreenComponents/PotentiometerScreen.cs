@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Transition.CircuitEditor.SerializableModels;
+using Transition.CircuitEditor.Serializable;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -48,8 +48,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 ContentTemplate = (DataTemplate)Application.Current.Resources["symbolPotentiometer"]
             };
             ComponentCanvas.Children.Add(SymbolPotentiometer);
-            SetTop(SymbolPotentiometer, 20);
-            SetLeft(SymbolPotentiometer, 20);
+            Canvas.SetTop(SymbolPotentiometer, 20);
+            Canvas.SetLeft(SymbolPotentiometer, 20);
 
             txtComponentName = new TextBlock()
             {

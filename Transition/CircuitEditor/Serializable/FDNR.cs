@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Transition.CircuitEditor.Serializable;
 
-namespace Transition.CircuitEditor.SerializableModels
+namespace Transition.CircuitEditor.Serializable
 {
     public class FDNR : SerializableComponent
     {

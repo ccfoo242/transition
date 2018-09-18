@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.Serializable;
+using Windows.Foundation;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
@@ -12,8 +14,10 @@ using Windows.UI.Xaml.Media;
 
 namespace Transition.CircuitEditor.OnScreenComponents
 {
+    /* i had to use Grid class because it has a border
+     as for Border class, it is sealed...*/
 
-    public abstract class ScreenComponentBase : Canvas
+    public abstract class ScreenComponentBase : Grid
     {
         public Canvas ComponentCanvas { get; }
         public CompositeTransform ComponentTransform { get; }
@@ -29,6 +33,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public abstract void setPositionTextBoxes();
         public abstract int[,] TerminalPositions { get; }
+
+        public Point PressedPoint;
 
         public ScreenComponentBase(SerializableComponent component) : base()
         {
@@ -47,10 +53,10 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
             
             Children.Add(ComponentCanvas);
-            
+         
             ComponentCanvas.PointerPressed += Element_PointerPressed;
             DataContext = SerializableComponent;
-
+            
         }
 
         protected void postConstruct()
@@ -69,6 +75,24 @@ namespace Transition.CircuitEditor.OnScreenComponents
             }
             CircuitEditor.currentInstance.clickElement(this.SerializableComponent);
         }
+
+
+        public void selected()
+        {
+            BorderBrush = new SolidColorBrush(Colors.Black);
+            BorderThickness = new Thickness(1);
+            updateOriginPoint();
+        }
         
+
+        public void deselected()
+        {
+             BorderBrush = new SolidColorBrush(Colors.Transparent);
+        }
+
+        public void updateOriginPoint()
+        {
+            PressedPoint = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
+        }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Transition.CircuitEditor.SerializableModels;
+using Transition.CircuitEditor.Serializable;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -35,8 +35,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 ContentTemplate = (DataTemplate)Application.Current.Resources["symbolTransformer"]
             };
             ComponentCanvas.Children.Add(SymbolTransformer);
-            SetTop(SymbolTransformer, 20);
-            SetLeft(SymbolTransformer, 20);
+            Canvas.SetTop(SymbolTransformer, 20);
+            Canvas.SetLeft(SymbolTransformer, 20);
 
 
             txtComponentName = new TextBlock() { FontWeight = FontWeights.ExtraBold };

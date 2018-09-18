@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Transition.CircuitEditor.OnScreenComponents;
 using Transition.CircuitEditor.Serializable;
 using Transition.Design;
 using Windows.ApplicationModel.DataTransfer;
@@ -32,10 +33,10 @@ namespace Transition.CircuitEditor
 
         public UserDesign currentDesign { get; set; }
 
-        public ObservableCollection<IElectricElement> selectedElements;
+        public ObservableCollection<SerializableElement> selectedElements;
         public List<Line> gridLines;
 
-        public SerializableComponent clickedElement;
+        public SerializableElement clickedElement;
 
         public OldWire manipulatingPnt1;
         public OldWire manipulatingPnt2;
@@ -51,7 +52,7 @@ namespace Transition.CircuitEditor
         public CircuitEditor()
         {
             InitializeComponent();
-            selectedElements = new ObservableCollection<IElectricElement>();
+            selectedElements = new ObservableCollection<SerializableElement>();
             selectedElements.CollectionChanged += refreshSelectedElements;
             gridLines = new List<Line>();
 
@@ -70,6 +71,7 @@ namespace Transition.CircuitEditor
         private void clickDeleteComponent(object sender, RoutedEventArgs e)
         {
             bool deleted = false;
+
             foreach (IElectricElement element in selectedElements)
                 if (cnvCircuit.Children.Contains((UIElement)element))
                 {
@@ -82,15 +84,15 @@ namespace Transition.CircuitEditor
 
         public void refreshSelectedElements(object sender, NotifyCollectionChangedEventArgs e)
         {
-            foreach (IElectricElement element in cnvCircuit.Children)
-                element.deselected();
+            foreach (SerializableElement element in currentDesign.elements)
+                element.OnScreenComponent.deselected();
 
-            foreach (IElectricElement element in selectedElements)
+            foreach (SerializableElement element in selectedElements)
             {
-                element.selected();
-                if (element is ElectricComponent)
+                element.OnScreenComponent.selected();
+                if (element is SerializableComponent)
                 {
-                    scrComponentParameters.Content = ((ElectricComponent)element).parameters;
+                    scrComponentParameters.Content = ((SerializableComponent)element).ParametersControl;
                     enableComponentEdit();
                 }
             }
@@ -119,16 +121,16 @@ namespace Transition.CircuitEditor
             scrComponentParameters.Content = grdNoSelectedElement;
         }
 
-        public void selectElement(IElectricElement element)
+        public void selectElement(SerializableElement element)
         {
             selectedElements.Clear();
             selectedElements.Add(element);
 
         }
 
-        public void clickElement(SerializableComponent component)
+        public void clickElement(SerializableElement element)
         {
-            clickedElement = component;
+            clickedElement = element;
         }
 
         public void addElement(String element)
@@ -193,8 +195,8 @@ namespace Transition.CircuitEditor
 
         private async void drop(object sender, DragEventArgs e)
         {
-        //  List<string> a = new List<string>();
-        //  a.AddRange(e.DataView.AvailableFormats);
+            //  List<string> a = new List<string>();
+            //  a.AddRange(e.DataView.AvailableFormats);
 
             string element = await e.DataView.GetTextAsync();
             Point ptCanvas = e.GetPosition(cnvCircuit);
@@ -394,7 +396,7 @@ namespace Transition.CircuitEditor
             splitter.IsPaneOpen = true;
             selectElement(element);
         }
-        
+
         public int getMaximumNumberElement(String ElementLetter)
         {
             if (ElementLetter == null) return 0;
@@ -422,6 +424,24 @@ namespace Transition.CircuitEditor
         public int getNextNumberLetter(String ElementLetter)
         {
             return getMaximumNumberElement(ElementLetter) + 1;
+        }
+
+        public static SerializableElement getElement(string element)
+        {
+            switch (element)
+            {
+                case "wire":           return new Wire();
+                case "resistor":       return new Resistor();
+                case "capacitor":      return new Capacitor();
+                case "inductor":       return new Inductor();
+                case "fdnr":           return new FDNR();
+                case "ground":         return new Ground();
+                case "potentiometer":  return new Potentiometer();
+                case "transformer":    return new Transformer();
+                case "generator":      return new VoltageSource();
+            }
+
+            throw new NotSupportedException();
         }
     }
 }

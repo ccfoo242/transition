@@ -21,8 +21,7 @@ namespace Transition.CircuitEditor
 {
     public sealed partial class ElectricComponent : UserControl, IElectricElement
     {
-        public Point PressedPoint;
-        
+      
         public IComponentParameterControl parameters { get; set; }
 
         public String elementName
@@ -156,12 +155,6 @@ namespace Transition.CircuitEditor
                 return false;
         }
 
-        public void deselected()
-        {
-            grd.BorderBrush = new SolidColorBrush(Colors.Transparent);
-            //  grd.BorderThickness = new Thickness(2);
-        }
-
 
         public void moveRelative(Point point)
         {
@@ -170,19 +163,7 @@ namespace Transition.CircuitEditor
         }
 
 
-        public void selected()
-        {
-            grd.BorderBrush = new SolidColorBrush(Colors.Black);
-            grd.BorderThickness = new Thickness(1);
-            updateOriginPoint();
-        }
-        
-
-
-        public void updateOriginPoint()
-        {
-            PressedPoint = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
-        }
+      
 
         private void rightTap(object sender, RightTappedRoutedEventArgs e)
         {

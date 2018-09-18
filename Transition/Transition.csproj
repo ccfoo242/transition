@@ -136,16 +136,16 @@
       <DependentUpon>ElectricComponent.xaml</DependentUpon>
     </Compile>
     <Compile Include="CircuitEditor\Interfaces.cs" />
-    <Compile Include="CircuitEditor\SerializableModels\Capacitor.cs" />
-    <Compile Include="CircuitEditor\SerializableModels\FDNR.cs" />
-    <Compile Include="CircuitEditor\SerializableModels\Ground.cs" />
-    <Compile Include="CircuitEditor\SerializableModels\Inductor.cs" />
-    <Compile Include="CircuitEditor\SerializableModels\Potentiometer.cs" />
-    <Compile Include="CircuitEditor\SerializableModels\SerializableComponent.cs" />
-    <Compile Include="CircuitEditor\SerializableModels\Resistor.cs" />
-    <Compile Include="CircuitEditor\SerializableModels\Transformer.cs" />
-    <Compile Include="CircuitEditor\SerializableModels\VoltageSource.cs" />
-    <Compile Include="CircuitEditor\SerializableModels\Wire.cs" />
+    <Compile Include="CircuitEditor\Serializable\Capacitor.cs" />
+    <Compile Include="CircuitEditor\Serializable\FDNR.cs" />
+    <Compile Include="CircuitEditor\Serializable\Ground.cs" />
+    <Compile Include="CircuitEditor\Serializable\Inductor.cs" />
+    <Compile Include="CircuitEditor\Serializable\Potentiometer.cs" />
+    <Compile Include="CircuitEditor\Serializable\SerializableElement.cs" />
+    <Compile Include="CircuitEditor\Serializable\Resistor.cs" />
+    <Compile Include="CircuitEditor\Serializable\Transformer.cs" />
+    <Compile Include="CircuitEditor\Serializable\VoltageSource.cs" />
+    <Compile Include="CircuitEditor\Serializable\Wire.cs" />
     <Compile Include="CircuitEditor\Wire.xaml.cs">
       <DependentUpon>Wire.xaml</DependentUpon>
     </Compile>
