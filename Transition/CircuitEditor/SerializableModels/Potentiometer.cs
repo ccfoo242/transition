@@ -36,6 +36,11 @@ namespace Transition.CircuitEditor.SerializableModels
 
         public Potentiometer() : base()
         {
+            // potentiometer always start as the simplest form, 3 terminal
+            // later can be changed by the user to 4, 5 or 6 terminal (
+            // added terminals are mid-point connections
+
+            QuantityOfTerminals = 3;
 
         }
     }

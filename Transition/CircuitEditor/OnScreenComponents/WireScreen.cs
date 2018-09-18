@@ -47,8 +47,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 Mode = BindingMode.OneWay
             };
             line.SetBinding(Line.Y2Property, bY2);
-
-
+            
         }
 
     }

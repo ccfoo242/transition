@@ -110,10 +110,10 @@
         <DataTemplate x:Key="symbolTransformer">
 
             <Canvas Background="Transparent" Width="80" Height="80">
-                <Polyline Points="0,0 20,00 20,8"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="20,72 20,80 0,80"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="00,00 20,00 20,08"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="20,72 20,80 00,80"  Stroke="Black" StrokeThickness="4"/>
 
-                <Polyline Points="80,0 60,00 60,8"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="80,00 60,00 60,08"  Stroke="Black" StrokeThickness="4"/>
                 <Polyline Points="60,72 60,80 80,80"  Stroke="Black" StrokeThickness="4"/>
 
                 <!-- two dots -->

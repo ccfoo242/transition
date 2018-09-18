@@ -19,15 +19,15 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public override int[,] TerminalPositions { get {
                 if (QuantityOfTerminals == 3)
-                { return new int[,] { }; }
+                    { return new int[,] { }; }
                 else
                 if (QuantityOfTerminals == 4)
-                { return new int[,] { }; }
+                    { return new int[,] { }; }
                 else
                 if (QuantityOfTerminals == 5)
-                { return new int[,] { }; }
+                    { return new int[,] { }; }
                 else /* 6 */
-                { return new int[,] { }; }
+                    { return new int[,] { }; }
             }
         } 
     

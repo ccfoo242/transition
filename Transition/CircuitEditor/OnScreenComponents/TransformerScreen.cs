@@ -24,7 +24,10 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public ContentControl SymbolTransformer { get; }
 
-
+        public override int[,] TerminalPositions
+        {
+            get => new int[,] { { 20, 20 }, { 100, 20 }, { 20, 100 }, { 100, 100 } };
+        }
         public TransformerScreen(Transformer trans) : base(trans)
         {
             SymbolTransformer = new ContentControl()
