@@ -30,71 +30,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public abstract void setPositionTextBoxes();
         public abstract int[,] TerminalPositions { get; }
         
-        public double PositionX
-        {
-            get { return (double)GetValue(PositionXProperty); }
-            set { SetValue(PositionXProperty, value);
-                  updateComponentPosition();
-            }
-        }
-
-        // Using a DependencyProperty as the backing store for PositionX.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty PositionXProperty =
-            DependencyProperty.Register("PositionX", typeof(double), typeof(ScreenComponentBase), new PropertyMetadata(0));
         
-        public double PositionY
-        {
-            get { return (double)GetValue(PositionYProperty); }
-            set { SetValue(PositionYProperty, value);
-                  updateComponentPosition();
-            }
-        }
-
-        // Using a DependencyProperty as the backing store for PositionY.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty PositionYProperty =
-            DependencyProperty.Register("PositionY", typeof(double), typeof(ScreenComponentBase), new PropertyMetadata(0));
-        
-
-        public double ActualRotation
-        {
-            get { return (double)GetValue(ActualRotationProperty); }
-            set { SetValue(ActualRotationProperty, value);
-                ComponentTransform.Rotation = value;
-            }
-        }
-
-        // Using a DependencyProperty as the backing store for ActualRotation.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty ActualRotationProperty =
-            DependencyProperty.Register("ActualRotation", typeof(double), typeof(ScreenComponentBase), new PropertyMetadata(0));
-        
-
-        public bool FlipX
-        {
-            get { return (bool)GetValue(FlipXProperty); }
-            set { SetValue(FlipXProperty, value);
-                ComponentTransform.ScaleX = value ? -1 : 1;
-            }
-        }
-
-        // Using a DependencyProperty as the backing store for FlipX.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty FlipXProperty =
-            DependencyProperty.Register("FlipX", typeof(bool), typeof(ScreenComponentBase), new PropertyMetadata(0));
-        
-        public bool FlipY
-        {
-            get { return (bool)GetValue(FlipYProperty); }
-            set { SetValue(FlipYProperty, value);
-                ComponentTransform.ScaleY = value ? -1 : 1;
-            }
-        }
-
-        // Using a DependencyProperty as the backing store for FlipY.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty FlipYProperty =
-            DependencyProperty.Register("FlipY", typeof(bool), typeof(ScreenComponentBase), new PropertyMetadata(0));
-
-
-
-
 
         public Point PressedPoint;
 
@@ -124,47 +60,42 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 Path = new PropertyPath("PositionX"),
                 Mode = BindingMode.OneWay
             };
-            SetBinding(PositionXProperty, bPX);
+            //    BindingOperations.SetBinding(ComponentTransform, CompositeTransform.TranslateXProperty, bPX);
+            SetBinding(Canvas.TopProperty, bPX);
 
             Binding bPY = new Binding()
             {
                 Path = new PropertyPath("PositionY"),
                 Mode = BindingMode.OneWay
             };
-            SetBinding(PositionYProperty, bPY);
+            //    BindingOperations.SetBinding(ComponentTransform, CompositeTransform.TranslateYProperty, bPY);
+            SetBinding(Canvas.LeftProperty, bPY);
 
-            Binding bRotation = new Binding()
+            Binding bRt = new Binding()
             {
                 Path = new PropertyPath("ActualRotation"),
                 Mode = BindingMode.OneWay
             };
-            SetBinding(ActualRotationProperty, bRotation);
+            BindingOperations.SetBinding(ComponentTransform, CompositeTransform.RotationProperty, bRt);
 
             Binding bFX = new Binding()
             {
                 Path = new PropertyPath("FlipX"),
-                Mode = BindingMode.OneWay
+                Mode = BindingMode.OneWay,
+                Converter = new BoolToIntConverter()
             };
-            SetBinding(FlipXProperty, bFX);
+            BindingOperations.SetBinding(ComponentTransform, CompositeTransform.ScaleXProperty, bFX);
 
             Binding bFY = new Binding()
             {
                 Path = new PropertyPath("FlipY"),
-                Mode = BindingMode.OneWay
+                Mode = BindingMode.OneWay,
+                Converter = new BoolToIntConverter()
             };
-            SetBinding(FlipYProperty, bFY);
+            BindingOperations.SetBinding(ComponentTransform, CompositeTransform.ScaleXProperty, bFY);
 
-        }
+        
 
-        private void updateComponentPosition()
-        {
-            try
-            {
-                Canvas.SetLeft(this, PositionX);
-                Canvas.SetTop(this, PositionY);
-            }
-            catch { }
-            
         }
 
         protected void postConstruct()
@@ -201,6 +132,26 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public void updateOriginPoint()
         {
              PressedPoint = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
+        }
+    }
+
+
+    public class BoolToIntConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (value == null) return 1;
+            bool valueBool = (bool)value;
+
+            return valueBool ? -1 : 1;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            if (value == null) return false;
+            int valueInt = (int)value;
+
+            return (valueInt == 1) ? false : true;
         }
     }
 }
