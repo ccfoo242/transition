@@ -21,7 +21,7 @@
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
         <StackPanel Orientation="Horizontal">
             <TextBlock Margin="4" Text="Component Name: "/>
-            <TextBox Margin="4" Text="{x:Bind ComponentName, Mode=TwoWay}"/>
+            <TextBox Margin="4" Text="{Binding ComponentName, Mode=TwoWay}"/>
         </StackPanel>
         <controls:Expander Header="Output Voltage" 
                            ExpandDirection="Down"
@@ -47,8 +47,7 @@
 
                 <StackPanel Orientation="Vertical" Grid.Row="1" HorizontalAlignment="Stretch"
                             x:Name="pnlVoltageConstant">
-                    <customcontrols:EngrNumberBoxDialog x:Name="boxConstVoltage"
-                                                        ValueManuallyChanged="changeConstVoltage"/>
+                    <customcontrols:EngrNumberBoxDialog x:Name="boxConstVoltage"/>
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Grid.Row="1" HorizontalAlignment="Stretch"
                             x:Name="pnlVoltageLibraryCurve">
@@ -80,8 +79,7 @@
 
                 <StackPanel Orientation="Vertical" Grid.Row="1" HorizontalAlignment="Stretch"
                             x:Name="pnlImpedanceConstant">
-                    <customcontrols:EngrNumberBoxDialog x:Name="boxConstImpedance"
-                                                        ValueManuallyChanged="changeConstImpedance"/>
+                    <customcontrols:EngrNumberBoxDialog x:Name="boxConstImpedance"/>
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Grid.Row="1" HorizontalAlignment="Stretch"
                             x:Name="pnlImpedanceLibraryCurve">

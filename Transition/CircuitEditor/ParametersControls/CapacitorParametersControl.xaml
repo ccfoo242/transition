@@ -22,14 +22,14 @@
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
         <StackPanel Orientation="Horizontal">
             <TextBlock Margin="4" Text="Component Name: "/>
-            <TextBox Margin="4" Text="{x:Bind ComponentName, Mode=TwoWay}"/>
+            <TextBox Margin="4" Text="{Binding ComponentName, Mode=TwoWay}"/>
         </StackPanel>
 
         <controls:Expander Header="Capacitor Value" ExpandDirection="Down"
                            IsExpanded="True">
             <customcontrols:ComponentValueBox Unit="Farad" Margin="4" HorizontalAlignment="Left"
                              UnitShort="F" x:Name="componentValueBox"
-                                          ValueChanged="changeC"/>
+                             ComponentValue="{Binding CapacitorValue, Mode=TwoWay}"/>
         </controls:Expander>
         <controls:Expander Header="Capacitor Model" ExpandDirection="Down"
                            IsExpanded="True">
@@ -44,7 +44,7 @@
                     <ComboBox VerticalAlignment="Center"
                                   HorizontalAlignment="Center"
                                   Margin="4" Width="150" 
-                                  SelectedIndex="{x:Bind selectedCapacitorModel, Mode=TwoWay}"
+                                  SelectedIndex="{Binding CapacitorModel, Mode=TwoWay}"
                                   SelectionChanged="modelCapacitorChanged">
                         <ComboBox.Items>
                             <ComboBoxItem Content="Ideal"/>
@@ -69,24 +69,19 @@
                         <ContentControl ContentTemplate="{StaticResource capacitorParasiticModelCircuit}"/>
                     </Viewbox>
                     <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
-                                ValueManuallyChanged="changeLs"
-                                x:Name="BoxLs" Value="{x:Bind Ls, Mode = OneWay}"
+                                x:Name="BoxLs" Value="{Binding Ls, Mode = OneWay}"
                                 VariableName="Ls (Henry)"/>
                     <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
-                                ValueManuallyChanged="changeRp"
-                                x:Name="BoxRp" Value="{x:Bind Rp, Mode = OneWay}"
+                                x:Name="BoxRp" Value="{Binding Rp, Mode = OneWay}"
                                 VariableName="Rp (Ohm)" />
                     <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
-                                ValueManuallyChanged="changeRs"
-                                x:Name="BoxRs" Value="{x:Bind Rs, Mode = OneWay}"
+                                x:Name="BoxRs" Value="{Binding Rs, Mode = OneWay}"
                                 VariableName="Rs (Ohm)" />
                     <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
-                                ValueManuallyChanged="changeFo"
-                                x:Name="BoxFo" Value="{x:Bind Fo, Mode = OneWay}"
+                                x:Name="BoxFo" Value="{Binding Fo, Mode = OneWay}"
                                 VariableName="Fo (Hz)" />
                     <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
-                                ValueManuallyChanged="changeQ"
-                                x:Name="BoxQ" Value="{x:Bind Q, Mode = OneWay}"
+                                x:Name="BoxQ" Value="{Binding Q, Mode = OneWay}"
                                 VariableName="Q"/>
                 </StackPanel>
             </Grid>

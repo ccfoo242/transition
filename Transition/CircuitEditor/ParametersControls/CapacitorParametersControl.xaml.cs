@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Transition.CircuitEditor.SerializableModels;
+using Transition.CircuitEditor.Serializable;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Text;
@@ -54,6 +54,7 @@ namespace Transition.CircuitEditor.Components
             if (SelectedCapacitorModel == 2)
                 pnlExponential.Visibility = Visibility.Visible;
         }
-        
+
+       
     }
 }

@@ -15,17 +15,20 @@
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
         <StackPanel Orientation="Horizontal">
             <TextBlock Margin="4" Text="Component Name: "/>
-            <TextBox Margin="4" Text="{Binding ComponentName, Mode=TwoWay}"/>
+            <TextBox Margin="4" Text="{Binding Path = ComponentName, Mode=TwoWay}"/>
         </StackPanel>
-
-        <controls:Expander Header="Resistor Value" ExpandDirection="Down"
+     
+        <controls:Expander Header="Resistor Value" 
+                           ExpandDirection="Down"
                            IsExpanded="True">
             <customcontrols:ComponentValueBox x:Name="componentValueBox" 
                                               Unit="Ohm" HorizontalAlignment="Left"
-                                              UnitShort="Ω" Margin="4" />
+                                              UnitShort="Ω" Margin="4"
+                                              ComponentValue="{Binding Path=ResistorValue, Mode=TwoWay}"/>
         </controls:Expander>
 
-        <controls:Expander Header="Resistor Model" ExpandDirection="Down"
+        <controls:Expander Header="Resistor Model" 
+                           ExpandDirection="Down"
                            IsExpanded="True">
             <Grid HorizontalAlignment="Stretch" Margin="4">
                 <Grid.RowDefinitions>

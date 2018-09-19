@@ -20,7 +20,10 @@ namespace Transition.Design
         public event ElementDelegate ElementAdded;
         public event ElementDelegate ElementRemoved;
 
-        private UserDesign()
+
+        public bool SnapToGrid { get; set; }
+
+        public UserDesign()
         {
             elements = new ObservableCollection<SerializableElement>();
             elements.CollectionChanged += elementCollectionChanged;
@@ -43,8 +46,7 @@ namespace Transition.Design
 
             foreach (ScreenComponentBase delete in toDelete)
                 visibleElements.Remove(delete);
-
-
+            
         }
 
         public void addElement(SerializableElement element)

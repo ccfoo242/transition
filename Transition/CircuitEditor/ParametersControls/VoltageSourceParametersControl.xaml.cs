@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Transition.CircuitEditor.Serializable;
 using Transition.Functions;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -23,6 +24,9 @@ namespace Transition.CircuitEditor.Components
     public sealed partial class VoltageSourceComponentParameters : UserControl
     {
 
+        public VoltageSource SerializableVoltageSource { get; }
+
+
         public event PropertyChangedEventHandler PropertyChanged;
         
         private int selectedVoltageFunctionType { get; set; }
@@ -32,9 +36,13 @@ namespace Transition.CircuitEditor.Components
         public VoltageSourceComponentParameters()
         {
             this.InitializeComponent();
-            
         }
-        
+
+        public VoltageSourceComponentParameters(VoltageSource vs)
+        {
+            SerializableVoltageSource = vs;
+            DataContext = vs;
+        }
         
         private void voltageFunctionTypeChanged(object sender, SelectionChangedEventArgs e)
         {

@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local1="using:Transition"
+    xmlns:local11="using:Transition.Common"
     mc:Ignorable="d" x:Name="control"
     d:DesignHeight="300"
     d:DesignWidth="400">
@@ -14,7 +15,7 @@
         <local1:EngrConverter x:Key="engrConverter" AllowNegativeNumber="False"/>
         <local1:EngrConverter x:Key="engrConverterAllowNegative" AllowNegativeNumber="True"/>
         
-        <local1:BooleanToVisibilityConverter x:Key="boolToVisible"/>
+        <local11:BooleanToVisibilityConverter x:Key="boolToVisible"/>
     </UserControl.Resources>
 
     <Grid>

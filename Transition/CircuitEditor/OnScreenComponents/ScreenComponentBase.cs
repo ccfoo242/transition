@@ -11,6 +11,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Shapes;
 
 namespace Transition.CircuitEditor.OnScreenComponents
 {
@@ -30,7 +31,9 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public abstract void setPositionTextBoxes();
         public abstract int[,] TerminalPositions { get; }
         
-        
+        public double ActualRotation { get { return SerializableComponent.Rotation; } }
+        public bool FlipX { get { return SerializableComponent.FlipX; } }
+        public bool FlipY { get { return SerializableComponent.FlipY; } }
 
         public Point PressedPoint;
 
@@ -38,6 +41,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             SerializableComponent = component;
 
+            component.ComponentLayoutChanged += setPositionTextBoxes;
+            
             ComponentTransform = new CompositeTransform();
             ComponentTransform.CenterX = SchematicWidth / 2;
             ComponentTransform.CenterY = SchematicHeight / 2;
@@ -47,7 +52,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 IsTapEnabled = true,
                 Width = SchematicWidth,
                 Height = SchematicHeight,
-                RenderTransform = ComponentTransform
+                RenderTransform = ComponentTransform,
+                Background = new SolidColorBrush(Colors.Transparent)
             };
             
             Children.Add(ComponentCanvas);
@@ -60,20 +66,18 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 Path = new PropertyPath("PositionX"),
                 Mode = BindingMode.OneWay
             };
-            //    BindingOperations.SetBinding(ComponentTransform, CompositeTransform.TranslateXProperty, bPX);
-            SetBinding(Canvas.TopProperty, bPX);
+            SetBinding(Canvas.LeftProperty, bPX);
 
             Binding bPY = new Binding()
             {
                 Path = new PropertyPath("PositionY"),
                 Mode = BindingMode.OneWay
             };
-            //    BindingOperations.SetBinding(ComponentTransform, CompositeTransform.TranslateYProperty, bPY);
-            SetBinding(Canvas.LeftProperty, bPY);
+            SetBinding(Canvas.TopProperty, bPY);
 
             Binding bRt = new Binding()
             {
-                Path = new PropertyPath("ActualRotation"),
+                Path = new PropertyPath("Rotation"),
                 Mode = BindingMode.OneWay
             };
             BindingOperations.SetBinding(ComponentTransform, CompositeTransform.RotationProperty, bRt);
@@ -92,10 +96,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 Mode = BindingMode.OneWay,
                 Converter = new BoolToIntConverter()
             };
-            BindingOperations.SetBinding(ComponentTransform, CompositeTransform.ScaleXProperty, bFY);
-
-        
-
+            BindingOperations.SetBinding(ComponentTransform, CompositeTransform.ScaleYProperty, bFY);
+            
         }
 
         protected void postConstruct()
@@ -109,12 +111,40 @@ namespace Transition.CircuitEditor.OnScreenComponents
             if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
             {
                 var prop = e.GetCurrentPoint(ComponentCanvas).Properties;
-                if (prop.IsRightButtonPressed) return;
+                if (prop.IsRightButtonPressed)
+                {
+                    CircuitEditor.currentInstance.rightClickElement(this.SerializableComponent);
+                    return;
+                }
                 if (prop.IsMiddleButtonPressed) return;
+                if (prop.IsLeftButtonPressed)
+                {
+                    CircuitEditor.currentInstance.clickElement(this.SerializableComponent);
+                    return;
+                }
+
             }
-            CircuitEditor.currentInstance.clickElement(this.SerializableComponent);
+           
         }
 
+
+        public bool isInside(Rectangle rect)
+        {
+            if (rect == null) return false;
+
+            double x1 = Canvas.GetLeft(rect);
+            double y1 = Canvas.GetTop(rect);
+            double x2 = Canvas.GetLeft(rect) + rect.Width;
+            double y2 = Canvas.GetTop(rect) + rect.Height;
+
+            if ((x1 < Canvas.GetLeft(this)) &&
+                (x2 > Canvas.GetLeft(this)) &&
+                (y1 < Canvas.GetTop(this)) &&
+                (y2 > Canvas.GetTop(this)))
+                return true;
+            else
+                return false;
+        }
 
         public void selected()
         {
@@ -123,7 +153,6 @@ namespace Transition.CircuitEditor.OnScreenComponents
             updateOriginPoint();
         }
         
-
         public void deselected()
         {
              BorderBrush = new SolidColorBrush(Colors.Transparent);
@@ -134,8 +163,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
              PressedPoint = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
         }
     }
-
-
+    
     public class BoolToIntConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)

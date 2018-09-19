@@ -28,15 +28,21 @@ namespace Transition.CircuitEditor.Serializable
     {
         private double rotation;
         public double Rotation { get { return rotation; }
-            set { SetProperty(ref rotation, value); } }
+            set { SetProperty(ref rotation, value);
+                ComponentLayoutChanged?.Invoke();
+            } }
 
         private bool flipX;
         public bool FlipX { get { return flipX; }
-            set { SetProperty(ref flipX, value); } }
+            set { SetProperty(ref flipX, value);
+                ComponentLayoutChanged?.Invoke();
+            } }
 
         private bool flipY;
         public bool FlipY { get { return flipY; }
-            set { SetProperty(ref flipY, value); } }
+            set { SetProperty(ref flipY, value);
+                ComponentLayoutChanged?.Invoke();
+            } }
 
         private double positionX;
         public double PositionX { get { return positionX; }
@@ -46,7 +52,11 @@ namespace Transition.CircuitEditor.Serializable
         public double PositionY { get { return positionY; }
             set { SetProperty(ref positionY, value); } }
 
-      
+
+        public delegate void ComponentLayoutChangedHandler();
+        
+        public event ComponentLayoutChangedHandler ComponentLayoutChanged;
+
         // ParametersControl is the UI Control that allows user to
         // configure the component parameters
         public UserControl ParametersControl { get; set; }
@@ -57,7 +67,22 @@ namespace Transition.CircuitEditor.Serializable
         // or other parameters.
         // it is a Canvas that must be added to the canvas of CircuitEditor
         // 
-      
-       
+
+        public void rotate()
+        {
+            Rotation += 90;
+            if (Rotation == 360) Rotation = 0;
+        }
+
+        public void doFlipX()
+        {
+            FlipX ^= true;
+        }
+
+        public void doFlipY()
+        {
+            FlipY ^= true;
+        }
+
     }
 }

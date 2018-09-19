@@ -40,7 +40,6 @@ namespace Transition.CircuitEditor.Components
             DataContext = resistor;
         }
         
-
         private void modelResistorChanged(object sender, SelectionChangedEventArgs e)
         {
             pnlExponential.Visibility = Visibility.Collapsed;

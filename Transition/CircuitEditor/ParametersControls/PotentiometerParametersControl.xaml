@@ -21,14 +21,13 @@
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
         <StackPanel Orientation="Horizontal">
             <TextBlock Margin="4" Text="Component Name: "/>
-            <TextBox Margin="4" Text="{x:Bind ComponentName, Mode=TwoWay}"/>
+            <TextBox Margin="4" Text="{Binding ComponentName, Mode=TwoWay}"/>
         </StackPanel>
         <controls:Expander Header="Potentiometer total Resistance and position"
                            IsExpanded="True" ExpandDirection="Down" HorizontalContentAlignment="Stretch">
             <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
                 <customcontrols:ComponentValueBox Unit="Ohm" HorizontalAlignment="Left"
-                                 UnitShort="Ω" ValueChanged="changeR" Margin="4"
-                                         x:Name="componentValueBox"/>
+                                 UnitShort="Ω" Margin="4"  x:Name="componentValueBox"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100"/>
@@ -40,7 +39,7 @@
                     <StackPanel Orientation="Horizontal" Grid.Column="1"
                                 HorizontalAlignment="Stretch">
                         <TextBlock Text="CCW" Margin="4" VerticalAlignment="Center"/>
-                        <Slider Margin="4" ValueChanged="positionChange"
+                        <Slider Margin="4" 
                                 VerticalAlignment="Center" x:Name="sldPosition"
                                 Value="0" StepFrequency="0.1" Width="150"/>
                         <TextBlock Text="CW" Margin="4" VerticalAlignment="Center"/>
@@ -62,8 +61,8 @@
                     <Button Content="CW" Margin="4" Grid.Column="2" 
                                 HorizontalAlignment="Center" Click="ClickCW"/>
                     <TextBox Grid.Column="3"  Width="50"
-                                 Style="{StaticResource EngrNumberBoxStyle}"
-                                 Text="{Binding Path=Value, ElementName=sldPosition, Mode=TwoWay}"/>
+                             Style="{StaticResource EngrNumberBoxStyle}"
+                             Text="{Binding Path=Value, ElementName=sldPosition, Mode=TwoWay}"/>
                 </Grid>
             </StackPanel>
         </controls:Expander>

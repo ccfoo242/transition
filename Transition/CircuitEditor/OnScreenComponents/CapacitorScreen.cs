@@ -52,7 +52,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             Binding b2 = new Binding()
             {
                 Path = new PropertyPath("CapacitorValue"),
-                Mode = BindingMode.OneWay
+                Mode = BindingMode.OneWay,
+                Converter = new EngrConverter() { AllowNegativeNumber = false }
             };
             txtCapacitorValue.SetBinding(TextBlock.TextProperty, b2);
             txtCapacitorValue.RenderTransform = new TranslateTransform() { };

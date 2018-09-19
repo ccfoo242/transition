@@ -48,13 +48,13 @@ namespace Transition.CircuitEditor.OnScreenComponents
             txtComponentName.RenderTransform = new TranslateTransform() { };
             txtComponentName.SizeChanged += delegate { setPositionTextBoxes(); };
             Children.Add(txtComponentName);
-
-
+            
             txtInductorValue = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b2 = new Binding()
             {
                 Path = new PropertyPath("InductorValue"),
-                Mode = BindingMode.OneWay
+                Mode = BindingMode.OneWay,
+                Converter = new EngrConverter() { AllowNegativeNumber = false }
             };
             txtInductorValue.SetBinding(TextBlock.TextProperty, b2);
             txtInductorValue.RenderTransform = new TranslateTransform() { };

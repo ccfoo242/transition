@@ -34,13 +34,11 @@ namespace Transition.CircuitEditor
         public UserDesign currentDesign { get; set; }
 
         public ObservableCollection<SerializableElement> selectedElements;
+        public List<SerializableComponent> selectedComponents;
         public List<Line> gridLines;
 
         public SerializableElement clickedElement;
-
-        public OldWire manipulatingPnt1;
-        public OldWire manipulatingPnt2;
-
+        
         public bool groupSelect = false;
         public Point pointStartGroupSelect;
         public Rectangle rectGroupSelect;
@@ -54,6 +52,8 @@ namespace Transition.CircuitEditor
             InitializeComponent();
             selectedElements = new ObservableCollection<SerializableElement>();
             selectedElements.CollectionChanged += refreshSelectedElements;
+            selectedComponents = new List<SerializableComponent>();
+
             gridLines = new List<Line>();
 
             grdNoSelectedElement = new Grid();
@@ -94,16 +94,8 @@ namespace Transition.CircuitEditor
 
         private void clickDeleteComponent(object sender, RoutedEventArgs e)
         {
-            bool deleted = false;
-
-            foreach (IElectricElement element in selectedElements)
-                if (cnvCircuit.Children.Contains((UIElement)element))
-                {
-                    cnvCircuit.Children.Remove((UIElement)element);
-                    deleted = true;
-                }
-
-            if (deleted) selectedElements.Clear();
+            foreach (SerializableElement element in selectedElements)
+                currentDesign.removeElement(element);
         }
 
         public void refreshSelectedElements(object sender, NotifyCollectionChangedEventArgs e)
@@ -125,6 +117,8 @@ namespace Transition.CircuitEditor
             {
                 disableComponentEdit();
             }
+
+            selectedComponents.Clear();
         }
 
         private void enableComponentEdit()
@@ -157,65 +151,47 @@ namespace Transition.CircuitEditor
             clickedElement = element;
         }
 
-        public void addElement(String element)
+        public void rightClickElement(SerializableElement element)
+        {
+            selectElement(element);
+            splitter.IsPaneOpen = true;
+
+        }
+
+        public void addElement(string element)
         {
             //tap event invoques an element on center of drawboard
             addElement(element, new Point(cnvCircuit.Width / 2, cnvCircuit.Height / 2));
         }
 
-        public void addElement(String element, Point ptCanvas)
+        public void addElement(string element, Point ptCanvas)
         {
+            SerializableComponent component = getElement(element);
+            component.PositionX = ptCanvas.X;
+            component.PositionY = ptCanvas.Y;
 
-            if (element == "wire")
-            {
-                OldWire elto = new OldWire(this);
-                cnvCircuit.Children.Add(elto);
-                Canvas.SetLeft(elto, 0);
-                Canvas.SetTop(elto, 0);
-                Point pt1 = new Point(Statics.round20(ptCanvas.X),
-                                      Statics.round20(ptCanvas.Y));
-                Point pt2 = new Point(pt1.X + 100, pt1.Y);
-                elto.setPnt1(pt1);
-                elto.setPnt2(pt2);
+            currentDesign.addElement(component);
 
-            }
-            else
-            {   //if it is not a wire, it is a component...
-                /* ElectricComponent elto;
-                elto = new ElectricComponent(element, this);
-
-                cnvCircuit.Children.Add(elto);
-
-                double x = Statics.round20(ptCanvas.X - (elto.Width / 2));
-                double y = Statics.round20(ptCanvas.Y - (elto.Height / 2));
-
-                Canvas.SetLeft(elto, x);
-                Canvas.SetTop(elto, y);*/
-
-                SerializableComponent component = getElement(element);
-                component.PositionX = ptCanvas.X;
-                component.PositionY = ptCanvas.Y;
-                
-
-            }
+            addToCanvas(component.OnScreenComponent);
         }
 
         private void clickRotate(object sender, RoutedEventArgs e)
         {
-            foreach (ElectricComponent comp in selectedElements)
-                comp.Rotate();
+            foreach (SerializableComponent comp in selectedElements.OfType<SerializableComponent>())
+                comp.rotate();
+            
         }
 
         private void clickFlipX(object sender, RoutedEventArgs e)
         {
-            foreach (ElectricComponent comp in selectedElements)
-                comp.FlipX();
+            foreach (SerializableComponent comp in selectedElements.OfType<SerializableComponent>())
+                comp.doFlipX();
         }
 
         private void clickFlipY(object sender, RoutedEventArgs e)
         {
-            foreach (ElectricComponent comp in selectedElements)
-                comp.FlipY();
+            foreach (SerializableComponent comp in selectedElements.OfType<SerializableComponent>())
+                comp.doFlipY();
         }
 
         private void tapCloseButton(object sender, TappedRoutedEventArgs e)
@@ -295,9 +271,8 @@ namespace Transition.CircuitEditor
         private void cnvPointerPressed(object sender, PointerRoutedEventArgs e)
         {
             clickPoint = e.GetCurrentPoint(cnvCircuit).Position;
-
-            if ((clickedElement == null) && (manipulatingPnt1 == null) &&
-                (manipulatingPnt2 == null))
+            
+            if ((clickedElement == null))
             {
                 if (rectGroupSelect != null)
                     if (cnvGeneral.Children.Contains(rectGroupSelect))
@@ -319,7 +294,7 @@ namespace Transition.CircuitEditor
                 rectGroupSelect.PointerReleased += cnvPointerReleased;
                 cnvGeneral.Children.Add(rectGroupSelect);
             }
-
+            
             if (clickedElement != null)
             {
                 if (selectedElements.Contains(clickedElement))
@@ -328,12 +303,13 @@ namespace Transition.CircuitEditor
                 {
                     selectElement(clickedElement);
                 }
+                clickedElement = null;
             }
         }
 
         private void cnvPointerMoved(object sender, PointerRoutedEventArgs e)
         {
-
+            
             if (e.GetCurrentPoint(cnvCircuit).Properties.IsLeftButtonPressed)
             {
                 if (groupSelect)
@@ -363,47 +339,24 @@ namespace Transition.CircuitEditor
 
                     return;
                 }
-
-                if (manipulatingPnt1 != null)
-                {
-                    PointerPoint ptCanvas = e.GetCurrentPoint(cnvCircuit);
-
-                    Point p1 = new Point(Statics.round20(ptCanvas.Position.X),
-                                         Statics.round20(ptCanvas.Position.Y));
-
-                    manipulatingPnt1.setPnt1(p1);
-                    return;
-                }
-
-                if (manipulatingPnt2 != null)
-                {
-                    PointerPoint ptCanvas = e.GetCurrentPoint(cnvCircuit);
-
-                    Point p2 = new Point(Statics.round20(ptCanvas.Position.X),
-                                         Statics.round20(ptCanvas.Position.Y));
-
-                    manipulatingPnt2.setPnt2(p2);
-                    return;
-                }
-
+                
                 if ((clickedElement != null))
                 {
                     Point ptCanvas = e.GetCurrentPoint(cnvCircuit).Position;
-                    foreach (IElectricElement elto in selectedElements)
+                 /*   foreach (IElectricElement elto in selectedElements)
                     {
                         elto.moveRelative(new Point(clickPoint.X - ptCanvas.X,
                                                     clickPoint.Y - ptCanvas.Y));
-                    }
+                    }*/
                 }
             }
         }
 
         private void cnvPointerReleased(object sender, PointerRoutedEventArgs e)
         {
+            
             clickedElement = null;
-            manipulatingPnt1 = null;
-            manipulatingPnt2 = null;
-
+            
             if (groupSelect)
             {
                 if (rectGroupSelect != null) cnvGeneral.Children.Remove(rectGroupSelect);
@@ -411,40 +364,33 @@ namespace Transition.CircuitEditor
 
                 selectedElements.Clear();
 
-                foreach (IElectricElement elto in cnvCircuit.Children)
-                    if (elto.isInside(rectGroupSelect))
-                        selectedElements.Add(elto);
+                foreach (ScreenComponentBase element in currentDesign.visibleElements)
+                    if (element.isInside(rectGroupSelect))
+                        selectedElements.Add(element.SerializableComponent);
             }
-
-            foreach (IElectricElement elto in cnvCircuit.Children)
-                elto.updateOriginPoint();
+            
+                
         }
 
-        public void showParameters(ElectricComponent element)
+        public void showParameters(SerializableComponent component)
         {
             //  scrComponentParameters.Content = element.parameters;
             splitter.IsPaneOpen = true;
-            selectElement(element);
+            selectElement(component);
         }
 
-        public int getMaximumNumberElement(String ElementLetter)
+        public int getMaximumNumberElement(string ElementLetter)
         {
             if (ElementLetter == null) return 0;
             if (ElementLetter == "") return 0;
-
-            List<ElectricComponent> elements = new List<ElectricComponent>();
-
-            foreach (Control cn in cnvCircuit.Children)
-                if (cn is ElectricComponent)
-                    elements.Add((ElectricComponent)cn);
-
+            
             int maximum = 0;
             int result;
 
-            foreach (ElectricComponent el in elements)
-                if (el.elementName != null)
-                    if (el.elementName.Substring(0, ElementLetter.Length) == ElementLetter)
-                        if (int.TryParse(el.elementName.Substring(ElementLetter.Length, el.elementName.Length - ElementLetter.Length), out result))
+            foreach (SerializableElement element in currentDesign.elements)
+                if (element.ElementName != null)
+                    if (element.ElementName.Substring(0, ElementLetter.Length) == ElementLetter)
+                        if (int.TryParse(element.ElementName.Substring(ElementLetter.Length, element.ElementName.Length - ElementLetter.Length), out result))
                             if (result > maximum) maximum = result;
 
             return maximum;

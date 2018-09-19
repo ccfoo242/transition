@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local1="using:Transition"
+    xmlns:local11="using:Transition.Common"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
@@ -13,7 +14,7 @@
     <UserControl.Resources>
         <local1:EngrConverter x:Key="engrConverterShort" ShortString="True" AllowNegativeNumber="False"/>
         <local1:EngrConverter x:Key="engrConverter" ShortString="False" AllowNegativeNumber="False"/>
-        <local1:BooleanToVisibilityConverter x:Key="boolVisibilityConverter"/>
+        <local11:BooleanToVisibilityConverter x:Key="boolVisibilityConverter"/>
     </UserControl.Resources>
 
     <Grid>

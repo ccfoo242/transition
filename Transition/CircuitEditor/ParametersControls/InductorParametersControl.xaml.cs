@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Transition.CircuitEditor.SerializableModels;
+using Transition.CircuitEditor.Serializable;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Text;
@@ -33,14 +33,15 @@ namespace Transition.CircuitEditor.Components
 
         public InductorParametersControl(Inductor inductor)
         {
+         
+            this.InitializeComponent();
+
             SerializableInductor = inductor;
             DataContext = inductor;
 
-            this.InitializeComponent();
-            
-           
+
         }
-        
+
         private void modelInductorChanged(object sender, SelectionChangedEventArgs e)
         {
             pnlExponential.Visibility = Visibility.Collapsed;

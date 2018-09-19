@@ -146,9 +146,6 @@
     <Compile Include="CircuitEditor\Serializable\Transformer.cs" />
     <Compile Include="CircuitEditor\Serializable\VoltageSource.cs" />
     <Compile Include="CircuitEditor\Serializable\Wire.cs" />
-    <Compile Include="CircuitEditor\Wire.xaml.cs">
-      <DependentUpon>Wire.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Common\BindableBase.cs" />
     <Compile Include="Common\BoolVisibilityConverter.cs" />
     <Compile Include="CurveLibrary\LibraryBase.cs" />
@@ -233,10 +230,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CircuitEditor\ElectricComponent.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="CircuitEditor\Wire.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

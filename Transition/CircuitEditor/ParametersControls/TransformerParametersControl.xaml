@@ -19,7 +19,7 @@
         <controls:Expander Header="Coupling" ExpandDirection="Down"
                            IsExpanded="True">
             <StackPanel Orientation="Vertical">
-                <customcontrols:EngrNumberBoxDialog ValueManuallyChanged="changeTR"
+                <customcontrols:EngrNumberBoxDialog 
                          HorizontalAlignment="Right" VariableName="Turns Ratio" Margin="4"
                                 x:Name="boxTR"  Value="{Binding TurnsRatio, Mode=OneWay}"/>
                 <StackPanel Orientation="Horizontal">
@@ -30,17 +30,17 @@
                                Text="{Binding KCouplingCoef, Mode=OneWay}"/>
                     <Slider Minimum="0" Maximum="1" StepFrequency="0.01" 
                             Width="110" VerticalAlignment="Center" 
-                            x:Name="sldKCouplingCoef" ValueChanged="changeK"/>
+                            x:Name="sldKCouplingCoef"/>
                 </StackPanel>
             </StackPanel>
         </controls:Expander>
         <controls:Expander Header="Inductance" ExpandDirection="Down"
                            IsExpanded="True">
             <StackPanel Orientation="Vertical">
-                <customcontrols:EngrNumberBoxDialog ValueManuallyChanged="changeLpri" x:Name="BoxLpri"
+                <customcontrols:EngrNumberBoxDialog x:Name="BoxLpri"
                          HorizontalAlignment="Right" VariableName="Primary Inductance (H)" Margin="4"
                                                     Value="{Binding Lpri, Mode=OneWay}"/>
-                <customcontrols:EngrNumberBoxDialog ValueManuallyChanged="changeLsec" x:Name="BoxLsec"
+                <customcontrols:EngrNumberBoxDialog x:Name="BoxLsec"
                          HorizontalAlignment="Right" VariableName="Secondary Inductance (H)" Margin="4"
                                                     Value="{Binding Lsec, Mode=OneWay}"/>
                 <NavigationViewItemSeparator/>

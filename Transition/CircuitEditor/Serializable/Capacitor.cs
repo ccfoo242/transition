@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Transition.CircuitEditor.Components;
+using Transition.CircuitEditor.OnScreenComponents;
 
 namespace Transition.CircuitEditor.Serializable
 {
@@ -47,6 +49,18 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
+
+        private EngrNumber rp;
+        public EngrNumber RP
+        {
+            get { return rp; }
+            set
+            {
+                SetProperty(ref rp, value);
+                calculateFoQ();
+            }
+        }
+
         private EngrNumber ew;
         public EngrNumber Ew
         {
@@ -82,6 +96,14 @@ namespace Transition.CircuitEditor.Serializable
         {
             CapacitorValue = EngrNumber.One;
             CapacitorModel = 0;
+            
+            SetProperty(ref ls, new EngrNumber(1, "p"));
+            SetProperty(ref rs, new EngrNumber(1, "p"));
+            SetProperty(ref rp, new EngrNumber(1, "T"));
+            calculateFoQ();
+
+            ParametersControl = new CapacitorParametersControl(this);
+            OnScreenComponent = new CapacitorScreen(this);
         }
 
 

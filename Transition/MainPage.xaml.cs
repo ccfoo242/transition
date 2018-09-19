@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Transition.Design;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -26,6 +27,10 @@ namespace Transition
         public MainPage()
         {
             this.InitializeComponent();
+
+            UserDesign newDesign = new UserDesign();
+
+            circuitEditor.loadDesign(newDesign);
         }
 
         private void dragElement(UIElement sender, DragStartingEventArgs args)

@@ -69,13 +69,14 @@ namespace Transition.CircuitEditor.Serializable
 
         public Resistor() : base()
         {
-            ResistorValue = EngrNumber.One;
-            
+            ResistorValue = EngrNumber.One ;
             ResistorModel = 0;
-            Ls = new EngrNumber(1, "p");
-            Cp = new EngrNumber(1, "p");
-            
-            ParametersControl = new ResistorParametersControl();
+
+            SetProperty(ref ls, new EngrNumber(1, "p"), "Ls");
+            SetProperty(ref cp, new EngrNumber(1, "p"), "Cp");
+            calculateFoQ();
+
+            ParametersControl = new ResistorParametersControl(this);
             OnScreenComponent = new OnScreenComponents.ResistorScreen(this);
         }
 
@@ -90,8 +91,8 @@ namespace Transition.CircuitEditor.Serializable
             double dQ = (dWop * dLs) / dR;
             double dFo = dWop / (2 * Math.PI);
 
-            SetProperty(ref fo, new EngrNumber(dFo));
-            SetProperty(ref q, new EngrNumber(dQ));
+            SetProperty(ref fo, new EngrNumber(dFo), "Fo");
+            SetProperty(ref q, new EngrNumber(dQ), "Q");
 
         }
 
@@ -107,8 +108,8 @@ namespace Transition.CircuitEditor.Serializable
             double dLs = dR * dQ / dWo;
             double dCp = dLs / (dQ * dQ * dR * dR);
 
-            SetProperty(ref ls, new EngrNumber(dLs));
-            SetProperty(ref cp, new EngrNumber(dCp));
+            SetProperty(ref ls, new EngrNumber(dLs), "Ls");
+            SetProperty(ref cp, new EngrNumber(dCp), "Cp");
 
         }
         

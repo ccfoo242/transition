@@ -372,27 +372,18 @@
                 <ContentControl ContentTemplate="{StaticResource symbolResistor}"
                                 Canvas.Left="20" Canvas.Top="80"/>
                 <ContentControl ContentTemplate="{StaticResource symbolInductor}"
-                                Canvas.Left="120" Canvas.Top="80"/>
+                                Canvas.Left="100" Canvas.Top="80"/>
                 <ContentControl ContentTemplate="{StaticResource symbolCapacitor}"
-                                Canvas.Left="70" Canvas.Top="20"/>
-                <Line X1="0" Y1="70" X2="20" Y2="70"
-                      Stroke="Black" StrokeThickness="4"/>
-                <Line X1="220" Y1="70" X2="240" Y2="70"
-                      Stroke="Black" StrokeThickness="4"/>
-                <Line X1="20" Y1="40" X2="20" Y2="100"
-                      Stroke="Black" StrokeThickness="4"/>
-                <Line X1="220" Y1="40" X2="220" Y2="100"
-                      Stroke="Black" StrokeThickness="4"/>
-                <Line X1="20" Y1="40" X2="70" Y2="40"
-                      Stroke="Black" StrokeThickness="4"/>
-                <Line X1="220" Y1="40" X2="170" Y2="40"
-                      Stroke="Black" StrokeThickness="4"/>
-                <TextBlock Text="R" Canvas.Left="65" Canvas.Top="60"
-                           FontSize="18"/>
-                <TextBlock Text="Ls" Canvas.Left="163" Canvas.Top="60"
-                           FontSize="18"/>
-                <TextBlock Text="Cp" Canvas.Left="110" Canvas.Top="0"
-                           FontSize="18"/>
+                                Canvas.Left="60" Canvas.Top="20"/>
+                <Line X1="0"   Y1="70" X2="20"  Y2="70"  Stroke="Black" StrokeThickness="4"/>
+                <Line X1="180" Y1="70" X2="200" Y2="70"  Stroke="Black" StrokeThickness="4"/>
+                <Line X1="20"  Y1="40" X2="20"  Y2="100" Stroke="Black" StrokeThickness="4"/>
+                <Line X1="180" Y1="40" X2="180" Y2="100" Stroke="Black" StrokeThickness="4"/>
+                <Line X1="20"  Y1="40" X2="60"  Y2="40"  Stroke="Black" StrokeThickness="4"/>
+                <Line X1="180" Y1="40" X2="140" Y2="40"  Stroke="Black" StrokeThickness="4"/>
+                <TextBlock Text="R"  Canvas.Left="55"  Canvas.Top="60" FontSize="18"/>
+                <TextBlock Text="Ls" Canvas.Left="133" Canvas.Top="60" FontSize="18"/>
+                <TextBlock Text="Cp" Canvas.Left="90"  Canvas.Top="0"  FontSize="18"/>
             </Canvas>
         </DataTemplate>
 

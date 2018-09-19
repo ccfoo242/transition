@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Transition.CircuitEditor.Components;
+using Transition.CircuitEditor.OnScreenComponents;
 
 namespace Transition.CircuitEditor.Serializable
 {
@@ -14,11 +16,7 @@ namespace Transition.CircuitEditor.Serializable
         public EngrNumber InductorValue
         {
             get { return inductorValue; }
-            set
-            {
-                inductorValue = value;
-                SetProperty(ref inductorValue, value);
-            }
+            set { SetProperty(ref inductorValue, value); }
         }
 
         private int inductorModel;
@@ -27,8 +25,7 @@ namespace Transition.CircuitEditor.Serializable
             get { return inductorModel; }
             set { SetProperty(ref inductorModel, value); }
         }
-
-
+        
         private EngrNumber rs;
         public EngrNumber Rs
         {
@@ -82,6 +79,19 @@ namespace Transition.CircuitEditor.Serializable
 
         public override int QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
 
+        public Inductor()
+        {
+            InductorValue = EngrNumber.One;
+            InductorModel = 0;
+            
+            SetProperty(ref rs, new EngrNumber(1, "p"));
+            SetProperty(ref cp, new EngrNumber(1, "p"));
+            calculateFoQ();
+
+            ParametersControl = new InductorParametersControl(this);
+            OnScreenComponent = new InductorScreen(this);
+
+        }
 
         private void calculateFoQ()
         {
