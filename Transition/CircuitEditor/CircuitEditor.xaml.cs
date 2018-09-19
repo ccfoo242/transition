@@ -68,6 +68,30 @@ namespace Transition.CircuitEditor
             CircuitEditor.currentInstance = this;   //XAML constructed singleton?
         }
 
+        public void loadDesign(UserDesign design)
+        {
+            cnvCircuit.Children.Clear();
+            currentDesign = design;
+            design.visibleElements.CollectionChanged += updateDesign;
+
+        }
+
+        public void updateDesign(object sender, NotifyCollectionChangedEventArgs e)
+        {
+
+        }
+
+        public void addToCanvas(ScreenComponentBase element)
+        {
+            cnvCircuit.Children.Add(element);
+
+        }
+
+        public bool isElementOnCanvas(ScreenComponentBase element)
+        {
+            return cnvCircuit.Children.Contains(element);
+        }
+
         private void clickDeleteComponent(object sender, RoutedEventArgs e)
         {
             bool deleted = false;
@@ -157,7 +181,7 @@ namespace Transition.CircuitEditor
             }
             else
             {   //if it is not a wire, it is a component...
-                ElectricComponent elto;
+                /* ElectricComponent elto;
                 elto = new ElectricComponent(element, this);
 
                 cnvCircuit.Children.Add(elto);
@@ -166,7 +190,13 @@ namespace Transition.CircuitEditor
                 double y = Statics.round20(ptCanvas.Y - (elto.Height / 2));
 
                 Canvas.SetLeft(elto, x);
-                Canvas.SetTop(elto, y);
+                Canvas.SetTop(elto, y);*/
+
+                SerializableComponent component = getElement(element);
+                component.PositionX = ptCanvas.X;
+                component.PositionY = ptCanvas.Y;
+                
+
             }
         }
 
@@ -356,7 +386,7 @@ namespace Transition.CircuitEditor
                     return;
                 }
 
-                if ((clickElement != null))
+                if ((clickedElement != null))
                 {
                     Point ptCanvas = e.GetCurrentPoint(cnvCircuit).Position;
                     foreach (IElectricElement elto in selectedElements)
@@ -426,11 +456,10 @@ namespace Transition.CircuitEditor
             return getMaximumNumberElement(ElementLetter) + 1;
         }
 
-        public static SerializableElement getElement(string element)
+        public static SerializableComponent getElement(string element)
         {
             switch (element)
             {
-                case "wire":           return new Wire();
                 case "resistor":       return new Resistor();
                 case "capacitor":      return new Capacitor();
                 case "inductor":       return new Inductor();

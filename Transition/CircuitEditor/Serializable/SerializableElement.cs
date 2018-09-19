@@ -26,8 +26,8 @@ namespace Transition.CircuitEditor.Serializable
 
     public abstract class SerializableComponent : SerializableElement
     {
-        private int rotation;
-        public int Rotation { get { return rotation; }
+        private double rotation;
+        public double Rotation { get { return rotation; }
             set { SetProperty(ref rotation, value); } }
 
         private bool flipX;
@@ -38,12 +38,12 @@ namespace Transition.CircuitEditor.Serializable
         public bool FlipY { get { return flipY; }
             set { SetProperty(ref flipY, value); } }
 
-        private int positionX;
-        public int PositionX { get { return positionX; }
+        private double positionX;
+        public double PositionX { get { return positionX; }
             set { SetProperty(ref positionX, value); } }
 
-        private int positionY;
-        public int PositionY { get { return positionY; }
+        private double positionY;
+        public double PositionY { get { return positionY; }
             set { SetProperty(ref positionY, value); } }
 
       

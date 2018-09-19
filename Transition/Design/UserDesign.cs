@@ -16,6 +16,10 @@ namespace Transition.Design
         public ObservableCollection<SerializableElement> elements { get; }
         public ObservableCollection<ScreenComponentBase> visibleElements { get; }
 
+        public delegate void ElementDelegate(UserDesign sender, SerializableElement element);
+        public event ElementDelegate ElementAdded;
+        public event ElementDelegate ElementRemoved;
+
         private UserDesign()
         {
             elements = new ObservableCollection<SerializableElement>();
@@ -26,14 +30,36 @@ namespace Transition.Design
 
         public void elementCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            visibleElements.Clear();
+           // visibleElements.Clear();
+           
             foreach (SerializableElement element in elements)
-                visibleElements.Add(element.OnScreenComponent);
+                if (!visibleElements.Contains(element.OnScreenComponent))
+                    visibleElements.Add(element.OnScreenComponent);
+
+            List<ScreenComponentBase> toDelete = new List<ScreenComponentBase>();
+            foreach (ScreenComponentBase element in visibleElements)
+                if (!elements.Contains(element.SerializableComponent))
+                    toDelete.Add(element);
+
+            foreach (ScreenComponentBase delete in toDelete)
+                visibleElements.Remove(delete);
+
+
         }
 
-        public void addComponent(SerializableElement element)
+        public void addElement(SerializableElement element)
         {
+            elements.Add(element);
+            ElementAdded?.Invoke(this, element);
+        }
 
+        public void removeElement(SerializableElement element)
+        {
+            if (elements.Contains(element))
+            {
+                elements.Remove(element);
+                ElementRemoved?.Invoke(this, element);
+            }
         }
     }
 }
