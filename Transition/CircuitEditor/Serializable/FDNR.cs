@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Transition.CircuitEditor.Components;
 
 namespace Transition.CircuitEditor.Serializable
 {
@@ -19,5 +20,12 @@ namespace Transition.CircuitEditor.Serializable
 
         public override int QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
 
+        public FDNR() : base()
+        {
+            FdnrValue = EngrNumber.One;
+            
+            ParametersControl = new FDNRParametersControl(this);
+            OnScreenComponent = new OnScreenComponents.FDNRScreen(this);
+        }
     }
 }

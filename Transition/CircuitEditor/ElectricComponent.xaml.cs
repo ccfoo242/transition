@@ -156,11 +156,7 @@ namespace Transition.CircuitEditor
           }
 
 
-          public void moveRelative(Point point)
-          {
-              Canvas.SetLeft(this, Statics.round20(PressedPoint.X - point.X));
-              Canvas.SetTop(this, Statics.round20(PressedPoint.Y - point.Y));
-          }
+         
 
 
 

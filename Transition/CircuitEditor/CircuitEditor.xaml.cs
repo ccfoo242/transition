@@ -33,11 +33,10 @@ namespace Transition.CircuitEditor
 
         public UserDesign currentDesign { get; set; }
 
-        public ObservableCollection<SerializableElement> selectedElements;
-        public List<SerializableComponent> selectedComponents;
+        public ObservableCollection<ScreenComponentBase> selectedElements;
         public List<Line> gridLines;
 
-        public SerializableElement clickedElement;
+        public ScreenComponentBase clickedElement;
         
         public bool groupSelect = false;
         public Point pointStartGroupSelect;
@@ -50,10 +49,9 @@ namespace Transition.CircuitEditor
         public CircuitEditor()
         {
             InitializeComponent();
-            selectedElements = new ObservableCollection<SerializableElement>();
+            selectedElements = new ObservableCollection<ScreenComponentBase>();
             selectedElements.CollectionChanged += refreshSelectedElements;
-            selectedComponents = new List<SerializableComponent>();
-
+        
             gridLines = new List<Line>();
 
             grdNoSelectedElement = new Grid();
@@ -94,23 +92,21 @@ namespace Transition.CircuitEditor
 
         private void clickDeleteComponent(object sender, RoutedEventArgs e)
         {
-            foreach (SerializableElement element in selectedElements)
-                currentDesign.removeElement(element);
+            foreach (ScreenComponentBase element in selectedElements)
+                currentDesign.removeElement(element.SerializableComponent);
         }
 
         public void refreshSelectedElements(object sender, NotifyCollectionChangedEventArgs e)
         {
-            foreach (SerializableElement element in currentDesign.elements)
-                element.OnScreenComponent.deselected();
+            foreach (ScreenComponentBase element in currentDesign.visibleElements)
+                element.deselected();
 
-            foreach (SerializableElement element in selectedElements)
+            foreach (ScreenComponentBase element in selectedElements)
             {
-                element.OnScreenComponent.selected();
-                if (element is SerializableComponent)
-                {
-                    scrComponentParameters.Content = ((SerializableComponent)element).ParametersControl;
-                    enableComponentEdit();
-                }
+                element.selected();
+                scrComponentParameters.Content = element.SerializableComponent.ParametersControl;
+                enableComponentEdit();
+                
             }
 
             if (selectedElements.Count == 0)
@@ -118,7 +114,7 @@ namespace Transition.CircuitEditor
                 disableComponentEdit();
             }
 
-            selectedComponents.Clear();
+           // selectedComponents.Clear();
         }
 
         private void enableComponentEdit()
@@ -139,19 +135,19 @@ namespace Transition.CircuitEditor
             scrComponentParameters.Content = grdNoSelectedElement;
         }
 
-        public void selectElement(SerializableElement element)
+        public void selectElement(ScreenComponentBase element)
         {
             selectedElements.Clear();
             selectedElements.Add(element);
 
         }
 
-        public void clickElement(SerializableElement element)
+        public void clickElement(ScreenComponentBase element)
         {
             clickedElement = element;
         }
 
-        public void rightClickElement(SerializableElement element)
+        public void rightClickElement(ScreenComponentBase element)
         {
             selectElement(element);
             splitter.IsPaneOpen = true;
@@ -303,7 +299,7 @@ namespace Transition.CircuitEditor
                 {
                     selectElement(clickedElement);
                 }
-                clickedElement = null;
+               // clickedElement = null;
             }
         }
 
@@ -343,11 +339,11 @@ namespace Transition.CircuitEditor
                 if ((clickedElement != null))
                 {
                     Point ptCanvas = e.GetCurrentPoint(cnvCircuit).Position;
-                 /*   foreach (IElectricElement elto in selectedElements)
+                    foreach (ScreenComponentBase element in selectedElements)
                     {
-                        elto.moveRelative(new Point(clickPoint.X - ptCanvas.X,
-                                                    clickPoint.Y - ptCanvas.Y));
-                    }*/
+                        element.moveRelative(clickPoint.X - ptCanvas.X,
+                                             clickPoint.Y - ptCanvas.Y);
+                    }
                 }
             }
         }
@@ -366,13 +362,13 @@ namespace Transition.CircuitEditor
 
                 foreach (ScreenComponentBase element in currentDesign.visibleElements)
                     if (element.isInside(rectGroupSelect))
-                        selectedElements.Add(element.SerializableComponent);
+                        selectedElements.Add(element);
             }
             
                 
         }
 
-        public void showParameters(SerializableComponent component)
+        public void showParameters(ScreenComponentBase component)
         {
             //  scrComponentParameters.Content = element.parameters;
             splitter.IsPaneOpen = true;

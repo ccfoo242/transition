@@ -35,8 +35,9 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public bool FlipX { get { return SerializableComponent.FlipX; } }
         public bool FlipY { get { return SerializableComponent.FlipY; } }
 
-        public Point PressedPoint;
-
+        public double originalPositionX;
+        public double originalPositionY;
+        
         public ScreenComponentBase(SerializableComponent component) : base()
         {
             SerializableComponent = component;
@@ -46,19 +47,18 @@ namespace Transition.CircuitEditor.OnScreenComponents
             ComponentTransform = new CompositeTransform();
             ComponentTransform.CenterX = SchematicWidth / 2;
             ComponentTransform.CenterY = SchematicHeight / 2;
-            
+
             ComponentCanvas = new Canvas()
             {
                 IsTapEnabled = true,
-                Width = SchematicWidth,
-                Height = SchematicHeight,
-                RenderTransform = ComponentTransform,
-                Background = new SolidColorBrush(Colors.Transparent)
+                RenderTransform = ComponentTransform
             };
-            
+
+            Background = new SolidColorBrush(Colors.Transparent);
             Children.Add(ComponentCanvas);
-         
-            ComponentCanvas.PointerPressed += Element_PointerPressed;
+            PointerPressed += Element_PointerPressed;
+
+         //   ComponentCanvas.PointerPressed += Element_PointerPressed;
             DataContext = SerializableComponent;
 
             Binding bPX = new Binding()
@@ -102,8 +102,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         protected void postConstruct()
         {
-            ComponentCanvas.Width = SchematicWidth;
-            ComponentCanvas.Height = SchematicHeight;
+            Width = SchematicWidth;
+            Height = SchematicHeight;
         }
 
         private void Element_PointerPressed(object sender, PointerRoutedEventArgs e)
@@ -113,21 +113,18 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 var prop = e.GetCurrentPoint(ComponentCanvas).Properties;
                 if (prop.IsRightButtonPressed)
                 {
-                    CircuitEditor.currentInstance.rightClickElement(this.SerializableComponent);
+                    CircuitEditor.currentInstance.rightClickElement(this);
                     return;
                 }
                 if (prop.IsMiddleButtonPressed) return;
                 if (prop.IsLeftButtonPressed)
                 {
-                    CircuitEditor.currentInstance.clickElement(this.SerializableComponent);
+                    CircuitEditor.currentInstance.clickElement(this);
                     return;
                 }
-
             }
-           
         }
-
-
+        
         public bool isInside(Rectangle rect)
         {
             if (rect == null) return false;
@@ -137,10 +134,10 @@ namespace Transition.CircuitEditor.OnScreenComponents
             double x2 = Canvas.GetLeft(rect) + rect.Width;
             double y2 = Canvas.GetTop(rect) + rect.Height;
 
-            if ((x1 < Canvas.GetLeft(this)) &&
-                (x2 > Canvas.GetLeft(this)) &&
-                (y1 < Canvas.GetTop(this)) &&
-                (y2 > Canvas.GetTop(this)))
+            if ((x1 < (Canvas.GetLeft(this)) + (SchematicWidth / 2)) &&
+                (x2 > (Canvas.GetLeft(this)) + (SchematicWidth / 2)) &&
+                (y1 < (Canvas.GetTop(this)) + (SchematicHeight / 2)) &&
+                (y2 > (Canvas.GetTop(this)) + (SchematicHeight / 2)))
                 return true;
             else
                 return false;
@@ -160,7 +157,14 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public void updateOriginPoint()
         {
-             PressedPoint = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
+            originalPositionX = Canvas.GetLeft(this);
+            originalPositionY = Canvas.GetTop(this);
+        }
+
+        public void moveRelative(double positionX, double positionY)
+        {
+            SerializableComponent.PositionX = originalPositionX - positionX;
+            SerializableComponent.PositionY = originalPositionY - positionY;
         }
     }
     

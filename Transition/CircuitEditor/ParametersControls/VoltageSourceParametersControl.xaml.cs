@@ -25,9 +25,6 @@ namespace Transition.CircuitEditor.Components
     {
 
         public VoltageSource SerializableVoltageSource { get; }
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
         
         private int selectedVoltageFunctionType { get; set; }
         private int selectedImpedanceFunctionType { get; set; }
