@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Transition.CircuitEditor.Components;
 
 namespace Transition.CircuitEditor.Serializable
 {
@@ -20,8 +21,8 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
      
-        private decimal kCouplingCoef;
-        public decimal KCouplingCoef
+        private double kCouplingCoef;
+        public double KCouplingCoef
         {
             get { return kCouplingCoef; }
             set { SetProperty(ref kCouplingCoef, value);
@@ -62,6 +63,18 @@ namespace Transition.CircuitEditor.Serializable
 
         public override int QuantityOfTerminals { get => 4; set => throw new NotImplementedException(); }
 
+        public Transformer() : base()
+        {
+         
+            SetProperty(ref turnsRatio, EngrNumber.One, "TurnsRatio");
+            SetProperty(ref lpri, EngrNumber.One, "Lpri");
+            SetProperty(ref lsec, EngrNumber.One, "Lsec");
+            SetProperty(ref kCouplingCoef, 0.99, "KCouplingCoef");
+            updateM();
+
+            ParametersControl = new TransformerParametersControl(this);
+            OnScreenComponent = new OnScreenComponents.TransformerScreen(this);
+        }
 
         private void changeTR()
         {
@@ -69,7 +82,7 @@ namespace Transition.CircuitEditor.Serializable
             double lp = Lpri.ValueDouble;
 
             double ls = tr * tr * lp;
-            SetProperty(ref lsec, ls);
+            SetProperty(ref lsec, ls, "Lsec");
             updateM();
         }
 
@@ -79,7 +92,7 @@ namespace Transition.CircuitEditor.Serializable
             double tr = TurnsRatio.ValueDouble;
 
             double ls = tr * tr * lp;
-            SetProperty(ref lsec, ls);
+            SetProperty(ref lsec, ls, "Lsec");
             updateM();
         }
         
@@ -89,7 +102,7 @@ namespace Transition.CircuitEditor.Serializable
             double lp = Lpri.ValueDouble;
 
             double tr = Math.Sqrt(ls / lp);
-            SetProperty(ref turnsRatio, tr);
+            SetProperty(ref turnsRatio, tr, "TurnsRatio");
             updateM();
         }
 
@@ -99,9 +112,9 @@ namespace Transition.CircuitEditor.Serializable
             double ls = Lsec.ValueDouble;
             double k = (double)KCouplingCoef;
 
-            SetProperty(ref mutualL, new EngrNumber(k * Math.Sqrt(lp * ls)));
-            SetProperty(ref lpLeak, new EngrNumber(lp * (1 - k)));
-            SetProperty(ref lsLeak, new EngrNumber(ls * (1 - k)));
+            SetProperty(ref mutualL, new EngrNumber(k * Math.Sqrt(lp * ls)), "MutualL");
+            SetProperty(ref lpLeak, new EngrNumber(lp * (1 - k)), "LpLeak");
+            SetProperty(ref lsLeak, new EngrNumber(ls * (1 - k)), "LsLeak");
         }
         
     }

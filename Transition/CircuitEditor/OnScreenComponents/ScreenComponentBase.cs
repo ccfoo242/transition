@@ -30,10 +30,13 @@ namespace Transition.CircuitEditor.OnScreenComponents
        
         public abstract void setPositionTextBoxes();
         public abstract int[,] TerminalPositions { get; }
-        
-        public double ActualRotation { get { return SerializableComponent.Rotation; } }
-        public bool FlipX { get { return SerializableComponent.FlipX; } }
-        public bool FlipY { get { return SerializableComponent.FlipY; } }
+
+        public double ActualRotation => SerializableComponent.Rotation;
+        public bool FlipX => SerializableComponent.FlipX;
+        public bool FlipY => SerializableComponent.FlipY;
+
+        public double PositionX => SerializableComponent.PositionX;
+        public double PositionY => SerializableComponent.PositionY;
 
         public double originalPositionX;
         public double originalPositionY;
@@ -55,9 +58,9 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
 
             Background = new SolidColorBrush(Colors.Transparent);
+            BorderThickness = new Thickness(1);
             Children.Add(ComponentCanvas);
-            PointerPressed += Element_PointerPressed;
-
+          
          //   ComponentCanvas.PointerPressed += Element_PointerPressed;
             DataContext = SerializableComponent;
 
@@ -102,28 +105,10 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         protected void postConstruct()
         {
-            Width = SchematicWidth;
-            Height = SchematicHeight;
+              Width = SchematicWidth ;
+              Height = SchematicHeight;
         }
-
-        private void Element_PointerPressed(object sender, PointerRoutedEventArgs e)
-        {
-            if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
-            {
-                var prop = e.GetCurrentPoint(ComponentCanvas).Properties;
-                if (prop.IsRightButtonPressed)
-                {
-                    CircuitEditor.currentInstance.rightClickElement(this);
-                    return;
-                }
-                if (prop.IsMiddleButtonPressed) return;
-                if (prop.IsLeftButtonPressed)
-                {
-                    CircuitEditor.currentInstance.clickElement(this);
-                    return;
-                }
-            }
-        }
+        
         
         public bool isInside(Rectangle rect)
         {
@@ -134,13 +119,19 @@ namespace Transition.CircuitEditor.OnScreenComponents
             double x2 = Canvas.GetLeft(rect) + rect.Width;
             double y2 = Canvas.GetTop(rect) + rect.Height;
 
-            if ((x1 < (Canvas.GetLeft(this)) + (SchematicWidth / 2)) &&
-                (x2 > (Canvas.GetLeft(this)) + (SchematicWidth / 2)) &&
-                (y1 < (Canvas.GetTop(this)) + (SchematicHeight / 2)) &&
-                (y2 > (Canvas.GetTop(this)) + (SchematicHeight / 2)))
+            if ((x1 < (PositionX + (SchematicWidth / 2))) &&
+                (x2 > (PositionX + (SchematicWidth / 2))) &&
+                (y1 < (PositionY + (SchematicHeight / 2))) &&
+                (y2 > (PositionY + (SchematicHeight / 2))))
                 return true;
             else
                 return false;
+        }
+
+        public bool isInside(double pointX, double pointY)
+        {
+            return (pointX > PositionX) && (pointX < (PositionX + SchematicWidth)) &&
+                   (pointY > PositionY) && (pointY < (PositionY + SchematicHeight));
         }
 
         public void selected()
@@ -183,7 +174,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             if (value == null) return false;
             int valueInt = (int)value;
 
-            return (valueInt == 1) ? false : true;
+            return !(valueInt == 1);
         }
     }
 }

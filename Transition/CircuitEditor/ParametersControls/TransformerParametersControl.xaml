@@ -14,35 +14,37 @@
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
         <StackPanel Orientation="Horizontal">
             <TextBlock Margin="4" Text="Component Name: "/>
-            <TextBox Margin="4" Text="{Binding ComponentName, Mode=TwoWay}"/>
+            <TextBox Margin="4" Text="{Binding ElementName, Mode=TwoWay}"/>
         </StackPanel>
         <controls:Expander Header="Coupling" ExpandDirection="Down"
                            IsExpanded="True">
             <StackPanel Orientation="Vertical">
                 <customcontrols:EngrNumberBoxDialog 
                          HorizontalAlignment="Right" VariableName="Turns Ratio" Margin="4"
-                                x:Name="boxTR"  Value="{Binding TurnsRatio, Mode=OneWay}"/>
+                                x:Name="boxTR"  Value="{Binding TurnsRatio, Mode=TwoWay}"/>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="K Coupling Coefficient" Margin="4"
                                VerticalAlignment="Center"/>
                     <TextBlock Margin="4" Width="30"
                                VerticalAlignment="Center"
                                Text="{Binding KCouplingCoef, Mode=OneWay}"/>
-                    <Slider Minimum="0" Maximum="1" StepFrequency="0.01" 
+                    <Slider Minimum="0" Maximum="0.99" StepFrequency="0.01" 
                             Width="110" VerticalAlignment="Center" 
-                            x:Name="sldKCouplingCoef"/>
+                            x:Name="sldKCouplingCoef"
+                            Value="{Binding KCouplingCoef, Mode=TwoWay}"/>
                 </StackPanel>
             </StackPanel>
         </controls:Expander>
+        
         <controls:Expander Header="Inductance" ExpandDirection="Down"
                            IsExpanded="True">
             <StackPanel Orientation="Vertical">
                 <customcontrols:EngrNumberBoxDialog x:Name="BoxLpri"
                          HorizontalAlignment="Right" VariableName="Primary Inductance (H)" Margin="4"
-                                                    Value="{Binding Lpri, Mode=OneWay}"/>
+                                                    Value="{Binding Lpri, Mode=TwoWay}"/>
                 <customcontrols:EngrNumberBoxDialog x:Name="BoxLsec"
                          HorizontalAlignment="Right" VariableName="Secondary Inductance (H)" Margin="4"
-                                                    Value="{Binding Lsec, Mode=OneWay}"/>
+                                                    Value="{Binding Lsec, Mode=TwoWay}"/>
                 <NavigationViewItemSeparator/>
                 <Grid>
                     <Grid.ColumnDefinitions>

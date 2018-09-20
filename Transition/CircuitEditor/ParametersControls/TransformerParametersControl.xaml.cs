@@ -34,10 +34,10 @@ namespace Transition.CircuitEditor.Components
 
         public TransformerParametersControl(Transformer trans)
         {
+            this.InitializeComponent();
+
             SerializableTransformer = trans;
             DataContext = trans;
-
-            this.InitializeComponent();
         }
 
 

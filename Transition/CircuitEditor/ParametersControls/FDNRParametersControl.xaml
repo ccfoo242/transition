@@ -15,7 +15,7 @@
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
         <StackPanel Orientation="Horizontal">
             <TextBlock Margin="4" Text="Component Name: "/>
-            <TextBox Margin="4" Text="{Binding ComponentName, Mode=TwoWay}"/>
+            <TextBox Margin="4" Text="{Binding ElementName, Mode=TwoWay}"/>
         </StackPanel>
 
         <controls:Expander Header="FDNR Value" ExpandDirection="Down"

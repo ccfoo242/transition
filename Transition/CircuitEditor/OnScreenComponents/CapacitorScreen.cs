@@ -39,7 +39,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             txtComponentName = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b1 = new Binding()
             {
-                Path = new PropertyPath("ComponentName"),
+                Path = new PropertyPath("ElementName"),
                 Mode = BindingMode.OneWay
             };
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);

@@ -34,15 +34,17 @@ namespace Transition.CircuitEditor
         public UserDesign currentDesign { get; set; }
 
         public ObservableCollection<ScreenComponentBase> selectedElements;
+        public ObservableCollection<ScreenComponentBase> elements => currentDesign.visibleElements;
         public List<Line> gridLines;
 
-        public ScreenComponentBase clickedElement;
-        
+        private bool SnapToGrid => true;
+
         public bool groupSelect = false;
+        private bool movingComponents = false;
         public Point pointStartGroupSelect;
         public Rectangle rectGroupSelect;
 
-        public Point clickPoint;
+        public Point clickedPoint;
 
         public Grid grdNoSelectedElement;
 
@@ -71,7 +73,6 @@ namespace Transition.CircuitEditor
             cnvCircuit.Children.Clear();
             currentDesign = design;
             design.visibleElements.CollectionChanged += updateDesign;
-
         }
 
         public void updateDesign(object sender, NotifyCollectionChangedEventArgs e)
@@ -82,7 +83,6 @@ namespace Transition.CircuitEditor
         public void addToCanvas(ScreenComponentBase element)
         {
             cnvCircuit.Children.Add(element);
-
         }
 
         public bool isElementOnCanvas(ScreenComponentBase element)
@@ -106,15 +106,12 @@ namespace Transition.CircuitEditor
                 element.selected();
                 scrComponentParameters.Content = element.SerializableComponent.ParametersControl;
                 enableComponentEdit();
-                
             }
 
             if (selectedElements.Count == 0)
             {
                 disableComponentEdit();
             }
-
-           // selectedComponents.Clear();
         }
 
         private void enableComponentEdit()
@@ -141,30 +138,20 @@ namespace Transition.CircuitEditor
             selectedElements.Add(element);
 
         }
-
-        public void clickElement(ScreenComponentBase element)
-        {
-            clickedElement = element;
-        }
-
-        public void rightClickElement(ScreenComponentBase element)
-        {
-            selectElement(element);
-            splitter.IsPaneOpen = true;
-
-        }
-
+        
         public void addElement(string element)
         {
             //tap event invoques an element on center of drawboard
-            addElement(element, new Point(cnvCircuit.Width / 2, cnvCircuit.Height / 2));
+            addElement(element, new Point(
+                snapCoordinate(cnvCircuit.Width / 2),
+                snapCoordinate(cnvCircuit.Height / 2)));
         }
 
         public void addElement(string element, Point ptCanvas)
         {
             SerializableComponent component = getElement(element);
-            component.PositionX = ptCanvas.X;
-            component.PositionY = ptCanvas.Y;
+            component.PositionX = snapCoordinate(ptCanvas.X);
+            component.PositionY = snapCoordinate(ptCanvas.Y);
 
             currentDesign.addElement(component);
 
@@ -173,21 +160,21 @@ namespace Transition.CircuitEditor
 
         private void clickRotate(object sender, RoutedEventArgs e)
         {
-            foreach (SerializableComponent comp in selectedElements.OfType<SerializableComponent>())
-                comp.rotate();
+            foreach (ScreenComponentBase comp in selectedElements)
+                comp.SerializableComponent.rotate();
             
         }
 
         private void clickFlipX(object sender, RoutedEventArgs e)
         {
-            foreach (SerializableComponent comp in selectedElements.OfType<SerializableComponent>())
-                comp.doFlipX();
+            foreach (ScreenComponentBase comp in selectedElements)
+                comp.SerializableComponent.doFlipX();
         }
 
         private void clickFlipY(object sender, RoutedEventArgs e)
         {
-            foreach (SerializableComponent comp in selectedElements.OfType<SerializableComponent>())
-                comp.doFlipY();
+            foreach (ScreenComponentBase comp in selectedElements)
+                comp.SerializableComponent.doFlipY();
         }
 
         private void tapCloseButton(object sender, TappedRoutedEventArgs e)
@@ -197,9 +184,7 @@ namespace Transition.CircuitEditor
 
         private async void drop(object sender, DragEventArgs e)
         {
-            //  List<string> a = new List<string>();
-            //  a.AddRange(e.DataView.AvailableFormats);
-
+      
             string element = await e.DataView.GetTextAsync();
             Point ptCanvas = e.GetPosition(cnvCircuit);
 
@@ -264,54 +249,73 @@ namespace Transition.CircuitEditor
                 cnvGeneral.Children.Add(l);
         }
 
+        private double snapCoordinate(double coordinate)
+        {
+            return SnapToGrid ? Statics.round20(coordinate) : coordinate;
+        }
+        
         private void cnvPointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            clickPoint = e.GetCurrentPoint(cnvCircuit).Position;
-            
-            if ((clickedElement == null))
-            {
-                if (rectGroupSelect != null)
-                    if (cnvGeneral.Children.Contains(rectGroupSelect))
-                        cnvGeneral.Children.Remove(rectGroupSelect);
+            clickedPoint = e.GetCurrentPoint(cnvCircuit).Position;
 
-                groupSelect = true;
-                pointStartGroupSelect = e.GetCurrentPoint(cnvCircuit).Position;
-                selectedElements.Clear();
-                // splitter.IsPaneOpen = false;
+            ScreenComponentBase clickedElement = null;
 
-                rectGroupSelect = new Rectangle()
+            foreach (ScreenComponentBase element in elements)
+                if (element.isInside(clickedPoint.X, clickedPoint.Y))
+                    clickedElement = element;
+
+            if (e.GetCurrentPoint(cnvCircuit).Properties.IsLeftButtonPressed)
+                if (clickedElement == null)
                 {
-                    StrokeThickness = 1,
-                    Stroke = new SolidColorBrush(Colors.Black),
-                    Width = 1,
-                    Height = 1
-                };
+                    if (rectGroupSelect != null)
+                        if (cnvGeneral.Children.Contains(rectGroupSelect))
+                            cnvGeneral.Children.Remove(rectGroupSelect);
 
-                rectGroupSelect.PointerReleased += cnvPointerReleased;
-                cnvGeneral.Children.Add(rectGroupSelect);
-            }
-            
-            if (clickedElement != null)
-            {
-                if (selectedElements.Contains(clickedElement))
-                { }
+                    groupSelect = true;
+                    pointStartGroupSelect = e.GetCurrentPoint(cnvCircuit).Position;
+                    selectedElements.Clear();
+
+                    rectGroupSelect = new Rectangle()
+                    {
+                        StrokeThickness = 1,
+                        Stroke = new SolidColorBrush(Colors.Black),
+                        Width = 1,
+                        Height = 1
+                    };
+
+                    rectGroupSelect.PointerReleased += cnvPointerReleased;
+                    cnvGeneral.Children.Add(rectGroupSelect);
+                }
                 else
                 {
-                    selectElement(clickedElement);
+                    movingComponents = true;
+
+                    if (selectedElements.Contains(clickedElement))
+                    { }
+                    else
+                    {
+                        selectElement(clickedElement);
+                    }
                 }
-               // clickedElement = null;
+
+            if (e.GetCurrentPoint(cnvCircuit).Properties.IsRightButtonPressed)
+            {
+                if (clickedElement != null)
+                {
+                    selectElement(clickedElement);
+                    splitter.IsPaneOpen = true;
+                }
             }
         }
 
         private void cnvPointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            
             if (e.GetCurrentPoint(cnvCircuit).Properties.IsLeftButtonPressed)
             {
+                Point ptCanvas = e.GetCurrentPoint(cnvCircuit).Position;
+
                 if (groupSelect)
                 {
-                    Point ptCanvas = e.GetCurrentPoint(cnvCircuit).Position;
-
                     double left;
                     double top;
                     double width;
@@ -335,23 +339,17 @@ namespace Transition.CircuitEditor
 
                     return;
                 }
+                else
                 
-                if ((clickedElement != null))
-                {
-                    Point ptCanvas = e.GetCurrentPoint(cnvCircuit).Position;
-                    foreach (ScreenComponentBase element in selectedElements)
-                    {
-                        element.moveRelative(clickPoint.X - ptCanvas.X,
-                                             clickPoint.Y - ptCanvas.Y);
-                    }
-                }
+                   if (movingComponents)
+                        foreach (ScreenComponentBase element in selectedElements)
+                            element.moveRelative(snapCoordinate(clickedPoint.X) - snapCoordinate(ptCanvas.X),
+                                                 snapCoordinate(clickedPoint.Y) - snapCoordinate(ptCanvas.Y));
             }
         }
 
         private void cnvPointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            
-            clickedElement = null;
             
             if (groupSelect)
             {
@@ -364,8 +362,9 @@ namespace Transition.CircuitEditor
                     if (element.isInside(rectGroupSelect))
                         selectedElements.Add(element);
             }
-            
-                
+            movingComponents = false;
+            foreach (ScreenComponentBase element in elements)
+                element.updateOriginPoint();
         }
 
         public void showParameters(ScreenComponentBase component)

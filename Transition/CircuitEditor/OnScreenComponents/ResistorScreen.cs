@@ -41,7 +41,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
             Binding b1 = new Binding()
             {
-                Path = new PropertyPath("ComponentName"),
+                Path = new PropertyPath("ElementName"),
                 Mode = BindingMode.OneWay
             };
 
