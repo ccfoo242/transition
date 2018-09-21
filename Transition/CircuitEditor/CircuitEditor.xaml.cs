@@ -153,6 +153,8 @@ namespace Transition.CircuitEditor
             component.PositionX = snapCoordinate(ptCanvas.X);
             component.PositionY = snapCoordinate(ptCanvas.Y);
 
+            component.ElementName = component.ElementLetter + getNextNumberLetter(component.ElementLetter).ToString();
+
             currentDesign.addElement(component);
 
             addToCanvas(component.OnScreenComponent);
