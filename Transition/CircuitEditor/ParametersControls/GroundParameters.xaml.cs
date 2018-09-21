@@ -30,6 +30,8 @@ namespace Transition.CircuitEditor.Components
 
         public GroundParameters(Ground g)
         {
+            this.InitializeComponent();
+
             SerializableGround = g;
             DataContext = g;
         }

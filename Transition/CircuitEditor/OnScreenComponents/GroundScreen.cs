@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.Serializable;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Transition.CircuitEditor.OnScreenComponents
 {
@@ -19,7 +21,16 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public GroundScreen(Ground ground) : base(ground)
         {
+            ContentControl symbolInductor = new ContentControl()
+            {
+                ContentTemplate = (DataTemplate)Application.Current.Resources["symbolGround"]
+            };
 
+            ComponentCanvas.Children.Add(symbolInductor);
+            Canvas.SetTop(symbolInductor, 20);
+            Canvas.SetLeft(symbolInductor, 20);
+
+            postConstruct();
         }
 
         public override void setPositionTextBoxes()

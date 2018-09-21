@@ -132,9 +132,6 @@
     <Compile Include="CircuitEditor\ParametersControls\VoltageSourceParametersControl.xaml.cs">
       <DependentUpon>VoltageSourceParametersControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CircuitEditor\ElectricComponent.xaml.cs">
-      <DependentUpon>ElectricComponent.xaml</DependentUpon>
-    </Compile>
     <Compile Include="CircuitEditor\Interfaces.cs" />
     <Compile Include="CircuitEditor\Serializable\Capacitor.cs" />
     <Compile Include="CircuitEditor\Serializable\FDNR.cs" />
@@ -226,10 +223,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CircuitEditor\ParametersControls\VoltageSourceParametersControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="CircuitEditor\ElectricComponent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

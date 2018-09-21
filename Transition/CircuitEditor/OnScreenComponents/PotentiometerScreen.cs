@@ -99,7 +99,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             {
                 Path = new PropertyPath("ResistanceValue"),
                 Mode = BindingMode.OneWay,
-                Converter = new EngrConverter() { AllowNegativeNumber = false }
+                Converter = new EngrConverter() { AllowNegativeNumber = false, ShortString = true }
             };
             txtResistanceValue.SetBinding(TextBlock.TextProperty, b2);
             txtResistanceValue.SizeChanged += delegate { setPositionTextBoxes(); };

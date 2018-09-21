@@ -84,8 +84,8 @@ namespace Transition.CircuitEditor.Serializable
             InductorValue = EngrNumber.One;
             InductorModel = 0;
             
-            SetProperty(ref rs, new EngrNumber(1, "p"));
-            SetProperty(ref cp, new EngrNumber(1, "p"));
+            SetProperty(ref rs, new EngrNumber(1, "p"), "Rs");
+            SetProperty(ref cp, new EngrNumber(1, "p"), "Cp");
             calculateFoQ();
 
             ParametersControl = new InductorParametersControl(this);
@@ -104,8 +104,8 @@ namespace Transition.CircuitEditor.Serializable
             double dQ = (dWop * dL) / dRs;
             double dFo = dWop / (2 * Math.PI);
 
-            SetProperty(ref fo, dFo);
-            SetProperty(ref q, dQ);
+            SetProperty(ref fo, dFo, "Fo");
+            SetProperty(ref q, dQ, "Q");
             
         }
 
@@ -120,8 +120,8 @@ namespace Transition.CircuitEditor.Serializable
             double dRs = (dWo * dL) / dQ;
             double dCp = 1 / (dL * dWo * dWo);
 
-            SetProperty(ref rs, dRs);
-            SetProperty(ref cp, dCp);
+            SetProperty(ref rs, dRs, "Rs");
+            SetProperty(ref cp, dCp, "Cp");
 
         }
 

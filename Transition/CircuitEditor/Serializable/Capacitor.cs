@@ -11,8 +11,7 @@ namespace Transition.CircuitEditor.Serializable
     public class Capacitor : SerializableComponent
     {
         public override string ElementLetter => "C";
-
-
+        
         private EngrNumber capacitorValue;
         public EngrNumber CapacitorValue
         {
@@ -97,9 +96,9 @@ namespace Transition.CircuitEditor.Serializable
             CapacitorValue = EngrNumber.One;
             CapacitorModel = 0;
             
-            SetProperty(ref ls, new EngrNumber(1, "p"));
-            SetProperty(ref rs, new EngrNumber(1, "p"));
-            SetProperty(ref rp, new EngrNumber(1, "T"));
+            SetProperty(ref ls, new EngrNumber(1, "p"), "Ls");
+            SetProperty(ref rs, new EngrNumber(1, "p"), "Rs");
+            SetProperty(ref rp, new EngrNumber(1, "T"), "Rp");
             calculateFoQ();
 
             ParametersControl = new CapacitorParametersControl(this);
@@ -118,8 +117,8 @@ namespace Transition.CircuitEditor.Serializable
             double dQ = (dWo * dLs) / dRs;
             double dFo = dWo / (2 * Math.PI);
 
-            SetProperty(ref fo, dFo);
-            SetProperty(ref q, dQ);
+            SetProperty(ref fo, dFo, "Fo");
+            SetProperty(ref q, dQ, "Q");
         }
 
         private void calculateRsLs()
@@ -134,8 +133,8 @@ namespace Transition.CircuitEditor.Serializable
             double dRs = 1 / (dQ * dWo * dC);
             double dLs = 1 / (dC * dWo * dWo);
 
-            SetProperty(ref ls, dLs);
-            SetProperty(ref rs, dRs);
+            SetProperty(ref ls, dLs, "Ls");
+            SetProperty(ref rs, dRs, "Rs");
             
         }
 

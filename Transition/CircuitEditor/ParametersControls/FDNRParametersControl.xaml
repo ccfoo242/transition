@@ -21,7 +21,8 @@
         <controls:Expander Header="FDNR Value" ExpandDirection="Down"
                            IsExpanded="True">
             <customcontrols:ComponentValueBox Unit="Farad²" HorizontalAlignment="Left"
-                             UnitShort="F²" Margin="4"
+                             UnitShort="F²" Margin="4" 
+                             ComponentValue="{Binding Path=FdnrValue, Mode=TwoWay}"
                              x:Name="componentValueBox"/>
         </controls:Expander>
     </StackPanel>

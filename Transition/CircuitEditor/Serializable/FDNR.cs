@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.Components;
+using Transition.CircuitEditor.OnScreenComponents;
 
 namespace Transition.CircuitEditor.Serializable
 {
@@ -25,7 +26,7 @@ namespace Transition.CircuitEditor.Serializable
             FdnrValue = EngrNumber.One;
             
             ParametersControl = new FDNRParametersControl(this);
-            OnScreenComponent = new OnScreenComponents.FDNRScreen(this);
+            OnScreenComponent = new FDNRScreen(this);
         }
     }
 }

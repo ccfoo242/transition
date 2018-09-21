@@ -32,25 +32,25 @@ namespace Transition.CircuitEditor.Components
 
         public PotentiometerParametersControl(Potentiometer pot)
         {
+            this.InitializeComponent();
+
             SerializablePotentioMeter = pot;
             DataContext = pot;
-            
-            this.InitializeComponent();
         }
 
         private void ClickCCW(object sender, RoutedEventArgs e)
         {
-
+            sldPosition.Value = 0;
         }
 
         private void ClickCenter(object sender, RoutedEventArgs e)
         {
-
+            sldPosition.Value = 50;
         }
 
         private void ClickCW(object sender, RoutedEventArgs e)
         {
-
+            sldPosition.Value = 100;
         }
     }
 }

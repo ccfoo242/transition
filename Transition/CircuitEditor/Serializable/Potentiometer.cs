@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Transition.CircuitEditor.Components;
+using Transition.CircuitEditor.OnScreenComponents;
 
 namespace Transition.CircuitEditor.Serializable
 {
@@ -26,7 +28,6 @@ namespace Transition.CircuitEditor.Serializable
             get { return positionValue; }
             set
             {
-                positionValue = value;
                 SetProperty(ref positionValue, value);
             }
         }
@@ -40,6 +41,13 @@ namespace Transition.CircuitEditor.Serializable
             // added terminals are mid-point connections
 
             QuantityOfTerminals = 3;
+
+            ResistanceValue = 1;
+            PositionValue = 50;
+
+            OnScreenComponent = new PotentiometerScreen(this);
+            ParametersControl = new PotentiometerParametersControl(this);
+
 
         }
     }

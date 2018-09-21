@@ -54,7 +54,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             {
                 Path = new PropertyPath("InductorValue"),
                 Mode = BindingMode.OneWay,
-                Converter = new EngrConverter() { AllowNegativeNumber = false }
+                Converter = new EngrConverter()
+                { AllowNegativeNumber = false, ShortString = true }
             };
             txtInductorValue.SetBinding(TextBlock.TextProperty, b2);
             txtInductorValue.RenderTransform = new TranslateTransform() { };

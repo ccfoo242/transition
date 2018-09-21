@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Transition.CircuitEditor.Components;
+using Transition.CircuitEditor.OnScreenComponents;
 
 namespace Transition.CircuitEditor.Serializable
 {
@@ -12,5 +14,11 @@ namespace Transition.CircuitEditor.Serializable
 
         public override int QuantityOfTerminals { get => 1; set => throw new NotImplementedException(); }
 
+        public Ground()
+        {
+            OnScreenComponent = new GroundScreen(this);
+            ParametersControl = new GroundParameters();
+
+        }
     }
 }

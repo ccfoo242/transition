@@ -41,7 +41,6 @@ namespace Transition.CircuitEditor.OnScreenComponents
             Binding b1 = new Binding()
             {
                 Path = new PropertyPath("ElementName"),
-                Source = this,
                 Mode = BindingMode.OneWay
             };
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
@@ -53,7 +52,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             txtFdnrValue = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b2 = new Binding()
             {
-                Path = new PropertyPath("ValueString"),
+                Path = new PropertyPath("FdnrValue"),
                 Mode = BindingMode.OneWay
             };
             txtFdnrValue.SetBinding(TextBlock.TextProperty, b2);

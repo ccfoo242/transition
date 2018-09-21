@@ -64,13 +64,13 @@
                         <ContentControl ContentTemplate="{StaticResource inductorParasiticModelCircuit}"/>
                     </Viewbox>
                     <customcontrols:EngrNumberBoxDialog VariableName="Rs (Ohm)"  HorizontalAlignment="Right"
-                               x:Name="BoxRs" Value="{Binding Rs, Mode = OneWay}"/>
+                               x:Name="BoxRs" Value="{Binding Rs, Mode = TwoWay}"/>
                     <customcontrols:EngrNumberBoxDialog VariableName="Cp (Farad)" HorizontalAlignment="Right"
-                               x:Name="BoxCp" Value="{Binding Cp, Mode = OneWay}"/>
+                               x:Name="BoxCp" Value="{Binding Cp, Mode = TwoWay}"/>
                     <customcontrols:EngrNumberBoxDialog VariableName="Fo (Hz)" HorizontalAlignment="Right"
-                               x:Name="BoxFo" Value="{Binding Fo, Mode = OneWay}"/>
+                               x:Name="BoxFo" Value="{Binding Fo, Mode = TwoWay}"/>
                     <customcontrols:EngrNumberBoxDialog VariableName="Q" HorizontalAlignment="Right"
-                               x:Name="BoxQ" Value="{Binding Q, Mode = OneWay}"/>
+                               x:Name="BoxQ" Value="{Binding Q, Mode = TwoWay}"/>
                 </StackPanel>
             </Grid>
         </controls:Expander>

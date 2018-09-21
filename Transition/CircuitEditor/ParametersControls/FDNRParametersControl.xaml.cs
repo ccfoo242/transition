@@ -27,8 +27,9 @@ namespace Transition.CircuitEditor.Components
 
         public FDNRParametersControl(FDNR fdnr)
         {
-            SerializableFDNR = fdnr;
             this.InitializeComponent();
+            SerializableFDNR = fdnr;
+            DataContext = fdnr;
         }
         
     }
