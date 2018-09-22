@@ -80,12 +80,12 @@ namespace Transition.CircuitEditor
 
         }
 
-        public void addToCanvas(ScreenComponentBase element)
+        public void addToCanvas(UIElement element)
         {
             cnvCircuit.Children.Add(element);
         }
 
-        public bool isElementOnCanvas(ScreenComponentBase element)
+        public bool isElementOnCanvas(UIElement element)
         {
             return cnvCircuit.Children.Contains(element);
         }
@@ -149,15 +149,28 @@ namespace Transition.CircuitEditor
 
         public void addElement(string stringComponent, Point ptCanvas)
         {
-            SerializableComponent component = getElement(stringComponent);
-            component.PositionX = snapCoordinate(ptCanvas.X);
-            component.PositionY = snapCoordinate(ptCanvas.Y);
+            if (stringComponent != "wire")
+            {
+                SerializableComponent component = getElement(stringComponent);
+                component.PositionX = snapCoordinate(ptCanvas.X);
+                component.PositionY = snapCoordinate(ptCanvas.Y);
 
-            component.ElementName = component.ElementLetter + getNextNumberLetter(component.ElementLetter).ToString();
+                component.ElementName = component.ElementLetter + getNextNumberLetter(component.ElementLetter).ToString();
 
-            currentDesign.addComponent(component);
+                currentDesign.addComponent(component);
 
-            addToCanvas(component.OnScreenComponent);
+                addToCanvas(component.OnScreenComponent);
+            }
+            else
+            {
+                Wire wire = new Wire();
+                wire.X1 = snapCoordinate(ptCanvas.X);
+                wire.Y1 = snapCoordinate(ptCanvas.Y);
+                wire.X2 = snapCoordinate(ptCanvas.X + 100);
+                wire.Y2 = snapCoordinate(ptCanvas.Y);
+                currentDesign.addWire(wire);
+                addToCanvas(wire.OnScreenWire);
+            }
         }
 
         private void clickRotate(object sender, RoutedEventArgs e)

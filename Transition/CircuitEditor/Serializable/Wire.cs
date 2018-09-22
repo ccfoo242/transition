@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Transition.CircuitEditor.OnScreenComponents;
 
 namespace Transition.CircuitEditor.Serializable
 {
@@ -32,18 +33,20 @@ namespace Transition.CircuitEditor.Serializable
 
         public override int QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
 
-        public SerializableElement Bind1 { get; set; }
+        public SerializableElement BoundedObject1 { get; set; }
         public byte BoundedTerminal1 { get; set; }
 
-        public SerializableElement Bind2 { get; set; }
+        public SerializableElement BoundedObject2 { get; set; }
         public byte BoundedTerminal2 { get; set; }
 
-        public bool IsBounded1 { get { return Bind1 != null; } }
-        public bool IsBounded2 { get { return Bind2 != null; } }
+        public bool IsBounded1 { get { return BoundedObject1 != null; } }
+        public bool IsBounded2 { get { return BoundedObject2 != null; } }
+
+        public WireScreen OnScreenWire { get; }
 
         public Wire()
         {
-       
+            OnScreenWire = new WireScreen(this);
         }
     }
 }

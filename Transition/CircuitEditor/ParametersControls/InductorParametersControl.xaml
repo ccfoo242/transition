@@ -49,14 +49,16 @@
 
                 <StackPanel Orientation="Vertical" x:Name="pnlExponential"
                                     Grid.Row="1" HorizontalAlignment="Stretch">
-                    <customcontrols:EngrNumberBoxDialog VariableName="Eω" Margin="4"/>
+                    <customcontrols:EngrNumberBoxDialog VariableName="Eω" Margin="4" 
+                                                        AllowNegativeNumber="True"
+                                                        Value="{Binding Ew, Mode=TwoWay}"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Inductance function: L(ω) = L · ω"/>
                         <TextBlock Text="Eω" FontSize="10" VerticalAlignment="Top"/>
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Orientation="Vertical" x:Name="pnlParasitic"
-                                Grid.Row="1" HorizontalAlignment="Stretch">
+                            Grid.Row="1" HorizontalAlignment="Stretch">
                     <TextBlock Text="Equivalent Inductor Model"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center"

@@ -6,7 +6,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Shapes;
 
 namespace Transition.CircuitEditor
-{ 
+{ /*
     public interface IElectricElement
     {
         // an element can be a Wire or Component
@@ -20,5 +20,5 @@ namespace Transition.CircuitEditor
         void updateOriginPoint();
 
     }
-    
+    */
 }

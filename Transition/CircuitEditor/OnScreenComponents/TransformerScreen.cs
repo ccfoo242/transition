@@ -37,8 +37,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             ComponentCanvas.Children.Add(SymbolTransformer);
             Canvas.SetTop(SymbolTransformer, 20);
             Canvas.SetLeft(SymbolTransformer, 20);
-
-
+            
             txtComponentName = new TextBlock() { FontWeight = FontWeights.ExtraBold };
 
             Binding b1 = new Binding()
@@ -50,8 +49,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             txtComponentName.RenderTransform = new TranslateTransform() { };
             txtComponentName.SizeChanged += delegate { setPositionTextBoxes(); };
             Children.Add(txtComponentName);
-
-
+            
             txtTurnsRatio = new TextBlock()
             {
                 FontWeight = FontWeights.ExtraBold,
@@ -62,7 +60,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             {
                 Path = new PropertyPath("TurnsRatio"),
                 Converter = new EngrConverter()
-                { ShortString = false, AllowNegativeNumber = false },
+                    { ShortString = false, AllowNegativeNumber = false },
                 Mode = BindingMode.OneWay
             };
             txtTurnsRatio.SetBinding(TextBlock.TextProperty, b2);

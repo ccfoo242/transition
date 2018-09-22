@@ -49,7 +49,9 @@
                 </StackPanel>
                 <StackPanel Orientation="Vertical" x:Name="pnlExponential"
                                 Grid.Row="1" HorizontalAlignment="Stretch">
-                    <customcontrols:EngrNumberBoxDialog VariableName="Eω" Margin="4"/>
+                    <customcontrols:EngrNumberBoxDialog VariableName="Eω" Margin="4" 
+                                                        AllowNegativeNumber="True"
+                                                        Value="{Binding Ew, Mode=TwoWay}"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Capacitance function: C(ω) = C · ω"/>
                         <TextBlock Text="Eω" FontSize="10" VerticalAlignment="Top"/>

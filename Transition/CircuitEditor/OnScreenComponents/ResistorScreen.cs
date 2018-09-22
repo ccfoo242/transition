@@ -65,8 +65,6 @@ namespace Transition.CircuitEditor.OnScreenComponents
             {
                 Path = new PropertyPath("ValueString"),
                 Mode = BindingMode.OneWay
-             /*   Converter = new EngrConverter()
-                    { AllowNegativeNumber = false, ShortString = true }*/
             };
             txtResistanceValue.SetBinding(TextBlock.TextProperty, b2);
             txtResistanceValue.SizeChanged += delegate { setPositionTextBoxes(); };
