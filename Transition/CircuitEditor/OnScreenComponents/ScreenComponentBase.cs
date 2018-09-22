@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
     /* i had to use Grid class because it has a border
      as for Border class, it is sealed...*/
 
-    public abstract class ScreenComponentBase : Grid
+    public abstract class ScreenComponentBase : Grid, INotifyPropertyChanged
     {
         public Canvas ComponentCanvas { get; }
         public CompositeTransform ComponentTransform { get; }
@@ -27,7 +28,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public abstract double SchematicWidth { get; }
         public abstract double SchematicHeight { get; }
-       
+
         public abstract void setPositionTextBoxes();
         public abstract int[,] TerminalPositions { get; }
 
@@ -40,13 +41,26 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public double originalPositionX;
         public double originalPositionY;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public double T1X => getAbsoluteTerminalPosition(0).X;
+        public double T1Y => getAbsoluteTerminalPosition(0).Y;
+        public double T2X => getAbsoluteTerminalPosition(1).X;
+        public double T2Y => getAbsoluteTerminalPosition(1).Y;
+        public double T3X => getAbsoluteTerminalPosition(2).X;
+        public double T3Y => getAbsoluteTerminalPosition(2).Y;
+        public double T4X => getAbsoluteTerminalPosition(3).X;
+        public double T4Y => getAbsoluteTerminalPosition(3).Y;
+
         
+
         public ScreenComponentBase(SerializableComponent component) : base()
         {
             SerializableComponent = component;
 
             component.ComponentLayoutChanged += setPositionTextBoxes;
-            
+            component.ComponentLayoutChanged += TerminalsPositionsChanged;
             ComponentTransform = new CompositeTransform();
             ComponentTransform.CenterX = SchematicWidth / 2;
             ComponentTransform.CenterY = SchematicHeight / 2;
@@ -60,8 +74,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             Background = new SolidColorBrush(Colors.Transparent);
             BorderThickness = new Thickness(1);
             Children.Add(ComponentCanvas);
-          
-         //   ComponentCanvas.PointerPressed += Element_PointerPressed;
+            
             DataContext = SerializableComponent;
 
             Binding bPX = new Binding()
@@ -100,7 +113,19 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 Converter = new BoolToIntConverter()
             };
             BindingOperations.SetBinding(ComponentTransform, CompositeTransform.ScaleYProperty, bFY);
-            
+
+        }
+        
+        public void TerminalsPositionsChanged()
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T1X"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T1Y"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T2X"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T2Y"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T3X"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T3Y"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T4X"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T4Y"));
         }
 
         protected void postConstruct()
@@ -138,7 +163,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             BorderBrush = new SolidColorBrush(Colors.Black);
             BorderThickness = new Thickness(1);
-            updateOriginPoint();
+            updateOriginalPosition();
         }
         
         public void deselected()
@@ -146,7 +171,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
              BorderBrush = new SolidColorBrush(Colors.Transparent);
         }
 
-        public void updateOriginPoint()
+        public void updateOriginalPosition()
         {
             originalPositionX = Canvas.GetLeft(this);
             originalPositionY = Canvas.GetTop(this);
@@ -156,6 +181,36 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             SerializableComponent.PositionX = originalPositionX - positionX;
             SerializableComponent.PositionY = originalPositionY - positionY;
+        }
+
+        public Point getRelativeTerminalPosition(byte terminal)
+        {
+            Point output = new Point();
+
+            output.X =  (SchematicWidth / 2) + 
+                           ((FlipX ? -1 : 1) *
+                           Math.Cos(Math.PI - ActualRotation) * 
+                           ((SchematicWidth / 2) - TerminalPositions[terminal, 0])) +
+                           ((FlipY ? -1 : 1) *
+                           Math.Sin(Math.PI - ActualRotation) *
+                           ((SchematicHeight / 2) - TerminalPositions[terminal, 1]));
+
+            output.Y =  (SchematicHeight / 2) +
+                           ((FlipX ? -1 : 1) *
+                           Math.Sin(Math.PI - ActualRotation) *
+                           ((SchematicWidth / 2) - TerminalPositions[terminal, 0])) +
+                           ((FlipY ? -1 : 1) *
+                           Math.Cos(Math.PI - ActualRotation) *
+                           ((SchematicHeight / 2) - TerminalPositions[terminal, 1]));
+            
+            return output;
+        }
+
+        public Point getAbsoluteTerminalPosition(byte terminal)
+        {
+            Point relative = getRelativeTerminalPosition(terminal);
+
+            return new Point(relative.X + PositionX, relative.Y + PositionY);
         }
     }
     

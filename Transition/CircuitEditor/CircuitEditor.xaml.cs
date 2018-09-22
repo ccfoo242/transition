@@ -268,6 +268,8 @@ namespace Transition.CircuitEditor
             return SnapToGrid ? Statics.round20(coordinate) : coordinate;
         }
         
+
+
         private void cnvPointerPressed(object sender, PointerRoutedEventArgs e)
         {
             clickedPoint = e.GetCurrentPoint(cnvCircuit).Position;
@@ -378,7 +380,7 @@ namespace Transition.CircuitEditor
             }
             movingComponents = false;
             foreach (ScreenComponentBase element in elements)
-                element.updateOriginPoint();
+                element.updateOriginalPosition();
         }
 
         public void showParameters(ScreenComponentBase component)

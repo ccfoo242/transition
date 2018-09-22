@@ -88,8 +88,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
             ((TranslateTransform)txtInductorValue.RenderTransform).X = leftRV;
             ((TranslateTransform)txtInductorValue.RenderTransform).Y = topRV;
-
-
+            
         }
     }
 }
