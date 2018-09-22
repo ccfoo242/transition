@@ -23,7 +23,8 @@
                            IsExpanded="True">
             <customcontrols:ComponentValueBox x:Name="componentValueBox" 
                                               Unit="Ohm" HorizontalAlignment="Left"
-                                              UnitShort="Ω" Margin="4"
+                                              UnitShort="Ω" Margin="4" 
+                                              ComponentPrecision="{Binding Path=ComponentPrecision, Mode=TwoWay}"
                                               ComponentValue="{Binding Path=ResistorValue, Mode=TwoWay}"/>
         </controls:Expander>
 

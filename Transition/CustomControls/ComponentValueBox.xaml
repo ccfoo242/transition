@@ -15,6 +15,7 @@
         <local1:EngrConverter x:Key="engrConverterShort" ShortString="True" AllowNegativeNumber="False"/>
         <local1:EngrConverter x:Key="engrConverter" ShortString="False" AllowNegativeNumber="False"/>
         <local11:BooleanToVisibilityConverter x:Key="boolVisibilityConverter"/>
+        <local:PrecisionIntConverter x:Key="precIntConverter"/>
     </UserControl.Resources>
 
     <Grid>
@@ -79,7 +80,8 @@
                    HorizontalAlignment="Right"
                    VerticalAlignment="Center" Margin="5"/>
         <ComboBox Grid.Row="1" Grid.Column="1"  VerticalAlignment="Center"
-                  HorizontalAlignment="Stretch" SelectedIndex="0"
+                  HorizontalAlignment="Stretch" 
+                  SelectedIndex="{x:Bind ComponentPrecision, Mode=TwoWay, Converter={StaticResource precIntConverter}}"
                   SelectionChanged="changedPrecision" x:Name="cmbPrecision">
             <ComboBox.Items>
                 <ComboBoxItem Content="Arbitrary" Tag="0"/>

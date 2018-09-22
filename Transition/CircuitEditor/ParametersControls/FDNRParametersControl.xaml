@@ -23,6 +23,7 @@
             <customcontrols:ComponentValueBox Unit="Farad²" HorizontalAlignment="Left"
                              UnitShort="F²" Margin="4" 
                              ComponentValue="{Binding Path=FdnrValue, Mode=TwoWay}"
+                             ComponentPrecision="{Binding Path=ComponentPrecision, Mode=TwoWay}"
                              x:Name="componentValueBox"/>
         </controls:Expander>
     </StackPanel>

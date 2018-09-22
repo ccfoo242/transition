@@ -41,7 +41,6 @@ namespace Transition.CircuitEditor.OnScreenComponents
             Binding b1 = new Binding()
             {
                 Path = new PropertyPath("ElementName"),
-                Source = this,
                 Mode = BindingMode.OneWay
             };
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
@@ -52,10 +51,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             txtInductorValue = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b2 = new Binding()
             {
-                Path = new PropertyPath("InductorValue"),
-                Mode = BindingMode.OneWay,
-                Converter = new EngrConverter()
-                { AllowNegativeNumber = false, ShortString = true }
+                Path = new PropertyPath("ValueString"),
+                Mode = BindingMode.OneWay
             };
             txtInductorValue.SetBinding(TextBlock.TextProperty, b2);
             txtInductorValue.RenderTransform = new TranslateTransform() { };

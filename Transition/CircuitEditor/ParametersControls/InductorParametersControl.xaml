@@ -22,6 +22,7 @@
             <customcontrols:ComponentValueBox Unit="Henry" HorizontalAlignment="Left"
                                               UnitShort="H" Margin="4" 
                                               ComponentValue="{Binding InductorValue, Mode=TwoWay}"
+                                              ComponentPrecision="{Binding ComponentPrecision, Mode=TwoWay}"
                                               x:Name="ComponentValueBox"/>
         </controls:Expander>
         <controls:Expander Header="Inductor Model" ExpandDirection="Down"

@@ -16,7 +16,9 @@ namespace Transition.CircuitEditor.Serializable
         public EngrNumber InductorValue
         {
             get { return inductorValue; }
-            set { SetProperty(ref inductorValue, value); }
+            set { SetProperty(ref inductorValue, value);
+                OnPropertyChanged("ValueString");
+            }
         }
 
         private int inductorModel;
@@ -25,7 +27,14 @@ namespace Transition.CircuitEditor.Serializable
             get { return inductorModel; }
             set { SetProperty(ref inductorModel, value); }
         }
-        
+
+        private Precision componentPrecision;
+        public Precision ComponentPrecision
+        {
+            get { return componentPrecision; }
+            set { SetProperty(ref componentPrecision, value); }
+        }
+
         private EngrNumber rs;
         public EngrNumber Rs
         {
@@ -77,6 +86,8 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
+        public bool AnyPrecisionSelected { get { return (ComponentPrecision == Precision.Arbitrary); } }
+
         public override int QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
 
         public Inductor()
@@ -125,5 +136,23 @@ namespace Transition.CircuitEditor.Serializable
 
         }
 
+
+        public string ValueString
+        {
+            get
+            {
+                // this one sets de String for the component in the schematic window
+                string returnString;
+                EngrConverter conv = new EngrConverter() { ShortString = false };
+                EngrConverter convShort = new EngrConverter() { ShortString = true };
+
+                if (AnyPrecisionSelected)
+                    returnString = (string)conv.Convert(InductorValue, typeof(string), null, "");
+                else
+                    returnString = (string)convShort.Convert(InductorValue, typeof(string), null, "");
+
+                return returnString + "H";
+            }
+        }
     }
 }

@@ -51,10 +51,10 @@ namespace Transition.CircuitEditor.OnScreenComponents
             txtCapacitorValue = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b2 = new Binding()
             {
-                Path = new PropertyPath("CapacitorValue"),
-                Mode = BindingMode.OneWay,
-                Converter = new EngrConverter()
-                { AllowNegativeNumber = false, ShortString = true }
+                Path = new PropertyPath("ValueString"),
+                Mode = BindingMode.OneWay
+             /*   Converter = new EngrConverter()
+                { AllowNegativeNumber = false, ShortString = true }*/
             };
             txtCapacitorValue.SetBinding(TextBlock.TextProperty, b2);
             txtCapacitorValue.RenderTransform = new TranslateTransform() { };

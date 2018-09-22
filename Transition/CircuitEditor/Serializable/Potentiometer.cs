@@ -19,6 +19,7 @@ namespace Transition.CircuitEditor.Serializable
             set
             {
                 SetProperty(ref resistanceValue, value);
+                OnPropertyChanged("ResistanceString");
             }
         }
         
@@ -31,6 +32,16 @@ namespace Transition.CircuitEditor.Serializable
                 SetProperty(ref positionValue, value);
             }
         }
+
+        private Precision componentPrecision;
+        public Precision ComponentPrecision
+        {
+            get { return componentPrecision; }
+            set { SetProperty(ref componentPrecision, value);
+                OnPropertyChanged("ResistanceString"); }
+        }
+
+        public bool AnyPrecisionSelected { get { return (ComponentPrecision == Precision.Arbitrary); } }
 
         public override int QuantityOfTerminals { get; set; }
 
@@ -47,8 +58,27 @@ namespace Transition.CircuitEditor.Serializable
 
             OnScreenComponent = new PotentiometerScreen(this);
             ParametersControl = new PotentiometerParametersControl(this);
-
-
+            
         }
+
+        public string ResistanceString
+        {
+            get
+            {
+                // this one sets de String for the component in the schematic window
+                string returnString;
+                EngrConverter conv = new EngrConverter() { ShortString = false };
+                EngrConverter convShort = new EngrConverter() { ShortString = true };
+
+                if (AnyPrecisionSelected)
+                    returnString = (string)conv.Convert(ResistanceValue, typeof(string), null, "");
+                else
+                    returnString = (string)convShort.Convert(ResistanceValue, typeof(string), null, "");
+
+                return returnString + "Ω";
+            }
+        }
+
+
     }
 }

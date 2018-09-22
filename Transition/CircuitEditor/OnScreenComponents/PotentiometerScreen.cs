@@ -97,9 +97,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
             Binding b2 = new Binding()
             {
-                Path = new PropertyPath("ResistanceValue"),
-                Mode = BindingMode.OneWay,
-                Converter = new EngrConverter() { AllowNegativeNumber = false, ShortString = true }
+                Path = new PropertyPath("ResistanceString"),
+                Mode = BindingMode.OneWay 
             };
             txtResistanceValue.SetBinding(TextBlock.TextProperty, b2);
             txtResistanceValue.SizeChanged += delegate { setPositionTextBoxes(); };

@@ -22,7 +22,8 @@
                            IsExpanded="True">
             <customcontrols:ComponentValueBox Unit="Farad" Margin="4" HorizontalAlignment="Left"
                              UnitShort="F" x:Name="componentValueBox"
-                             ComponentValue="{Binding CapacitorValue, Mode=TwoWay}"/>
+                             ComponentValue="{Binding CapacitorValue, Mode=TwoWay}"
+                             ComponentPrecision="{Binding ComponentPrecision, Mode=TwoWay}"/>
         </controls:Expander>
         <controls:Expander Header="Capacitor Model" ExpandDirection="Down"
                            IsExpanded="True">

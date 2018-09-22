@@ -37,7 +37,7 @@ namespace Transition.CircuitEditor
         public ObservableCollection<ScreenComponentBase> elements => currentDesign.visibleElements;
         public List<Line> gridLines;
 
-        private bool SnapToGrid => true;
+        private bool SnapToGrid => currentDesign.SnapToGrid;
 
         public bool groupSelect = false;
         private bool movingComponents = false;
@@ -147,15 +147,15 @@ namespace Transition.CircuitEditor
                 snapCoordinate(cnvCircuit.Height / 2)));
         }
 
-        public void addElement(string element, Point ptCanvas)
+        public void addElement(string stringComponent, Point ptCanvas)
         {
-            SerializableComponent component = getElement(element);
+            SerializableComponent component = getElement(stringComponent);
             component.PositionX = snapCoordinate(ptCanvas.X);
             component.PositionY = snapCoordinate(ptCanvas.Y);
 
             component.ElementName = component.ElementLetter + getNextNumberLetter(component.ElementLetter).ToString();
 
-            currentDesign.addElement(component);
+            currentDesign.addComponent(component);
 
             addToCanvas(component.OnScreenComponent);
         }
@@ -164,7 +164,6 @@ namespace Transition.CircuitEditor
         {
             foreach (ScreenComponentBase comp in selectedElements)
                 comp.SerializableComponent.rotate();
-            
         }
 
         private void clickFlipX(object sender, RoutedEventArgs e)
@@ -384,7 +383,7 @@ namespace Transition.CircuitEditor
             int maximum = 0;
             int result;
 
-            foreach (SerializableElement element in currentDesign.elements)
+            foreach (SerializableElement element in currentDesign.components)
                 if (element.ElementName != null)
                     if (element.ElementName.Substring(0, ElementLetter.Length) == ElementLetter)
                         if (int.TryParse(element.ElementName.Substring(ElementLetter.Length, element.ElementName.Length - ElementLetter.Length), out result))

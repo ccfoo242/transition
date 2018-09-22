@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Transition.CircuitEditor.Serializable;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -20,8 +21,7 @@ namespace Transition.CustomControls
 {
     public sealed partial class ComponentValueBox : UserControl, INotifyPropertyChanged
     {
-        public enum ComponentPrecision { Arbitrary, p05, p1, p2, p5, p10, p20, p50 }
-
+    
         private String unit;
         public String Unit { get { return unit; }
             set { unit = value;
@@ -36,12 +36,12 @@ namespace Transition.CustomControls
             set
             {
                 SetValue(ComponentValueProperty, value);
-                if (selectedComponentPrecision != ComponentPrecision.Arbitrary)
+                if (ComponentPrecision != Precision.Arbitrary)
                     if (!isValueAdjustedToPrecision())
                         ComponentValue = new EngrNumber(getNextValue(), ComponentValue.Prefix);
 
                 ValueChanged?.Invoke(this, new PropertyChangedEventArgs("ComponentValue"));
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ComponentValue"));
+              
             }
         }
 
@@ -50,7 +50,17 @@ namespace Transition.CustomControls
               typeof(EngrNumber), typeof(ComponentValueBox), new PropertyMetadata(EngrNumber.One));
 
 
-        public ComponentPrecision selectedComponentPrecision { get; set; }
+
+        public Precision ComponentPrecision
+        {
+            get { return (Precision)GetValue(ComponentPrecisionProperty); }
+            set { SetValue(ComponentPrecisionProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for ComponentPrecision.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ComponentPrecisionProperty =
+            DependencyProperty.Register("ComponentPrecision", typeof(Precision), typeof(ComponentValueBox), new PropertyMetadata(0));
+        
 
         private bool anyPrecisionSelected;
         public bool AnyPrecisionSelected
@@ -64,19 +74,10 @@ namespace Transition.CustomControls
         public event PropertyChangedEventHandler PropertyChanged;
         public event PropertyChangedEventHandler ValueChanged;
 
-        private String valueString;
-        public String ValueString { get { return valueString; }
-            set { valueString = value;
-                  PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ValueString"));
-            }
-        }
-        
-
+       
         public ComponentValueBox()
         {
             this.InitializeComponent();
-            ValueChanged += updateValueString;
-
         }
 
         private void increaseClick(object sender, RoutedEventArgs e)
@@ -91,7 +92,7 @@ namespace Transition.CustomControls
 
         private void changedPrecision(object sender, SelectionChangedEventArgs e)
         {
-            if (cmbPrecision.SelectedIndex == (int)ComponentPrecision.Arbitrary)
+            if (cmbPrecision.SelectedIndex == (int)Precision.Arbitrary)
             {
                 hideUpDownButtons();
                 AnyPrecisionSelected = true;
@@ -101,9 +102,7 @@ namespace Transition.CustomControls
                 showUpDownButtons();
                 AnyPrecisionSelected = false;
             }
-
-            selectedComponentPrecision = (ComponentPrecision)cmbPrecision.SelectedIndex;
-
+            
             if (!AnyPrecisionSelected) ComponentValue = new EngrNumber(getNextOrEqualValue(), ComponentValue.Prefix);
 
         }
@@ -134,10 +133,9 @@ namespace Transition.CustomControls
 
         public bool isValueAdjustedToPrecision()
         {
-            if (selectedComponentPrecision != ComponentPrecision.Arbitrary)
+            if (ComponentPrecision != Precision.Arbitrary)
             {
                 EngrNumber nextEqualValue = new EngrNumber(getNextOrEqualValue(), ComponentValue.Prefix);
-
                 return (ComponentValue == nextEqualValue);
             }
             return true;
@@ -174,32 +172,18 @@ namespace Transition.CustomControls
             return (reversed[0] / 10) * multiplier;
         }
 
-        private void updateValueString(object sender, PropertyChangedEventArgs e)
-        {
-            // this one sets de String for the component in the schematic window
-
-            EngrConverter conv = new EngrConverter() { ShortString = false };
-            EngrConverter convShort = new EngrConverter() { ShortString = true };
-
-            if (AnyPrecisionSelected)
-                ValueString = (String)conv.Convert(ComponentValue, typeof(String), null, "");
-            else
-                ValueString = (String)convShort.Convert(ComponentValue, typeof(String), null, "");
-
-            if (UnitShort != null) ValueString += " " + UnitShort;
-        }
-
+      
         public decimal[] arraySelectedPrecision()
         {
-            switch (selectedComponentPrecision)
+            switch (ComponentPrecision)
             {
-                case ComponentPrecision.p05: return e192;
-                case ComponentPrecision.p1: return e96;
-                case ComponentPrecision.p2: return e48;
-                case ComponentPrecision.p5: return e24;
-                case ComponentPrecision.p10: return e12;
-                case ComponentPrecision.p20: return e6;
-                case ComponentPrecision.p50: return e3;
+                case Precision.p05: return e192;
+                case Precision.p1: return e96;
+                case Precision.p2: return e48;
+                case Precision.p5: return e24;
+                case Precision.p10: return e12;
+                case Precision.p20: return e6;
+                case Precision.p50: return e3;
                 default: return new decimal[] { };
             }
         }
@@ -287,5 +271,42 @@ namespace Transition.CustomControls
               8.66M, 8.76M, 8.87M, 8.98M, 9.09M, 9.20M,
               9.31M, 9.42M, 9.53M, 9.65M, 9.76M, 9.88M
             };
+    }
+
+    public class PrecisionIntConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            Precision precisionValue = (Precision)value;
+            switch (precisionValue)
+            {
+                case Precision.Arbitrary: return 0;
+                case Precision.p05:       return 1;
+                case Precision.p1:        return 2;
+                case Precision.p2:        return 3;
+                case Precision.p5:        return 4;
+                case Precision.p10:       return 5;
+                case Precision.p20:       return 6;
+                case Precision.p50:       return 7;
+                default: return -1;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            int precisionValue = (int)value;
+            switch (precisionValue)
+            {
+                case 0: return Precision.Arbitrary;
+                case 1: return Precision.p05;
+                case 2: return Precision.p1;
+                case 3: return Precision.p2;
+                case 4: return Precision.p5;
+                case 5: return Precision.p10;
+                case 6: return Precision.p20;
+                case 7: return Precision.p50;
+                default: return Precision.Arbitrary;
+            }
+        }
     }
 }

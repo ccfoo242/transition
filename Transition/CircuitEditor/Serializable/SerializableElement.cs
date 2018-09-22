@@ -9,6 +9,8 @@ using Windows.UI.Xaml.Controls;
 
 namespace Transition.CircuitEditor.Serializable
 {
+    public enum Precision { Arbitrary, p05, p1, p2, p5, p10, p20, p50 }
+
     public abstract class SerializableElement : BindableBase
     {
         private string elementName;

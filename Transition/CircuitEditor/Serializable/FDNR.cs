@@ -16,8 +16,23 @@ namespace Transition.CircuitEditor.Serializable
         public EngrNumber FdnrValue
         {
             get { return fdnrValue; }
-            set { SetProperty(ref fdnrValue, value); }
+            set { SetProperty(ref fdnrValue, value);
+                OnPropertyChanged("ValueString");
+            }
         }
+
+        private Precision componentPrecision;
+        public Precision ComponentPrecision
+        {
+            get { return componentPrecision; }
+            set
+            {
+                SetProperty(ref componentPrecision, value);
+                OnPropertyChanged("ValueString");
+            }
+        }
+
+        public bool AnyPrecisionSelected { get { return (ComponentPrecision == Precision.Arbitrary); } }
 
         public override int QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
 
@@ -27,6 +42,25 @@ namespace Transition.CircuitEditor.Serializable
             
             ParametersControl = new FDNRParametersControl(this);
             OnScreenComponent = new FDNRScreen(this);
+        }
+
+
+        public string ValueString
+        {
+            get
+            {
+                // this one sets de String for the component in the schematic window
+                string returnString;
+                EngrConverter conv = new EngrConverter() { ShortString = false };
+                EngrConverter convShort = new EngrConverter() { ShortString = true };
+
+                if (AnyPrecisionSelected)
+                    returnString = (string)conv.Convert(FdnrValue, typeof(string), null, "");
+                else
+                    returnString = (string)convShort.Convert(FdnrValue, typeof(string), null, "");
+
+                return returnString + "F²";
+            }
         }
     }
 }
