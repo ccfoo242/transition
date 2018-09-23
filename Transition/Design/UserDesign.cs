@@ -14,7 +14,7 @@ namespace Transition.Design
     public class UserDesign
     {
         public ObservableCollection<SerializableComponent> components { get; }
-        public ObservableCollection<ScreenComponentBase> visibleElements { get; }
+        public ObservableCollection<ScreenElementBase> visibleElements { get; }
         public ObservableCollection<Wire> wires { get; }
 
 
@@ -29,7 +29,7 @@ namespace Transition.Design
             components = new ObservableCollection<SerializableComponent>();
             components.CollectionChanged += elementCollectionChanged;
 
-            visibleElements = new ObservableCollection<ScreenComponentBase>();
+            visibleElements = new ObservableCollection<ScreenElementBase>();
             wires = new ObservableCollection<Wire>();
         }
 

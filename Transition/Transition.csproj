@@ -108,6 +108,7 @@
     <Compile Include="CircuitEditor\OnScreenComponents\TransformerScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\VoltageSourceScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\WireScreen.cs" />
+    <Compile Include="CircuitEditor\OnScreenComponents\WireTerminal.cs" />
     <Compile Include="CircuitEditor\ParametersControls\CapacitorParametersControl.xaml.cs">
       <DependentUpon>CapacitorParametersControl.xaml</DependentUpon>
     </Compile>

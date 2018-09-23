@@ -19,7 +19,29 @@ namespace Transition.CircuitEditor.OnScreenComponents
     /* i had to use Grid class because it has a border
      as for Border class, it is sealed...*/
 
-    public abstract class ScreenComponentBase : Grid, INotifyPropertyChanged
+    public abstract class ScreenElementBase : Grid
+    {
+        public double originalPositionX;
+        public double originalPositionY;
+
+        public abstract double PositionX { get; }
+        public abstract double PositionY { get; }
+
+        public abstract void  moveRelative(double pointX, double pointY);
+        public abstract double getDistance(double pointX, double pointY);
+
+        public abstract void selected();
+        public abstract void deselected();
+
+        public void updateOriginalPosition()
+        {
+            originalPositionX = PositionX;
+            originalPositionY = PositionY;
+        }
+    }
+
+
+    public abstract class ScreenComponentBase : ScreenElementBase, INotifyPropertyChanged
     {
         public Canvas ComponentCanvas { get; }
         public CompositeTransform ComponentTransform { get; }
@@ -36,12 +58,10 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public bool FlipX => SerializableComponent.FlipX;
         public bool FlipY => SerializableComponent.FlipY;
 
-        public double PositionX => SerializableComponent.PositionX;
-        public double PositionY => SerializableComponent.PositionY;
+        public override double PositionX => SerializableComponent.PositionX;
+        public override double PositionY => SerializableComponent.PositionY;
 
-        public double originalPositionX;
-        public double originalPositionY;
-
+    
         public event PropertyChangedEventHandler PropertyChanged;
 
         public double T1X => getAbsoluteTerminalPosition(0).X;
@@ -52,8 +72,12 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public double T3Y => getAbsoluteTerminalPosition(2).Y;
         public double T4X => getAbsoluteTerminalPosition(3).X;
         public double T4Y => getAbsoluteTerminalPosition(3).Y;
+        public double T5X => getAbsoluteTerminalPosition(4).X;
+        public double T5Y => getAbsoluteTerminalPosition(4).Y;
+        public double T6X => getAbsoluteTerminalPosition(5).X;
+        public double T6Y => getAbsoluteTerminalPosition(5).Y;
 
-        
+
 
         public ScreenComponentBase(SerializableComponent component) : base()
         {
@@ -126,6 +150,10 @@ namespace Transition.CircuitEditor.OnScreenComponents
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T3Y"));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T4X"));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T4Y"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T5X"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T5Y"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T6X"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T6Y"));
         }
 
         protected void postConstruct()
@@ -159,25 +187,30 @@ namespace Transition.CircuitEditor.OnScreenComponents
                    (pointY > PositionY) && (pointY < (PositionY + SchematicHeight));
         }
 
-        public void selected()
+        public override double getDistance(double pointX, double pointY)
+        {
+            double midPositionX = PositionX + (SchematicWidth / 2);
+            double midPositionY = PositionY + (SchematicHeight / 2);
+
+            return Math.Sqrt(Math.Pow(midPositionX - pointX, 2) +
+                             Math.Pow(midPositionY - pointY, 2));
+
+        }
+
+        public override void selected()
         {
             BorderBrush = new SolidColorBrush(Colors.Black);
             BorderThickness = new Thickness(1);
             updateOriginalPosition();
         }
         
-        public void deselected()
+        public override void deselected()
         {
              BorderBrush = new SolidColorBrush(Colors.Transparent);
         }
 
-        public void updateOriginalPosition()
-        {
-            originalPositionX = Canvas.GetLeft(this);
-            originalPositionY = Canvas.GetTop(this);
-        }
 
-        public void moveRelative(double positionX, double positionY)
+        public override void moveRelative(double positionX, double positionY)
         {
             SerializableComponent.PositionX = originalPositionX - positionX;
             SerializableComponent.PositionY = originalPositionY - positionY;
@@ -206,6 +239,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             return output;
         }
 
+        
+
         public Point getAbsoluteTerminalPosition(byte terminal)
         {
             Point relative = getRelativeTerminalPosition(terminal);
@@ -214,6 +249,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
         }
     }
     
+
+
     public class BoolToIntConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)

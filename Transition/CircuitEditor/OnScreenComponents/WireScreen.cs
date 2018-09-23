@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Transition.CircuitEditor.OnScreenComponents
 {
-    public class WireScreen : Canvas, INotifyPropertyChanged
+    public class WireScreen : Grid, INotifyPropertyChanged
     {
         private Line line { get; }
 
@@ -66,6 +66,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
         }
 
         public Wire wire;
+        public WireTerminal1 wt1;
+        public WireTerminal2 wt2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -112,6 +114,9 @@ namespace Transition.CircuitEditor.OnScreenComponents
             line.SetBinding(Line.Y2Property, bY2);
 
             Children.Add(line);
+
+            wt1 = new WireTerminal1(this);
+            wt2 = new WireTerminal2(this);
         }
         
         public void checkBounds(object sender, PropertyChangedEventArgs e)

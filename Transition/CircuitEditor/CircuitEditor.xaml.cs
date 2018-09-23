@@ -33,8 +33,8 @@ namespace Transition.CircuitEditor
 
         public UserDesign currentDesign { get; set; }
 
-        public ObservableCollection<ScreenComponentBase> selectedElements;
-        public ObservableCollection<ScreenComponentBase> elements => currentDesign.visibleElements;
+        public ObservableCollection<ScreenElementBase> selectedElements;
+        public ObservableCollection<ScreenElementBase> elements => currentDesign.visibleElements;
         public List<Line> gridLines;
 
         private bool SnapToGrid => currentDesign.SnapToGrid;
@@ -51,7 +51,7 @@ namespace Transition.CircuitEditor
         public CircuitEditor()
         {
             InitializeComponent();
-            selectedElements = new ObservableCollection<ScreenComponentBase>();
+            selectedElements = new ObservableCollection<ScreenElementBase>();
             selectedElements.CollectionChanged += refreshSelectedElements;
         
             gridLines = new List<Line>();
@@ -92,16 +92,16 @@ namespace Transition.CircuitEditor
 
         private void clickDeleteComponent(object sender, RoutedEventArgs e)
         {
-            foreach (ScreenComponentBase element in selectedElements)
+            foreach (ScreenComponentBase element in selectedElements.OfType<ScreenComponentBase>())
                 currentDesign.removeElement(element.SerializableComponent);
         }
 
         public void refreshSelectedElements(object sender, NotifyCollectionChangedEventArgs e)
         {
-            foreach (ScreenComponentBase element in currentDesign.visibleElements)
+            foreach (ScreenElementBase element in currentDesign.visibleElements)
                 element.deselected();
 
-            foreach (ScreenComponentBase element in selectedElements)
+            foreach (ScreenComponentBase element in selectedElements.OfType<ScreenComponentBase>())
             {
                 element.selected();
                 scrComponentParameters.Content = element.SerializableComponent.ParametersControl;
@@ -132,7 +132,7 @@ namespace Transition.CircuitEditor
             scrComponentParameters.Content = grdNoSelectedElement;
         }
 
-        public void selectElement(ScreenComponentBase element)
+        public void selectElement(ScreenElementBase element)
         {
             selectedElements.Clear();
             selectedElements.Add(element);
@@ -170,6 +170,10 @@ namespace Transition.CircuitEditor
                 wire.Y2 = snapCoordinate(ptCanvas.Y);
                 currentDesign.addWire(wire);
                 addToCanvas(wire.OnScreenWire);
+                addToCanvas(wire.OnScreenWire.wt1);
+                addToCanvas(wire.OnScreenWire.wt2);
+
+                
             }
         }
 
@@ -274,11 +278,17 @@ namespace Transition.CircuitEditor
         {
             clickedPoint = e.GetCurrentPoint(cnvCircuit).Position;
 
-            ScreenComponentBase clickedElement = null;
+            ScreenElementBase clickedElement = null;
+            double minDistance = double.MaxValue;
+            double currentDistance;
 
-            foreach (ScreenComponentBase element in elements)
-                if (element.isInside(clickedPoint.X, clickedPoint.Y))
-                    clickedElement = element;
+            foreach (ScreenElementBase element in cnvCircuit.Children.OfType<ScreenElementBase>())
+            {
+                currentDistance = element.getDistance(clickedPoint.X, clickedPoint.Y);
+                if (currentDistance < minDistance)
+                    clickedElement = element; 
+            }
+             
 
             if (e.GetCurrentPoint(cnvCircuit).Properties.IsLeftButtonPressed)
                 if (clickedElement == null)
@@ -358,7 +368,7 @@ namespace Transition.CircuitEditor
                 else
                 
                    if (movingComponents)
-                        foreach (ScreenComponentBase element in selectedElements)
+                        foreach (ScreenElementBase element in selectedElements)
                             element.moveRelative(snapCoordinate(clickedPoint.X) - snapCoordinate(ptCanvas.X),
                                                  snapCoordinate(clickedPoint.Y) - snapCoordinate(ptCanvas.Y));
             }

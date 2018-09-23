@@ -152,6 +152,5 @@ namespace Transition.CircuitEditor.Serializable
         {
             ComponentChanged?.Invoke();
         }
-
     }
 }
