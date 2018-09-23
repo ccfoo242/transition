@@ -33,8 +33,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
 
             ComponentCanvas.Children.Add(symbolCapacitor);
-            Canvas.SetTop(symbolCapacitor, 20);
-            Canvas.SetLeft(symbolCapacitor, 20);
+            Canvas.SetTop(symbolCapacitor, 19);
+            Canvas.SetLeft(symbolCapacitor, 19);
 
             txtComponentName = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b1 = new Binding()

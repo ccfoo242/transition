@@ -34,7 +34,9 @@
             <Canvas Background="Transparent" Width="80" Height="40">
                 <Polyline Points="00,20 12,20 16,10 24,30 32,10 40,30 48,10 56,30 64,10 68,20 80,20"
                    Stroke="Black" StrokeLineJoin="Round"
-                   StrokeThickness="4"/>
+                   StrokeThickness="4"
+                   StrokeEndLineCap="Round" StrokeStartLineCap="Round"
+                          />
             </Canvas>
         </DataTemplate>
 
@@ -60,8 +62,10 @@
 
         <DataTemplate x:Key="symbolInductor">
             <Canvas Background="Transparent" Width="80" Height="40">
-                <Polyline Points="00,20 8,20"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="72,20 80,20"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="00,20 8,20"  Stroke="Black" StrokeThickness="4"
+                            StrokeEndLineCap="Round" StrokeStartLineCap="Round"/>
+                <Polyline Points="72,20 80,20"  Stroke="Black" StrokeThickness="4"
+                            StrokeEndLineCap="Round" StrokeStartLineCap="Round"/>
 
                 <Path Stroke="Black" StrokeThickness="4">
                     <Path.Data>
@@ -110,11 +114,15 @@
         <DataTemplate x:Key="symbolTransformer">
 
             <Canvas Background="Transparent" Width="80" Height="80">
-                <Polyline Points="00,00 20,00 20,08"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="20,72 20,80 00,80"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="00,00 20,00 20,08"  Stroke="Black" StrokeThickness="4"
+                            StrokeEndLineCap="Round" StrokeStartLineCap="Round"/>
+                <Polyline Points="20,72 20,80 00,80"  Stroke="Black" StrokeThickness="4"
+                            StrokeEndLineCap="Round" StrokeStartLineCap="Round"/>
 
-                <Polyline Points="80,00 60,00 60,08"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="60,72 60,80 80,80"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="80,00 60,00 60,08"  Stroke="Black" StrokeThickness="4"
+                            StrokeEndLineCap="Round" StrokeStartLineCap="Round"/>
+                <Polyline Points="60,72 60,80 80,80"  Stroke="Black" StrokeThickness="4"
+                            StrokeEndLineCap="Round" StrokeStartLineCap="Round"/>
 
                 <!-- two dots -->
                 <Ellipse Width="6" Height="6" Stroke="Black"

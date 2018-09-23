@@ -24,7 +24,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public TextBlock txtVoltage;
         public TextBlock txtImpedance;
 
-        public ContentControl SymbolGenerator;
+        public ContentControl SymbolGenerator { get; }
   
         public VoltageSourceScreen(VoltageSource vs) : base(vs)
         {
@@ -33,8 +33,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 ContentTemplate = (DataTemplate)Application.Current.Resources["symbolGenerator"]
             };
             ComponentCanvas.Children.Add(SymbolGenerator);
-            Canvas.SetTop(SymbolGenerator, 20);
-            Canvas.SetLeft(SymbolGenerator, 20);
+            Canvas.SetTop(SymbolGenerator, 19);
+            Canvas.SetLeft(SymbolGenerator, 19);
 
             txtComponentName = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b1 = new Binding()

@@ -48,8 +48,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 ContentTemplate = (DataTemplate)Application.Current.Resources["symbolPotentiometer"]
             };
             ComponentCanvas.Children.Add(SymbolPotentiometer);
-            Canvas.SetTop(SymbolPotentiometer, 20);
-            Canvas.SetLeft(SymbolPotentiometer, 20);
+            Canvas.SetTop(SymbolPotentiometer, 19);
+            Canvas.SetLeft(SymbolPotentiometer, 19);
 
             txtComponentName = new TextBlock()
             {

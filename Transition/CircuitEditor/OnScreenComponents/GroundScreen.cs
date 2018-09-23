@@ -27,8 +27,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
 
             ComponentCanvas.Children.Add(symbolInductor);
-            Canvas.SetTop(symbolInductor, 20);
-            Canvas.SetLeft(symbolInductor, 20);
+            Canvas.SetTop(symbolInductor, 19);
+            Canvas.SetLeft(symbolInductor, 19);
 
             postConstruct();
         }

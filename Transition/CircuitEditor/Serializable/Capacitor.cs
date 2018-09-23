@@ -61,7 +61,7 @@ namespace Transition.CircuitEditor.Serializable
 
 
         private EngrNumber rp;
-        public EngrNumber RP
+        public EngrNumber Rp
         {
             get { return rp; }
             set

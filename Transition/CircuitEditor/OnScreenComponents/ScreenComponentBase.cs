@@ -29,15 +29,24 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public abstract void  moveRelative(double pointX, double pointY);
         public abstract double getDistance(double pointX, double pointY);
-
+      
         public abstract void selected();
         public abstract void deselected();
+
+        public abstract double RadiusClick { get; }
+        public abstract bool isInside(Rectangle rect);
 
         public void updateOriginalPosition()
         {
             originalPositionX = PositionX;
             originalPositionY = PositionY;
         }
+
+        public bool isClicked(double pointX, double pointY)
+        {
+            return getDistance(pointX, pointY) < RadiusClick;
+        }
+        
     }
 
 
@@ -61,7 +70,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public override double PositionX => SerializableComponent.PositionX;
         public override double PositionY => SerializableComponent.PositionY;
 
-    
+        public override double RadiusClick => 30;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public double T1X => getAbsoluteTerminalPosition(0).X;
@@ -77,8 +87,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public double T6X => getAbsoluteTerminalPosition(5).X;
         public double T6Y => getAbsoluteTerminalPosition(5).Y;
 
-
-
+        
         public ScreenComponentBase(SerializableComponent component) : base()
         {
             SerializableComponent = component;
@@ -163,7 +172,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
         }
         
         
-        public bool isInside(Rectangle rect)
+        public override bool isInside(Rectangle rect)
         {
             if (rect == null) return false;
 
@@ -194,9 +203,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
             return Math.Sqrt(Math.Pow(midPositionX - pointX, 2) +
                              Math.Pow(midPositionY - pointY, 2));
-
         }
-
+        
         public override void selected()
         {
             BorderBrush = new SolidColorBrush(Colors.Black);

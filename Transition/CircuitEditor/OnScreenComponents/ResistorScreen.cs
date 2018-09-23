@@ -36,8 +36,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
 
             ComponentCanvas.Children.Add(SymbolResistor);
-            Canvas.SetTop(SymbolResistor, 20);
-            Canvas.SetLeft(SymbolResistor, 20);
+            Canvas.SetTop(SymbolResistor, 19);
+            Canvas.SetLeft(SymbolResistor, 19);
 
             Binding b1 = new Binding()
             {
@@ -53,8 +53,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
             txtComponentName.SizeChanged += delegate { setPositionTextBoxes(); };
             Children.Add(txtComponentName);
-
-
+            
             txtResistanceValue = new TextBlock()
             {
                 FontWeight = FontWeights.ExtraBold,

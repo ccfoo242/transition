@@ -14,7 +14,6 @@ namespace Transition.Design
     public class UserDesign
     {
         public ObservableCollection<SerializableComponent> components { get; }
-        public ObservableCollection<ScreenElementBase> visibleElements { get; }
         public ObservableCollection<Wire> wires { get; }
 
 
@@ -22,30 +21,12 @@ namespace Transition.Design
         public event ElementDelegate ElementAdded;
         public event ElementDelegate ElementRemoved;
 
-        public bool SnapToGrid { get; set; } = true;
+        public bool SnapToGrid { get; set; } = false;
 
         public UserDesign()
         {
             components = new ObservableCollection<SerializableComponent>();
-            components.CollectionChanged += elementCollectionChanged;
-
-            visibleElements = new ObservableCollection<ScreenElementBase>();
             wires = new ObservableCollection<Wire>();
-        }
-
-        public void elementCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            foreach (SerializableElement element in components)
-                if (!visibleElements.Contains(element.OnScreenComponent))
-                    visibleElements.Add(element.OnScreenComponent);
-
-            List<ScreenComponentBase> toDelete = new List<ScreenComponentBase>();
-            foreach (ScreenComponentBase element in visibleElements)
-                if (!components.Contains(element.SerializableComponent))
-                    toDelete.Add(element);
-
-            foreach (ScreenComponentBase delete in toDelete)
-                visibleElements.Remove(delete);
         }
 
         public void addComponent(SerializableComponent component)

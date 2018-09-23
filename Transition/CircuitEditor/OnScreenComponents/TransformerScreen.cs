@@ -35,8 +35,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 ContentTemplate = (DataTemplate)Application.Current.Resources["symbolTransformer"]
             };
             ComponentCanvas.Children.Add(SymbolTransformer);
-            Canvas.SetTop(SymbolTransformer, 20);
-            Canvas.SetLeft(SymbolTransformer, 20);
+            Canvas.SetTop(SymbolTransformer, 19);
+            Canvas.SetLeft(SymbolTransformer, 19);
             
             txtComponentName = new TextBlock() { FontWeight = FontWeights.ExtraBold };
 

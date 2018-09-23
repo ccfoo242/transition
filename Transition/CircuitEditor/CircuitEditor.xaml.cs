@@ -34,7 +34,7 @@ namespace Transition.CircuitEditor
         public UserDesign currentDesign { get; set; }
 
         public ObservableCollection<ScreenElementBase> selectedElements;
-        public ObservableCollection<ScreenElementBase> elements => currentDesign.visibleElements;
+  //      public ObservableCollection<ScreenElementBase> elements => currentDesign.visibleElements;
         public List<Line> gridLines;
 
         private bool SnapToGrid => currentDesign.SnapToGrid;
@@ -72,7 +72,7 @@ namespace Transition.CircuitEditor
         {
             cnvCircuit.Children.Clear();
             currentDesign = design;
-            design.visibleElements.CollectionChanged += updateDesign;
+          //  design.visibleElements.CollectionChanged += updateDesign;
         }
 
         public void updateDesign(object sender, NotifyCollectionChangedEventArgs e)
@@ -98,20 +98,21 @@ namespace Transition.CircuitEditor
 
         public void refreshSelectedElements(object sender, NotifyCollectionChangedEventArgs e)
         {
-            foreach (ScreenElementBase element in currentDesign.visibleElements)
+            foreach (ScreenElementBase element in cnvCircuit.Children.OfType<ScreenElementBase>())
                 element.deselected();
 
-            foreach (ScreenComponentBase element in selectedElements.OfType<ScreenComponentBase>())
+            foreach (ScreenElementBase element in selectedElements)
             {
                 element.selected();
-                scrComponentParameters.Content = element.SerializableComponent.ParametersControl;
-                enableComponentEdit();
+                if (element is ScreenComponentBase)
+                {
+                    scrComponentParameters.Content = ((ScreenComponentBase)element).SerializableComponent.ParametersControl;
+                    enableComponentEdit();
+                }
             }
 
             if (selectedElements.Count == 0)
-            {
                 disableComponentEdit();
-            }
         }
 
         private void enableComponentEdit()
@@ -136,7 +137,6 @@ namespace Transition.CircuitEditor
         {
             selectedElements.Clear();
             selectedElements.Add(element);
-
         }
         
         public void addElement(string element)
@@ -158,7 +158,6 @@ namespace Transition.CircuitEditor
                 component.ElementName = component.ElementLetter + getNextNumberLetter(component.ElementLetter).ToString();
 
                 currentDesign.addComponent(component);
-
                 addToCanvas(component.OnScreenComponent);
             }
             else
@@ -172,8 +171,6 @@ namespace Transition.CircuitEditor
                 addToCanvas(wire.OnScreenWire);
                 addToCanvas(wire.OnScreenWire.wt1);
                 addToCanvas(wire.OnScreenWire.wt2);
-
-                
             }
         }
 
@@ -202,7 +199,6 @@ namespace Transition.CircuitEditor
 
         private async void drop(object sender, DragEventArgs e)
         {
-      
             string element = await e.DataView.GetTextAsync();
             Point ptCanvas = e.GetPosition(cnvCircuit);
 
@@ -272,24 +268,16 @@ namespace Transition.CircuitEditor
             return SnapToGrid ? Statics.round20(coordinate) : coordinate;
         }
         
-
-
         private void cnvPointerPressed(object sender, PointerRoutedEventArgs e)
         {
             clickedPoint = e.GetCurrentPoint(cnvCircuit).Position;
 
             ScreenElementBase clickedElement = null;
-            double minDistance = double.MaxValue;
-            double currentDistance;
-
+            
             foreach (ScreenElementBase element in cnvCircuit.Children.OfType<ScreenElementBase>())
-            {
-                currentDistance = element.getDistance(clickedPoint.X, clickedPoint.Y);
-                if (currentDistance < minDistance)
-                    clickedElement = element; 
-            }
-             
-
+                if (element.isClicked(clickedPoint.X, clickedPoint.Y))
+                    clickedElement = element;
+            
             if (e.GetCurrentPoint(cnvCircuit).Properties.IsLeftButtonPressed)
                 if (clickedElement == null)
                 {
@@ -316,12 +304,9 @@ namespace Transition.CircuitEditor
                 {
                     movingComponents = true;
 
-                    if (selectedElements.Contains(clickedElement))
-                    { }
-                    else
-                    {
-                        selectElement(clickedElement);
-                    }
+                    if (!selectedElements.Contains(clickedElement))
+                       selectElement(clickedElement);
+                    
                 }
 
             if (e.GetCurrentPoint(cnvCircuit).Properties.IsRightButtonPressed)
@@ -336,7 +321,7 @@ namespace Transition.CircuitEditor
 
         private void cnvPointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            if (e.GetCurrentPoint(cnvCircuit).Properties.IsLeftButtonPressed)
+            if (e.GetCurrentPoint(cnvCircuit).Properties.IsLeftButtonPressed )
             {
                 Point ptCanvas = e.GetCurrentPoint(cnvCircuit).Position;
 
@@ -366,7 +351,6 @@ namespace Transition.CircuitEditor
                     return;
                 }
                 else
-                
                    if (movingComponents)
                         foreach (ScreenElementBase element in selectedElements)
                             element.moveRelative(snapCoordinate(clickedPoint.X) - snapCoordinate(ptCanvas.X),
@@ -376,7 +360,6 @@ namespace Transition.CircuitEditor
 
         private void cnvPointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            
             if (groupSelect)
             {
                 if (rectGroupSelect != null) cnvGeneral.Children.Remove(rectGroupSelect);
@@ -384,12 +367,12 @@ namespace Transition.CircuitEditor
 
                 selectedElements.Clear();
 
-                foreach (ScreenComponentBase element in currentDesign.visibleElements)
+                foreach (ScreenElementBase element in cnvCircuit.Children.OfType<ScreenElementBase>())
                     if (element.isInside(rectGroupSelect))
                         selectedElements.Add(element);
             }
             movingComponents = false;
-            foreach (ScreenComponentBase element in elements)
+            foreach (ScreenElementBase element in cnvCircuit.Children.OfType<ScreenElementBase>())
                 element.updateOriginalPosition();
         }
 
@@ -415,7 +398,6 @@ namespace Transition.CircuitEditor
                             if (result > maximum) maximum = result;
 
             return maximum;
-
         }
 
         public int getNextNumberLetter(String ElementLetter)

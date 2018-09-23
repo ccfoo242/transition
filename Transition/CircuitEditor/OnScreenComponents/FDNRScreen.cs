@@ -34,8 +34,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
 
             ComponentCanvas.Children.Add(SymbolFdnr);
-            Canvas.SetTop(SymbolFdnr, 20);
-            Canvas.SetLeft(SymbolFdnr, 20);
+            Canvas.SetTop(SymbolFdnr, 19);
+            Canvas.SetLeft(SymbolFdnr, 19);
 
             txtComponentName = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b1 = new Binding()

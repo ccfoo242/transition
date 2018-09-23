@@ -44,6 +44,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 { return wire.Y1; }
             }
         }
+
         public double X2
         {
             get
@@ -54,6 +55,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 { return wire.X2; }
             }
         }
+
         public double Y2
         {
             get
@@ -73,9 +75,14 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public WireScreen(Wire wire) : base()
         {
-            line = new Line();
-            line.StrokeThickness = 4;
-            line.Stroke = new SolidColorBrush(Colors.Black);
+            line = new Line()
+            {
+                StrokeThickness = 4,
+                Stroke = new SolidColorBrush(Colors.Black),
+                StrokeEndLineCap = PenLineCap.Round,
+                StrokeStartLineCap = PenLineCap.Round
+            };
+           
             this.wire = wire;
 
             wire.PropertyChanged += checkBounds;
