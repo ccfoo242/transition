@@ -352,25 +352,57 @@ namespace Transition.CircuitEditor
                 else
                 if (movingComponents)
                 {
-                    if (selectedElements.Count >= 1)
+                    if (selectedElements.Count > 1)
                     {
                         foreach (ScreenElementBase element in selectedElements)
-                            element.moveRelative(snapCoordinate(clickedPoint.X) - snapCoordinate(ptCanvas.X),
-                                                 snapCoordinate(clickedPoint.Y) - snapCoordinate(ptCanvas.Y));
+                            element.moveRelative(snapCoordinate(clickedPoint.X - ptCanvas.X),
+                                                 snapCoordinate(clickedPoint.Y - ptCanvas.Y));
                     }
                     if (selectedElements.Count == 1)
                         if (selectedElements[0] is WireTerminal1 ||
-                            selectedElements[0] is WireTerminal2)
+                              selectedElements[0] is WireTerminal2)
                         {
+                            byte terminalNumber = 0;
+                            ScreenComponentBase nearestComponent = null;
+                            double nearestDistance = double.MaxValue;
+
                             foreach (ScreenComponentBase cp in cnvCircuit.Children.OfType<ScreenComponentBase>())
                             {
                                 cp.lowlightTerminal();
+
                                 for (byte x = 0; x < cp.QuantityOfTerminals; x++)
-                                    if (cp.isPointNearTerminal(x, clickedPoint.X, clickedPoint.Y))
-                                        cp.highlightTerminal(x);
+                                    if (cp.isPointNearTerminal(x, ptCanvas.X, ptCanvas.Y))
+                                        if (cp.getDistance(x, ptCanvas.X, ptCanvas.Y) < nearestDistance)
+                                        {
+                                            nearestDistance = cp.getDistance(x, ptCanvas.X, ptCanvas.Y);
+                                            terminalNumber = x;
+                                            nearestComponent = cp;
+                                        }
+                            }
+
+                            if (nearestComponent!=null)
+                            {
+                                nearestComponent.highlightTerminal(terminalNumber);
+                                selectedElements[0].moveAbsolute(
+                                    snapCoordinate(nearestComponent.getAbsoluteTerminalPosition(terminalNumber).X),
+                                    snapCoordinate(nearestComponent.getAbsoluteTerminalPosition(terminalNumber).Y));
                                 
                             }
+                            else
+                            {
+                                foreach (ScreenElementBase element in selectedElements)
+                                    element.moveRelative(snapCoordinate(clickedPoint.X - ptCanvas.X),
+                                                         snapCoordinate(clickedPoint.Y - ptCanvas.Y));
+                            }
                         }
+                        else
+                        {
+                            foreach (ScreenElementBase element in selectedElements)
+                                element.moveRelative(snapCoordinate(clickedPoint.X - ptCanvas.X),
+                                                     snapCoordinate(clickedPoint.Y - ptCanvas.Y));
+
+                        }
+                    
                 }
             }
         }
@@ -388,6 +420,46 @@ namespace Transition.CircuitEditor
                     if (element.isInside(rectGroupSelect))
                         selectedElements.Add(element);
             }
+
+            if (movingComponents)
+                if (selectedElements.Count == 1)
+                    if (selectedElements[0] is WireTerminal1 ||
+                          selectedElements[0] is WireTerminal2)
+                    {
+                        Point ptCanvas = e.GetCurrentPoint(cnvCircuit).Position;
+                        byte terminalNumber = 0;
+                        ScreenComponentBase nearestComponent = null;
+                        double nearestDistance = double.MaxValue;
+
+                        foreach (ScreenComponentBase cp in cnvCircuit.Children.OfType<ScreenComponentBase>())
+                        {
+                            cp.lowlightTerminal();
+
+                            for (byte x = 0; x < cp.QuantityOfTerminals; x++)
+                                if (cp.isPointNearTerminal(x, ptCanvas.X, ptCanvas.Y))
+                                    if (cp.getDistance(x, ptCanvas.X, ptCanvas.Y) < nearestDistance)
+                                    {
+                                        nearestDistance = cp.getDistance(x, ptCanvas.X, ptCanvas.Y);
+                                        terminalNumber = x;
+                                        nearestComponent = cp;
+                                    }
+                        }
+
+                        if (nearestComponent != null)
+                        {
+                            if (selectedElements[0] is WireTerminal1)
+                            {
+                                WireTerminal1 wt = (WireTerminal1)selectedElements[0];
+                                wt.wireScreen.wire.bind(nearestComponent.SerializableComponent, terminalNumber, 1);
+                            }
+                            else
+                            {
+                                WireTerminal2 wt = (WireTerminal2)selectedElements[0];
+                                wt.wireScreen.wire.bind(nearestComponent.SerializableComponent, terminalNumber, 2);
+                            }
+                        }
+                    }
+
             movingComponents = false;
             foreach (ScreenElementBase element in cnvCircuit.Children.OfType<ScreenElementBase>())
                 element.updateOriginalPosition();

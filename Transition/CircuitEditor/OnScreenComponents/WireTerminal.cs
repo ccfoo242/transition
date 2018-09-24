@@ -65,6 +65,12 @@ namespace Transition.CircuitEditor.OnScreenComponents
             wireScreen.wire.Y1 = originalPositionY - pointY;
         }
 
+        public override void moveAbsolute(double positionX, double positionY)
+        {
+            wireScreen.wire.X1 = positionX;
+            wireScreen.wire.Y1 = positionY;
+        }
+
         public override void selected()
         {
             updateOriginalPosition();
@@ -147,6 +153,12 @@ namespace Transition.CircuitEditor.OnScreenComponents
             {
                 wireScreen.wire.X2 = originalPositionX - pointX;
                 wireScreen.wire.Y2 = originalPositionY - pointY;
+            }
+
+            public override void moveAbsolute(double positionX, double positionY)
+            {
+                wireScreen.wire.X2 = positionX;
+                wireScreen.wire.Y2 = positionY;
             }
 
             public override void selected()

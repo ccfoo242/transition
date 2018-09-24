@@ -27,7 +27,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public abstract double PositionX { get; }
         public abstract double PositionY { get; }
 
-        public abstract void  moveRelative(double pointX, double pointY);
+        public abstract void moveRelative(double pointX, double pointY);
+        public abstract void moveAbsolute(double pointX, double pointY);
         public abstract double getDistance(double pointX, double pointY);
       
         public abstract void selected();
@@ -167,12 +168,12 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
             highlightRectangle = new Rectangle
             {
-                Width = 8,
-                Height = 8,
-                Fill = new SolidColorBrush(Colors.Black),
+                Width = 12,
+                Height = 12,
+                Fill = new SolidColorBrush(Colors.Transparent),
                 Stroke = new SolidColorBrush(Colors.Black),
-                StrokeThickness = 2,
-                Visibility = Visibility.Visible,
+                StrokeThickness = 1,
+                Visibility = Visibility.Collapsed,
                 RenderTransform = new TranslateTransform()
             };
             
@@ -247,7 +248,13 @@ namespace Transition.CircuitEditor.OnScreenComponents
             return Math.Sqrt(Math.Pow(midPositionX - pointX, 2) +
                              Math.Pow(midPositionY - pointY, 2));
         }
-        
+
+        public double getDistance(byte terminal, double pointX, double pointY)
+        {
+            return Math.Sqrt(Math.Pow(getAbsoluteTerminalPosition(terminal).X - pointX, 2) +
+                             Math.Pow(getAbsoluteTerminalPosition(terminal).Y - pointY, 2));
+        }
+
         public override void selected()
         {
             BorderBrush = new SolidColorBrush(Colors.Black);
@@ -264,6 +271,16 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             SerializableComponent.PositionX = originalPositionX - positionX;
             SerializableComponent.PositionY = originalPositionY - positionY;
+
+            TerminalsPositionsChanged();
+        }
+
+        public override void moveAbsolute(double positionX, double positionY)
+        {
+            SerializableComponent.PositionX = positionX;
+            SerializableComponent.PositionY = positionY;
+
+            TerminalsPositionsChanged();
         }
 
         public Point getRelativeTerminalPosition(byte terminal)
@@ -272,39 +289,36 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
             output.X =  (SchematicWidth / 2) + 
                            ((FlipX ? -1 : 1) *
-                           Math.Cos(Math.PI - ActualRotation) * 
+                           Math.Cos(Math.PI - (ActualRotation * Math.PI / 180)) * 
                            ((SchematicWidth / 2) - TerminalPositions[terminal, 0])) +
                            ((FlipY ? -1 : 1) *
-                           Math.Sin(Math.PI - ActualRotation) *
+                           Math.Sin(Math.PI - (ActualRotation * Math.PI / 180)) *
                            ((SchematicHeight / 2) - TerminalPositions[terminal, 1]));
 
             output.Y =  (SchematicHeight / 2) +
                            ((FlipX ? -1 : 1) *
-                           Math.Sin(Math.PI - ActualRotation) *
+                           Math.Sin(Math.PI - (ActualRotation * Math.PI / 180)) *
                            ((SchematicWidth / 2) - TerminalPositions[terminal, 0])) +
                            ((FlipY ? -1 : 1) *
-                           Math.Cos(Math.PI - ActualRotation) *
+                           Math.Cos(Math.PI - (ActualRotation * Math.PI / 180)) *
                            ((SchematicHeight / 2) - TerminalPositions[terminal, 1]));
             
             return output;
         }
-
         
 
         public Point getAbsoluteTerminalPosition(byte terminal)
         {
             Point relative = getRelativeTerminalPosition(terminal);
-
             return new Point(relative.X + PositionX, relative.Y + PositionY);
         }
 
         public bool isPointNearTerminal(byte terminal, double pointX, double pointY)
         {
             Point abs = getAbsoluteTerminalPosition(terminal);
-                
             double distance = Math.Sqrt(Math.Pow(pointX - abs.X, 2) + Math.Pow(pointY - abs.Y, 2));
 
-            return (distance < 10) ? true : false;
+            return (distance < 15) ? true : false;
 
         }
 
@@ -312,13 +326,11 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             highlightRectangle.Visibility = Visibility.Visible;
 
-            double xx = getRelativeTerminalPosition(terminal).X;
-            double yy = getRelativeTerminalPosition(terminal).Y;
+            double xx = getRelativeTerminalPosition(terminal).X - (SchematicWidth / 2);
+            double yy = getRelativeTerminalPosition(terminal).Y - (SchematicHeight / 2);
 
             ((TranslateTransform)highlightRectangle.RenderTransform).X = xx;
             ((TranslateTransform)highlightRectangle.RenderTransform).Y = yy;
-
-
         }
 
         public void lowlightTerminal()

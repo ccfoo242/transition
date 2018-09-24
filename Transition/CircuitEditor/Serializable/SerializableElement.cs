@@ -48,16 +48,22 @@ namespace Transition.CircuitEditor.Serializable
 
         private double positionX;
         public double PositionX { get { return positionX; }
-            set { SetProperty(ref positionX, value); } }
+            set { SetProperty(ref positionX, value);
+                ComponentPositionChanged?.Invoke();
+            } }
 
         private double positionY;
         public double PositionY { get { return positionY; }
-            set { SetProperty(ref positionY, value); } }
+            set { SetProperty(ref positionY, value);
+                ComponentPositionChanged?.Invoke();
+            } }
 
 
         public delegate void ComponentLayoutChangedHandler();
+        public delegate void ComponentPositionChangedHandler();
         
         public event ComponentLayoutChangedHandler ComponentLayoutChanged;
+        public event ComponentPositionChangedHandler ComponentPositionChanged;
 
         // ParametersControl is the UI Control that allows user to
         // configure the component parameters

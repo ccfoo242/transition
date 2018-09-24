@@ -28,7 +28,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             get
             {
                 if (wire.IsBounded1)
-                { return wire.BoundedObject1.OnScreenComponent.getAbsoluteTerminalPosition((byte)(wire.BoundedTerminal1 - 1)).X; }
+                { return wire.BoundedObject1.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal1).X; }
                 else
                 { return wire.X1; }
             }
@@ -39,7 +39,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             get
             {
                 if (wire.IsBounded1)
-                { return wire.BoundedObject1.OnScreenComponent.getAbsoluteTerminalPosition((byte)(wire.BoundedTerminal1 - 1)).Y; }
+                { return wire.BoundedObject1.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal1).Y; }
                 else
                 { return wire.Y1; }
             }
@@ -50,7 +50,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             get
             {
                 if (wire.IsBounded2)
-                { return wire.BoundedObject2.OnScreenComponent.getAbsoluteTerminalPosition((byte)(wire.BoundedTerminal2 - 1)).X; }
+                { return wire.BoundedObject2.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal2).X; }
                 else
                 { return wire.X2; }
             }
@@ -61,7 +61,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             get
             {
                 if (wire.IsBounded2)
-                { return wire.BoundedObject2.OnScreenComponent.getAbsoluteTerminalPosition((byte)(wire.BoundedTerminal2 - 1)).Y; }
+                { return wire.BoundedObject2.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal2).Y; }
                 else
                 { return wire.Y2; }
             }

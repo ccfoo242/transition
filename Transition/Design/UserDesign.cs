@@ -21,7 +21,7 @@ namespace Transition.Design
         public event ElementDelegate ElementAdded;
         public event ElementDelegate ElementRemoved;
 
-        public bool SnapToGrid { get; set; } = false;
+        public bool SnapToGrid { get; set; } = true;
 
         public UserDesign()
         {

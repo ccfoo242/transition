@@ -137,6 +137,7 @@
     <Compile Include="CircuitEditor\Serializable\Capacitor.cs" />
     <Compile Include="CircuitEditor\Serializable\FDNR.cs" />
     <Compile Include="CircuitEditor\Serializable\Ground.cs" />
+    <Compile Include="CircuitEditor\Serializable\Impedance.cs" />
     <Compile Include="CircuitEditor\Serializable\Inductor.cs" />
     <Compile Include="CircuitEditor\Serializable\Potentiometer.cs" />
     <Compile Include="CircuitEditor\Serializable\SerializableElement.cs" />

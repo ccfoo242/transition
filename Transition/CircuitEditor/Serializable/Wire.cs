@@ -73,7 +73,6 @@ namespace Transition.CircuitEditor.Serializable
         public Wire()
         {
             OnScreenWire = new WireScreen(this);
-
         }
 
 
@@ -102,6 +101,7 @@ namespace Transition.CircuitEditor.Serializable
         {
             BoundedObject1 = component;
             component.ComponentLayoutChanged += RaiseLayoutChanged;
+            component.ComponentPositionChanged += RaiseLayoutChanged;
             BoundedTerminal1 = componentTerminal;
         }
         
@@ -109,6 +109,7 @@ namespace Transition.CircuitEditor.Serializable
         {
             BoundedObject2 = component;
             component.ComponentLayoutChanged += RaiseLayoutChanged;
+            component.ComponentPositionChanged += RaiseLayoutChanged;
             BoundedTerminal2 = componentTerminal;
         }
 

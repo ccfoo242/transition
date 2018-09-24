@@ -38,8 +38,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public TextBlock txtComponentName;
 
         public ContentControl SymbolPotentiometer { get; }
-        public int QuantityOfTerminals { get { return SerializableComponent.QuantityOfTerminals; } }
-
+  
 
         public PotentiometerScreen(Potentiometer pot) : base(pot)
         {
