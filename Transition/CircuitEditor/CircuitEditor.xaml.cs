@@ -306,7 +306,6 @@ namespace Transition.CircuitEditor
 
                     if (!selectedElements.Contains(clickedElement))
                        selectElement(clickedElement);
-                    
                 }
 
             if (e.GetCurrentPoint(cnvCircuit).Properties.IsRightButtonPressed)
@@ -321,7 +320,7 @@ namespace Transition.CircuitEditor
 
         private void cnvPointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            if (e.GetCurrentPoint(cnvCircuit).Properties.IsLeftButtonPressed )
+            if (e.GetCurrentPoint(cnvCircuit).Properties.IsLeftButtonPressed)
             {
                 Point ptCanvas = e.GetCurrentPoint(cnvCircuit).Position;
 
@@ -351,10 +350,28 @@ namespace Transition.CircuitEditor
                     return;
                 }
                 else
-                   if (movingComponents)
+                if (movingComponents)
+                {
+                    if (selectedElements.Count >= 1)
+                    {
                         foreach (ScreenElementBase element in selectedElements)
                             element.moveRelative(snapCoordinate(clickedPoint.X) - snapCoordinate(ptCanvas.X),
                                                  snapCoordinate(clickedPoint.Y) - snapCoordinate(ptCanvas.Y));
+                    }
+                    if (selectedElements.Count == 1)
+                        if (selectedElements[0] is WireTerminal1 ||
+                            selectedElements[0] is WireTerminal2)
+                        {
+                            foreach (ScreenComponentBase cp in cnvCircuit.Children.OfType<ScreenComponentBase>())
+                            {
+                                cp.lowlightTerminal();
+                                for (byte x = 0; x < cp.QuantityOfTerminals; x++)
+                                    if (cp.isPointNearTerminal(x, clickedPoint.X, clickedPoint.Y))
+                                        cp.highlightTerminal(x);
+                                
+                            }
+                        }
+                }
             }
         }
 

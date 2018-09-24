@@ -43,7 +43,7 @@ namespace Transition.CircuitEditor.Serializable
 
         public bool AnyPrecisionSelected { get { return (ComponentPrecision == Precision.Arbitrary); } }
 
-        public override int QuantityOfTerminals { get; set; }
+        public override byte QuantityOfTerminals { get; set; }
 
         public Potentiometer() : base()
         {

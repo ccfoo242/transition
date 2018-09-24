@@ -61,7 +61,7 @@ namespace Transition.CircuitEditor.Serializable
         private EngrNumber lsLeak;
         public EngrNumber LsLeak { get { return lsLeak; }}
 
-        public override int QuantityOfTerminals { get => 4; set => throw new NotImplementedException(); }
+        public override byte QuantityOfTerminals { get => 4; set => throw new NotImplementedException(); }
 
         public Transformer() : base()
         {

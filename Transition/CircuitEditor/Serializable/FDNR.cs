@@ -34,7 +34,7 @@ namespace Transition.CircuitEditor.Serializable
 
         public bool AnyPrecisionSelected { get { return (ComponentPrecision == Precision.Arbitrary); } }
 
-        public override int QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
+        public override byte QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
 
         public FDNR() : base()
         {

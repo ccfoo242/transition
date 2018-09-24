@@ -12,7 +12,7 @@ namespace Transition.CircuitEditor.Serializable
     {
         public override string ElementLetter => "V";
 
-        public override int QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
+        public override byte QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
 
         public VoltageSource() : base()
         {

@@ -70,6 +70,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public override double PositionX => SerializableComponent.PositionX;
         public override double PositionY => SerializableComponent.PositionY;
 
+        public byte QuantityOfTerminals => SerializableComponent.QuantityOfTerminals;
+
         public override double RadiusClick => 30;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -87,7 +89,23 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public double T6X => getAbsoluteTerminalPosition(5).X;
         public double T6Y => getAbsoluteTerminalPosition(5).Y;
 
-        
+        public double RT1X => getRelativeTerminalPosition(0).X;
+        public double RT1Y => getRelativeTerminalPosition(0).Y;
+        public double RT2X => getRelativeTerminalPosition(1).X;
+        public double RT2Y => getRelativeTerminalPosition(1).Y;
+        public double RT3X => getRelativeTerminalPosition(2).X;
+        public double RT3Y => getRelativeTerminalPosition(2).Y;
+        public double RT4X => getRelativeTerminalPosition(3).X;
+        public double RT4Y => getRelativeTerminalPosition(3).Y;
+        public double RT5X => getRelativeTerminalPosition(4).X;
+        public double RT5Y => getRelativeTerminalPosition(4).Y;
+        public double RT6X => getRelativeTerminalPosition(5).X;
+        public double RT6Y => getRelativeTerminalPosition(5).Y;
+
+        public Rectangle highlightRectangle;
+        public Binding bindHighlightRectangleX;
+        public Binding bindHighlightRectangleY;
+
         public ScreenComponentBase(SerializableComponent component) : base()
         {
             SerializableComponent = component;
@@ -147,6 +165,18 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
             BindingOperations.SetBinding(ComponentTransform, CompositeTransform.ScaleYProperty, bFY);
 
+            highlightRectangle = new Rectangle
+            {
+                Width = 8,
+                Height = 8,
+                Fill = new SolidColorBrush(Colors.Black),
+                Stroke = new SolidColorBrush(Colors.Black),
+                StrokeThickness = 2,
+                Visibility = Visibility.Visible,
+                RenderTransform = new TranslateTransform()
+            };
+            
+            Children.Add(highlightRectangle);
         }
         
         public void TerminalsPositionsChanged()
@@ -163,12 +193,25 @@ namespace Transition.CircuitEditor.OnScreenComponents
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T5Y"));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T6X"));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T6Y"));
+
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT1X"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT1Y"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT2X"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT2Y"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT3X"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT3Y"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT4X"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT4Y"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT5X"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT5Y"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT6X"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT6Y"));
         }
 
         protected void postConstruct()
         {
-              Width = SchematicWidth ;
-              Height = SchematicHeight;
+            Width = SchematicWidth ;
+            Height = SchematicHeight;
         }
         
         
@@ -216,8 +259,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
              BorderBrush = new SolidColorBrush(Colors.Transparent);
         }
-
-
+        
         public override void moveRelative(double positionX, double positionY)
         {
             SerializableComponent.PositionX = originalPositionX - positionX;
@@ -254,6 +296,34 @@ namespace Transition.CircuitEditor.OnScreenComponents
             Point relative = getRelativeTerminalPosition(terminal);
 
             return new Point(relative.X + PositionX, relative.Y + PositionY);
+        }
+
+        public bool isPointNearTerminal(byte terminal, double pointX, double pointY)
+        {
+            Point abs = getAbsoluteTerminalPosition(terminal);
+                
+            double distance = Math.Sqrt(Math.Pow(pointX - abs.X, 2) + Math.Pow(pointY - abs.Y, 2));
+
+            return (distance < 10) ? true : false;
+
+        }
+
+        public void highlightTerminal(byte terminal)
+        {
+            highlightRectangle.Visibility = Visibility.Visible;
+
+            double xx = getRelativeTerminalPosition(terminal).X;
+            double yy = getRelativeTerminalPosition(terminal).Y;
+
+            ((TranslateTransform)highlightRectangle.RenderTransform).X = xx;
+            ((TranslateTransform)highlightRectangle.RenderTransform).Y = yy;
+
+
+        }
+
+        public void lowlightTerminal()
+        {
+            highlightRectangle.Visibility = Visibility.Collapsed;
         }
     }
     
