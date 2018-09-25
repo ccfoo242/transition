@@ -27,10 +27,15 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             get
             {
-                if (wire.IsBounded1)
-                { return wire.BoundedObject1.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal1).X; }
+                if (wire.IsBounded0)
+                {
+                    if (!wire.IsWireBounded0)
+                        return wire.BoundedObject0.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal0).X;
+                    else
+                        return ((Wire)wire.BoundedObject0).OnScreenWire.X1;
+                }
                 else
-                { return wire.X1; }
+                { return wire.X0; }
             }
         }
 
@@ -38,10 +43,15 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             get
             {
-                if (wire.IsBounded1)
-                { return wire.BoundedObject1.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal1).Y; }
+                if (wire.IsBounded0)
+                {
+                    if (!wire.IsWireBounded0)
+                        return wire.BoundedObject0.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal0).Y;
+                     else
+                        return ((Wire)wire.BoundedObject0).OnScreenWire.Y1;
+                }
                 else
-                { return wire.Y1; }
+                { return wire.Y0; }
             }
         }
 
@@ -49,10 +59,15 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             get
             {
-                if (wire.IsBounded2)
-                { return wire.BoundedObject2.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal2).X; }
+                if (wire.IsBounded1)
+                {
+                    if (!wire.IsWireBounded1)
+                        return wire.BoundedObject1.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal1).X;
+                    else
+                        return ((Wire)wire.BoundedObject1).OnScreenWire.X2;
+                }
                 else
-                { return wire.X2; }
+                { return wire.X1; }
             }
         }
 
@@ -60,16 +75,21 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             get
             {
-                if (wire.IsBounded2)
-                { return wire.BoundedObject2.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal2).Y; }
+                if (wire.IsBounded1)
+                {
+                    if (!wire.IsWireBounded1)
+                        return wire.BoundedObject1.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal1).Y;
+                    else
+                        return ((Wire)wire.BoundedObject1).OnScreenWire.Y2;
+                }
                 else
-                { return wire.Y2; }
+                { return wire.Y1; }
             }
         }
 
         public Wire wire;
-        public WireTerminal1 wt1;
-        public WireTerminal2 wt2;
+        public WireTerminal wt1;
+        public WireTerminal wt2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -122,8 +142,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
             Children.Add(line);
 
-            wt1 = new WireTerminal1(this);
-            wt2 = new WireTerminal2(this);
+            wt1 = new WireTerminal(this, 0);
+            wt2 = new WireTerminal(this, 1);
         }
         
         public void checkBounds(object sender, PropertyChangedEventArgs e)
