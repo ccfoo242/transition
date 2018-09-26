@@ -11,7 +11,9 @@ using Transition.Design;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -37,7 +39,11 @@ namespace Transition.CircuitEditor
   //      public ObservableCollection<ScreenElementBase> elements => currentDesign.visibleElements;
         public List<Line> gridLines;
 
-        private bool SnapToGrid => currentDesign.SnapToGrid;
+        private bool SnapToGrid { get {
+                if (Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
+                    return !currentDesign.SnapToGrid;
+                else
+                    return currentDesign.SnapToGrid; } }
 
         public bool groupSelect = false;
         private bool movingComponents = false;
@@ -199,6 +205,20 @@ namespace Transition.CircuitEditor
                 addToCanvas(wire.OnScreenWire.wt0);
                 addToCanvas(wire.OnScreenWire.wt1);
             }
+        }
+
+        private void bindComponentTerminalPair(ElementTerminal et1, ElementTerminal et2)
+        {
+            Wire wire = new Wire();
+
+            wire.bind0( ((ScreenComponentBase)et1.element).SerializableComponent, et1.terminal);
+            wire.bind1( ((ScreenComponentBase)et2.element).SerializableComponent, et2.terminal);
+            wire.ElementName = "W" + (getMaximumNumberWire() + 1).ToString();
+
+            currentDesign.addWire(wire);
+            addToCanvas(wire.OnScreenWire);
+            addToCanvas(wire.OnScreenWire.wt0);
+            addToCanvas(wire.OnScreenWire.wt1);
         }
 
         private void clickRotate(object sender, RoutedEventArgs e)
@@ -363,6 +383,61 @@ namespace Transition.CircuitEditor
                 return null;
         }
 
+        private List<ElementTerminal> getListPairedComponentTerminals()
+        {
+            List<ElementTerminal> output = new List<ElementTerminal>();
+            double distance;
+
+            foreach (ScreenComponentBase comp in cnvCircuit.Children.OfType<ScreenComponentBase>())
+                for (byte i = 0; i < comp.QuantityOfTerminals; i++)
+                    foreach (ScreenComponentBase comp2 in cnvCircuit.Children.OfType<ScreenComponentBase>())
+                        for (byte j = 0; j < comp2.QuantityOfTerminals; j++)
+                            if (comp != comp2)
+                            {
+                                distance = comp.getDistance(i,
+                                  comp2.getAbsoluteTerminalPosition(j).X,
+                                  comp2.getAbsoluteTerminalPosition(j).Y);
+                                if (distance < 15)
+                                    output.Add(new ElementTerminal()
+                                    { element = comp, terminal = i });
+                            }
+                        
+            return output;
+        }
+
+        private Dictionary<ElementTerminal, ElementTerminal> getPairedTerminalsForBinding()
+        {
+            Dictionary<ElementTerminal, ElementTerminal> output = new Dictionary<ElementTerminal, ElementTerminal>();
+            double distance;
+
+            foreach (ScreenComponentBase comp in cnvCircuit.Children.OfType<ScreenComponentBase>())
+                for (byte i = 0; i < comp.QuantityOfTerminals; i++)
+                    foreach (ScreenComponentBase comp2 in cnvCircuit.Children.OfType<ScreenComponentBase>())
+                        for (byte j = 0; j < comp2.QuantityOfTerminals; j++)
+                            if (comp != comp2)
+                            {
+                                distance = comp.getDistance(i,
+                                  comp2.getAbsoluteTerminalPosition(j).X,
+                                  comp2.getAbsoluteTerminalPosition(j).Y);
+
+                                if (distance < 15)
+                                {
+                                    ElementTerminal elt1 = new ElementTerminal() { element = comp, terminal = i };
+                                    ElementTerminal elt2 = new ElementTerminal() { element = comp2, terminal = j };
+                                    bool existsAlready = false;
+                                    foreach (KeyValuePair<ElementTerminal, ElementTerminal> kvp in output)
+                                    {
+                                        if (kvp.Key.Equals(elt1)) existsAlready = true;
+                                        if (kvp.Value.Equals(elt1)) existsAlready = true;
+                                        if (kvp.Key.Equals(elt2)) existsAlready = true;
+                                        if (kvp.Value.Equals(elt2)) existsAlready = true;
+                                    }
+                                    if (!existsAlready) output.Add(elt1, elt2);
+                                }
+                            }
+
+            return output;
+        }
 
         private ElementTerminal getNearestElementTerminalExcept(double pointX, double pointY, ScreenElementBase removedElement)
         {
@@ -450,7 +525,6 @@ namespace Transition.CircuitEditor
                     selectElement(clickedElement);
                     splitter.IsPaneOpen = true;
                 }
-            
         }
 
         private void cnvPointerMoved(object sender, PointerRoutedEventArgs e)
@@ -493,30 +567,41 @@ namespace Transition.CircuitEditor
                             element.moveRelative(snapCoordinate(clickedPoint.X - ptCanvas.X),
                                                  snapCoordinate(clickedPoint.Y - ptCanvas.Y));
                     }
+
                     if (selectedElements.Count == 1)
                         if (selectedElements[0] is WireTerminal)
                         {
                             WireTerminal wt = (WireTerminal)selectedElements[0];
                             if (!wt.isBounded)
                             {
+                                /* we are dragging around an unbounded wire terminal */
                                 ElementTerminal nearest = getNearestElementTerminalExcept(ptCanvas.X, ptCanvas.Y, selectedElements[0]);
                                 lowlightAllTerminalsAllElements();
                                 if (nearest != null)
                                 {
                                     nearest.element.highlightTerminal(nearest.terminal);
-                                    selectedElements[0].moveAbsolute(
-                                        snapCoordinate(nearest.element.getAbsoluteTerminalPosition(nearest.terminal).X),
-                                        snapCoordinate(nearest.element.getAbsoluteTerminalPosition(nearest.terminal).Y));
+                                    wt.moveAbsolute(
+                                        nearest.element.getAbsoluteTerminalPosition(nearest.terminal).X,
+                                        nearest.element.getAbsoluteTerminalPosition(nearest.terminal).Y);
 
                                 }
-                                else
-                                    selectedElements[0].moveRelative(snapCoordinate(clickedPoint.X - ptCanvas.X),
-                                                             snapCoordinate(clickedPoint.Y - ptCanvas.Y));
-                            }
+                                 else
+                                    wt.moveRelative(snapCoordinate(clickedPoint.X - ptCanvas.X),
+                                                    snapCoordinate(clickedPoint.Y - ptCanvas.Y));
+                            }/* else, the wt is bounded, and for now, it is not movable */
                         }
                         else
+                        {   /* here, the one selected element is a component.
+                            while dragging, if one its terminals is very close to some other terminal of other component
+                            */
                             selectedElements[0].moveRelative(snapCoordinate(clickedPoint.X - ptCanvas.X),
-                                                     snapCoordinate(clickedPoint.Y - ptCanvas.Y));
+                                                    snapCoordinate(clickedPoint.Y - ptCanvas.Y));
+
+                            lowlightAllTerminalsAllElements();
+                            foreach (ElementTerminal elt in getListPairedComponentTerminals())
+                                ((ScreenComponentBase)elt.element).highlightTerminal(elt.terminal);
+                            
+                        }
                 }
             }
         }
@@ -545,9 +630,17 @@ namespace Transition.CircuitEditor
                             Point ptCanvas = e.GetCurrentPoint(cnvCircuit).Position;
                             ElementTerminal nearest = getNearestElementTerminalExcept(ptCanvas.X, ptCanvas.Y, wt);
 
-                            if (nearest != null)
+                            if (nearest != null) /* if there is some terminal nearby, we bind the wire to it*/
                                 wt.wireScreen.wire.bind(nearest.element.Serializable, nearest.terminal, wt.TerminalNumber);
                         }
+                    }
+                    else
+                    {
+                        /* the dropped element is a component */
+                        Dictionary<ElementTerminal, ElementTerminal> pairs = getPairedTerminalsForBinding();
+                        foreach (KeyValuePair<ElementTerminal, ElementTerminal> kvp in pairs)
+                            bindComponentTerminalPair(kvp.Key, kvp.Value);
+                        
                     }
 
             movingComponents = false;
@@ -619,6 +712,27 @@ namespace Transition.CircuitEditor
         {
             public ScreenElementBase element { get; set; }
             public byte terminal { get; set; }
+
+            public override bool Equals(object obj)
+            {
+                if (obj is ElementTerminal)
+                {
+                    return (((ElementTerminal)obj).element == this.element) &&
+                           (((ElementTerminal)obj).terminal == this.terminal);
+                }
+
+                return false;
+            }
+
+            public override int GetHashCode()
+            {
+                return base.GetHashCode();
+            }
+
+            public override string ToString()
+            {
+                return "Element:" + element.ToString() + " Terminal: " + terminal.ToString();
+            }
         }
     }
 }

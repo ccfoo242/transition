@@ -15,8 +15,7 @@ namespace Transition.Design
     {
         public ObservableCollection<SerializableComponent> components { get; }
         public ObservableCollection<Wire> wires { get; }
-
-
+        
         public delegate void ElementDelegate(UserDesign sender, SerializableElement element);
         public event ElementDelegate ElementAdded;
         public event ElementDelegate ElementRemoved;
