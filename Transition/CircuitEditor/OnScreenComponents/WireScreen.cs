@@ -18,12 +18,12 @@ namespace Transition.CircuitEditor.OnScreenComponents
     {
         private Line line { get; }
 
+        Binding bX0;
+        Binding bY0;
         Binding bX1;
         Binding bY1;
-        Binding bX2;
-        Binding bY2;
         
-        public double X1
+        public double X0
         {
             get
             {
@@ -32,6 +32,9 @@ namespace Transition.CircuitEditor.OnScreenComponents
                     if (!wire.IsWireBounded0)
                         return wire.BoundedObject0.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal0).X;
                     else
+                        if (wire.BoundedTerminal0 == 0)
+                        return ((Wire)wire.BoundedObject0).OnScreenWire.X0;
+                    else
                         return ((Wire)wire.BoundedObject0).OnScreenWire.X1;
                 }
                 else
@@ -39,7 +42,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             }
         }
 
-        public double Y1
+        public double Y0
         {
             get
             {
@@ -48,6 +51,9 @@ namespace Transition.CircuitEditor.OnScreenComponents
                     if (!wire.IsWireBounded0)
                         return wire.BoundedObject0.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal0).Y;
                      else
+                        if (wire.BoundedTerminal0 == 0)
+                        return ((Wire)wire.BoundedObject0).OnScreenWire.Y0;
+                    else
                         return ((Wire)wire.BoundedObject0).OnScreenWire.Y1;
                 }
                 else
@@ -55,7 +61,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             }
         }
 
-        public double X2
+        public double X1
         {
             get
             {
@@ -64,14 +70,17 @@ namespace Transition.CircuitEditor.OnScreenComponents
                     if (!wire.IsWireBounded1)
                         return wire.BoundedObject1.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal1).X;
                     else
-                        return ((Wire)wire.BoundedObject1).OnScreenWire.X2;
+                        if (wire.BoundedTerminal1 == 0)
+                        return ((Wire)wire.BoundedObject1).OnScreenWire.X0;
+                    else
+                        return ((Wire)wire.BoundedObject1).OnScreenWire.X1;
                 }
                 else
                 { return wire.X1; }
             }
         }
 
-        public double Y2
+        public double Y1
         {
             get
             {
@@ -80,7 +89,10 @@ namespace Transition.CircuitEditor.OnScreenComponents
                     if (!wire.IsWireBounded1)
                         return wire.BoundedObject1.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal1).Y;
                     else
-                        return ((Wire)wire.BoundedObject1).OnScreenWire.Y2;
+                        if (wire.BoundedTerminal1 == 0)
+                        return ((Wire)wire.BoundedObject1).OnScreenWire.Y0;
+                    else
+                        return ((Wire)wire.BoundedObject1).OnScreenWire.Y1;
                 }
                 else
                 { return wire.Y1; }
@@ -88,8 +100,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
         }
 
         public Wire wire;
+        public WireTerminal wt0;
         public WireTerminal wt1;
-        public WireTerminal wt2;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -108,13 +120,29 @@ namespace Transition.CircuitEditor.OnScreenComponents
             wire.PropertyChanged += checkBounds;
             wire.ComponentChanged += checkBounds2;
 
+            bX0 = new Binding()
+            {
+                Path = new PropertyPath("X0"),
+                Mode = BindingMode.OneWay,
+                Source = this
+            };
+            line.SetBinding(Line.X1Property, bX0);
+
+            bY0 = new Binding()
+            {
+                Path = new PropertyPath("Y0"),
+                Mode = BindingMode.OneWay,
+                Source = this
+            };
+            line.SetBinding(Line.Y1Property, bY0);
+
             bX1 = new Binding()
             {
                 Path = new PropertyPath("X1"),
                 Mode = BindingMode.OneWay,
                 Source = this
             };
-            line.SetBinding(Line.X1Property, bX1);
+            line.SetBinding(Line.X2Property, bX1);
 
             bY1 = new Binding()
             {
@@ -122,28 +150,12 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 Mode = BindingMode.OneWay,
                 Source = this
             };
-            line.SetBinding(Line.Y1Property, bY1);
-
-            bX2 = new Binding()
-            {
-                Path = new PropertyPath("X2"),
-                Mode = BindingMode.OneWay,
-                Source = this
-            };
-            line.SetBinding(Line.X2Property, bX2);
-
-            bY2 = new Binding()
-            {
-                Path = new PropertyPath("Y2"),
-                Mode = BindingMode.OneWay,
-                Source = this
-            };
-            line.SetBinding(Line.Y2Property, bY2);
+            line.SetBinding(Line.Y2Property, bY1);
 
             Children.Add(line);
 
-            wt1 = new WireTerminal(this, 0);
-            wt2 = new WireTerminal(this, 1);
+            wt0 = new WireTerminal(this, 0);
+            wt1 = new WireTerminal(this, 1);
         }
         
         public void checkBounds(object sender, PropertyChangedEventArgs e)
@@ -153,10 +165,10 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public void checkBounds2()
         {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("X0"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Y0"));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("X1"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("X2"));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Y1"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Y2"));
         }
     }
 }

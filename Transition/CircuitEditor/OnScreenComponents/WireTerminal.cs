@@ -16,8 +16,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
 {
     public class WireTerminal : ScreenElementBase
     {
-        public override double PositionX => TerminalNumber == 0 ? wireScreen.X1 : wireScreen.X2;
-        public override double PositionY => TerminalNumber == 0 ? wireScreen.Y1 : wireScreen.Y2;
+        public override double PositionX => TerminalNumber == 0 ? wireScreen.X0 : wireScreen.X1;
+        public override double PositionY => TerminalNumber == 0 ? wireScreen.Y0 : wireScreen.Y1;
 
         public override double RadiusClick => 10;
 
@@ -27,6 +27,10 @@ namespace Transition.CircuitEditor.OnScreenComponents
         
         public Wire SerializableWire => wireScreen.wire;
         public override SerializableElement Serializable => SerializableWire;
+
+        public bool isBounded => TerminalNumber == 0 ? SerializableWire.IsBounded0 : SerializableWire.IsBounded1;
+        public bool isBoundedToOtherWire => TerminalNumber == 0 ? SerializableWire.IsWireBounded0 : SerializableWire.IsWireBounded1;
+
 
         public WireScreen wireScreen;
         public Rectangle rectangle;
@@ -52,14 +56,14 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
             Binding bPX1 = new Binding()
             {
-                Path = new PropertyPath("X" + (terminalNumber + 1).ToString()),
+                Path = new PropertyPath("X" + (terminalNumber).ToString()),
                 Mode = BindingMode.OneWay
             };
             SetBinding(Canvas.LeftProperty, bPX1);
 
             Binding bPY1 = new Binding()
             {
-                Path = new PropertyPath("Y" + (terminalNumber + 1).ToString()),
+                Path = new PropertyPath("Y" + (terminalNumber).ToString()),
                 Mode = BindingMode.OneWay
             };
             SetBinding(Canvas.TopProperty, bPY1);
@@ -170,6 +174,11 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public override void lowlightAllTerminals()
         {
             terminalsRectangles[0].Visibility = Visibility.Collapsed;
+        }
+
+        public override string ToString()
+        {
+            return "WireTerminal Wire: " + SerializableWire.ElementName + " Terminal: " + TerminalNumber.ToString();
         }
     }
     

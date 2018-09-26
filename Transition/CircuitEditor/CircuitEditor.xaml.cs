@@ -47,6 +47,7 @@ namespace Transition.CircuitEditor
         public Point clickedPoint;
 
         public Grid grdNoSelectedElement;
+        public Grid grdWiresHaveNoParameters;
 
         public CircuitEditor()
         {
@@ -57,10 +58,17 @@ namespace Transition.CircuitEditor
             gridLines = new List<Line>();
 
             grdNoSelectedElement = new Grid();
-
             grdNoSelectedElement.Children.Add(new TextBlock()
             {
                 Text = "No selected element...",
+                FontStyle = Windows.UI.Text.FontStyle.Italic,
+                Margin = new Thickness(4)
+            });
+
+            grdWiresHaveNoParameters = new Grid();
+            grdWiresHaveNoParameters.Children.Add(new TextBlock()
+            {
+                Text = "Wires have no parameters...",
                 FontStyle = Windows.UI.Text.FontStyle.Italic,
                 Margin = new Thickness(4)
             });
@@ -93,7 +101,20 @@ namespace Transition.CircuitEditor
         private void clickDeleteComponent(object sender, RoutedEventArgs e)
         {
             foreach (ScreenComponentBase element in selectedElements.OfType<ScreenComponentBase>())
+            {
+                element.SerializableComponent.deleteElement();
                 currentDesign.removeElement(element.SerializableComponent);
+                cnvCircuit.Children.Remove(element);
+            }
+
+            foreach (WireTerminal wt in selectedElements.OfType<WireTerminal>())
+            {
+                wt.SerializableWire.deleteElement();
+                currentDesign.removeWire(wt.SerializableWire);
+                cnvCircuit.Children.Remove(wt.wireScreen.wt0);
+                cnvCircuit.Children.Remove(wt.wireScreen.wt1);
+                cnvCircuit.Children.Remove(wt.wireScreen);
+            }
         }
 
         public void refreshSelectedElements(object sender, NotifyCollectionChangedEventArgs e)
@@ -107,6 +128,11 @@ namespace Transition.CircuitEditor
                 if (element is ScreenComponentBase)
                 {
                     scrComponentParameters.Content = ((ScreenComponentBase)element).SerializableComponent.ParametersControl;
+                    enableComponentEdit();
+                }
+                if (element is WireTerminal)
+                {
+                    scrComponentParameters.Content = grdWiresHaveNoParameters;
                     enableComponentEdit();
                 }
             }
@@ -167,10 +193,11 @@ namespace Transition.CircuitEditor
                 wire.Y0 = snapCoordinate(ptCanvas.Y);
                 wire.X1 = snapCoordinate(ptCanvas.X + 100);
                 wire.Y1 = snapCoordinate(ptCanvas.Y);
+                wire.ElementName = "W" + (getMaximumNumberWire() + 1).ToString();
                 currentDesign.addWire(wire);
                 addToCanvas(wire.OnScreenWire);
+                addToCanvas(wire.OnScreenWire.wt0);
                 addToCanvas(wire.OnScreenWire.wt1);
-                addToCanvas(wire.OnScreenWire.wt2);
             }
         }
 
@@ -270,12 +297,40 @@ namespace Transition.CircuitEditor
 
         private ScreenElementBase getClickedElement(Point clickedPoint)
         {
-
+            List<ScreenElementBase> clickedElements = new List<ScreenElementBase>();
+            
             foreach (ScreenElementBase element in cnvCircuit.Children.OfType<ScreenElementBase>())
                 if (element.isClicked(clickedPoint.X, clickedPoint.Y))
-                    return element;
+                    clickedElements.Add(element);
 
-            return null;
+            if (clickedElements.Count == 0) return null;
+
+            bool isThereOneOrMoreWireTerminals = false;
+
+            foreach (ScreenElementBase element in clickedElements)
+                if (element is WireTerminal)
+                    isThereOneOrMoreWireTerminals = true;
+
+            if (isThereOneOrMoreWireTerminals)
+            {
+                /* if is there one or more wireterminals, we give them priority
+                 but we cannot select a wire terminal that is already bounded
+                 to other wire terminal, in a point where many wire terminals coexist
+                 there is one free terminal, and the others are bounded to the free
+                 We do select the free terminal, that one can be moved freely
+                 and the others terminal will follow it.*/
+                foreach (WireTerminal wt in clickedElements.OfType<WireTerminal>())
+                    { if (!wt.isBoundedToOtherWire) return wt; }
+                /* if all wt's were bounded, we do select whatever else is present on the click point*/
+                foreach (ScreenComponentBase cm in clickedElements.OfType<ScreenComponentBase>())
+                    { return cm; }
+                /* if we reach here is because all click elements are bounded wt's, so we return null
+                 but this is unlikely*/
+                return null;
+            }
+            // if there are no wt's in the clicked point we select whatever is there.
+
+            return clickedElements[0];
         }
 
         private void lowlightAllTerminalsAllElements()
@@ -301,7 +356,9 @@ namespace Transition.CircuitEditor
                         }
 
             if (nearestElement != null)
-                return new ElementTerminal() { element = nearestElement, terminal = terminalNumber };
+                return new ElementTerminal()
+                    { element = nearestElement,
+                    terminal = terminalNumber };
             else
                 return null;
         }
@@ -309,6 +366,11 @@ namespace Transition.CircuitEditor
 
         private ElementTerminal getNearestElementTerminalExcept(double pointX, double pointY, ScreenElementBase removedElement)
         {
+            /* when user is dragging a wire terminal across the screen
+             nearby components or wires terminals are highlighted,
+             but we need the dragged terminal not to be highlighted.
+             so the dragging wire terminal is the removed element */
+
             byte terminalNumber = 0;
             ScreenElementBase nearestElement = null;
             double nearestDistance = double.MaxValue;
@@ -317,15 +379,30 @@ namespace Transition.CircuitEditor
                 if (el != removedElement)
                     for (byte x = 0; x < el.QuantityOfTerminals; x++)
                         if (el.isPointNearTerminal(x, pointX, pointY))
-                            if (el.getDistance(x, pointX, pointY) < nearestDistance)
+                            if (!(el is WireTerminal))
                             {
-                                nearestDistance = el.getDistance(x, pointX, pointY);
-                                terminalNumber = x;
-                                nearestElement = el;
+                                if (el.getDistance(x, pointX, pointY) < nearestDistance)
+                                {
+                                    nearestDistance = el.getDistance(x, pointX, pointY);
+                                    terminalNumber = x;
+                                    nearestElement = el;
+                                }
+                            }
+                            else
+                            {
+                                WireTerminal wt = (WireTerminal)el;
+                                if (!wt.isBoundedToOtherWire)
+                                    if (wt.getDistance(x, pointX, pointY) < nearestDistance)
+                                    {
+                                        nearestDistance = wt.getDistance(x, pointX, pointY);
+                                        terminalNumber = wt.TerminalNumber;
+                                        nearestElement = wt;
+                                    }
                             }
 
             if (nearestElement != null)
-                return new ElementTerminal() { element = nearestElement, terminal = terminalNumber };
+                return new ElementTerminal()
+                { element = nearestElement, terminal = terminalNumber };
             else
                 return null;
         }
@@ -419,19 +496,23 @@ namespace Transition.CircuitEditor
                     if (selectedElements.Count == 1)
                         if (selectedElements[0] is WireTerminal)
                         {
-                            ElementTerminal nearest = getNearestElementTerminalExcept(ptCanvas.X, ptCanvas.Y, selectedElements[0]);
-                            lowlightAllTerminalsAllElements();
-                            if (nearest!=null)
+                            WireTerminal wt = (WireTerminal)selectedElements[0];
+                            if (!wt.isBounded)
                             {
-                                nearest.element.highlightTerminal(nearest.terminal);
-                                selectedElements[0].moveAbsolute(
-                                    snapCoordinate(nearest.element.getAbsoluteTerminalPosition(nearest.terminal).X),
-                                    snapCoordinate(nearest.element.getAbsoluteTerminalPosition(nearest.terminal).Y));
-                                
+                                ElementTerminal nearest = getNearestElementTerminalExcept(ptCanvas.X, ptCanvas.Y, selectedElements[0]);
+                                lowlightAllTerminalsAllElements();
+                                if (nearest != null)
+                                {
+                                    nearest.element.highlightTerminal(nearest.terminal);
+                                    selectedElements[0].moveAbsolute(
+                                        snapCoordinate(nearest.element.getAbsoluteTerminalPosition(nearest.terminal).X),
+                                        snapCoordinate(nearest.element.getAbsoluteTerminalPosition(nearest.terminal).Y));
+
+                                }
+                                else
+                                    selectedElements[0].moveRelative(snapCoordinate(clickedPoint.X - ptCanvas.X),
+                                                             snapCoordinate(clickedPoint.Y - ptCanvas.Y));
                             }
-                            else 
-                                selectedElements[0].moveRelative(snapCoordinate(clickedPoint.X - ptCanvas.X),
-                                                         snapCoordinate(clickedPoint.Y - ptCanvas.Y));
                         }
                         else
                             selectedElements[0].moveRelative(snapCoordinate(clickedPoint.X - ptCanvas.X),
@@ -458,14 +539,15 @@ namespace Transition.CircuitEditor
                 if (selectedElements.Count == 1)
                     if (selectedElements[0] is WireTerminal)
                     {
-                        Point ptCanvas = e.GetCurrentPoint(cnvCircuit).Position;
-                        ElementTerminal nearest = getNearestElementTerminalExcept(ptCanvas.X, ptCanvas.Y, selectedElements[0]);
-
-                        if (nearest != null)
+                        WireTerminal wt = (WireTerminal)selectedElements[0];
+                        if (!wt.isBounded)
                         {
-                            WireTerminal wt = (WireTerminal)selectedElements[0];
-                            wt.wireScreen.wire.bind(nearest.element.Serializable, nearest.terminal, wt.TerminalNumber);
-                        }   
+                            Point ptCanvas = e.GetCurrentPoint(cnvCircuit).Position;
+                            ElementTerminal nearest = getNearestElementTerminalExcept(ptCanvas.X, ptCanvas.Y, wt);
+
+                            if (nearest != null)
+                                wt.wireScreen.wire.bind(nearest.element.Serializable, nearest.terminal, wt.TerminalNumber);
+                        }
                     }
 
             movingComponents = false;
@@ -492,6 +574,20 @@ namespace Transition.CircuitEditor
                 if (element.ElementName != null)
                     if (element.ElementName.Substring(0, ElementLetter.Length) == ElementLetter)
                         if (int.TryParse(element.ElementName.Substring(ElementLetter.Length, element.ElementName.Length - ElementLetter.Length), out result))
+                            if (result > maximum) maximum = result;
+
+            return maximum;
+        }
+
+        public int getMaximumNumberWire()
+        {
+            int result;
+            int maximum = 0;
+
+            foreach (Wire wire in currentDesign.wires)
+                if (wire.ElementName != null)
+                    if (wire.ElementName.Substring(0, 1) == "W")
+                        if (int.TryParse(wire.ElementName.Substring(1, wire.ElementName.Length - 1), out result))
                             if (result > maximum) maximum = result;
 
             return maximum;

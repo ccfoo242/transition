@@ -24,6 +24,15 @@ namespace Transition.CircuitEditor.Serializable
         public abstract byte QuantityOfTerminals { get; set; }
         public ScreenComponentBase OnScreenComponent { get; set; }
 
+        public delegate void ElementDeletedHandler();
+        public event ElementDeletedHandler ElementDeleted;
+
+      
+        public void deleteElement()
+        {
+            ElementDeleted?.Invoke();
+        }
+
     }
 
     public abstract class SerializableComponent : SerializableElement
@@ -58,11 +67,10 @@ namespace Transition.CircuitEditor.Serializable
                 ComponentPositionChanged?.Invoke();
             } }
 
-
         public delegate void ComponentLayoutChangedHandler();
-        public delegate void ComponentPositionChangedHandler();
-        
         public event ComponentLayoutChangedHandler ComponentLayoutChanged;
+
+        public delegate void ComponentPositionChangedHandler();
         public event ComponentPositionChangedHandler ComponentPositionChanged;
 
         // ParametersControl is the UI Control that allows user to
