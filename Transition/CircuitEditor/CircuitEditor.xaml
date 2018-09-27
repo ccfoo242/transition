@@ -84,7 +84,7 @@
                         SizeChanged="reDrawCanvas">
 
                     <!-- cnvGeneral is where the grid lines are placed. -->
-                    <Canvas x:Name="cnvCircuit" AllowDrop="True" 
+                 <!--   <Canvas x:Name="cnvCircuit" AllowDrop="True" 
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"  
                             Drop="drop" Background="Transparent"
@@ -93,7 +93,7 @@
                             PointerPressed="cnvPointerPressed"
                             PointerMoved="cnvPointerMoved"
                             PointerReleased="cnvPointerReleased"
-                            Canvas.ZIndex="1"/>
+                            Canvas.ZIndex="1"/> -->
 
                     <!-- cnvCircuit is where the elements (Wires and Components) are placed -->
 

@@ -7,12 +7,25 @@ using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.OnScreenComponents;
 using Transition.CircuitEditor.Serializable;
+using Windows.UI;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace Transition.Design
 {
     public class UserDesign
     {
+        /* the UserDesign class stores all circuit information, components, wires
+         * and the bounds between them. Also it handles the Canvas where the Design is
+         drawn, and has the responsability for drawing the circuit on this canvas.
+         This allows the UserDesign class to show a circuit on screen. This is useful
+         for showing circuit examples on different UI dialogs (and not only the 
+         circuit is being edited by the user in CircuitEditor)
+         On the other hand the CircuitEditor has all operations for manipulating
+         the design, to add components, wires, move and link them.
+         That means there is a strong coupling between UserDesign and CircuitEditor*/
+
         public ObservableCollection<SerializableComponent> components { get; }
         public ObservableCollection<Wire> wires { get; }
         
@@ -20,12 +33,56 @@ namespace Transition.Design
         public event ElementDelegate ElementAdded;
         public event ElementDelegate ElementRemoved;
 
+        public Canvas canvasCircuit { get; set; }
+
         public bool SnapToGrid { get; set; } = true;
 
         public UserDesign()
         {
+            canvasCircuit = new Canvas()
+            {
+                Background = new SolidColorBrush(Colors.Transparent),
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                Width = 1080,
+                Height = 720,
+                AllowDrop = true
+            };
+            
             components = new ObservableCollection<SerializableComponent>();
             wires = new ObservableCollection<Wire>();
+
+            components.CollectionChanged += Components_CollectionChanged;
+            wires.CollectionChanged += Wires_CollectionChanged;
+            
+        }
+        
+        private void Components_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            foreach (SerializableComponent comp in components)
+                if (!isComponentOnCanvas(comp))
+                    canvasCircuit.Children.Add(comp.OnScreenComponent);
+        }
+
+        private void Wires_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            foreach (Wire wire in wires)
+                if (!isWireOnCanvas(wire))
+                {
+                    canvasCircuit.Children.Add(wire.OnScreenWire);
+                    canvasCircuit.Children.Add(wire.OnScreenWire.wt0);
+                    canvasCircuit.Children.Add(wire.OnScreenWire.wt1);
+                }
+        }
+
+        public bool isComponentOnCanvas(SerializableComponent comp)
+        {
+            return canvasCircuit.Children.Contains(comp.OnScreenComponent);
+        }
+
+        public bool isWireOnCanvas(Wire wire)
+        {
+            return canvasCircuit.Children.Contains(wire.OnScreenWire);
         }
 
         public void addComponent(SerializableComponent component)
@@ -34,11 +91,19 @@ namespace Transition.Design
             ElementAdded?.Invoke(this, component);
         }
 
-        public void removeElement(SerializableComponent component)
+        public void removeElement(SerializableElement element)
+        {
+            if (element is SerializableComponent) removeComponent((SerializableComponent)element);
+            if (element is Wire) removeWire((Wire)element);
+        }
+
+        public void removeComponent(SerializableComponent component)
         {
             if (components.Contains(component))
             {
+                component.deletedElement();
                 components.Remove(component);
+                canvasCircuit.Children.Remove(component.OnScreenComponent);
                 ElementRemoved?.Invoke(this, component);
             }
         }
@@ -53,7 +118,12 @@ namespace Transition.Design
         {
             if (wires.Contains(wire))
             {
+                wire.deletedElement();
                 wires.Remove(wire);
+                canvasCircuit.Children.Remove(wire.OnScreenWire);
+                canvasCircuit.Children.Remove(wire.OnScreenWire.wt0);
+                canvasCircuit.Children.Remove(wire.OnScreenWire.wt1);
+
                 ElementRemoved?.Invoke(this, wire);
             }
         }

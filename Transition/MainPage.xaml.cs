@@ -29,7 +29,6 @@ namespace Transition
             this.InitializeComponent();
 
             UserDesign newDesign = new UserDesign();
-
             circuitEditor.loadDesign(newDesign);
         }
 

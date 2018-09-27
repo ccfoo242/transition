@@ -36,7 +36,6 @@ namespace Transition.CircuitEditor
         public UserDesign currentDesign { get; set; }
 
         public ObservableCollection<ScreenElementBase> selectedElements;
-  //      public ObservableCollection<ScreenElementBase> elements => currentDesign.visibleElements;
         public List<Line> gridLines;
 
         private bool SnapToGrid { get {
@@ -58,11 +57,18 @@ namespace Transition.CircuitEditor
         public CircuitEditor()
         {
             InitializeComponent();
+
+            init();
             selectedElements = new ObservableCollection<ScreenElementBase>();
             selectedElements.CollectionChanged += refreshSelectedElements;
         
             gridLines = new List<Line>();
+            
+            CircuitEditor.currentInstance = this;   //XAML constructed singleton?
+        }
 
+        private void init()
+        {
             grdNoSelectedElement = new Grid();
             grdNoSelectedElement.Children.Add(new TextBlock()
             {
@@ -78,74 +84,58 @@ namespace Transition.CircuitEditor
                 FontStyle = Windows.UI.Text.FontStyle.Italic,
                 Margin = new Thickness(4)
             });
-
-            CircuitEditor.currentInstance = this;   //XAML constructed singleton?
         }
 
         public void loadDesign(UserDesign design)
         {
-            cnvCircuit.Children.Clear();
             currentDesign = design;
-          //  design.visibleElements.CollectionChanged += updateDesign;
+
+            design.canvasCircuit.PointerPressed += cnvPointerPressed;
+            design.canvasCircuit.PointerMoved += cnvPointerMoved;
+            design.canvasCircuit.PointerReleased += cnvPointerReleased;
+            design.canvasCircuit.Drop += drop;
+            design.canvasCircuit.DragOver += dragOver;
+
+            cnvGeneral.Children.Add(design.canvasCircuit);
+
         }
 
         public void updateDesign(object sender, NotifyCollectionChangedEventArgs e)
         {
 
         }
-
-        public void addToCanvas(UIElement element)
-        {
-            cnvCircuit.Children.Add(element);
-        }
-
-        public bool isElementOnCanvas(UIElement element)
-        {
-            return cnvCircuit.Children.Contains(element);
-        }
-
+        
         private void clickDeleteComponent(object sender, RoutedEventArgs e)
         {
             foreach (ScreenComponentBase element in selectedElements.OfType<ScreenComponentBase>())
-            {
-                element.SerializableComponent.deleteElement();
-                currentDesign.removeElement(element.SerializableComponent);
-                cnvCircuit.Children.Remove(element);
-            }
-
+                currentDesign.removeComponent(element.SerializableComponent);
+            
             foreach (WireTerminal wt in selectedElements.OfType<WireTerminal>())
-            {
-                wt.SerializableWire.deleteElement();
                 currentDesign.removeWire(wt.SerializableWire);
-                cnvCircuit.Children.Remove(wt.wireScreen.wt0);
-                cnvCircuit.Children.Remove(wt.wireScreen.wt1);
-                cnvCircuit.Children.Remove(wt.wireScreen);
-            }
+        
         }
 
         public void refreshSelectedElements(object sender, NotifyCollectionChangedEventArgs e)
         {
-            foreach (ScreenElementBase element in cnvCircuit.Children.OfType<ScreenElementBase>())
+            foreach (ScreenElementBase element in currentDesign.canvasCircuit.Children.OfType<ScreenElementBase>())
                 element.deselected();
 
             foreach (ScreenElementBase element in selectedElements)
             {
                 element.selected();
+             
                 if (element is ScreenComponentBase)
-                {
                     scrComponentParameters.Content = ((ScreenComponentBase)element).SerializableComponent.ParametersControl;
-                    enableComponentEdit();
-                }
+                  
                 if (element is WireTerminal)
-                {
                     scrComponentParameters.Content = grdWiresHaveNoParameters;
-                    enableComponentEdit();
-                }
             }
 
             if (selectedElements.Count == 0)
-                disableComponentEdit();
+                disableComponentEdit(); else
+                enableComponentEdit();
         }
+
 
         private void enableComponentEdit()
         {
@@ -175,8 +165,8 @@ namespace Transition.CircuitEditor
         {
             //tap event invoques an element on center of drawboard
             addElement(element, new Point(
-                snapCoordinate(cnvCircuit.Width / 2),
-                snapCoordinate(cnvCircuit.Height / 2)));
+                snapCoordinate(cnvGeneral.Width / 2),
+                snapCoordinate(cnvGeneral.Height / 2)));
         }
 
         public void addElement(string stringComponent, Point ptCanvas)
@@ -190,20 +180,20 @@ namespace Transition.CircuitEditor
                 component.ElementName = component.ElementLetter + currentDesign.getNextNumberLetter(component.ElementLetter).ToString();
 
                 currentDesign.addComponent(component);
-                addToCanvas(component.OnScreenComponent);
+           //     addToCanvas(component.OnScreenComponent);
             }
             else
             {
-                Wire wire = new Wire();
-                wire.X0 = snapCoordinate(ptCanvas.X);
-                wire.Y0 = snapCoordinate(ptCanvas.Y);
-                wire.X1 = snapCoordinate(ptCanvas.X + 100);
-                wire.Y1 = snapCoordinate(ptCanvas.Y);
-                wire.ElementName = "W" + (currentDesign.getMaximumNumberWire() + 1).ToString();
+                Wire wire = new Wire()
+                {
+                    X0 = snapCoordinate(ptCanvas.X),
+                    Y0 = snapCoordinate(ptCanvas.Y),
+                    X1 = snapCoordinate(ptCanvas.X + 100),
+                    Y1 = snapCoordinate(ptCanvas.Y),
+                    ElementName = "W" + (currentDesign.getMaximumNumberWire() + 1).ToString()
+                };
+
                 currentDesign.addWire(wire);
-                addToCanvas(wire.OnScreenWire);
-                addToCanvas(wire.OnScreenWire.wt0);
-                addToCanvas(wire.OnScreenWire.wt1);
             }
         }
 
@@ -214,10 +204,6 @@ namespace Transition.CircuitEditor
                 ((ScreenComponentBase)et2.element).SerializableComponent, et2.terminal);
 
             if (wire == null) return;
-
-            addToCanvas(wire.OnScreenWire);
-            addToCanvas(wire.OnScreenWire.wt0);
-            addToCanvas(wire.OnScreenWire.wt1);
         }
 
         private void clickRotate(object sender, RoutedEventArgs e)
@@ -246,7 +232,7 @@ namespace Transition.CircuitEditor
         private async void drop(object sender, DragEventArgs e)
         {
             string element = await e.DataView.GetTextAsync();
-            Point ptCanvas = e.GetPosition(cnvCircuit);
+            Point ptCanvas = e.GetPosition(cnvGeneral);
 
             addElement(element, ptCanvas);
         }
@@ -306,7 +292,10 @@ namespace Transition.CircuitEditor
             }
 
             foreach (Line l in gridLines)
+            {
                 cnvGeneral.Children.Add(l);
+                Canvas.SetZIndex(l, -1);
+            }
         }
 
         private double snapCoordinate(double coordinate)
@@ -318,7 +307,7 @@ namespace Transition.CircuitEditor
         {
             List<ScreenElementBase> clickedElements = new List<ScreenElementBase>();
             
-            foreach (ScreenElementBase element in cnvCircuit.Children.OfType<ScreenElementBase>())
+            foreach (ScreenElementBase element in currentDesign.canvasCircuit.Children.OfType<ScreenElementBase>())
                 if (element.isClicked(clickedPoint.X, clickedPoint.Y))
                     clickedElements.Add(element);
 
@@ -354,7 +343,7 @@ namespace Transition.CircuitEditor
 
         private void lowlightAllTerminalsAllElements()
         {
-            foreach (ScreenElementBase el in cnvCircuit.Children.OfType<ScreenElementBase>())
+            foreach (ScreenElementBase el in currentDesign.canvasCircuit.Children.OfType<ScreenElementBase>())
                 el.lowlightAllTerminals();
         }
 
@@ -364,7 +353,7 @@ namespace Transition.CircuitEditor
             ScreenElementBase nearestElement = null;
             double nearestDistance = double.MaxValue;
 
-            foreach (ScreenElementBase el in cnvCircuit.Children.OfType<ScreenElementBase>())
+            foreach (ScreenElementBase el in currentDesign.canvasCircuit.Children.OfType<ScreenElementBase>())
                 for (byte x = 0; x < el.QuantityOfTerminals; x++)
                     if (el.isPointNearTerminal(x, pointX, pointY))
                         if (el.getDistance(x, pointX, pointY) < nearestDistance)
@@ -387,9 +376,9 @@ namespace Transition.CircuitEditor
             List<ElementTerminal> output = new List<ElementTerminal>();
             double distance;
 
-            foreach (ScreenComponentBase comp in cnvCircuit.Children.OfType<ScreenComponentBase>())
+            foreach (ScreenComponentBase comp in currentDesign.canvasCircuit.Children.OfType<ScreenComponentBase>())
                 for (byte i = 0; i < comp.QuantityOfTerminals; i++)
-                    foreach (ScreenComponentBase comp2 in cnvCircuit.Children.OfType<ScreenComponentBase>())
+                    foreach (ScreenComponentBase comp2 in currentDesign.canvasCircuit.Children.OfType<ScreenComponentBase>())
                         for (byte j = 0; j < comp2.QuantityOfTerminals; j++)
                             if (comp != comp2)
                             {
@@ -409,11 +398,11 @@ namespace Transition.CircuitEditor
             Dictionary<ElementTerminal, ElementTerminal> output = new Dictionary<ElementTerminal, ElementTerminal>();
             double distance;
 
-            foreach (ScreenComponentBase comp in cnvCircuit.Children.OfType<ScreenComponentBase>())
+            foreach (ScreenComponentBase comp in currentDesign.canvasCircuit.Children.OfType<ScreenComponentBase>())
                 for (byte i = 0; i < comp.QuantityOfTerminals; i++)
-                    foreach (ScreenComponentBase comp2 in cnvCircuit.Children.OfType<ScreenComponentBase>())
+                    foreach (ScreenComponentBase comp2 in currentDesign.canvasCircuit.Children.OfType<ScreenComponentBase>())
                         for (byte j = 0; j < comp2.QuantityOfTerminals; j++)
-                            if (comp != comp2)
+                            if ( comp != comp2 )
                             {
                                 distance = comp.getDistance(i,
                                   comp2.getAbsoluteTerminalPosition(j).X,
@@ -438,6 +427,13 @@ namespace Transition.CircuitEditor
             return output;
         }
 
+        private List<ElementTerminal> getAllFreeElementTerminals()
+        {
+            List<ElementTerminal> output = new List<ElementTerminal>();
+            
+            return output;
+        }
+
         private ElementTerminal getNearestElementTerminalExcept(double pointX, double pointY, ScreenElementBase removedElement)
         {
             /* when user is dragging a wire terminal across the screen
@@ -449,7 +445,7 @@ namespace Transition.CircuitEditor
             ScreenElementBase nearestElement = null;
             double nearestDistance = double.MaxValue;
 
-            foreach (ScreenElementBase el in cnvCircuit.Children.OfType<ScreenElementBase>())
+            foreach (ScreenElementBase el in currentDesign.canvasCircuit.Children.OfType<ScreenElementBase>())
                 if (el != removedElement)
                     for (byte x = 0; x < el.QuantityOfTerminals; x++)
                         if (el.isPointNearTerminal(x, pointX, pointY))
@@ -484,11 +480,11 @@ namespace Transition.CircuitEditor
 
         private void cnvPointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            clickedPoint = e.GetCurrentPoint(cnvCircuit).Position;
+            clickedPoint = e.GetCurrentPoint(cnvGeneral).Position;
 
             ScreenElementBase clickedElement = getClickedElement(clickedPoint);
           
-            if (e.GetCurrentPoint(cnvCircuit).Properties.IsLeftButtonPressed)
+            if (e.GetCurrentPoint(cnvGeneral).Properties.IsLeftButtonPressed)
                 if (clickedElement == null)
                 {
                     if (rectGroupSelect != null)
@@ -496,7 +492,7 @@ namespace Transition.CircuitEditor
                             cnvGeneral.Children.Remove(rectGroupSelect);
 
                     groupSelect = true;
-                    pointStartGroupSelect = e.GetCurrentPoint(cnvCircuit).Position;
+                    pointStartGroupSelect = e.GetCurrentPoint(cnvGeneral).Position;
                     selectedElements.Clear();
 
                     rectGroupSelect = new Rectangle()
@@ -518,7 +514,7 @@ namespace Transition.CircuitEditor
                        selectElement(clickedElement);
                 }
 
-            if (e.GetCurrentPoint(cnvCircuit).Properties.IsRightButtonPressed)
+            if (e.GetCurrentPoint(cnvGeneral).Properties.IsRightButtonPressed)
                 if (clickedElement != null)
                 {
                     selectElement(clickedElement);
@@ -528,9 +524,9 @@ namespace Transition.CircuitEditor
 
         private void cnvPointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            if (e.GetCurrentPoint(cnvCircuit).Properties.IsLeftButtonPressed)
+            if (e.GetCurrentPoint(cnvGeneral).Properties.IsLeftButtonPressed)
             {
-                Point ptCanvas = e.GetCurrentPoint(cnvCircuit).Position;
+                Point ptCanvas = e.GetCurrentPoint(cnvGeneral).Position;
 
                 if (groupSelect)
                 {
@@ -614,7 +610,7 @@ namespace Transition.CircuitEditor
 
                 selectedElements.Clear();
 
-                foreach (ScreenElementBase element in cnvCircuit.Children.OfType<ScreenElementBase>())
+                foreach (ScreenElementBase element in currentDesign.canvasCircuit.Children.OfType<ScreenElementBase>())
                     if (element.isInside(rectGroupSelect))
                         selectedElements.Add(element);
             }
@@ -626,7 +622,7 @@ namespace Transition.CircuitEditor
                         WireTerminal wt = (WireTerminal)selectedElements[0];
                         if (!wt.isBounded)
                         {
-                            Point ptCanvas = e.GetCurrentPoint(cnvCircuit).Position;
+                            Point ptCanvas = e.GetCurrentPoint(cnvGeneral).Position;
                             ElementTerminal nearest = getNearestElementTerminalExcept(ptCanvas.X, ptCanvas.Y, wt);
 
                             if (nearest != null) /* if there is some terminal nearby, we bind the wire to it*/
@@ -643,7 +639,7 @@ namespace Transition.CircuitEditor
                     }
 
             movingComponents = false;
-            foreach (ScreenElementBase element in cnvCircuit.Children.OfType<ScreenElementBase>())
+            foreach (ScreenElementBase element in currentDesign.canvasCircuit.Children.OfType<ScreenElementBase>())
                 element.updateOriginalPosition();
         }
 

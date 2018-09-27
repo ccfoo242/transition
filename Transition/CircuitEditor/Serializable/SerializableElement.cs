@@ -28,7 +28,7 @@ namespace Transition.CircuitEditor.Serializable
         public event ElementDeletedHandler ElementDeleted;
 
       
-        public void deleteElement()
+        public void deletedElement()
         {
             ElementDeleted?.Invoke();
         }
