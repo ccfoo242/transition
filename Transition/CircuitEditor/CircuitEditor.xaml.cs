@@ -187,7 +187,7 @@ namespace Transition.CircuitEditor
                 component.PositionX = snapCoordinate(ptCanvas.X);
                 component.PositionY = snapCoordinate(ptCanvas.Y);
 
-                component.ElementName = component.ElementLetter + getNextNumberLetter(component.ElementLetter).ToString();
+                component.ElementName = component.ElementLetter + currentDesign.getNextNumberLetter(component.ElementLetter).ToString();
 
                 currentDesign.addComponent(component);
                 addToCanvas(component.OnScreenComponent);
@@ -199,7 +199,7 @@ namespace Transition.CircuitEditor
                 wire.Y0 = snapCoordinate(ptCanvas.Y);
                 wire.X1 = snapCoordinate(ptCanvas.X + 100);
                 wire.Y1 = snapCoordinate(ptCanvas.Y);
-                wire.ElementName = "W" + (getMaximumNumberWire() + 1).ToString();
+                wire.ElementName = "W" + (currentDesign.getMaximumNumberWire() + 1).ToString();
                 currentDesign.addWire(wire);
                 addToCanvas(wire.OnScreenWire);
                 addToCanvas(wire.OnScreenWire.wt0);
@@ -209,13 +209,12 @@ namespace Transition.CircuitEditor
 
         private void bindComponentTerminalPair(ElementTerminal et1, ElementTerminal et2)
         {
-            Wire wire = new Wire();
+            Wire wire = currentDesign.bindTwoComponentsTerminals(
+                ((ScreenComponentBase)et1.element).SerializableComponent, et1.terminal,
+                ((ScreenComponentBase)et2.element).SerializableComponent, et2.terminal);
 
-            wire.bind0( ((ScreenComponentBase)et1.element).SerializableComponent, et1.terminal);
-            wire.bind1( ((ScreenComponentBase)et2.element).SerializableComponent, et2.terminal);
-            wire.ElementName = "W" + (getMaximumNumberWire() + 1).ToString();
+            if (wire == null) return;
 
-            currentDesign.addWire(wire);
             addToCanvas(wire.OnScreenWire);
             addToCanvas(wire.OnScreenWire.wt0);
             addToCanvas(wire.OnScreenWire.wt1);
@@ -595,7 +594,7 @@ namespace Transition.CircuitEditor
                             while dragging, if one its terminals is very close to some other terminal of other component
                             */
                             selectedElements[0].moveRelative(snapCoordinate(clickedPoint.X - ptCanvas.X),
-                                                    snapCoordinate(clickedPoint.Y - ptCanvas.Y));
+                                                             snapCoordinate(clickedPoint.Y - ptCanvas.Y));
 
                             lowlightAllTerminalsAllElements();
                             foreach (ElementTerminal elt in getListPairedComponentTerminals())
@@ -655,41 +654,6 @@ namespace Transition.CircuitEditor
             selectElement(component);
         }
 
-        public int getMaximumNumberElement(string ElementLetter)
-        {
-            if (ElementLetter == null) return 0;
-            if (ElementLetter == "") return 0;
-            
-            int maximum = 0;
-            int result;
-
-            foreach (SerializableElement element in currentDesign.components)
-                if (element.ElementName != null)
-                    if (element.ElementName.Substring(0, ElementLetter.Length) == ElementLetter)
-                        if (int.TryParse(element.ElementName.Substring(ElementLetter.Length, element.ElementName.Length - ElementLetter.Length), out result))
-                            if (result > maximum) maximum = result;
-
-            return maximum;
-        }
-
-        public int getMaximumNumberWire()
-        {
-            int result;
-            int maximum = 0;
-
-            foreach (Wire wire in currentDesign.wires)
-                if (wire.ElementName != null)
-                    if (wire.ElementName.Substring(0, 1) == "W")
-                        if (int.TryParse(wire.ElementName.Substring(1, wire.ElementName.Length - 1), out result))
-                            if (result > maximum) maximum = result;
-
-            return maximum;
-        }
-
-        public int getNextNumberLetter(String ElementLetter)
-        {
-            return getMaximumNumberElement(ElementLetter) + 1;
-        }
 
         public static SerializableComponent getElement(string element)
         {
