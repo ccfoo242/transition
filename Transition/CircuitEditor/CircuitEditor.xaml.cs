@@ -208,19 +208,19 @@ namespace Transition.CircuitEditor
 
         private void clickRotate(object sender, RoutedEventArgs e)
         {
-            foreach (ScreenComponentBase comp in selectedElements)
+            foreach (ScreenComponentBase comp in selectedElements.OfType<ScreenComponentBase>())
                 comp.SerializableComponent.rotate();
         }
 
         private void clickFlipX(object sender, RoutedEventArgs e)
         {
-            foreach (ScreenComponentBase comp in selectedElements)
+            foreach (ScreenComponentBase comp in selectedElements.OfType<ScreenComponentBase>())
                 comp.SerializableComponent.doFlipX();
         }
 
         private void clickFlipY(object sender, RoutedEventArgs e)
         {
-            foreach (ScreenComponentBase comp in selectedElements)
+            foreach (ScreenComponentBase comp in selectedElements.OfType<ScreenComponentBase>())
                 comp.SerializableComponent.doFlipY();
         }
 

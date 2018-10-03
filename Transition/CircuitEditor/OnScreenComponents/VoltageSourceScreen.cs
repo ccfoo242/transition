@@ -18,7 +18,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public override double SchematicHeight => 120;
         public override int[,] TerminalPositions
         {
-            get => new int[,] { { 40, 20 }, { 40, 100 } };
+            get => new int[,] { { 60, 20 }, { 60, 100 } };
         }
         public TextBlock txtComponentName;
         public TextBlock txtVoltage;
@@ -58,6 +58,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
             };
             Children.Add(txtImpedance);
+
+            postConstruct();
         }
 
         public override void setPositionTextBoxes()
