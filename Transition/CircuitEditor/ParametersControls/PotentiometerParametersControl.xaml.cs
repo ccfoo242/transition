@@ -27,7 +27,6 @@ namespace Transition.CircuitEditor.Components
         public PotentiometerParametersControl()
         {
             this.InitializeComponent();
-           
         }
 
         public PotentiometerParametersControl(Potentiometer pot)
@@ -36,6 +35,8 @@ namespace Transition.CircuitEditor.Components
 
             SerializablePotentioMeter = pot;
             DataContext = pot;
+
+            pot.TerminalsChanged += quantityOfTerminalsChanged;
         }
 
         private void ClickCCW(object sender, RoutedEventArgs e)
@@ -51,6 +52,29 @@ namespace Transition.CircuitEditor.Components
         private void ClickCW(object sender, RoutedEventArgs e)
         {
             sldPosition.Value = 100;
+        }
+
+        private void cmbSelectedQuantityOfTerminalsChanged(object sender, SelectionChangedEventArgs e)
+        {
+            switch (cmbQuantityOfTerminals.SelectedIndex)
+            {
+                case 0: SerializablePotentioMeter.QuantityOfTerminals = 3; break;
+                case 1: SerializablePotentioMeter.QuantityOfTerminals = 4; break;
+                case 2: SerializablePotentioMeter.QuantityOfTerminals = 5; break;
+                case 3: SerializablePotentioMeter.QuantityOfTerminals = 6; break;
+            }
+        }
+
+        private void quantityOfTerminalsChanged()
+        {
+            switch (SerializablePotentioMeter.QuantityOfTerminals)
+            {
+                case 3: cmbQuantityOfTerminals.SelectedIndex = 0; break;
+                case 4: cmbQuantityOfTerminals.SelectedIndex = 1; break;
+                case 5: cmbQuantityOfTerminals.SelectedIndex = 2; break;
+                case 6: cmbQuantityOfTerminals.SelectedIndex = 3; break;
+
+            }
         }
     }
 }

@@ -43,13 +43,25 @@ namespace Transition.CircuitEditor.Serializable
 
         public bool AnyPrecisionSelected { get { return (ComponentPrecision == Precision.Arbitrary); } }
 
-        public override byte QuantityOfTerminals { get; set; }
+        private byte quantityOfTerminals;
+        public override byte QuantityOfTerminals { get { return quantityOfTerminals; }
+            set
+            {
+                unbindElement();
+                SetProperty(ref quantityOfTerminals, value);
+                TerminalsChanged?.Invoke();
+
+            } }
+
+        public delegate void DelegateTerminalsChanged();
+        public event DelegateTerminalsChanged TerminalsChanged;
+
 
         public Potentiometer() : base()
         {
             // potentiometer always start as the simplest form, 3 terminal
-            // later can be changed by the user to 4, 5 or 6 terminal (
-            // added terminals are mid-point connections
+            // later can be changed by the user to 4, 5 or 6 terminal
+            // ( added terminals are mid-point connections )
 
             QuantityOfTerminals = 3;
 

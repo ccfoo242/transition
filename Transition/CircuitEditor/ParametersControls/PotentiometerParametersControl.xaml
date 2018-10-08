@@ -60,6 +60,18 @@
                              Style="{StaticResource EngrNumberBoxStyle}"
                              Text="{Binding Path = PositionValue, Mode=OneWay}"/>
                 </Grid>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Quantity of Terminals"/>
+                    <ComboBox Margin="4" SelectionChanged="cmbSelectedQuantityOfTerminalsChanged"
+                              x:Name="cmbQuantityOfTerminals">
+                        <ComboBox.Items>
+                            <ComboBoxItem Content="3"/>
+                            <ComboBoxItem Content="4"/>
+                            <ComboBoxItem Content="5"/>
+                            <ComboBoxItem Content="6"/>
+                        </ComboBox.Items>
+                    </ComboBox>
+                </StackPanel>
             </StackPanel>
         </controls:Expander>
        

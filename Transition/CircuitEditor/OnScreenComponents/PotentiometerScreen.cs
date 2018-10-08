@@ -19,15 +19,15 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public override int[,] TerminalPositions { get {
                 if (QuantityOfTerminals == 3)
-                    { return new int[,] { { 40, 20 } , { 40, 140 }, { 100, 80 } }; }
+                    { return new int[,] { { 40, 20 }, { 40, 140 }, { 100, 80 } }; }
                 else
                 if (QuantityOfTerminals == 4)
-                    { return new int[,] { { 40, 20 }, { 40, 140 }, { 100, 80 }, { 0, 80 } }; }
+                    { return new int[,] { { 40, 20 }, { 40, 140 }, { 100, 80 }, { 20, 80 } }; }
                 else
                 if (QuantityOfTerminals == 5)
-                    { return new int[,] { { 40, 20 }, { 40, 140 }, { 100, 80 }, { 0, 60 }, { 0, 100 } }; }
+                    { return new int[,] { { 40, 20 }, { 40, 140 }, { 100, 80 }, { 20, 60 }, { 20, 100 } }; }
                 else /* 6 */
-                    { return new int[,] { { 40, 20 }, { 40, 140 }, { 100, 80 }, { 0, 60 }, { 0, 80 }, { 0, 100 } }; }
+                    { return new int[,] { { 40, 20 }, { 40, 140 }, { 100, 80 }, { 20, 60 }, { 20, 80 }, { 20, 100 } }; }
             }
         } 
     
@@ -49,6 +49,9 @@ namespace Transition.CircuitEditor.OnScreenComponents
             ComponentCanvas.Children.Add(SymbolPotentiometer);
             Canvas.SetTop(SymbolPotentiometer, 19);
             Canvas.SetLeft(SymbolPotentiometer, 19);
+
+            pot.TerminalsChanged += terminalsChanged;
+            terminalsChanged();
 
             txtComponentName = new TextBlock()
             {
@@ -115,6 +118,31 @@ namespace Transition.CircuitEditor.OnScreenComponents
             Children.Add(txtPositionValue);
 
             postConstruct();
+        }
+
+        private void terminalsChanged()
+        {
+            switch (QuantityOfTerminals)
+            {
+                case 3:
+                    SymbolPotentiometer.ContentTemplate =
+                        (DataTemplate)Application.Current.Resources["symbolPotentiometer"];
+                    break;
+                case 4:
+                    SymbolPotentiometer.ContentTemplate =
+                        (DataTemplate)Application.Current.Resources["symbolPotentiometer1MidPoint"];
+                    break;
+                case 5:
+                    SymbolPotentiometer.ContentTemplate =
+                        (DataTemplate)Application.Current.Resources["symbolPotentiometer2MidPoint"];
+                    break;
+                case 6:
+                    SymbolPotentiometer.ContentTemplate =
+                        (DataTemplate)Application.Current.Resources["symbolPotentiometer3MidPoint"];
+                    break;
+            }
+
+
         }
 
         public override void setPositionTextBoxes()

@@ -66,7 +66,6 @@ namespace Transition.CircuitEditor.OnScreenComponents
         }
     }
 
-
     public abstract class ScreenComponentBase : ScreenElementBase, INotifyPropertyChanged
     {
         public Canvas ComponentCanvas { get; }
@@ -361,7 +360,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public override void highlightTerminal(byte terminal)
         {
-            terminalsRectangles[terminal].Visibility = Visibility.Visible;
+            if (terminalsRectangles.ContainsKey(terminal))
+                terminalsRectangles[terminal].Visibility = Visibility.Visible;
         }
 
         public override void lowlightAllTerminals()
@@ -372,7 +372,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public override void lowlightTerminal(byte terminal)
         {
-            terminalsRectangles[terminal].Visibility = Visibility.Collapsed;
+            if (terminalsRectangles.ContainsKey(terminal))
+                terminalsRectangles[terminal].Visibility = Visibility.Collapsed;
         }
     }
     

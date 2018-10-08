@@ -129,7 +129,13 @@ namespace Transition
         public EngrNumber(decimal input) : this(input, "") { }
         public EngrNumber(int input) : this((decimal)input, "") { }
         public EngrNumber(double input) : this((decimal)input, "") { }
-    
+        public EngrNumber(string input)
+        {
+            EngrNumber parsed = Parse(input);
+            this.Mantissa = parsed.Mantissa;
+            this.Prefix = parsed.Prefix;
+
+        }
         
         public override string ToString()
         {
@@ -249,7 +255,6 @@ namespace Transition
                 throw new ArgumentException();
 
             return new EngrNumber(parsedMantissa, prefix);
-            
         }
 
         public bool Equals(EngrNumber other)
@@ -313,6 +318,7 @@ namespace Transition
         public static implicit operator EngrNumber(decimal n1) { return new EngrNumber(n1); }
         public static implicit operator EngrNumber(double n1)  { return new EngrNumber(n1); }
         public static implicit operator EngrNumber(int n1)     { return new EngrNumber(n1); }
+        public static implicit operator EngrNumber(string n1)  { return new EngrNumber(n1); }
 
         public override int GetHashCode()
         {

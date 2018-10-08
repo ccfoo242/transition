@@ -121,6 +121,7 @@ namespace Transition.CircuitEditor.Serializable
             component.ComponentLayoutChanged += RaiseLayoutChanged;
             component.ComponentPositionChanged += RaiseLayoutChanged;
             component.ElementDeleted += deleted0;
+            component.UnBindElement += deleted0;
             BoundedTerminal0 = componentTerminal;
         }
         
@@ -130,6 +131,7 @@ namespace Transition.CircuitEditor.Serializable
             component.ComponentLayoutChanged += RaiseLayoutChanged;
             component.ComponentPositionChanged += RaiseLayoutChanged;
             component.ElementDeleted += deleted1;
+            component.UnBindElement += deleted1;
             BoundedTerminal1 = componentTerminal;
         }
         
