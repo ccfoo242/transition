@@ -43,6 +43,10 @@ namespace Transition.CircuitEditor.Serializable
 
         public bool AnyPrecisionSelected { get { return (ComponentPrecision == Precision.Arbitrary); } }
 
+        /* Potentiometer allows to change the quantity
+         of terminals, because it can have taps at determined points
+         of its path , taps can be specified in the actual element */
+
         private byte quantityOfTerminals;
         public override byte QuantityOfTerminals { get { return quantityOfTerminals; }
             set
@@ -61,7 +65,7 @@ namespace Transition.CircuitEditor.Serializable
         {
             // potentiometer always start as the simplest form, 3 terminal
             // later can be changed by the user to 4, 5 or 6 terminal
-            // ( added terminals are mid-point connections )
+            // ( added terminals are tap connections )
 
             QuantityOfTerminals = 3;
 
