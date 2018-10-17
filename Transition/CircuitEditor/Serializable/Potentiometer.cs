@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,9 +28,43 @@ namespace Transition.CircuitEditor.Serializable
         public double PositionValue
         {
             get { return positionValue; }
-            set
-            {
-                SetProperty(ref positionValue, value);
+            set { SetProperty(ref positionValue, value); }
+        }
+
+        private double tapAPositionValue;
+        public double TapAPositionValue
+        {
+            get { return tapAPositionValue; }
+            set { SetProperty(ref tapAPositionValue, value);
+                if (TapAPositionValue > TapBPositionValue)
+                    TapBPositionValue = TapAPositionValue;
+                if (TapAPositionValue > TapCPositionValue)
+                    TapCPositionValue = TapAPositionValue;
+            }
+        }
+
+        private double tapBPositionValue;
+        public double TapBPositionValue
+        {
+            get { return tapBPositionValue; }
+            set { SetProperty(ref tapBPositionValue, value);
+                if (TapBPositionValue < TapAPositionValue)
+                    TapAPositionValue = TapBPositionValue;
+
+                if (TapBPositionValue > TapCPositionValue)
+                    TapCPositionValue = TapBPositionValue;
+            }
+        }
+
+        private double tapCPositionValue;
+        public double TapCPositionValue
+        {
+            get { return tapCPositionValue; }
+            set { SetProperty(ref tapCPositionValue, value);
+                if (TapCPositionValue < TapAPositionValue)
+                    TapAPositionValue = TapCPositionValue;
+                if (TapCPositionValue < TapBPositionValue)
+                    TapBPositionValue = TapCPositionValue;
             }
         }
 
@@ -43,6 +78,20 @@ namespace Transition.CircuitEditor.Serializable
 
         public bool AnyPrecisionSelected { get { return (ComponentPrecision == Precision.Arbitrary); } }
 
+        private ObservableCollection<TaperPoint> taperFunction ;
+        public ObservableCollection<TaperPoint> TaperFunction
+            { get { return taperFunction; }
+              set { taperFunction = value;
+                    TaperChanged?.Invoke();
+                    taperFunction.CollectionChanged += TaperFunction_CollectionChanged;
+            }
+        }
+
+        private void TaperFunction_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            TaperChanged?.Invoke();
+        }
+
         /* Potentiometer allows to change the quantity
          of terminals, because it can have taps at determined points
          of its path , taps can be specified in the actual element */
@@ -54,12 +103,13 @@ namespace Transition.CircuitEditor.Serializable
                 unbindElement();
                 SetProperty(ref quantityOfTerminals, value);
                 TerminalsChanged?.Invoke();
-
             } }
 
         public delegate void DelegateTerminalsChanged();
         public event DelegateTerminalsChanged TerminalsChanged;
 
+        public delegate void DelegateTaperChanged();
+        public event DelegateTaperChanged TaperChanged;
 
         public Potentiometer() : base()
         {
@@ -72,9 +122,30 @@ namespace Transition.CircuitEditor.Serializable
             ResistanceValue = 1;
             PositionValue = 50;
 
+            TaperFunction = new ObservableCollection<TaperPoint>();
+
+
+            TaperFunction.Add(new TaperPoint()
+            {
+                PositionValuePercent = 0,
+                ResistanceValuePercent = 0
+            });
+
+            TaperFunction.Add(new TaperPoint()
+            {
+                PositionValuePercent = 50,
+                ResistanceValuePercent = 25
+            });
+
+            TaperFunction.Add(new TaperPoint()
+            {
+                PositionValuePercent = 100,
+                ResistanceValuePercent = 100
+            });
+
+
             OnScreenComponent = new PotentiometerScreen(this);
             ParametersControl = new PotentiometerParametersControl(this);
-            
         }
 
         public string ResistanceString
@@ -94,7 +165,12 @@ namespace Transition.CircuitEditor.Serializable
                 return returnString + "Ω";
             }
         }
+        
+    }
 
-
+    public class TaperPoint
+    {
+        public double PositionValuePercent { get; set; }
+        public double ResistanceValuePercent { get; set; }
     }
 }

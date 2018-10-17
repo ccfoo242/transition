@@ -450,7 +450,7 @@ namespace Transition.CircuitEditor
                     for (byte x = 0; x < el.QuantityOfTerminals; x++)
                         if (el.isPointNearTerminal(x, pointX, pointY))
                             if (!(el is WireTerminal))
-                            {
+                            {   /* nearby terminal is a component terminal*/
                                 if (el.getDistance(x, pointX, pointY) < nearestDistance)
                                 {
                                     nearestDistance = el.getDistance(x, pointX, pointY);
@@ -459,7 +459,7 @@ namespace Transition.CircuitEditor
                                 }
                             }
                             else
-                            {
+                            {   /* nearby terminal is an unbounded wire terminal */
                                 WireTerminal wt = (WireTerminal)el;
                                 if (!wt.isBoundedToOtherWire)
                                     if (wt.getDistance(x, pointX, pointY) < nearestDistance)
@@ -587,7 +587,9 @@ namespace Transition.CircuitEditor
                         }
                         else
                         {   /* here, the one selected element is a component.
-                            while dragging, if one its terminals is very close to some other terminal of other component
+                            while dragging, if one its terminals is very close to 
+                            some other terminal of other component,
+                            the two terminals will be highlighted.
                             */
                             selectedElements[0].moveRelative(snapCoordinate(clickedPoint.X - ptCanvas.X),
                                                              snapCoordinate(clickedPoint.Y - ptCanvas.Y));

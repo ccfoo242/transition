@@ -33,7 +33,7 @@ namespace Transition.Design
         public event ElementDelegate ElementAdded;
         public event ElementDelegate ElementRemoved;
 
-        public Canvas canvasCircuit { get; set; }
+        public Canvas canvasCircuit { get; }
 
         public bool SnapToGrid { get; set; } = true;
 
@@ -54,18 +54,32 @@ namespace Transition.Design
 
             components.CollectionChanged += Components_CollectionChanged;
             wires.CollectionChanged += Wires_CollectionChanged;
-            
+
+          
+
         }
         
         private void Components_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
+        {    
+            /*
             foreach (SerializableComponent comp in components)
                 if (!isComponentOnCanvas(comp))
                     canvasCircuit.Children.Add(comp.OnScreenComponent);
+              */
+
+            if (e.NewItems!=null)
+                foreach (SerializableComponent comp in e.NewItems)
+                    canvasCircuit.Children.Add(comp.OnScreenComponent);
+
+            if (e.OldItems!=null)
+                foreach (SerializableComponent comp in e.OldItems)
+                    removedComponent(comp);
+
         }
 
         private void Wires_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            /*
             foreach (Wire wire in wires)
                 if (!isWireOnCanvas(wire))
                 {
@@ -73,8 +87,23 @@ namespace Transition.Design
                     canvasCircuit.Children.Add(wire.OnScreenWire.wt0);
                     canvasCircuit.Children.Add(wire.OnScreenWire.wt1);
                 }
+            */
+
+            if (e.NewItems!=null)
+                foreach (Wire wire in e.NewItems)
+                {
+                    canvasCircuit.Children.Add(wire.OnScreenWire);
+                    canvasCircuit.Children.Add(wire.OnScreenWire.wt0);
+                    canvasCircuit.Children.Add(wire.OnScreenWire.wt1);
+                }
+
+            if (e.OldItems!=null)
+                foreach (Wire wire in e.OldItems)
+                    removedWire(wire);
+            
         }
 
+        /*
         public bool isComponentOnCanvas(SerializableComponent comp)
         {
             return canvasCircuit.Children.Contains(comp.OnScreenComponent);
@@ -84,6 +113,7 @@ namespace Transition.Design
         {
             return canvasCircuit.Children.Contains(wire.OnScreenWire);
         }
+        */
 
         public void addComponent(SerializableComponent component)
         {
@@ -99,13 +129,20 @@ namespace Transition.Design
 
         public void removeComponent(SerializableComponent component)
         {
-            if (components.Contains(component))
-            {
-                component.deletedElement();
-                components.Remove(component);
-                canvasCircuit.Children.Remove(component.OnScreenComponent);
-                ElementRemoved?.Invoke(this, component);
-            }
+            components.Remove(component);
+        }
+
+        public void removeWire(Wire wire)
+        {
+            wires.Remove(wire);
+        }
+
+        public void removedComponent(SerializableComponent component)
+        {
+            component.deletedElement();
+            //    components.Remove(component);
+            canvasCircuit.Children.Remove(component.OnScreenComponent);
+            ElementRemoved?.Invoke(this, component);
         }
 
         public void addWire(Wire wire)
@@ -114,18 +151,16 @@ namespace Transition.Design
             ElementAdded?.Invoke(this, wire);
         }
 
-        public void removeWire(Wire wire)
-        {
-            if (wires.Contains(wire))
-            {
-                wire.deletedElement();
-                wires.Remove(wire);
-                canvasCircuit.Children.Remove(wire.OnScreenWire);
-                canvasCircuit.Children.Remove(wire.OnScreenWire.wt0);
-                canvasCircuit.Children.Remove(wire.OnScreenWire.wt1);
+        public void removedWire(Wire wire)
+        { 
+            wire.deletedElement();
+               // wires.Remove(wire);
+            canvasCircuit.Children.Remove(wire.OnScreenWire);
+            canvasCircuit.Children.Remove(wire.OnScreenWire.wt0);
+            canvasCircuit.Children.Remove(wire.OnScreenWire.wt1);
 
-                ElementRemoved?.Invoke(this, wire);
-            }
+            ElementRemoved?.Invoke(this, wire);
+            
         }
 
         public Wire bindTwoComponentsTerminals(SerializableComponent comp1, byte terminal1, SerializableComponent comp2, byte terminal2)
