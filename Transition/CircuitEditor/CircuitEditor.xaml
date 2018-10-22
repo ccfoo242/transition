@@ -8,83 +8,256 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="140"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <ScrollViewer VerticalScrollBarVisibility="Visible" VerticalScrollMode="Enabled" >
+            <StackPanel Orientation="Vertical" Grid.Column="0">
 
-    <SplitView OpenPaneLength="360" CompactPaneLength="48" DisplayMode="Inline"
-               x:Name="splitter" PanePlacement="Right">
-        <SplitView.Pane>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
+                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
+                        x:Name="brdGround" Tag="ground" Height="50" Width="50">
+                    <Viewbox>
+                        <ContentControl ContentTemplate="{StaticResource symbolGround}" 
+                                    HorizontalAlignment="Center" Margin="5" 
+                                    VerticalAlignment="Center" />
+                    </Viewbox>
+                </Border>
 
-                <Button Grid.Row="0" VerticalAlignment="Center" Margin="4" 
+                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
+                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
+                        x:Name="brdWire" Tag="wire" Height="50" Width="50" >
+                    <Viewbox>
+                        <ContentControl ContentTemplate="{StaticResource symbolWire}" 
+                                    HorizontalAlignment="Center" Margin="5" 
+                                    VerticalAlignment="Center" />
+                    </Viewbox>
+                </Border>
+
+                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
+                        Background="AntiqueWhite" Tag="resistor"
+                        x:Name="brdResistor" IsTapEnabled="True" Tapped="tapElement"
+                         Height="50" Width="50">
+                    <Viewbox>
+                        <ContentControl ContentTemplate="{StaticResource symbolResistor}" 
+                                    HorizontalAlignment="Center"  Margin="5"
+                                    VerticalAlignment="Center"/>
+                    </Viewbox>
+                </Border>
+
+                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
+                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
+                        x:Name="brdCapacitor" Tag="capacitor" Height="50" Width="50">
+                    <Viewbox>
+                        <ContentControl ContentTemplate="{StaticResource symbolCapacitor}" 
+                                    HorizontalAlignment="Center"  Margin="5"
+                                    VerticalAlignment="Center"/>
+                    </Viewbox>
+
+                </Border>
+
+                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
+                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
+                        x:Name="brdInductor" Tag="inductor" Height="50" Width="50">
+
+                    <Viewbox>
+                        <ContentControl ContentTemplate="{StaticResource symbolInductor}" 
+                                    HorizontalAlignment="Center"  Margin="5"
+                                    VerticalAlignment="Center"/>
+                    </Viewbox>
+                </Border>
+
+                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
+                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
+                        x:Name="brdFdnr" Tag="fdnr" Height="50" Width="50" >
+                    <Viewbox>
+                        <ContentControl ContentTemplate="{StaticResource symbolFdnr}" 
+                                    HorizontalAlignment="Center"  Margin="5"
+                                    VerticalAlignment="Center"/>
+                    </Viewbox>
+                </Border>
+
+                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
+                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
+                        x:Name="brdPotentiometer" Tag="potentiometer" Height="50" Width="50">
+                    <Viewbox>
+                        <ContentControl ContentTemplate="{StaticResource symbolPotentiometer}" 
+                                    HorizontalAlignment="Center"  Margin="5"
+                                    VerticalAlignment="Center"/>
+                    </Viewbox>
+                </Border>
+
+                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
+                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
+                        x:Name="brdTransformer" Tag="transformer" Height="50" Width="50">
+                    <Viewbox>
+                        <ContentControl ContentTemplate="{StaticResource symbolTransformer}" 
+                                    HorizontalAlignment="Center"  Margin="5"
+                                    VerticalAlignment="Center"/>
+                    </Viewbox>
+                </Border>
+
+                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
+                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
+                        x:Name="brdGenerator" Tag="generator" Height="50" Width="50">
+                    <Viewbox>
+                        <ContentControl ContentTemplate="{StaticResource symbolGenerator}" 
+                                    HorizontalAlignment="Center"  Margin="5"
+                                    VerticalAlignment="Center"/>
+                    </Viewbox>
+                </Border>
+
+                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
+                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
+                        x:Name="brdImpedance" Tag="impedance" Height="50" Width="50">
+                    <Viewbox>
+                        <ContentControl ContentTemplate="{StaticResource symbolImpedance}" 
+                                    HorizontalAlignment="Center"  Margin="5"
+                                    VerticalAlignment="Center"/>
+                    </Viewbox>
+                </Border>
+                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
+                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
+                        x:Name="brdSCN" Tag="scn" Height="50" Width="50">
+                    <Viewbox>
+                        <ContentControl ContentTemplate="{StaticResource symbolSCN}" 
+                                    HorizontalAlignment="Center"  Margin="5"
+                                    VerticalAlignment="Center"/>
+                    </Viewbox>
+                </Border>
+
+                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
+                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
+                        x:Name="brdOpAmp" Tag="opamp" Height="50" Width="50">
+                    <Viewbox>
+                        <ContentControl ContentTemplate="{StaticResource symbolOpAmp}" 
+                                    HorizontalAlignment="Center"  Margin="5"
+                                    VerticalAlignment="Center"/>
+                    </Viewbox>
+                </Border>
+
+                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
+                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
+                        x:Name="brdTF" Tag="transferfunction" Width="50" Height="50">
+                    <Viewbox>
+                        <ContentControl ContentTemplate="{StaticResource symbolTF}" 
+                                    HorizontalAlignment="Center" Margin="5"
+                                    VerticalAlignment="Center"/>
+                    </Viewbox>
+                </Border>
+
+                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
+                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
+                        x:Name="brdSummer" Tag="summer" Width="50" Height="50">
+                    <Viewbox>
+                        <ContentControl ContentTemplate="{StaticResource symbolSummer}" 
+                                    HorizontalAlignment="Center"  Margin="5"
+                                    VerticalAlignment="Center"/>
+                    </Viewbox>
+                </Border>
+
+                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
+                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
+                        x:Name="brdBuffer" Tag="buffer"  Width="50" Height="50">
+                    <Viewbox>
+                        <ContentControl ContentTemplate="{StaticResource symbolBuffer}" 
+                                    HorizontalAlignment="Center"  Margin="5"
+                                    VerticalAlignment="Center"/>
+                    </Viewbox>
+                </Border>
+
+                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
+                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
+                        x:Name="brdSpeaker" Tag="speaker" Width="50" Height="50">
+                    <Viewbox>
+                        <ContentControl ContentTemplate="{StaticResource symbolSpeaker}" 
+                                    HorizontalAlignment="Center"  Margin="5"
+                                    VerticalAlignment="Center"/>
+                    </Viewbox>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <SplitView OpenPaneLength="360" CompactPaneLength="48" DisplayMode="Inline"
+               x:Name="splitter" PanePlacement="Right" Grid.Column="1">
+            <SplitView.Pane>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Button Grid.Row="0" VerticalAlignment="Center" Margin="4" 
                         Tapped="tapCloseButton" IsTapEnabled="True"
                         HorizontalAlignment="Left">
-                    <Button.Content>
-                        <StackPanel Orientation="Horizontal">
-                            <SymbolIcon Symbol="ClosePane" Margin="4"/>
-                            <TextBlock Text="Close" Margin="4"/>
-                        </StackPanel>
-                    </Button.Content>
-                </Button>
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <SymbolIcon Symbol="ClosePane" Margin="4"/>
+                                <TextBlock Text="Close" Margin="4"/>
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
 
-                <StackPanel Orientation="Horizontal" 
+                    <StackPanel Orientation="Horizontal" 
                             Grid.Row="0" Margin="4" 
                             HorizontalAlignment="Right">
-                    <Button Margin="4" x:Name="btnCommonControlRotate" 
+                        <Button Margin="4" x:Name="btnCommonControlRotate" 
                             Click="clickRotate" VerticalAlignment="Center">
-                        <Button.Content>
-                            <StackPanel Orientation="Vertical">
-                                <SymbolIcon Symbol="Rotate" HorizontalAlignment="Center"/>
-                                <TextBlock Text="Rotate" HorizontalAlignment="Center"/>
-                            </StackPanel>
-                        </Button.Content>
-                    </Button>
-                    <Button Margin="4" x:Name="btnCommonControlFlipX"
+                            <Button.Content>
+                                <StackPanel Orientation="Vertical">
+                                    <SymbolIcon Symbol="Rotate" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="Rotate" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
+                        <Button Margin="4" x:Name="btnCommonControlFlipX"
                             Click="clickFlipX" VerticalAlignment="Center">
-                        <Button.Content>
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock Text="Flip X" HorizontalAlignment="Center"/>
-                            </StackPanel>
-                        </Button.Content>
-                    </Button>
-                    <Button Margin="4" x:Name="btnCommonControlFlipY" 
+                            <Button.Content>
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="Flip X" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
+                        <Button Margin="4" x:Name="btnCommonControlFlipY" 
                             Click="clickFlipY" VerticalAlignment="Center">
-                        <Button.Content>
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock Text="Flip Y" HorizontalAlignment="Center"/>
-                            </StackPanel>
-                        </Button.Content>
-                    </Button>
+                            <Button.Content>
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="Flip Y" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
 
-                </StackPanel>
-                <ScrollViewer x:Name="scrComponentParameters" Grid.Row="1" Margin="4"/>
-                <Button x:Name="btnDeleteComponent" Grid.Row="2" Margin="4"
+                    </StackPanel>
+                    <ScrollViewer x:Name="scrComponentParameters" Grid.Row="1" Margin="4"/>
+                    <Button x:Name="btnDeleteComponent" Grid.Row="2" Margin="4"
                         Click="clickDeleteComponent" VerticalAlignment="Center"
                         HorizontalAlignment="Stretch">
-                    <Button.Content>
-                        <StackPanel Orientation="Vertical">
-                            <SymbolIcon Symbol="Delete" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Delete Component" HorizontalAlignment="Center"/>
-                        </StackPanel>
-                    </Button.Content>
-                </Button>
-            </Grid>
-        </SplitView.Pane>
-        <SplitView.Content>
-            <ScrollViewer ZoomMode="Enabled"
+                        <Button.Content>
+                            <StackPanel Orientation="Vertical">
+                                <SymbolIcon Symbol="Delete" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Delete Component" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                </Grid>
+            </SplitView.Pane>
+            <SplitView.Content>
+                <ScrollViewer ZoomMode="Enabled"
                           HorizontalScrollMode="Auto"
                           HorizontalScrollBarVisibility="Auto"
                           VerticalScrollMode="Auto" 
                           VerticalScrollBarVisibility="Auto">
-                <Canvas HorizontalAlignment="Stretch" x:Name="cnvGeneral"
+                    <Canvas HorizontalAlignment="Stretch" x:Name="cnvGeneral"
                         VerticalAlignment="Stretch" Width="1080" Height="720"
                         SizeChanged="reDrawCanvas">
 
-                    <!-- cnvGeneral is where the grid lines are placed. -->
-                 <!--   <Canvas x:Name="cnvCircuit" AllowDrop="True" 
+                        <!-- cnvGeneral is where the grid lines are placed. -->
+                        <!--   <Canvas x:Name="cnvCircuit" AllowDrop="True" 
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"  
                             Drop="drop" Background="Transparent"
@@ -95,11 +268,12 @@
                             PointerReleased="cnvPointerReleased"
                             Canvas.ZIndex="1"/> -->
 
-                    <!-- cnvCircuit is where the elements (Wires and Components) are placed -->
+                        <!-- cnvCircuit is where the elements (Wires and Components) are placed -->
 
-                </Canvas>
-            </ScrollViewer>
-        </SplitView.Content>
+                    </Canvas>
+                </ScrollViewer>
+            </SplitView.Content>
 
-    </SplitView>
+        </SplitView>
+    </Grid>
 </UserControl>

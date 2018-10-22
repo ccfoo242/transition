@@ -696,5 +696,25 @@ namespace Transition.CircuitEditor
                 return "Element:" + element.ToString() + " Terminal: " + terminal.ToString();
             }
         }
+        
+        private void dragElement(UIElement sender, DragStartingEventArgs args)
+        {
+
+            Border b = (Border)sender;
+            String element = (String)b.Tag;
+
+            args.DragUI.SetContentFromDataPackage();
+            args.Data.RequestedOperation = DataPackageOperation.Move;
+            args.Data.SetText(element);
+        }
+
+        private void tapElement(object sender, TappedRoutedEventArgs e)
+        {
+
+            Border bd = (Border)sender;
+            String element = (String)bd.Tag;
+
+            addElement(element);
+        }
     }
 }
