@@ -517,6 +517,8 @@
             </Canvas>
         </DataTemplate>
 
+        
+        
         <Style x:Key="EngrNumberBoxStyle" TargetType="TextBox">
             <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}"/>
             <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}"/>

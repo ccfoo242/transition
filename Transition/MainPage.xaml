@@ -11,13 +11,15 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-        <NavigationView PaneDisplayMode="Top">
+        <NavigationView OpenPaneLength="150" 
+                        Loaded="NavLoaded"
+                        ItemInvoked="NavItemInvoked">
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="Design" Tag="DesignPage" />
                 <NavigationViewItem Content="Settings" Tag="SettingsPage" />
                 <NavigationViewItem Content="Library" Tag="LibraryPage" />
             </NavigationView.MenuItems>
-
+            <Frame x:Name="ContentFrame"/>
         </NavigationView>
 
     </Grid>

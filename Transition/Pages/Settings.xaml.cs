@@ -20,22 +20,11 @@ namespace Transition.Pages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class DesignPage : Page
+    public sealed partial class Settings : Page
     {
-        public DesignPage()
+        public Settings()
         {
             this.InitializeComponent();
-        }
-
-        private void PageLoaded(object sender, RoutedEventArgs e)
-        {
-            PageGrid.Children.Add(
-             CircuitEditor.CircuitEditor.currentInstance);
-        }
-
-        private void PageUnloaded(object sender, RoutedEventArgs e)
-        {
-            PageGrid.Children.Remove(CircuitEditor.CircuitEditor.currentInstance);
         }
     }
 }
