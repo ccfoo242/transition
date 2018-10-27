@@ -6,19 +6,10 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Shapes;
 
 namespace Transition.CircuitEditor
-{ /*
-    public interface IElectricElement
+{
+    public interface ICircuitCommand
     {
-        // an element can be a Wire or Component
-        void selected();
-        void deselected();
-
-        void moveRelative(Point point);
-
-        bool isInside(Rectangle rect);
-
-        void updateOriginPoint();
-
+        void execute();
+        void unExecute();
     }
-    */
 }

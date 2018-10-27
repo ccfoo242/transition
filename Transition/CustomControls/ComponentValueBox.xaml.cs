@@ -21,27 +21,41 @@ namespace Transition.CustomControls
 {
     public sealed partial class ComponentValueBox : UserControl, INotifyPropertyChanged
     {
-    
-        private String unit;
-        public String Unit { get { return unit; }
+        private string unit;
+        public string Unit { get { return unit; }
             set { unit = value;
                 Header.Text = "Value (" + value + "): ";
             } }
 
-        public String UnitShort { get;set; }
+        public string UnitShort { get;set; }
 
         public EngrNumber ComponentValue
         {
             get { return (EngrNumber)GetValue(ComponentValueProperty); }
             set
             {
-                SetValue(ComponentValueProperty, value);
+                EngrNumber oldValue = (EngrNumber)GetValue(ComponentValueProperty);
+                
                 if (ComponentPrecision != Precision.Arbitrary)
-                    if (!isValueAdjustedToPrecision())
-                        ComponentValue = new EngrNumber(getNextValue(), ComponentValue.Prefix);
+                {
+                    if (!isValueAdjustedToPrecision(value))
+                        SetValue(ComponentValueProperty, new EngrNumber(getNextOrEqualValue(value), value.Prefix));
+                    else
+                        SetValue(ComponentValueProperty, value);
+                }
+                else
+                {
+                    SetValue(ComponentValueProperty, value);
+                }
 
-                ValueChanged?.Invoke(this, new PropertyChangedEventArgs("ComponentValue"));
-              
+                var args = new ValueChangedEventArgs()
+                {
+                    PropertyName = "ComponentValue",
+                    oldValue = oldValue,
+                    newValue = value
+                };
+
+                ValueChanged?.Invoke(this, args);
             }
         }
 
@@ -72,8 +86,9 @@ namespace Transition.CustomControls
         }
         
         public event PropertyChangedEventHandler PropertyChanged;
-        public event PropertyChangedEventHandler ValueChanged;
+        public event ValueChangedEventHandler ValueChanged;
 
+        public delegate void ValueChangedEventHandler(object sender, ValueChangedEventArgs args);
        
         public ComponentValueBox()
         {
@@ -131,6 +146,20 @@ namespace Transition.CustomControls
             return 10M * arraySelectedPrecision()[0] * multiplier;
         }
 
+        public decimal getNextOrEqualValue(EngrNumber val)
+        {
+            decimal currentOneDigitMantissa = val.getOneDigitMantissa();
+            decimal multiplier = val.Mantissa / val.getOneDigitMantissa();
+
+            foreach (decimal number in arraySelectedPrecision())
+            {
+                if (number >= currentOneDigitMantissa)
+                    return (number * multiplier);
+            }
+
+            return 10M * arraySelectedPrecision()[0] * multiplier;
+        }
+
         public bool isValueAdjustedToPrecision()
         {
             if (ComponentPrecision != Precision.Arbitrary)
@@ -139,7 +168,16 @@ namespace Transition.CustomControls
                 return (ComponentValue == nextEqualValue);
             }
             return true;
+        }
 
+        public bool isValueAdjustedToPrecision(EngrNumber val)
+        {
+            if (ComponentPrecision != Precision.Arbitrary)
+            {
+                EngrNumber nextEqualValue = new EngrNumber(getNextOrEqualValue(val), ComponentValue.Prefix);
+                return (ComponentValue == nextEqualValue);
+            }
+            return true;
         }
 
         public decimal getNextValue()

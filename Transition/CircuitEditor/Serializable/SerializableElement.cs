@@ -27,7 +27,15 @@ namespace Transition.CircuitEditor.Serializable
         public delegate void ElementDeletedHandler();
         public event ElementDeletedHandler ElementDeleted;
         public event ElementDeletedHandler UnBindElement;
-      
+
+        public virtual void SetProperty(string property, object value)
+        {
+            switch (property)
+            {
+                case "ElementName": ElementName = (string)value;break;
+            }
+        }
+
         public void deletedElement()
         {
             ElementDeleted?.Invoke();
@@ -103,6 +111,20 @@ namespace Transition.CircuitEditor.Serializable
         public void doFlipY()
         {
             FlipY ^= true;
+        }
+
+        public override void SetProperty(string property, object value)
+        {
+            switch (property)
+            {
+                case "Rotation":  Rotation = (double)value; break;
+                case "FlipX":     FlipX = (bool)value; break;
+                case "FlipY":     FlipY = (bool)value; break;
+                case "PositionX": PositionX = (double)value; break;
+                case "PositionY": PositionY = (double)value; break;
+                case "QuantityOfTerminals":
+                                  QuantityOfTerminals = (byte)value; break;
+            }
         }
 
     }

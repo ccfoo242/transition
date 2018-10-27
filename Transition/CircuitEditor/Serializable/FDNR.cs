@@ -62,5 +62,17 @@ namespace Transition.CircuitEditor.Serializable
                 return returnString + "F²";
             }
         }
+
+        public override void SetProperty(string property, object value)
+        {
+            base.SetProperty(property, value);
+
+            switch (property)
+            {
+                case "FdnrValue": FdnrValue = (EngrNumber)value; break;
+                case "ComponentPrecision": ComponentPrecision = (Precision)value; break;
+           
+            }
+        }
     }
 }

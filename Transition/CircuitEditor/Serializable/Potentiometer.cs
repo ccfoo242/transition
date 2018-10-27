@@ -165,7 +165,21 @@ namespace Transition.CircuitEditor.Serializable
                 return returnString + "Ω";
             }
         }
-        
+
+        public override void SetProperty(string property, object value)
+        {
+            base.SetProperty(property, value);
+
+            switch (property)
+            {
+                case "ResistanceValue"   : ResistanceValue = (EngrNumber)value; break;
+                case "PositionValue"     : PositionValue = (double)value; break;
+                case "ComponentPrecision": ComponentPrecision = (Precision)value; break;
+                case "TapAPositionValue" : TapAPositionValue = (double)value; break;
+                case "TapBPositionValue" : TapBPositionValue = (double)value; break;
+                case "TapCPositionValue" : TapCPositionValue = (double)value; break;
+            }
+        }
     }
 
     public class TaperPoint

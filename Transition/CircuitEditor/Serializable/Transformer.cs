@@ -116,6 +116,18 @@ namespace Transition.CircuitEditor.Serializable
             SetProperty(ref lpLeak, new EngrNumber(lp * (1 - k)), "LpLeak");
             SetProperty(ref lsLeak, new EngrNumber(ls * (1 - k)), "LsLeak");
         }
-        
+
+        public override void SetProperty(string property, object value)
+        {
+            base.SetProperty(property, value);
+
+            switch (property)
+            {
+                case "TurnsRatio": TurnsRatio = (EngrNumber)value; break;
+                case "KCouplingCoef": KCouplingCoef = (double)value; break;
+                case "Lpri": Lpri = (EngrNumber)value; break;
+                case "Lsec": Lsec = (EngrNumber)value; break;
+            }
+        }
     }
 }

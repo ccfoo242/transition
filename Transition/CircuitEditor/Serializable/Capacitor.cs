@@ -169,5 +169,23 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
+        public override void SetProperty(string property, object value)
+        {
+            base.SetProperty(property, value);
+
+            switch (property)
+            {
+                case "CapacitorValue": CapacitorValue = (EngrNumber)value; break;
+                case "CapacitorModel": CapacitorModel = (int)value; break;
+                case "ComponentPrecision": ComponentPrecision = (Precision)value; break;
+                case "Ls": Ls = (EngrNumber)value; break;
+                case "Rp": Rp = (EngrNumber)value; break;
+                case "Rs": Rs = (EngrNumber)value; break;
+                case "Fo": Fo = (EngrNumber)value; break;
+                case "Q": Q = (EngrNumber)value; break;
+                case "Ew": Ew = (EngrNumber)value; break;
+            }
+        }
+
     }
 }

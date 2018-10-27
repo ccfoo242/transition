@@ -21,11 +21,12 @@ namespace Transition.CustomControls
     public sealed partial class EngrNumberBoxDialog : UserControl, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        public event PropertyChangedEventHandler ValueManuallyChanged;
+        public event ValueChangedEventHandler ValueManuallyChanged;
 
-        public String VariableName { get; set; }
-        public String Unit { get; set; }
+        public string VariableName { get; set; }
+        public string Unit { get; set; }
 
+        public delegate void ValueChangedEventHandler (object sender, ValueChangedEventArgs args);
 
         public EngrNumber Value
         {
@@ -78,11 +79,24 @@ namespace Transition.CustomControls
 
             if (result == ContentDialogResult.Primary)
             {
+                var args = new ValueChangedEventArgs
+                {
+                    oldValue = Value,
+                    newValue = box.Value,
+                    PropertyName = "Value"
+                };
+
                 Value = box.Value;
-                ValueManuallyChanged?.Invoke(this, new PropertyChangedEventArgs("Value"));
+                ValueManuallyChanged?.Invoke(this, args);
             }
-
-
         }
+    }
+
+    public class ValueChangedEventArgs : EventArgs
+    {
+        public string PropertyName { get; set; }
+        public object oldValue { get; set; }
+        public object newValue { get; set; }
+
     }
 }

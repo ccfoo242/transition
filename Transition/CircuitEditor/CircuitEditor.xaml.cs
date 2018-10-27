@@ -54,6 +54,9 @@ namespace Transition.CircuitEditor
         public Grid grdNoSelectedElement;
         public Grid grdWiresHaveNoParameters;
 
+        public Stack<ICircuitCommand> UndoStack = new Stack<ICircuitCommand>();
+        public Stack<ICircuitCommand> RedoStack = new Stack<ICircuitCommand>();
+
         public CircuitEditor()
         {
             InitializeComponent();
@@ -61,9 +64,9 @@ namespace Transition.CircuitEditor
             init();
             selectedElements = new ObservableCollection<ScreenElementBase>();
             selectedElements.CollectionChanged += refreshSelectedElements;
-        
+
             gridLines = new List<Line>();
-            
+
             CircuitEditor.currentInstance = this;   //XAML constructed singleton?
         }
 
@@ -104,15 +107,15 @@ namespace Transition.CircuitEditor
         {
 
         }
-        
+
         private void clickDeleteComponent(object sender, RoutedEventArgs e)
         {
             foreach (ScreenComponentBase element in selectedElements.OfType<ScreenComponentBase>())
                 currentDesign.removeComponent(element.SerializableComponent);
-            
+
             foreach (WireTerminal wt in selectedElements.OfType<WireTerminal>())
                 currentDesign.removeWire(wt.SerializableWire);
-        
+
         }
 
         public void refreshSelectedElements(object sender, NotifyCollectionChangedEventArgs e)
@@ -123,10 +126,10 @@ namespace Transition.CircuitEditor
             foreach (ScreenElementBase element in selectedElements)
             {
                 element.selected();
-             
+
                 if (element is ScreenComponentBase)
                     scrComponentParameters.Content = ((ScreenComponentBase)element).SerializableComponent.ParametersControl;
-                  
+
                 if (element is WireTerminal)
                     scrComponentParameters.Content = grdWiresHaveNoParameters;
             }
@@ -160,7 +163,7 @@ namespace Transition.CircuitEditor
             selectedElements.Clear();
             selectedElements.Add(element);
         }
-        
+
         public void addElement(string element)
         {
             //tap event invoques an element on center of drawboard
@@ -180,7 +183,7 @@ namespace Transition.CircuitEditor
                 component.ElementName = component.ElementLetter + currentDesign.getNextNumberLetter(component.ElementLetter).ToString();
 
                 currentDesign.addComponent(component);
-           //     addToCanvas(component.OnScreenComponent);
+                //     addToCanvas(component.OnScreenComponent);
             }
             else
             {
@@ -306,7 +309,7 @@ namespace Transition.CircuitEditor
         private ScreenElementBase getClickedElement(Point clickedPoint)
         {
             List<ScreenElementBase> clickedElements = new List<ScreenElementBase>();
-            
+
             foreach (ScreenElementBase element in currentDesign.canvasCircuit.Children.OfType<ScreenElementBase>())
                 if (element.isClicked(clickedPoint.X, clickedPoint.Y))
                     clickedElements.Add(element);
@@ -328,10 +331,10 @@ namespace Transition.CircuitEditor
                  We do select the free terminal, that one can be moved freely
                  and the others terminal will follow it.*/
                 foreach (WireTerminal wt in clickedElements.OfType<WireTerminal>())
-                    { if (!wt.isBoundedToOtherWire) return wt; }
+                { if (!wt.isBoundedToOtherWire) return wt; }
                 /* if all wt's were bounded, we do select whatever else is present on the click point*/
                 foreach (ScreenComponentBase cm in clickedElements.OfType<ScreenComponentBase>())
-                    { return cm; }
+                { return cm; }
                 /* if we reach here is because all click elements are bounded wt's, so we return null
                  but this is unlikely*/
                 return null;
@@ -365,7 +368,7 @@ namespace Transition.CircuitEditor
 
             if (nearestElement != null)
                 return new ElementTerminal()
-                    { element = nearestElement,
+                { element = nearestElement,
                     terminal = terminalNumber };
             else
                 return null;
@@ -389,7 +392,7 @@ namespace Transition.CircuitEditor
                                     output.Add(new ElementTerminal()
                                     { element = comp, terminal = i });
                             }
-                        
+
             return output;
         }
 
@@ -402,7 +405,7 @@ namespace Transition.CircuitEditor
                 for (byte i = 0; i < comp.QuantityOfTerminals; i++)
                     foreach (ScreenComponentBase comp2 in currentDesign.canvasCircuit.Children.OfType<ScreenComponentBase>())
                         for (byte j = 0; j < comp2.QuantityOfTerminals; j++)
-                            if ( comp != comp2 )
+                            if (comp != comp2)
                             {
                                 distance = comp.getDistance(i,
                                   comp2.getAbsoluteTerminalPosition(j).X,
@@ -430,7 +433,7 @@ namespace Transition.CircuitEditor
         private List<ElementTerminal> getAllFreeElementTerminals()
         {
             List<ElementTerminal> output = new List<ElementTerminal>();
-            
+
             return output;
         }
 
@@ -483,7 +486,7 @@ namespace Transition.CircuitEditor
             clickedPoint = e.GetCurrentPoint(cnvGeneral).Position;
 
             ScreenElementBase clickedElement = getClickedElement(clickedPoint);
-          
+
             if (e.GetCurrentPoint(cnvGeneral).Properties.IsLeftButtonPressed)
                 if (clickedElement == null)
                 {
@@ -511,7 +514,7 @@ namespace Transition.CircuitEditor
                     movingComponents = true;
 
                     if (!selectedElements.Contains(clickedElement))
-                       selectElement(clickedElement);
+                        selectElement(clickedElement);
                 }
 
             if (e.GetCurrentPoint(cnvGeneral).Properties.IsRightButtonPressed)
@@ -580,7 +583,7 @@ namespace Transition.CircuitEditor
                                         nearest.element.getAbsoluteTerminalPosition(nearest.terminal).Y);
 
                                 }
-                                 else
+                                else
                                     wt.moveRelative(snapCoordinate(clickedPoint.X - ptCanvas.X),
                                                     snapCoordinate(clickedPoint.Y - ptCanvas.Y));
                             }/* else, the wt is bounded, and for now, it is not movable */
@@ -597,7 +600,7 @@ namespace Transition.CircuitEditor
                             lowlightAllTerminalsAllElements();
                             foreach (ElementTerminal elt in getListPairedComponentTerminals())
                                 ((ScreenComponentBase)elt.element).highlightTerminal(elt.terminal);
-                            
+
                         }
                 }
             }
@@ -637,7 +640,7 @@ namespace Transition.CircuitEditor
                         Dictionary<ElementTerminal, ElementTerminal> pairs = getPairedTerminalsForBinding();
                         foreach (KeyValuePair<ElementTerminal, ElementTerminal> kvp in pairs)
                             bindComponentTerminalPair(kvp.Key, kvp.Value);
-                        
+
                     }
 
             movingComponents = false;
@@ -657,14 +660,14 @@ namespace Transition.CircuitEditor
         {
             switch (element)
             {
-                case "resistor":       return new Resistor();
-                case "capacitor":      return new Capacitor();
-                case "inductor":       return new Inductor();
-                case "fdnr":           return new FDNR();
-                case "ground":         return new Ground();
-                case "potentiometer":  return new Potentiometer();
-                case "transformer":    return new Transformer();
-                case "generator":      return new VoltageSource();
+                case "resistor": return new Resistor();
+                case "capacitor": return new Capacitor();
+                case "inductor": return new Inductor();
+                case "fdnr": return new FDNR();
+                case "ground": return new Ground();
+                case "potentiometer": return new Potentiometer();
+                case "transformer": return new Transformer();
+                case "generator": return new VoltageSource();
             }
 
             throw new NotSupportedException();
@@ -696,7 +699,7 @@ namespace Transition.CircuitEditor
                 return "Element:" + element.ToString() + " Terminal: " + terminal.ToString();
             }
         }
-        
+
         private void dragElement(UIElement sender, DragStartingEventArgs args)
         {
 
@@ -715,6 +718,30 @@ namespace Transition.CircuitEditor
             String element = (String)bd.Tag;
 
             addElement(element);
+        }
+
+        public void executeCommand(ICircuitCommand command)
+        {
+            RedoStack.Clear();
+            command.execute();
+            UndoStack.Push(command);
+        }
+
+        public void undo()
+        {
+            ICircuitCommand command = UndoStack.Pop();
+            command.unExecute();
+            RedoStack.Push(command);
+        }
+
+        public void redo()
+        {
+            if (RedoStack.Count != 0)
+            {
+                ICircuitCommand command = RedoStack.Pop();
+                command.execute();
+                UndoStack.Push(command);
+            }
         }
     }
 }

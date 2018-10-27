@@ -172,5 +172,11 @@ namespace Transition.CircuitEditor.Serializable
         {
             return "Wire " + ElementName;
         }
+
+        public override void SetProperty(string property, object value)
+        {
+            
+        }
+
     }
 }

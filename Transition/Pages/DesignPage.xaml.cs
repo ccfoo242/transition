@@ -29,8 +29,7 @@ namespace Transition.Pages
 
         private void PageLoaded(object sender, RoutedEventArgs e)
         {
-            PageGrid.Children.Add(
-             CircuitEditor.CircuitEditor.currentInstance);
+            PageGrid.Children.Add(CircuitEditor.CircuitEditor.currentInstance);
         }
 
         private void PageUnloaded(object sender, RoutedEventArgs e)
