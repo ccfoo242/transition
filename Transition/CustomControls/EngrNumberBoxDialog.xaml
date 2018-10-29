@@ -14,10 +14,10 @@
     </UserControl.Resources>
     <StackPanel Orientation="Horizontal">
         <TextBlock VerticalAlignment="Center"
-                   Text="{x:Bind VariableName, Mode=TwoWay}"
+                   Text="{x:Bind VariableName, Mode=OneWay}"
                    HorizontalAlignment="Right"/>
         <TextBox Style="{StaticResource EngrNumberBoxStyle}"
-                 Text="{x:Bind Value, Mode=TwoWay, Converter={StaticResource engrConverter}}" 
+                 Text="{x:Bind Value, Mode=OneWay, Converter={StaticResource engrConverter}}" 
                  Margin="4,4,0,4" IsReadOnly="True"
                  Width="100"/>
         <Button Content="..." Click="changeValue" Margin="0,5,5,5"/>

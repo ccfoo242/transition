@@ -11,7 +11,8 @@ namespace Transition.CircuitEditor.Serializable
     public class Inductor : SerializableComponent
     {
         public override string ElementLetter => "L";
-        
+        public override string ElementType => "Inductor";
+
         private EngrNumber inductorValue;
         public EngrNumber InductorValue
         {

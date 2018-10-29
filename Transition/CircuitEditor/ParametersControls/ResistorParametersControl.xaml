@@ -15,7 +15,7 @@
         <StackPanel Orientation="Horizontal">
             <TextBlock Margin="4" Text="Component Name: "/>
             <TextBox x:Name="txtElementName"
-                     Margin="4" Text="{Binding Path = ElementName, Mode=OneWay}"
+                     Margin="4" 
                      TextChanged="elementNameChanged" 
                      GotFocus="elementNameFocus"/>
         </StackPanel>
@@ -26,9 +26,10 @@
             <customcontrols:ComponentValueBox x:Name="componentValueBox" 
                                               Unit="Ohm" HorizontalAlignment="Left"
                                               UnitShort="Ω" Margin="4" 
-                                              ComponentPrecision="{Binding Path=ComponentPrecision, Mode=OneWay}"
-                                              ComponentValue="{Binding Path=ResistorValue, Mode=OneWay}"
-                                              ValueChanged="ResistorValueChanged"/>
+                                              ValueChanged="ResistorValueChanged"
+                                              UserChangedPrecision="ResistorPrecisionChanged"/>
+            <!--  ComponentValue="{Binding Path=ResistorValue, Mode=OneWay}"
+                  ComponentPrecision="{Binding Path=ComponentPrecision, Mode=OneWay}" -->
         </controls:Expander>
 
         <controls:Expander Header="Resistor Model" 
@@ -42,11 +43,12 @@
 
                 <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Stretch">
                     <TextBlock Text="Model" Margin="4" VerticalAlignment="Center"/>
-                    <ComboBox  x:Name="cmbResistorModel"
-                          HorizontalAlignment="Center" 
-                          VerticalAlignment="Center"
-                          SelectionChanged="modelResistorChanged"
-                          Margin="4" Width="150" SelectedIndex="{Binding ResistorModel, Mode=OneWay}">
+                    <ComboBox x:Name="cmbResistorModel"
+                              HorizontalAlignment="Center" 
+                              VerticalAlignment="Center"
+                              Margin="4" Width="150"
+                              SelectionChanged="modelResistorChanged">
+                        <!-- SelectedIndex="{Binding ResistorModel, Mode=OneWay}" -->
                         <ComboBox.Items>
                             <ComboBoxItem Content="Ideal" Tag="0"/>
                             <ComboBoxItem Content="Parasitic" Tag="1"/>
@@ -58,10 +60,12 @@
                 <StackPanel Orientation="Vertical" x:Name="pnlExponential"
                                     Grid.Row="1" HorizontalAlignment="Stretch">
                     <customcontrols:EngrNumberBoxDialog VariableName="Eω" Margin="4" 
+                                                        x:Name="BoxEw"
                                                         AllowNegativeNumber="True"
-                                                        Value="{Binding Ew, Mode=OneWay}"
+                                                     
                                                         ValueManuallyChanged="ChangeEw"/>
                     <StackPanel Orientation="Horizontal">
+                        <!--  Value="{Binding Ew, Mode=OneWay}" -->
                         <TextBlock Text="Resistance function: R(ω) = R · ω"/>
                         <TextBlock Text="Eω" FontSize="10" VerticalAlignment="Top"/>
                     </StackPanel>
@@ -78,19 +82,21 @@
                     </Viewbox>
                     <customcontrols:EngrNumberBoxDialog VariableName="Ls (Henry)" 
                                HorizontalAlignment="Right"
-                               x:Name="BoxLs" Value="{Binding Ls, Mode = OneWay}"
+                               x:Name="BoxLs" 
                                ValueManuallyChanged="changeLs"/>
+                    <!--Value="{Binding Ls, Mode = OneWay}"-->
                     <customcontrols:EngrNumberBoxDialog  VariableName="Cp (Farad)"
                                HorizontalAlignment="Right"
-                               x:Name="BoxCp" Value="{Binding Cp, Mode = OneWay}"
+                               x:Name="BoxCp"
                                ValueManuallyChanged="changeCp"/>
+                    <!-- ="{Binding Cp, Mode = OneWay}" -->
                     <customcontrols:EngrNumberBoxDialog  VariableName="Fo (Hz)"
                                HorizontalAlignment="Right"
-                               x:Name="BoxFo" Value="{Binding Fo, Mode = OneWay}"
+                               x:Name="BoxFo" 
                                ValueManuallyChanged="changeFo"/>
                     <customcontrols:EngrNumberBoxDialog  VariableName="Q"
                                HorizontalAlignment="Right"
-                               x:Name="BoxQ" Value="{Binding Q, Mode = OneWay}"
+                               x:Name="BoxQ" 
                                ValueManuallyChanged="changeQ"/>
                 </StackPanel>
             </Grid>

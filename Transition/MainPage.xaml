@@ -8,19 +8,21 @@
     xmlns:local1="using:Transition.CircuitEditor"
     xmlns:local2="using:Transition.CustomControls"
     mc:Ignorable="d">
-
+ 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
-        <NavigationView OpenPaneLength="150" 
-                        Loaded="NavLoaded"
-                        ItemInvoked="NavItemInvoked">
-            <NavigationView.MenuItems>
-                <NavigationViewItem Content="Design" Tag="DesignPage" />
-                <NavigationViewItem Content="Settings" Tag="SettingsPage" />
-                <NavigationViewItem Content="Library" Tag="LibraryPage" />
-            </NavigationView.MenuItems>
-            <Frame x:Name="ContentFrame"/>
-        </NavigationView>
-
+        <Pivot>
+            <PivotItem Header="Circuit">
+                <local1:CircuitEditor x:Name="circuitEditor"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch"/>
+            </PivotItem>
+            <PivotItem Header="Library">
+                
+            </PivotItem>
+            <PivotItem Header="Settings">
+                
+            </PivotItem>
+        </Pivot>
+     
     </Grid>
 </Page>

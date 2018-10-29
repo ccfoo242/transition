@@ -12,7 +12,8 @@ namespace Transition.CircuitEditor.Serializable
     public class Potentiometer : SerializableComponent
     {
         public override string ElementLetter => "P";
-        
+        public override string ElementType => "Potentiometer";
+
         private EngrNumber resistanceValue;
         public EngrNumber ResistanceValue
         {

@@ -12,12 +12,13 @@ namespace Transition.CircuitEditor.Serializable
     public class Resistor : SerializableComponent
     {
         public override string ElementLetter => "R";
+        public override string ElementType => "Resistor";
 
         private EngrNumber resistorValue;
         public EngrNumber ResistorValue
         {
             get { return resistorValue; }
-            set { SetProperty(ref resistorValue, value);
+            set { SetProperty(ref resistorValue, value, "ResistorValue");
                 OnPropertyChanged("ValueString");
             }
         }
@@ -26,21 +27,21 @@ namespace Transition.CircuitEditor.Serializable
         public int ResistorModel
         {
             get { return resistorModel; }
-            set { SetProperty(ref resistorModel, value); }
+            set { SetProperty(ref resistorModel, value, "ResistorModel"); }
         }
 
         private Precision componentPrecision;
         public Precision ComponentPrecision
         {
             get { return componentPrecision; }
-            set { SetProperty(ref componentPrecision, value); }
+            set { SetProperty(ref componentPrecision, value, "ComponentPrecision"); }
         }
 
         private EngrNumber ls;
         public EngrNumber Ls
         {
             get { return ls; }
-            set { SetProperty(ref ls, value);
+            set { SetProperty(ref ls, value,"Ls");
                   calculateFoQ(); }
         }
 
@@ -48,7 +49,7 @@ namespace Transition.CircuitEditor.Serializable
         public EngrNumber Cp
         {
             get { return cp; }
-            set { SetProperty(ref cp, value);
+            set { SetProperty(ref cp, value, "Cp");
                   calculateFoQ(); }
         }
 
@@ -56,14 +57,14 @@ namespace Transition.CircuitEditor.Serializable
         public EngrNumber Ew
         {
             get { return ew; }
-            set { SetProperty(ref ew, value); }
+            set { SetProperty(ref ew, value, "Ew"); }
         }
 
         private EngrNumber fo;
         public EngrNumber Fo
         {
             get { return fo;}
-            set { SetProperty(ref fo, value);
+            set { SetProperty(ref fo, value, "Fo");
                   calculateLsCp(); }
         }
 
@@ -71,7 +72,7 @@ namespace Transition.CircuitEditor.Serializable
         public EngrNumber Q
         {
             get { return q; }
-            set { SetProperty(ref q, value);
+            set { SetProperty(ref q, value, "Q");
                   calculateLsCp(); }
         }
 
@@ -106,7 +107,7 @@ namespace Transition.CircuitEditor.Serializable
 
             SetProperty(ref fo, new EngrNumber(dFo), "Fo");
             SetProperty(ref q, new EngrNumber(dQ), "Q");
-
+            SetProperty(ref ls, Ls, "Ls");
         }
 
         private void calculateLsCp()

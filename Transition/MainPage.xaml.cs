@@ -29,36 +29,11 @@ namespace Transition
             this.InitializeComponent();
 
             UserDesign newDesign = new UserDesign();
-            CircuitEditor.CircuitEditor ce = new CircuitEditor.CircuitEditor();
+        //    CircuitEditor.CircuitEditor ce = new CircuitEditor.CircuitEditor();
 
-            ce.loadDesign(newDesign);
+            circuitEditor.loadDesign(newDesign);
             
         }
-
-        private void NavItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
-        {
-            string ItemContent = args.InvokedItem as string;
-
-            if (ItemContent != null)
-            {
-                switch (ItemContent)
-                {
-                    case "Design":
-                        ContentFrame.Navigate(typeof(Pages.DesignPage));
-                        break;
-                    case "Library":
-                        ContentFrame.Navigate(typeof(Pages.Library));
-                        break;
-                    case "Settings":
-                        ContentFrame.Navigate(typeof(Pages.Settings));
-                        break;
-                }
-            }    
-        }
-
-        private void NavLoaded(object sender, RoutedEventArgs e)
-        {
-            ContentFrame.Navigate(typeof(Pages.DesignPage));
-        }
+        
     }
 }

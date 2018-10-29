@@ -36,6 +36,7 @@ namespace Transition.CircuitEditor.Serializable
                 WireLayoutChanged?.Invoke(); } }
 
         public override string ElementLetter => "W";
+        public override string ElementType => "Wire";
 
         public override byte QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
 

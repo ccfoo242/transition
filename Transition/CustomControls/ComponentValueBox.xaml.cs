@@ -27,7 +27,8 @@ namespace Transition.CustomControls
                 Header.Text = "Value (" + value + "): ";
             } }
 
-        public string UnitShort { get;set; }
+        public string UnitShort { get; set; }
+        
 
         public EngrNumber ComponentValue
         {
@@ -35,24 +36,29 @@ namespace Transition.CustomControls
             set
             {
                 EngrNumber oldValue = (EngrNumber)GetValue(ComponentValueProperty);
-                
+                EngrNumber newValue;
+
                 if (ComponentPrecision != Precision.Arbitrary)
                 {
                     if (!isValueAdjustedToPrecision(value))
-                        SetValue(ComponentValueProperty, new EngrNumber(getNextOrEqualValue(value), value.Prefix));
+                        newValue = new EngrNumber(getNextOrEqualValue(value), value.Prefix);
                     else
-                        SetValue(ComponentValueProperty, value);
+                        newValue = value;
                 }
                 else
                 {
-                    SetValue(ComponentValueProperty, value);
+                    newValue = value;
                 }
+
+                if (oldValue == newValue) return;
+
+                SetValue(ComponentValueProperty, newValue);
 
                 var args = new ValueChangedEventArgs()
                 {
                     PropertyName = "ComponentValue",
                     oldValue = oldValue,
-                    newValue = value
+                    newValue = newValue
                 };
 
                 ValueChanged?.Invoke(this, args);
@@ -63,36 +69,44 @@ namespace Transition.CustomControls
           DependencyProperty.Register("ComponentValue",
               typeof(EngrNumber), typeof(ComponentValueBox), new PropertyMetadata(EngrNumber.One));
 
-
-
+        
         public Precision ComponentPrecision
         {
             get { return (Precision)GetValue(ComponentPrecisionProperty); }
-            set { SetValue(ComponentPrecisionProperty, value); }
+            set
+            {
+                Precision oldValue = (Precision)GetValue(ComponentPrecisionProperty);
+                var args = new ValueChangedEventArgs()
+                {
+                    PropertyName = "ComponentPrecision",
+                    oldValue = oldValue,
+                    newValue = value
+                };
+
+                SetValue(ComponentPrecisionProperty, value);
+
+                if (cmbPrecision.IsDropDownOpen) UserChangedPrecision?.Invoke(this, args);
+                PrecisionChanged?.Invoke(this, args);
+            }
         }
 
         // Using a DependencyProperty as the backing store for ComponentPrecision.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ComponentPrecisionProperty =
             DependencyProperty.Register("ComponentPrecision", typeof(Precision), typeof(ComponentValueBox), new PropertyMetadata(0));
-        
 
-        private bool anyPrecisionSelected;
-        public bool AnyPrecisionSelected
-        {
-            get { return anyPrecisionSelected; }
-            set { anyPrecisionSelected = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AnyPrecisionSelected"));
-            }
-        }
-        
+
+        public bool AnyPrecisionSelected => (cmbPrecision.SelectedIndex == (int)Precision.Arbitrary);
+
         public event PropertyChangedEventHandler PropertyChanged;
         public event ValueChangedEventHandler ValueChanged;
+        public event ValueChangedEventHandler PrecisionChanged;
+        public event ValueChangedEventHandler UserChangedPrecision;
 
         public delegate void ValueChangedEventHandler(object sender, ValueChangedEventArgs args);
        
         public ComponentValueBox()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         private void increaseClick(object sender, RoutedEventArgs e)
@@ -105,19 +119,16 @@ namespace Transition.CustomControls
             ComponentValue = new EngrNumber(getPreviousValue(), ComponentValue.Prefix);
         }
 
+
         private void changedPrecision(object sender, SelectionChangedEventArgs e)
         {
             if (cmbPrecision.SelectedIndex == (int)Precision.Arbitrary)
-            {
                 hideUpDownButtons();
-                AnyPrecisionSelected = true;
-            }
             else
-            {
                 showUpDownButtons();
-                AnyPrecisionSelected = false;
-            }
             
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AnyPrecisionSelected"));
+
             if (!AnyPrecisionSelected) ComponentValue = new EngrNumber(getNextOrEqualValue(), ComponentValue.Prefix);
 
         }
@@ -209,8 +220,8 @@ namespace Transition.CustomControls
 
             return (reversed[0] / 10) * multiplier;
         }
+        
 
-      
         public decimal[] arraySelectedPrecision()
         {
             switch (ComponentPrecision)
@@ -309,6 +320,7 @@ namespace Transition.CustomControls
               8.66M, 8.76M, 8.87M, 8.98M, 9.09M, 9.20M,
               9.31M, 9.42M, 9.53M, 9.65M, 9.76M, 9.88M
             };
+
     }
 
     public class PrecisionIntConverter : IValueConverter

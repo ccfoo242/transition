@@ -11,6 +11,7 @@ namespace Transition.CircuitEditor.Serializable
     public class Ground : SerializableComponent
     {
         public override string ElementLetter => "G";
+        public override string ElementType => "Ground";
 
         public override byte QuantityOfTerminals { get => 1; set => throw new NotImplementedException(); }
 

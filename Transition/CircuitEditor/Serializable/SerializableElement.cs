@@ -21,6 +21,7 @@ namespace Transition.CircuitEditor.Serializable
         }
 
         public abstract string ElementLetter { get; }
+        public abstract string ElementType { get; }
         public abstract byte QuantityOfTerminals { get; set; }
         public ScreenComponentBase OnScreenComponent { get; set; }
 
@@ -44,6 +45,11 @@ namespace Transition.CircuitEditor.Serializable
         public void unbindElement()
         {
             ElementDeleted?.Invoke();
+        }
+
+        public override string ToString()
+        {
+            return "Element: " + ElementName;
         }
 
     }
@@ -115,6 +121,8 @@ namespace Transition.CircuitEditor.Serializable
 
         public override void SetProperty(string property, object value)
         {
+            base.SetProperty(property, value);
+
             switch (property)
             {
                 case "Rotation":  Rotation = (double)value; break;
@@ -126,6 +134,6 @@ namespace Transition.CircuitEditor.Serializable
                                   QuantityOfTerminals = (byte)value; break;
             }
         }
-
+        
     }
 }

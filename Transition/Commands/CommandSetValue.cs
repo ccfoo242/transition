@@ -10,23 +10,43 @@ namespace Transition.Commands
 {
     public class CommandSetValue : ICircuitCommand
     {
-        private SerializableComponent component;
+        public SerializableComponent Component { get; set; }
 
-        public object oldValue;
-        public object newValue;
+        public object OldValue { get; set; }
+        public object NewValue { get; set; }
 
-        public string property;
+        public string Property { get; set; }
+
+
+        public string Title => "Change " + Property + " from " + OldValue.ToString() + " to " + NewValue.ToString();
+
 
         public void execute()
         {
             //this method is extremely complex
-            component.SetProperty(property, newValue);
+            Component.SetProperty(Property, NewValue);
+            System.Diagnostics.Debug.WriteLine("EXECUTE COMMAND!");
+            System.Diagnostics.Debug.WriteLine(ToString());
         }
 
         public void unExecute()
         {
-            component.SetProperty(property, oldValue);
+            Component.SetProperty(Property, OldValue);
+            System.Diagnostics.Debug.WriteLine("UN-EXECUTE COMMAND!");
+            System.Diagnostics.Debug.WriteLine(ToString());
         }
-        
+
+        public override string ToString()
+        {
+            string output = "";
+            output += "Command Set Value: " + Environment.NewLine;
+            output += "Component: " + Component.ToString() + Environment.NewLine;
+            output += "Property: " + Property + Environment.NewLine;
+            output += "Old Value: " + OldValue.ToString() + Environment.NewLine;
+            output += "New Value: " + NewValue.ToString() + Environment.NewLine;
+
+            return output;
+        }
+
     }
 }

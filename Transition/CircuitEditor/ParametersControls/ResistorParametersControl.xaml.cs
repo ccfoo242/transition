@@ -40,37 +40,67 @@ namespace Transition.CircuitEditor.Components
             InitializeComponent();
 
             SerializableResistor = resistor;
-            DataContext = resistor;
+        //    DataContext = resistor;
+     
+            resistor.PropertyChanged += handleChangeOfControls;
+
+            handleChangeOfControls(null,null);
         }
         
         private void modelResistorChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!cmbResistorModel.IsDropDownOpen) return;
+
             var command = new CommandSetValue()
             {
-                property = "ResistorModel",
-                oldValue = (int)(e.RemovedItems[0] as ComboBoxItem).Tag,
-                newValue = cmbResistorModel.SelectedIndex
+                Component = SerializableResistor,
+                Property = "ResistorModel",
+                OldValue = int.Parse((string)(e.RemovedItems[0] as ComboBoxItem).Tag),
+                NewValue = cmbResistorModel.SelectedIndex
             };
+
+            if (command.OldValue == command.NewValue) return;
 
             CircuitEditor.currentInstance.executeCommand(command);
 
+         //   handleChangeOfControls();
+        }
+
+        private void handleChangeOfControls(object sender, PropertyChangedEventArgs args)
+        {
+            SerializableResistor.PropertyChanged -= handleChangeOfControls;
+
+            BoxLs.Value = SerializableResistor.Ls;
+            BoxCp.Value = SerializableResistor.Cp;
+            BoxFo.Value = SerializableResistor.Fo;
+            BoxQ.Value = SerializableResistor.Q;
+            BoxEw.Value = SerializableResistor.Ew;
+
+            cmbResistorModel.SelectedIndex = SerializableResistor.ResistorModel;
+
+            componentValueBox.ComponentValue = SerializableResistor.ResistorValue;
+            componentValueBox.ComponentPrecision = SerializableResistor.ComponentPrecision;
+            
             pnlExponential.Visibility = Visibility.Collapsed;
             pnlParasitic.Visibility = Visibility.Collapsed;
 
-            if (cmbResistorModel.SelectedIndex == 1)
+            if (SerializableResistor.ResistorModel == 1)
                 pnlParasitic.Visibility = Visibility.Visible;
 
-            if (cmbResistorModel.SelectedIndex == 2)
+            if (SerializableResistor.ResistorModel == 2)
                 pnlExponential.Visibility = Visibility.Visible;
+
+            SerializableResistor.PropertyChanged += handleChangeOfControls;
         }
 
         private void changeLs(object sender, ValueChangedEventArgs e)
         {
             var command = new CommandSetValue()
             {
-                property = "Ls",
-                oldValue = e.oldValue,
-                newValue = e.newValue
+                Component = SerializableResistor,
+                Property = "Ls",
+                OldValue = e.oldValue,
+                NewValue = e.newValue
             };
 
             CircuitEditor.currentInstance.executeCommand(command);
@@ -81,9 +111,10 @@ namespace Transition.CircuitEditor.Components
         {
             var command = new CommandSetValue()
             {
-                property = "Cp",
-                oldValue = e.oldValue,
-                newValue = e.newValue
+                Component = SerializableResistor,
+                Property = "Cp",
+                OldValue = e.oldValue,
+                NewValue = e.newValue
             };
 
             CircuitEditor.currentInstance.executeCommand(command);
@@ -93,9 +124,10 @@ namespace Transition.CircuitEditor.Components
         {
             var command = new CommandSetValue()
             {
-                property = "Fo",
-                oldValue = e.oldValue,
-                newValue = e.newValue
+                Component = SerializableResistor,
+                Property = "Fo",
+                OldValue = e.oldValue,
+                NewValue = e.newValue
             };
 
             CircuitEditor.currentInstance.executeCommand(command);
@@ -105,9 +137,10 @@ namespace Transition.CircuitEditor.Components
         {
             var command = new CommandSetValue()
             {
-                property = "Q",
-                oldValue = e.oldValue,
-                newValue = e.newValue
+                Component = SerializableResistor,
+                Property = "Q",
+                OldValue = e.oldValue,
+                NewValue = e.newValue
             };
 
             CircuitEditor.currentInstance.executeCommand(command);
@@ -117,9 +150,10 @@ namespace Transition.CircuitEditor.Components
         {
             var command = new CommandSetValue()
             {
-                property = "Ew",
-                oldValue = e.oldValue,
-                newValue = e.newValue
+                Component = SerializableResistor,
+                Property = "Ew",
+                OldValue = e.oldValue,
+                NewValue = e.newValue
             };
 
             CircuitEditor.currentInstance.executeCommand(command);
@@ -127,11 +161,14 @@ namespace Transition.CircuitEditor.Components
 
         private void elementNameChanged(object sender, TextChangedEventArgs e)
         {
+            if (oldElementName == txtElementName.Text) return;
+
             var command = new CommandSetValue()
             {
-                property = "ElementName",
-                oldValue = oldElementName,
-                newValue = txtElementName.Text
+                Component = SerializableResistor,
+                Property = "ElementName",
+                OldValue = oldElementName,
+                NewValue = txtElementName.Text
             };
 
             CircuitEditor.currentInstance.executeCommand(command);
@@ -143,10 +180,32 @@ namespace Transition.CircuitEditor.Components
         {
             oldElementName = SerializableResistor.ElementName;
         }
-
-        private void ResistorValueChanged(object sender, PropertyChangedEventArgs e)
+        
+        private void ResistorValueChanged(object sender, ValueChangedEventArgs args)
         {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableResistor,
+                Property = "ResistorValue",
+                OldValue = args.oldValue,
+                NewValue = args.newValue
+            };
 
+            CircuitEditor.currentInstance.executeCommand(command);
         }
+
+        private void ResistorPrecisionChanged(object sender, ValueChangedEventArgs args)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableResistor,
+                Property = "ComponentPrecision",
+                OldValue = args.oldValue,
+                NewValue = args.newValue
+            };
+
+            CircuitEditor.currentInstance.executeCommand(command);
+        }
+
     }
 }

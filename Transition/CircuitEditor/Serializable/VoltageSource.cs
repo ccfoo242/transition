@@ -11,6 +11,7 @@ namespace Transition.CircuitEditor.Serializable
     public class VoltageSource : SerializableComponent
     {
         public override string ElementLetter => "V";
+        public override string ElementType => "Voltage Source";
 
         public override byte QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
 

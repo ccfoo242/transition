@@ -11,7 +11,8 @@ namespace Transition.CircuitEditor.Serializable
     public class Capacitor : SerializableComponent
     {
         public override string ElementLetter => "C";
-        
+        public override string ElementType => "Capacitor";
+
         private EngrNumber capacitorValue;
         public EngrNumber CapacitorValue
         {
@@ -182,7 +183,7 @@ namespace Transition.CircuitEditor.Serializable
                 case "Rp": Rp = (EngrNumber)value; break;
                 case "Rs": Rs = (EngrNumber)value; break;
                 case "Fo": Fo = (EngrNumber)value; break;
-                case "Q": Q = (EngrNumber)value; break;
+                case "Q":  Q = (EngrNumber)value; break;
                 case "Ew": Ew = (EngrNumber)value; break;
             }
         }

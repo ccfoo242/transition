@@ -44,29 +44,37 @@
             </Grid.RowDefinitions>
 
             <TextBox Style="{StaticResource EngrNumberBoxStyle}" 
-                 x:Name="numberBoxShort"  Visibility="{x:Bind AnyPrecisionSelected, Mode=OneWay, Converter = {StaticResource boolVisibilityConverter}, ConverterParameter=Reverse}"
+                 x:Name="numberBoxShort"  
+                 Visibility="{x:Bind AnyPrecisionSelected, Mode=OneWay, Converter = {StaticResource boolVisibilityConverter}, ConverterParameter=Reverse}"
                  IsSpellCheckEnabled="False"
-                 IsTextPredictionEnabled="False" Width="100"
+                 IsTextPredictionEnabled="False" 
+                 Width="100"
                  AllowDrop="False"  InputScope="AlphanumericFullWidth"
-                 Text="{x:Bind ComponentValue, Mode=TwoWay, Converter = {StaticResource engrConverterShort}}"  />
+                 Text="{x:Bind ComponentValue, Mode=TwoWay, Converter = {StaticResource engrConverterShort}}" />
             
             <TextBox Style="{StaticResource EngrNumberBoxStyle}" 
-                 x:Name="numberBox"  Visibility="{x:Bind AnyPrecisionSelected, Mode=OneWay, Converter = {StaticResource boolVisibilityConverter}}"
+                 x:Name="numberBox"  
+                 Visibility="{x:Bind AnyPrecisionSelected, Mode=OneWay, Converter = {StaticResource boolVisibilityConverter}}"
                  IsSpellCheckEnabled="False"
-                 IsTextPredictionEnabled="False" Width="100"
+                 IsTextPredictionEnabled="False" 
+                 Width="100"
                  AllowDrop="False"  InputScope="AlphanumericFullWidth"
-                 Text="{x:Bind ComponentValue, Mode=TwoWay, Converter = {StaticResource engrConverter}}"  />
+                 Text="{x:Bind ComponentValue, Mode=TwoWay, Converter = {StaticResource engrConverter}}" />
 
             <StackPanel Orientation="Vertical" Grid.Column="1"
                         x:Name="stkButtonsIncDec" HorizontalAlignment="Left">
-                <RepeatButton x:Name="btnIncrease" Height="20" Click="increaseClick">
+                <RepeatButton x:Name="btnIncrease" 
+                              Height="20" 
+                              Click="increaseClick">
                     <RepeatButton.Content>
                         <Viewbox>
                             <SymbolIcon Symbol="Upload"/>
                         </Viewbox>
                     </RepeatButton.Content>
                 </RepeatButton>
-                <RepeatButton x:Name="btnDecrease" Height="20" Click="decreaseClick">
+                <RepeatButton x:Name="btnDecrease" 
+                              Height="20" 
+                              Click="decreaseClick">
                     <RepeatButton.Content>
                         <Viewbox>
                             <SymbolIcon Symbol="Download"/>

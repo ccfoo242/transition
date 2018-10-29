@@ -10,7 +10,7 @@ namespace Transition.CircuitEditor.Serializable
     public class Transformer : SerializableComponent
     {
         public override string ElementLetter => "T";
-
+        public override string ElementType => "Transformer";
 
         private EngrNumber turnsRatio;
         public EngrNumber TurnsRatio

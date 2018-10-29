@@ -11,5 +11,7 @@ namespace Transition.CircuitEditor
     {
         void execute();
         void unExecute();
+
+        string Title { get; }
     }
 }
