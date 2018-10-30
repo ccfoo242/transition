@@ -147,6 +147,7 @@
     <Compile Include="CircuitEditor\Serializable\Wire.cs" />
     <Compile Include="Commands\CommandAddComponent.cs" />
     <Compile Include="Commands\CommandAddWire.cs" />
+    <Compile Include="Commands\CommandBindWire.cs" />
     <Compile Include="Commands\CommandMoveComponent.cs" />
     <Compile Include="Commands\CommandRemoveComponent.cs" />
     <Compile Include="Commands\CommandRemoveWire.cs" />

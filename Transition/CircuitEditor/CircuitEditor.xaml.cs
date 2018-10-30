@@ -631,6 +631,23 @@ namespace Transition.CircuitEditor
             }
 
             if (movingComponents)
+                foreach (ScreenElementBase el in selectedElements)
+                    if ((el.originalPositionX != el.PositionX) ||
+                        (el.originalPositionY != el.PositionY))
+                    {
+                        var command = new CommandMoveElement()
+                        {
+                            OldPositionX = el.originalPositionX,
+                            OldPositionY = el.originalPositionY,
+                            NewPositionX = el.PositionX,
+                            NewPositionY = el.PositionY,
+                            Element = el
+                        };
+
+                        executeCommand(command);
+                    }
+                
+            if (movingComponents)
                 if (selectedElements.Count == 1)
                     if (selectedElements[0] is WireTerminal)
                     {
@@ -647,15 +664,16 @@ namespace Transition.CircuitEditor
                     else
                     {
                         /* the dropped element is a component */
-                        Dictionary<ElementTerminal, ElementTerminal> pairs = getPairedTerminalsForBinding();
+                        var pairs = getPairedTerminalsForBinding();
                         foreach (KeyValuePair<ElementTerminal, ElementTerminal> kvp in pairs)
                             bindComponentTerminalPair(kvp.Key, kvp.Value);
 
                     }
 
             movingComponents = false;
-            foreach (ScreenElementBase element in currentDesign.CanvasCircuit.Children.OfType<ScreenElementBase>())
-                element.updateOriginalPosition();
+
+         /*   foreach (ScreenElementBase element in currentDesign.CanvasCircuit.Children.OfType<ScreenElementBase>())
+                element.updateOriginalPosition(); */
         }
 
         public void showParameters(ScreenComponentBase component)

@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor;
+using Transition.CircuitEditor.OnScreenComponents;
 using Transition.CircuitEditor.Serializable;
 
 namespace Transition.Commands
 {
-    class CommandMoveComponent : ICircuitCommand
+    public class CommandMoveElement : ICircuitCommand
     {
-        public string Title => "Move component " + Component.ToString() + " from Position " + 
+        public string Title => "Move component " + Element.ToString() + " from Position " + 
               OldPositionX.ToString() + " , " + OldPositionY.ToString() + " to position " +
               NewPositionX.ToString() + " , " + NewPositionY.ToString() ;
 
@@ -22,16 +23,18 @@ namespace Transition.Commands
         public double NewPositionX { get; set; }
         public double NewPositionY { get; set; }
 
-        public SerializableComponent Component { get; set; }
+        public ScreenElementBase Element { get; set; }
 
         public void execute()
         {
-            throw new NotImplementedException();
+            Element.moveAbsolute(NewPositionX, NewPositionY);
+            Element.updateOriginalPosition();
         }
 
         public void unExecute()
         {
-            throw new NotImplementedException();
+            Element.moveAbsolute(OldPositionX, OldPositionX);
+            Element.updateOriginalPosition();
         }
 
     }
