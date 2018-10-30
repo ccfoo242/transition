@@ -48,7 +48,7 @@
                  Visibility="{x:Bind AnyPrecisionSelected, Mode=OneWay, Converter = {StaticResource boolVisibilityConverter}, ConverterParameter=Reverse}"
                  IsSpellCheckEnabled="False"
                  IsTextPredictionEnabled="False" 
-                 Width="100"
+                 Width="100" IsReadOnly="True"
                  AllowDrop="False"  InputScope="AlphanumericFullWidth"
                  Text="{x:Bind ComponentValue, Mode=TwoWay, Converter = {StaticResource engrConverterShort}}" />
             
@@ -57,12 +57,13 @@
                  Visibility="{x:Bind AnyPrecisionSelected, Mode=OneWay, Converter = {StaticResource boolVisibilityConverter}}"
                  IsSpellCheckEnabled="False"
                  IsTextPredictionEnabled="False" 
-                 Width="100"
+                 Width="100" IsReadOnly="True"
                  AllowDrop="False"  InputScope="AlphanumericFullWidth"
                  Text="{x:Bind ComponentValue, Mode=TwoWay, Converter = {StaticResource engrConverter}}" />
 
             <StackPanel Orientation="Vertical" Grid.Column="1"
-                        x:Name="stkButtonsIncDec" HorizontalAlignment="Left">
+                        x:Name="stkButtonsIncDec" HorizontalAlignment="Left"
+                        Visibility="{x:Bind AnyPrecisionSelected, Mode=OneWay, Converter = {StaticResource boolVisibilityConverter}, ConverterParameter=Reverse}" >
                 <RepeatButton x:Name="btnIncrease" 
                               Height="20" 
                               Click="increaseClick">
@@ -82,6 +83,8 @@
                     </RepeatButton.Content>
                 </RepeatButton>
             </StackPanel>
+            <Button Content="..." IsTapEnabled="True" Tapped="TapChangeValue"  Grid.Column="1"
+                    Visibility="{x:Bind AnyPrecisionSelected, Mode=OneWay, Converter = {StaticResource boolVisibilityConverter}}"/>
         </Grid>
 
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Precision:" 
@@ -90,7 +93,7 @@
         <ComboBox Grid.Row="1" Grid.Column="1"  VerticalAlignment="Center"
                   HorizontalAlignment="Stretch" 
                   SelectedIndex="{x:Bind ComponentPrecision, Mode=TwoWay, Converter={StaticResource precIntConverter}}"
-                  SelectionChanged="changedPrecision" x:Name="cmbPrecision">
+                  x:Name="cmbPrecision">
             <ComboBox.Items>
                 <ComboBoxItem Content="Arbitrary" Tag="0"/>
                 <ComboBoxItem Content="0.5% Tolerance" Tag="1"/>

@@ -26,8 +26,8 @@
             <customcontrols:ComponentValueBox x:Name="componentValueBox" 
                                               Unit="Ohm" HorizontalAlignment="Left"
                                               UnitShort="Ω" Margin="4" 
-                                              ValueChanged="ResistorValueChanged"
-                                              UserChangedPrecision="ResistorPrecisionChanged"/>
+                                              ValueManuallyChanged="ResistorValueChanged"
+                                              PrecisionManuallyChanged="ResistorPrecisionChanged"/>
             <!--  ComponentValue="{Binding Path=ResistorValue, Mode=OneWay}"
                   ComponentPrecision="{Binding Path=ComponentPrecision, Mode=OneWay}" -->
         </controls:Expander>

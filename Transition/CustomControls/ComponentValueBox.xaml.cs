@@ -76,6 +76,8 @@ namespace Transition.CustomControls
             set
             {
                 Precision oldValue = (Precision)GetValue(ComponentPrecisionProperty);
+
+                if (oldValue == value) return;
                 var args = new ValueChangedEventArgs()
                 {
                     PropertyName = "ComponentPrecision",
@@ -85,8 +87,12 @@ namespace Transition.CustomControls
 
                 SetValue(ComponentPrecisionProperty, value);
 
-                if (cmbPrecision.IsDropDownOpen) UserChangedPrecision?.Invoke(this, args);
+                if (cmbPrecision.IsDropDownOpen) PrecisionManuallyChanged?.Invoke(this, args);
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AnyPrecisionSelected"));
+
                 PrecisionChanged?.Invoke(this, args);
+
+                fixValue();
             }
         }
 
@@ -99,8 +105,10 @@ namespace Transition.CustomControls
 
         public event PropertyChangedEventHandler PropertyChanged;
         public event ValueChangedEventHandler ValueChanged;
+        public event ValueChangedEventHandler ValueManuallyChanged;
         public event ValueChangedEventHandler PrecisionChanged;
-        public event ValueChangedEventHandler UserChangedPrecision;
+        public event ValueChangedEventHandler PrecisionManuallyChanged;
+        
 
         public delegate void ValueChangedEventHandler(object sender, ValueChangedEventArgs args);
        
@@ -111,25 +119,40 @@ namespace Transition.CustomControls
 
         private void increaseClick(object sender, RoutedEventArgs e)
         {
+            EngrNumber oldValue = ComponentValue;
+
             ComponentValue = new EngrNumber(getNextValue(), ComponentValue.Prefix);
+
+            var args = new ValueChangedEventArgs
+            {
+                oldValue = oldValue,
+                newValue = ComponentValue,
+                PropertyName = "Value"
+            };
+            
+            ValueManuallyChanged?.Invoke(this, args);
         }
 
         private void decreaseClick(object sender, RoutedEventArgs e)
         {
+            EngrNumber oldValue = ComponentValue;
+
             ComponentValue = new EngrNumber(getPreviousValue(), ComponentValue.Prefix);
+
+            var args = new ValueChangedEventArgs
+            {
+                oldValue = oldValue,
+                newValue = ComponentValue,
+                PropertyName = "Value"
+            };
+
+            ValueManuallyChanged?.Invoke(this, args);
         }
-
-
-        private void changedPrecision(object sender, SelectionChangedEventArgs e)
+        
+        private void fixValue()
         {
-            if (cmbPrecision.SelectedIndex == (int)Precision.Arbitrary)
-                hideUpDownButtons();
-            else
-                showUpDownButtons();
-            
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AnyPrecisionSelected"));
-
-            if (!AnyPrecisionSelected) ComponentValue = new EngrNumber(getNextOrEqualValue(), ComponentValue.Prefix);
+            if (!AnyPrecisionSelected)
+                ComponentValue = new EngrNumber(getNextOrEqualValue(), ComponentValue.Prefix);
 
         }
 
@@ -236,6 +259,50 @@ namespace Transition.CustomControls
                 default: return new decimal[] { };
             }
         }
+
+
+        private async void TapChangeValue(object sender, TappedRoutedEventArgs e)
+        {
+            StackPanel stk = new StackPanel()
+            { Orientation = Orientation.Horizontal };
+
+            stk.Children.Add(new TextBlock()
+            { Text = "Component Value:", Margin = new Thickness(4) });
+
+            EngrNumberBox box = new EngrNumberBox()
+            {
+                Value = this.ComponentValue,
+                Margin = new Thickness(4),
+                AllowNegativeNumber = false
+            };
+
+            stk.Children.Add(box);
+            stk.Children.Add(new TextBlock() { Text = UnitShort });
+
+            ContentDialog dialog = new ContentDialog()
+            {
+                Title = "Enter new Component Value (" + unit + ")",
+                Content = stk,
+                CloseButtonText = "Cancel",
+                PrimaryButtonText = "OK"
+            };
+
+            ContentDialogResult result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                var args = new ValueChangedEventArgs
+                {
+                    oldValue = ComponentValue,
+                    newValue = box.Value,
+                    PropertyName = "Value"
+                };
+
+                ComponentValue = box.Value;
+                ValueManuallyChanged?.Invoke(this, args);
+            }
+        }
+
 
         //standard values por every precision
         //the M suffix is for decimal number type
