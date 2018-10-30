@@ -13,7 +13,7 @@ namespace Transition.CircuitEditor.Serializable
 
     public abstract class SerializableElement : BindableBase
     {
-        private string elementName;
+        private string elementName = "";
         public string ElementName
         {
             get { return elementName; }

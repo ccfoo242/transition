@@ -11,6 +11,7 @@ namespace Transition.Commands
     public class CommandRemoveWire : ICircuitCommand
     {
         public string Title => "Remove Wire Command: " + Wire.ToString();
+        public override string ToString() => Title;
 
         public Wire Wire { get; set; }
 

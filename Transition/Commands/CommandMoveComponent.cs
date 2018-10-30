@@ -14,6 +14,8 @@ namespace Transition.Commands
               OldPositionX.ToString() + " , " + OldPositionY.ToString() + " to position " +
               NewPositionX.ToString() + " , " + NewPositionY.ToString() ;
 
+        public override string ToString() => Title;
+
         public double OldPositionX { get; set; }
         public double OldPositionY { get; set; }
         
@@ -31,5 +33,6 @@ namespace Transition.Commands
         {
             throw new NotImplementedException();
         }
+
     }
 }

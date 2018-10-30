@@ -40,11 +40,10 @@ namespace Transition.CircuitEditor.Components
             InitializeComponent();
 
             SerializableResistor = resistor;
-        //    DataContext = resistor;
      
             resistor.PropertyChanged += handleChangeOfControls;
 
-            handleChangeOfControls(null,null);
+            handleChangeOfControls(null, null);
         }
         
         private void modelResistorChanged(object sender, SelectionChangedEventArgs e)
@@ -61,9 +60,8 @@ namespace Transition.CircuitEditor.Components
 
             if (command.OldValue == command.NewValue) return;
 
-            CircuitEditor.currentInstance.executeCommand(command);
-
-         //   handleChangeOfControls();
+            executeCommand(command);
+            
         }
 
         private void handleChangeOfControls(object sender, PropertyChangedEventArgs args)
@@ -80,7 +78,9 @@ namespace Transition.CircuitEditor.Components
 
             componentValueBox.ComponentValue = SerializableResistor.ResistorValue;
             componentValueBox.ComponentPrecision = SerializableResistor.ComponentPrecision;
-            
+
+            txtElementName.Text = SerializableResistor.ElementName;
+
             pnlExponential.Visibility = Visibility.Collapsed;
             pnlParasitic.Visibility = Visibility.Collapsed;
 
@@ -103,7 +103,7 @@ namespace Transition.CircuitEditor.Components
                 NewValue = e.newValue
             };
 
-            CircuitEditor.currentInstance.executeCommand(command);
+            executeCommand(command);
 
         }
 
@@ -117,7 +117,7 @@ namespace Transition.CircuitEditor.Components
                 NewValue = e.newValue
             };
 
-            CircuitEditor.currentInstance.executeCommand(command);
+            executeCommand(command);
         }
 
         private void changeFo(object sender, ValueChangedEventArgs e)
@@ -130,7 +130,7 @@ namespace Transition.CircuitEditor.Components
                 NewValue = e.newValue
             };
 
-            CircuitEditor.currentInstance.executeCommand(command);
+            executeCommand(command);
         }
 
         private void changeQ(object sender, ValueChangedEventArgs e)
@@ -143,7 +143,7 @@ namespace Transition.CircuitEditor.Components
                 NewValue = e.newValue
             };
 
-            CircuitEditor.currentInstance.executeCommand(command);
+            executeCommand(command);
         }
 
         private void ChangeEw(object sender, ValueChangedEventArgs e)
@@ -156,7 +156,7 @@ namespace Transition.CircuitEditor.Components
                 NewValue = e.newValue
             };
 
-            CircuitEditor.currentInstance.executeCommand(command);
+            executeCommand(command);
         }
 
         private void elementNameChanged(object sender, TextChangedEventArgs e)
@@ -171,7 +171,7 @@ namespace Transition.CircuitEditor.Components
                 NewValue = txtElementName.Text
             };
 
-            CircuitEditor.currentInstance.executeCommand(command);
+            executeCommand(command);
 
             oldElementName = txtElementName.Text;
         }
@@ -191,7 +191,7 @@ namespace Transition.CircuitEditor.Components
                 NewValue = args.newValue
             };
 
-            CircuitEditor.currentInstance.executeCommand(command);
+            executeCommand(command);
         }
 
         private void ResistorPrecisionChanged(object sender, ValueChangedEventArgs args)
@@ -204,8 +204,18 @@ namespace Transition.CircuitEditor.Components
                 NewValue = args.newValue
             };
 
-            CircuitEditor.currentInstance.executeCommand(command);
+            executeCommand(command);
+           
         }
 
+        private void executeCommand(ICircuitCommand command)
+        {
+            SerializableResistor.PropertyChanged -= handleChangeOfControls;
+
+            CircuitEditor.currentInstance.executeCommand(command);
+
+            SerializableResistor.PropertyChanged += handleChangeOfControls;
+
+        }
     }
 }

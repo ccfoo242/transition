@@ -11,6 +11,7 @@ namespace Transition.Commands
     class CommandRemoveComponent : ICircuitCommand
     {
         public string Title => "Remove Component: " + Component.ToString();
+        public override string ToString() => Title;
 
         public SerializableComponent Component { get; set; }
         

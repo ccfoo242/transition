@@ -13,7 +13,8 @@ namespace Transition.Commands
         public SerializableComponent Component { get; set; }
 
         public string Title => "Add Component Command: " + Component.ToString();
-        
+        public override string ToString() => Title;
+
         public void execute()
         {
             CircuitEditor.CircuitEditor.currentInstance.currentDesign.addComponent(Component);
@@ -23,5 +24,7 @@ namespace Transition.Commands
         {
             CircuitEditor.CircuitEditor.currentInstance.currentDesign.removeComponent(Component);
         }
+
+        
     }
 }

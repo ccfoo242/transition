@@ -10,9 +10,11 @@ namespace Transition.Commands
 {
     public class CommandAddWire : ICircuitCommand
     {
-        public string Title => throw new NotImplementedException();
+        public string Title => "Add Wire Command: " + Wire.ToString();
 
         public Wire Wire { get; set; }
+
+        public override string ToString() => Title;
 
         public void execute()
         {
@@ -23,5 +25,7 @@ namespace Transition.Commands
         {
             throw new NotImplementedException();
         }
+
+
     }
 }

@@ -8,6 +8,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Transition.CircuitEditor.OnScreenComponents;
 using Transition.CircuitEditor.Serializable;
 using Transition.Commands;
+using Transition.Common;
 using Transition.Design;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -55,8 +56,8 @@ namespace Transition.CircuitEditor
         public Grid grdNoSelectedElement;
         public Grid grdWiresHaveNoParameters;
 
-        public Stack<ICircuitCommand> UndoStack = new Stack<ICircuitCommand>();
-        public Stack<ICircuitCommand> RedoStack = new Stack<ICircuitCommand>();
+        public ObservableStack<ICircuitCommand> UndoStack = new ObservableStack<ICircuitCommand>();
+        public ObservableStack<ICircuitCommand> RedoStack = new ObservableStack<ICircuitCommand>();
 
         public CircuitEditor()
         {
@@ -69,6 +70,10 @@ namespace Transition.CircuitEditor
             gridLines = new List<Line>();
 
             CircuitEditor.currentInstance = this;   //XAML constructed singleton?
+
+            lstStackUndo.ItemsSource = UndoStack;
+            lstStackRedo.ItemsSource = RedoStack;
+            
         }
 
         private void init()

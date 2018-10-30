@@ -153,6 +153,7 @@
     <Compile Include="Commands\CommandSetValue.cs" />
     <Compile Include="Common\BindableBase.cs" />
     <Compile Include="Common\BoolVisibilityConverter.cs" />
+    <Compile Include="Common\ObservableStack.cs" />
     <Compile Include="CurveLibrary\LibraryBase.cs" />
     <Compile Include="CurveLibrary\LibraryFolder.cs" />
     <Compile Include="CurveLibrary\LibraryItem.cs" />
