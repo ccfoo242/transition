@@ -23,7 +23,7 @@ namespace Transition.Commands
 
         public void unExecute()
         {
-            throw new NotImplementedException();
+            CircuitEditor.CircuitEditor.currentInstance.currentDesign.removeWire(Wire);
         }
 
 

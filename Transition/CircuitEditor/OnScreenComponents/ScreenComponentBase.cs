@@ -67,7 +67,14 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public override string ToString()
         {
-            return Serializable.ElementType;
+            string output = Serializable.ElementType + Environment.NewLine;
+
+            output += "PositionX: " + PositionX + Environment.NewLine;
+            output += "PositionY: " + PositionY + Environment.NewLine;
+            output += "OrigPositionX: " + originalPositionX + Environment.NewLine;
+            output += "OrigPositionY: " + originalPositionY + Environment.NewLine;
+
+            return output;
         }
     }
 

@@ -123,20 +123,20 @@ namespace Transition.Design
             ElementAdded?.Invoke(this, wire);
         }
 
-        public List<SWireTerminal> getBoundedWires(SerializableElement el, byte terminal)
+        public List<SerializableWireTerminal> getBoundedWires(SerializableElement el, byte terminal)
         {
-            var output = new List<SWireTerminal>();
+            var output = new List<SerializableWireTerminal>();
 
             foreach (Wire wire in Wires)
             {
                 if (wire.IsBounded0)
                     if (wire.BoundedObject0 == el && wire.BoundedTerminal0 == terminal)
-                        output.Add(new SWireTerminal()
+                        output.Add(new SerializableWireTerminal()
                             { Wire = wire, Terminal = 0 });
                             
                 if (wire.IsBounded1)
                     if (wire.BoundedObject1 == el && wire.BoundedTerminal1 == terminal)
-                        output.Add(new SWireTerminal()
+                        output.Add(new SerializableWireTerminal()
                             { Wire = wire, Terminal = 1 });
             }
 
@@ -225,18 +225,20 @@ namespace Transition.Design
     }
 
     
-    public class SWireTerminal
+    public class SerializableWireTerminal
     {
+        /* this is just a holder of a Wire and its terminal number
+         there is other class WireTerminal but it is used for GUI purposes.*/
+
         public Wire Wire { get; set; }
         public byte Terminal { get; set; }
 
         public override bool Equals(object obj)
         {
-            if (obj is SWireTerminal)
-                return (((SWireTerminal)obj).Wire == this.Wire) &&
-                       (((SWireTerminal)obj).Terminal == this.Terminal);
+            if (obj is SerializableWireTerminal)
+                return (((SerializableWireTerminal)obj).Wire == this.Wire) &&
+                       (((SerializableWireTerminal)obj).Terminal == this.Terminal);
             
-
             return false;
         }
 
@@ -244,7 +246,13 @@ namespace Transition.Design
         {
             return base.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return "Wire: " + Wire.ToString() + " Terminal: " + Terminal.ToString();
+        }
     }
+    
     
 
     public class ElementTerminal

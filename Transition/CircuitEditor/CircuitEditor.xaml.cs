@@ -71,9 +71,9 @@ namespace Transition.CircuitEditor
 
             CircuitEditor.currentInstance = this;   //XAML constructed singleton?
 
-            lstStackUndo.ItemsSource = UndoStack;
-            lstStackRedo.ItemsSource = RedoStack;
-            
+            //lstStackUndo.ItemsSource = UndoStack;
+            //lstStackRedo.ItemsSource = RedoStack;
+
         }
 
         private void init()
@@ -126,23 +126,36 @@ namespace Transition.CircuitEditor
         
         public void refreshSelectedElements(object sender, NotifyCollectionChangedEventArgs e)
         {
-            foreach (ScreenElementBase element in currentDesign.CanvasCircuit.Children.OfType<ScreenElementBase>())
-                element.deselected();
-
-            foreach (ScreenElementBase element in selectedElements)
+            switch (e.Action)
             {
-                element.selected();
+                case NotifyCollectionChangedAction.Add:
+                    foreach (ScreenElementBase element in e.NewItems)
+                    {
+                        element.selected();
+                        element.updateOriginalPosition();
 
-                if (element is ScreenComponentBase)
-                    scrComponentParameters.Content = ((ScreenComponentBase)element).SerializableComponent.ParametersControl;
+                        if (element is ScreenComponentBase)
+                            scrComponentParameters.Content = ((ScreenComponentBase)element).SerializableComponent.ParametersControl;
 
-                if (element is WireTerminal)
-                    scrComponentParameters.Content = grdWiresHaveNoParameters;
+                        if (element is WireTerminal)
+                            scrComponentParameters.Content = grdWiresHaveNoParameters;
+                    }
+                    enableComponentEdit();
+                    break;
+
+                case NotifyCollectionChangedAction.Remove:
+                    foreach (ScreenElementBase element in e.OldItems)
+                        element.deselected();
+                    disableComponentEdit();
+                    break;
+
+                case NotifyCollectionChangedAction.Reset:
+                    foreach (ScreenElementBase element in currentDesign.CanvasCircuit.Children.OfType<ScreenElementBase>())
+                        element.deselected();
+                    disableComponentEdit();
+                    break;
             }
-
-            if (selectedElements.Count == 0)
-                disableComponentEdit(); else
-                enableComponentEdit();
+            
         }
 
 
@@ -168,6 +181,7 @@ namespace Transition.CircuitEditor
         {
             selectedElements.Clear();
             selectedElements.Add(element);
+          
         }
 
         public void addElement(string element)
@@ -211,6 +225,7 @@ namespace Transition.CircuitEditor
 
         private void bindComponentTerminalPair(ElementTerminal et1, ElementTerminal et2)
         {
+           
             Wire wire = currentDesign.bindTwoComponentsTerminals(
                 ((ScreenComponentBase)et1.element).SerializableComponent, et1.terminal,
                 ((ScreenComponentBase)et2.element).SerializableComponent, et2.terminal);
@@ -404,37 +419,32 @@ namespace Transition.CircuitEditor
 
             return output;
         }
+        
 
-        private Dictionary<ElementTerminal, ElementTerminal> getPairedTerminalsForBinding()
+        private List<Tuple<ScreenElementBase, byte, byte>> getPairedTerminalsForBinding(ScreenComponentBase comp)
         {
-            Dictionary<ElementTerminal, ElementTerminal> output = new Dictionary<ElementTerminal, ElementTerminal>();
+            var output = new List<Tuple<ScreenElementBase, byte, byte>>();
             double distance;
 
-            foreach (ScreenComponentBase comp in currentDesign.CanvasCircuit.Children.OfType<ScreenComponentBase>())
-                for (byte i = 0; i < comp.QuantityOfTerminals; i++)
-                    foreach (ScreenComponentBase comp2 in currentDesign.CanvasCircuit.Children.OfType<ScreenComponentBase>())
-                        for (byte j = 0; j < comp2.QuantityOfTerminals; j++)
-                            if (comp != comp2)
-                            {
-                                distance = comp.getDistance(i,
-                                  comp2.getAbsoluteTerminalPosition(j).X,
-                                  comp2.getAbsoluteTerminalPosition(j).Y);
+            for (byte i = 0; i < comp.QuantityOfTerminals; i++)
+                foreach (ScreenElementBase element in currentDesign.CanvasCircuit.Children.OfType<ScreenComponentBase>())
+                    for (byte j = 0; j < element.QuantityOfTerminals; j++)
+                        if (comp != element)
+                        {
+                            distance = comp.getDistance(i,
+                              element.getAbsoluteTerminalPosition(j).X,
+                              element.getAbsoluteTerminalPosition(j).Y);
 
-                                if (distance < 15)
+                            if (distance < 15)
+                                if (element is WireTerminal)
                                 {
-                                    ElementTerminal elt1 = new ElementTerminal() { element = comp, terminal = i };
-                                    ElementTerminal elt2 = new ElementTerminal() { element = comp2, terminal = j };
-                                    bool existsAlready = false;
-                                    foreach (KeyValuePair<ElementTerminal, ElementTerminal> kvp in output)
-                                    {
-                                        if (kvp.Key.Equals(elt1)) existsAlready = true;
-                                        if (kvp.Value.Equals(elt1)) existsAlready = true;
-                                        if (kvp.Key.Equals(elt2)) existsAlready = true;
-                                        if (kvp.Value.Equals(elt2)) existsAlready = true;
-                                    }
-                                    if (!existsAlready) output.Add(elt1, elt2);
+                                    if (!((WireTerminal)element).isBounded)
+                                        output.Add(new Tuple<ScreenElementBase, byte, byte>(element, j, i));
                                 }
-                            }
+                                else
+                                    output.Add(new Tuple<ScreenElementBase, byte, byte>(element, j, i));
+                                
+                        }
 
             return output;
         }
@@ -586,16 +596,21 @@ namespace Transition.CircuitEditor
                                 lowlightAllTerminalsAllElements();
                                 if (nearest != null)
                                 {
-                                    nearest.element.highlightTerminal(nearest.terminal);
-                                    wt.moveAbsolute(
-                                        nearest.element.getAbsoluteTerminalPosition(nearest.terminal).X,
-                                        nearest.element.getAbsoluteTerminalPosition(nearest.terminal).Y);
-
+                                    if (nearest.element.Serializable != wt.SerializableWire)
+                                    {
+                                        nearest.element.highlightTerminal(nearest.terminal);
+                                        wt.moveAbsolute(
+                                            nearest.element.getAbsoluteTerminalPosition(nearest.terminal).X,
+                                            nearest.element.getAbsoluteTerminalPosition(nearest.terminal).Y);
+                                    }
                                 }
                                 else
+                                {   //there is nothing nearby so we can move the unbounded wire terminal, freely
                                     wt.moveRelative(snapCoordinate(clickedPoint.X - ptCanvas.X),
                                                     snapCoordinate(clickedPoint.Y - ptCanvas.Y));
-                            }/* else, the wt is bounded, and for now, it is not movable */
+                                }
+                            }
+                            else { /* else, the wt is bounded, and for now, it is not movable */ }
                         }
                         else
                         {   /* here, the one selected element is a component.
@@ -617,6 +632,10 @@ namespace Transition.CircuitEditor
 
         private void cnvPointerReleased(object sender, PointerRoutedEventArgs e)
         {
+            /* this method is messy 
+             when the user releases the mouse button, commands of moving or binding
+             must be packed up and execute, so the pile up in the undo stack */
+
             if (groupSelect)
             {
                 if (rectGroupSelect != null) cnvGeneral.Children.Remove(rectGroupSelect);
@@ -628,28 +647,12 @@ namespace Transition.CircuitEditor
                     if (element.isInside(rectGroupSelect))
                         selectedElements.Add(element);
             }
+            
 
-            if (movingComponents)
-                foreach (ScreenElementBase el in selectedElements)
-                    if ((el.originalPositionX != el.PositionX) ||
-                        (el.originalPositionY != el.PositionY))
-                    {
-                        var command = new CommandMoveElement()
-                        {
-                            OldPositionX = el.originalPositionX,
-                            OldPositionY = el.originalPositionY,
-                            NewPositionX = el.PositionX,
-                            NewPositionY = el.PositionY,
-                            Element = el
-                        };
-
-                        executeCommand(command);
-                    }
-                
-            if (movingComponents)
+            if (movingComponents) //things are being moved, and the user released them
                 if (selectedElements.Count == 1)
                     if (selectedElements[0] is WireTerminal)
-                    {
+                    {  //one thing is being moved, and it is a Wire Terminal
                         WireTerminal wt = (WireTerminal)selectedElements[0];
                         if (!wt.isBounded)
                         {
@@ -657,17 +660,83 @@ namespace Transition.CircuitEditor
                             ElementTerminal nearest = getNearestElementTerminalExcept(ptCanvas.X, ptCanvas.Y, wt);
 
                             if (nearest != null) /* if there is some terminal nearby, we bind the wire to it*/
-                                wt.wireScreen.wire.bind(nearest.element.Serializable, nearest.terminal, wt.TerminalNumber);
+                            {
+                                if (nearest.element.Serializable != wt.Serializable)
+                                {
+                                    var command = new CommandBindWire()
+                                    {
+                                        Wt = new SerializableWireTerminal()
+                                        {
+                                            Wire = wt.SerializableWire,
+                                            Terminal = wt.TerminalNumber
+                                        },
+                                        boundedObject = nearest.element.Serializable,
+                                        boundedTerminal = nearest.terminal
+                                    };
+                                    executeCommand(command);
+                                }
+                            }
+                            else
+                            { /* the dragged wire terminal is just moved without bind it to something */
+                                if ((wt.originalPositionX != wt.PositionX) ||
+                                    (wt.originalPositionY != wt.PositionY))
+                                {
+                                    var command = new CommandMoveElement()
+                                    {
+                                        OldPositionX = wt.originalPositionX,
+                                        OldPositionY = wt.originalPositionY,
+                                        NewPositionX = wt.PositionX,
+                                        NewPositionY = wt.PositionY,
+                                        Element = wt
+                                    };
+                                    executeCommand(command);
+                                }
+                            }
                         }
                     }
                     else
                     {
-                        /* the dropped element is a component */
-                        var pairs = getPairedTerminalsForBinding();
-                        foreach (KeyValuePair<ElementTerminal, ElementTerminal> kvp in pairs)
-                            bindComponentTerminalPair(kvp.Key, kvp.Value);
+                        /* the moved element is a component */
+                        var comp = selectedElements[0] as ScreenComponentBase;
 
+                        if ((comp.originalPositionX != comp.PositionX) ||
+                           (comp.originalPositionY != comp.PositionY))
+                        { /* we check the component has actually moved and not stayed in place */
+                            /* we do a move command */
+                            var command = new CommandMoveElement()
+                            {
+                                OldPositionX = comp.originalPositionX,
+                                OldPositionY = comp.originalPositionY,
+                                NewPositionX = comp.PositionX,
+                                NewPositionY = comp.PositionY,
+                                Element = comp
+                            };
+                            executeCommand(command);
+
+                            /* and now we do a bind command, in case the component has moved
+                               close enough to other terminals */
+                            var pairs = getPairedTerminalsForBinding(comp);
+
+                            foreach (KeyValuePair<ElementTerminal, ElementTerminal> kvp in pairs)
+                                bindComponentTerminalPair(kvp.Key, kvp.Value);
+                        }
                     }
+                else
+                if (selectedElements.Count > 1)
+                    foreach (ScreenElementBase el in selectedElements)
+                        if ((el.originalPositionX != el.PositionX) ||
+                            (el.originalPositionY != el.PositionY))
+                        {
+                            var command = new CommandMoveElement()
+                            {
+                                OldPositionX = el.originalPositionX,
+                                OldPositionY = el.originalPositionY,
+                                NewPositionX = el.PositionX,
+                                NewPositionY = el.PositionY,
+                                Element = el
+                            };
+                            executeCommand(command);
+                        }
 
             movingComponents = false;
 

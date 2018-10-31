@@ -98,6 +98,23 @@ namespace Transition.CircuitEditor.Serializable
             if (thisWireTerminal == 1) bind1(component, componentTerminal);
         }
 
+        public void unBind(byte thisWireTerminal)
+        {
+
+            if (thisWireTerminal == 0)
+            {
+                if (!IsBounded0) return;
+                BoundedObject0 = null;
+                BoundedTerminal0 = 0;
+            }
+            else
+            {
+                if (!IsBounded1) return;
+                BoundedObject1 = null;
+                BoundedTerminal1 = 0;
+            }
+        }
+
         public void bind(Wire otherWire, byte otherWireTerminal, byte thisWireTerminal)
         {
             //we check to not bound to a wire, that is already bounded to this one
@@ -179,5 +196,6 @@ namespace Transition.CircuitEditor.Serializable
             
         }
 
+       
     }
 }
