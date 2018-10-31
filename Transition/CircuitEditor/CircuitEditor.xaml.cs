@@ -117,8 +117,7 @@ namespace Transition.CircuitEditor
         private void clickDeleteComponent(object sender, RoutedEventArgs e)
         {
             foreach (ScreenComponentBase element in selectedElements.OfType<ScreenComponentBase>())
-                executeCommand(new CommandRemoveComponent()
-                     { Component = element.SerializableComponent });
+                executeCommand(new CommandRemoveComponent(element.SerializableComponent));
 
             foreach (WireTerminal wt in selectedElements.OfType<WireTerminal>())
                 executeCommand(new CommandRemoveWire()
@@ -688,45 +687,19 @@ namespace Transition.CircuitEditor
         {
             switch (element)
             {
-                case "resistor": return new Resistor();
-                case "capacitor": return new Capacitor();
-                case "inductor": return new Inductor();
-                case "fdnr": return new FDNR();
-                case "ground": return new Ground();
-                case "potentiometer": return new Potentiometer();
-                case "transformer": return new Transformer();
-                case "generator": return new VoltageSource();
+                case "resistor":        return new Resistor();
+                case "capacitor":       return new Capacitor();
+                case "inductor":        return new Inductor();
+                case "fdnr":            return new FDNR();
+                case "ground":          return new Ground();
+                case "potentiometer":   return new Potentiometer();
+                case "transformer":     return new Transformer();
+                case "generator":       return new VoltageSource();
             }
 
             throw new NotSupportedException();
         }
 
-        public class ElementTerminal
-        {
-            public ScreenElementBase element { get; set; }
-            public byte terminal { get; set; }
-
-            public override bool Equals(object obj)
-            {
-                if (obj is ElementTerminal)
-                {
-                    return (((ElementTerminal)obj).element == this.element) &&
-                           (((ElementTerminal)obj).terminal == this.terminal);
-                }
-
-                return false;
-            }
-
-            public override int GetHashCode()
-            {
-                return base.GetHashCode();
-            }
-
-            public override string ToString()
-            {
-                return "Element:" + element.ToString() + " Terminal: " + terminal.ToString();
-            }
-        }
 
         private void dragElement(UIElement sender, DragStartingEventArgs args)
         {

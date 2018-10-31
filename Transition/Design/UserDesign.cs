@@ -112,17 +112,37 @@ namespace Transition.Design
         public void removedComponent(SerializableComponent component)
         {
             component.deletedElement();
-            //    components.Remove(component);
+            
             CanvasCircuit.Children.Remove(component.OnScreenComponent);
             ElementRemoved?.Invoke(this, component);
         }
-
+        
         public void addWire(Wire wire)
         {
             Wires.Add(wire);
             ElementAdded?.Invoke(this, wire);
         }
 
+        public List<SWireTerminal> getBoundedWires(SerializableElement el, byte terminal)
+        {
+            var output = new List<SWireTerminal>();
+
+            foreach (Wire wire in Wires)
+            {
+                if (wire.IsBounded0)
+                    if (wire.BoundedObject0 == el && wire.BoundedTerminal0 == terminal)
+                        output.Add(new SWireTerminal()
+                            { Wire = wire, Terminal = 0 });
+                            
+                if (wire.IsBounded1)
+                    if (wire.BoundedObject1 == el && wire.BoundedTerminal1 == terminal)
+                        output.Add(new SWireTerminal()
+                            { Wire = wire, Terminal = 1 });
+            }
+
+            return output;
+        }
+        
         public void removedWire(Wire wire)
         { 
             wire.deletedElement();
@@ -201,6 +221,55 @@ namespace Transition.Design
         public int getNextNumberLetter(string ElementLetter)
         {
             return getMaximumNumberElement(ElementLetter) + 1;
+        }
+    }
+
+    
+    public class SWireTerminal
+    {
+        public Wire Wire { get; set; }
+        public byte Terminal { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is SWireTerminal)
+                return (((SWireTerminal)obj).Wire == this.Wire) &&
+                       (((SWireTerminal)obj).Terminal == this.Terminal);
+            
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+    }
+    
+
+    public class ElementTerminal
+    {
+        public ScreenElementBase element { get; set; }
+        public byte terminal { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ElementTerminal)
+                return (((ElementTerminal)obj).element == this.element) &&
+                       (((ElementTerminal)obj).terminal == this.terminal);
+            
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return "Element:" + element.ToString() + " Terminal: " + terminal.ToString();
         }
     }
 }

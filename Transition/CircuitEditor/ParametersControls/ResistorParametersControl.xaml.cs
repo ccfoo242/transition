@@ -104,7 +104,6 @@ namespace Transition.CircuitEditor.Components
             };
 
             executeCommand(command);
-
         }
 
         private void changeCp(object sender, ValueChangedEventArgs e)
@@ -205,7 +204,6 @@ namespace Transition.CircuitEditor.Components
             };
 
             executeCommand(command);
-           
         }
 
         private void executeCommand(ICircuitCommand command)

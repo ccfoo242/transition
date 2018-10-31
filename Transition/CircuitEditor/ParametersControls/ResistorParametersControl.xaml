@@ -84,12 +84,10 @@
                                HorizontalAlignment="Right"
                                x:Name="BoxLs" 
                                ValueManuallyChanged="changeLs"/>
-                    <!--Value="{Binding Ls, Mode = OneWay}"-->
                     <customcontrols:EngrNumberBoxDialog  VariableName="Cp (Farad)"
                                HorizontalAlignment="Right"
                                x:Name="BoxCp"
                                ValueManuallyChanged="changeCp"/>
-                    <!-- ="{Binding Cp, Mode = OneWay}" -->
                     <customcontrols:EngrNumberBoxDialog  VariableName="Fo (Hz)"
                                HorizontalAlignment="Right"
                                x:Name="BoxFo" 

@@ -64,6 +64,11 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             return (getDistance(terminal, pointX, pointY) < 15) ? true : false;
         }
+
+        public override string ToString()
+        {
+            return Serializable.ElementType;
+        }
     }
 
     public abstract class ScreenComponentBase : ScreenElementBase, INotifyPropertyChanged
