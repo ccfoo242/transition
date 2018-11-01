@@ -71,8 +71,8 @@ namespace Transition.CircuitEditor
 
             CircuitEditor.currentInstance = this;   //XAML constructed singleton?
 
-            //lstStackUndo.ItemsSource = UndoStack;
-            //lstStackRedo.ItemsSource = RedoStack;
+            lstStackUndo.ItemsSource = UndoStack;
+            lstStackRedo.ItemsSource = RedoStack;
 
         }
 
@@ -403,31 +403,49 @@ namespace Transition.CircuitEditor
             List<ElementTerminal> output = new List<ElementTerminal>();
             double distance;
 
-            foreach (ScreenComponentBase comp in currentDesign.CanvasCircuit.Children.OfType<ScreenComponentBase>())
-                for (byte i = 0; i < comp.QuantityOfTerminals; i++)
-                    foreach (ScreenComponentBase comp2 in currentDesign.CanvasCircuit.Children.OfType<ScreenComponentBase>())
-                        for (byte j = 0; j < comp2.QuantityOfTerminals; j++)
-                            if (comp != comp2)
+            foreach (ScreenElementBase el1 in unboundedScreenElements())
+                for (byte i = 0; i < el1.QuantityOfTerminals; i++)
+                    foreach (ScreenElementBase el2 in unboundedScreenElements())
+                        for (byte j = 0; j < el2.QuantityOfTerminals; j++)
+                            if (el1 != el2)
                             {
-                                distance = comp.getDistance(i,
-                                  comp2.getAbsoluteTerminalPosition(j).X,
-                                  comp2.getAbsoluteTerminalPosition(j).Y);
+                                distance = el1.getDistance(i,
+                                  el2.getAbsoluteTerminalPosition(j).X,
+                                  el2.getAbsoluteTerminalPosition(j).Y);
                                 if (distance < 15)
                                     output.Add(new ElementTerminal()
-                                    { element = comp, terminal = i });
+                                    { element = el1, terminal = i });
                             }
 
             return output;
         }
-        
 
-        private List<Tuple<ScreenElementBase, byte, byte>> getPairedTerminalsForBinding(ScreenComponentBase comp)
+        private List<ScreenElementBase> unboundedScreenElements()
         {
-            var output = new List<Tuple<ScreenElementBase, byte, byte>>();
+            var output = new List<ScreenElementBase>();
+            WireTerminal wt;
+
+            foreach (ScreenElementBase el in currentDesign.CanvasCircuit.Children.OfType<ScreenElementBase>())
+                if (el is ScreenComponentBase)
+                    output.Add(el);
+                else
+                    if (el is WireTerminal)
+                    {
+                        wt = (WireTerminal)el;
+                        if (!wt.isBounded) output.Add(el);
+                    }
+                
+            return output;
+        }
+
+        private List<Tuple<SerializableElement, byte, byte>> getPairedTerminalsForBinding(ScreenComponentBase comp)
+        {
+            var output = new List<Tuple<SerializableElement, byte, byte>>();
             double distance;
+            WireTerminal wt;
 
             for (byte i = 0; i < comp.QuantityOfTerminals; i++)
-                foreach (ScreenElementBase element in currentDesign.CanvasCircuit.Children.OfType<ScreenComponentBase>())
+                foreach (ScreenElementBase element in unboundedScreenElements())
                     for (byte j = 0; j < element.QuantityOfTerminals; j++)
                         if (comp != element)
                         {
@@ -438,12 +456,11 @@ namespace Transition.CircuitEditor
                             if (distance < 15)
                                 if (element is WireTerminal)
                                 {
-                                    if (!((WireTerminal)element).isBounded)
-                                        output.Add(new Tuple<ScreenElementBase, byte, byte>(element, j, i));
+                                    wt = (WireTerminal)element;
+                                    output.Add(new Tuple<SerializableElement, byte, byte>(element.Serializable, wt.TerminalNumber, i));
                                 }
                                 else
-                                    output.Add(new Tuple<ScreenElementBase, byte, byte>(element, j, i));
-                                
+                                    output.Add(new Tuple<SerializableElement, byte, byte>(element.Serializable, j, i));
                         }
 
             return output;
@@ -623,8 +640,7 @@ namespace Transition.CircuitEditor
 
                             lowlightAllTerminalsAllElements();
                             foreach (ElementTerminal elt in getListPairedComponentTerminals())
-                                ((ScreenComponentBase)elt.element).highlightTerminal(elt.terminal);
-
+                                elt.element.highlightTerminal(elt.terminal);
                         }
                 }
             }
@@ -700,8 +716,8 @@ namespace Transition.CircuitEditor
                         var comp = selectedElements[0] as ScreenComponentBase;
 
                         if ((comp.originalPositionX != comp.PositionX) ||
-                           (comp.originalPositionY != comp.PositionY))
-                        { /* we check the component has actually moved and not stayed in place */
+                            (comp.originalPositionY != comp.PositionY))
+                        {   /* we check the component has actually moved and not stayed in place */
                             /* we do a move command */
                             var command = new CommandMoveElement()
                             {
@@ -715,10 +731,12 @@ namespace Transition.CircuitEditor
 
                             /* and now we do a bind command, in case the component has moved
                                close enough to other terminals */
-                            var pairs = getPairedTerminalsForBinding(comp);
-
-                            foreach (KeyValuePair<ElementTerminal, ElementTerminal> kvp in pairs)
-                                bindComponentTerminalPair(kvp.Key, kvp.Value);
+                            var binds = getPairedTerminalsForBinding(comp);
+                            if (binds.Count > 0)
+                            {
+                                var command2 = new CommandBindComponent(binds, comp.SerializableComponent);
+                                executeCommand(command2);
+                            }
                         }
                     }
                 else

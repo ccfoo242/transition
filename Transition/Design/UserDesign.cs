@@ -168,7 +168,7 @@ namespace Transition.Design
             wire.bind1(comp2, terminal2);
             wire.ElementName = "W" + (getMaximumNumberWire() + 1).ToString();
 
-            addWire(wire);
+         //   addWire(wire);
 
             return wire;
         }
@@ -236,8 +236,8 @@ namespace Transition.Design
         public override bool Equals(object obj)
         {
             if (obj is SerializableWireTerminal)
-                return (((SerializableWireTerminal)obj).Wire == this.Wire) &&
-                       (((SerializableWireTerminal)obj).Terminal == this.Terminal);
+                return (((SerializableWireTerminal)obj).Wire == Wire) &&
+                       (((SerializableWireTerminal)obj).Terminal == Terminal);
             
             return false;
         }
@@ -263,10 +263,9 @@ namespace Transition.Design
         public override bool Equals(object obj)
         {
             if (obj is ElementTerminal)
-                return (((ElementTerminal)obj).element == this.element) &&
-                       (((ElementTerminal)obj).terminal == this.terminal);
+                return (((ElementTerminal)obj).element == element) &&
+                       (((ElementTerminal)obj).terminal == terminal);
             
-
             return false;
         }
 
