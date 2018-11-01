@@ -18,6 +18,10 @@ namespace Transition.Commands
         public SerializableElement boundedObject { get; set; }
         public byte boundedTerminal { get; set; }
 
+        public bool previousStateBounded { get; set; }
+        public SerializableElement previousBoundedObject { get; set; }
+        public byte previuosBoundedTerminal { get; set; }
+
         public void execute()
         {
             Wt.Wire.bind(boundedObject, boundedTerminal, Wt.Terminal);
@@ -25,7 +29,10 @@ namespace Transition.Commands
 
         public void unExecute()
         {
-            Wt.Wire.unBind(Wt.Terminal);
+            if (previousStateBounded)
+                Wt.Wire.bind(previousBoundedObject, previuosBoundedTerminal, Wt.Terminal);
+            else
+                Wt.Wire.unBind(Wt.Terminal);
         }
 
         public override string ToString()

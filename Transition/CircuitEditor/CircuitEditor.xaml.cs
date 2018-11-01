@@ -605,29 +605,28 @@ namespace Transition.CircuitEditor
                     if (selectedElements.Count == 1)
                         if (selectedElements[0] is WireTerminal)
                         {
+                            /* user is moving a wire terminal that can be bounded or free,
+                             * at button release, a bind or unbind command can be fired */
                             WireTerminal wt = (WireTerminal)selectedElements[0];
-                            if (!wt.isBounded)
+                            
+                            ElementTerminal nearest = getNearestElementTerminalExcept(ptCanvas.X, ptCanvas.Y, selectedElements[0]);
+                            lowlightAllTerminalsAllElements();
+                            if (nearest != null)
                             {
-                                /* we are dragging around an unbounded wire terminal */
-                                ElementTerminal nearest = getNearestElementTerminalExcept(ptCanvas.X, ptCanvas.Y, selectedElements[0]);
-                                lowlightAllTerminalsAllElements();
-                                if (nearest != null)
+                                if (nearest.element.Serializable != wt.SerializableWire)
                                 {
-                                    if (nearest.element.Serializable != wt.SerializableWire)
-                                    {
                                         nearest.element.highlightTerminal(nearest.terminal);
                                         wt.moveAbsolute(
                                             nearest.element.getAbsoluteTerminalPosition(nearest.terminal).X,
                                             nearest.element.getAbsoluteTerminalPosition(nearest.terminal).Y);
-                                    }
-                                }
-                                else
-                                {   //there is nothing nearby so we can move the unbounded wire terminal, freely
-                                    wt.moveRelative(snapCoordinate(clickedPoint.X - ptCanvas.X),
-                                                    snapCoordinate(clickedPoint.Y - ptCanvas.Y));
                                 }
                             }
-                            else { /* else, the wt is bounded, and for now, it is not movable */ }
+                            else
+                            {   //there is nothing nearby so we can move the unbounded wire terminal, freely
+                                wt.moveRelative(snapCoordinate(clickedPoint.X - ptCanvas.X),
+                                                snapCoordinate(clickedPoint.Y - ptCanvas.Y));
+                            }
+                            
                         }
                         else
                         {   /* here, the one selected element is a component.
@@ -670,14 +669,14 @@ namespace Transition.CircuitEditor
                     if (selectedElements[0] is WireTerminal)
                     {  //one thing is being moved, and it is a Wire Terminal
                         WireTerminal wt = (WireTerminal)selectedElements[0];
+                        Point ptCanvas = e.GetCurrentPoint(cnvGeneral).Position;
+                        ElementTerminal nearest = getNearestElementTerminalExcept(ptCanvas.X, ptCanvas.Y, wt);
+
                         if (!wt.isBounded)
                         {
-                            Point ptCanvas = e.GetCurrentPoint(cnvGeneral).Position;
-                            ElementTerminal nearest = getNearestElementTerminalExcept(ptCanvas.X, ptCanvas.Y, wt);
-
                             if (nearest != null) /* if there is some terminal nearby, we bind the wire to it*/
                             {
-                                if (nearest.element.Serializable != wt.Serializable)
+                                if (nearest.element.Serializable != wt.Serializable) /* we cannot bind the wire to itself! */
                                 {
                                     var command = new CommandBindWire()
                                     {
@@ -687,7 +686,8 @@ namespace Transition.CircuitEditor
                                             Terminal = wt.TerminalNumber
                                         },
                                         boundedObject = nearest.element.Serializable,
-                                        boundedTerminal = nearest.terminal
+                                        boundedTerminal = nearest.terminal,
+                                        previousStateBounded = false
                                     };
                                     executeCommand(command);
                                 }
@@ -707,6 +707,54 @@ namespace Transition.CircuitEditor
                                     };
                                     executeCommand(command);
                                 }
+                            }
+                        }
+                        else
+                        {
+                            /* user had been moving a bounded wire terminal */
+                            if (nearest != null)
+                            {
+                                if ((nearest.element.Serializable == wt.SerializableWire.BoundedObject(wt.TerminalNumber))
+                                    && (nearest.terminal == wt.SerializableWire.BoundedTerminal(wt.TerminalNumber)))
+                                {
+                                    /* here the user did release the wire terminal at the same place it picked off
+                                     so we do not alter the binding of the wire terminal */
+                                }
+                                else
+                                {
+                                    if (nearest.element.Serializable != wt.Serializable) /* we cannot bind the wire to itself! */
+                                    {
+                                        var command = new CommandBindWire()
+                                        {
+                                            Wt = new SerializableWireTerminal()
+                                            {
+                                                Wire = wt.SerializableWire,
+                                                Terminal = wt.TerminalNumber
+                                            },
+                                            boundedObject = nearest.element.Serializable,
+                                            boundedTerminal = nearest.terminal,
+                                            previousStateBounded = true,
+                                            previousBoundedObject = wt.SerializableWire.BoundedObject(wt.TerminalNumber),
+                                            previuosBoundedTerminal = wt.SerializableWire.BoundedTerminal(wt.TerminalNumber)
+                                        };
+                                        executeCommand(command);
+                                    }
+                                }
+                            }
+                            else
+                            { /* here the user dropped off the bounded wire terminal
+                                some where far from a terminal, so we understand the user
+                                wants to free and unbind the terminal */
+                                var command = new CommandUnBindWire()
+                                {
+                                    Wire = wt.SerializableWire,
+                                    Terminal = wt.TerminalNumber,
+                                    BoundedObject = wt.SerializableWire.BoundedObject(wt.TerminalNumber),
+                                    ObjectTerminal = wt.SerializableWire.BoundedTerminal(wt.TerminalNumber),
+                                    newPositionX = ptCanvas.X,
+                                    newPositionY = ptCanvas.Y
+                                };
+                                executeCommand(command);
                             }
                         }
                     }

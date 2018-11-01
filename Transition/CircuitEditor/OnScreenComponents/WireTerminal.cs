@@ -40,7 +40,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             this.TerminalNumber = terminalNumber;
             this.wireScreen = wireScreen;
             /* this rectangle is for selection, it appears as long
-             the extreme of the wire remains selected */
+               the extreme of the wire remains selected */
             rectangle = new Rectangle()
             {
                 Width = 8,
@@ -54,6 +54,11 @@ namespace Transition.CircuitEditor.OnScreenComponents
             DataContext = wireScreen;
             Children.Add(rectangle);
 
+            /* following bindings, bind the position of this wireterminal
+               to the position of the WireScreen object
+               , the position of this WireTerminal object is handled
+               with absolute coordinates with the Top and Left properties
+               of Canvas, which is parent of this class */
             Binding bPX1 = new Binding()
             {
                 Path = new PropertyPath("X" + (terminalNumber).ToString()),
@@ -98,17 +103,31 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             if (TerminalNumber == 0)
             {
-                wireScreen.wire.X0 = originalPositionX - pointX;
-                wireScreen.wire.Y0 = originalPositionY - pointY;
+                wireScreen.X0 = originalPositionX - pointX;
+                wireScreen.Y0 = originalPositionY - pointY;
             }
             else
             {
-                wireScreen.wire.X1 = originalPositionX - pointX;
-                wireScreen.wire.Y1 = originalPositionY - pointY;
+                wireScreen.X1 = originalPositionX - pointX;
+                wireScreen.Y1 = originalPositionY - pointY;
             }
         }
 
         public override void moveAbsolute(double pointX, double pointY)
+        {
+            if (TerminalNumber == 0)
+            {
+                wireScreen.X0 = pointX;
+                wireScreen.Y0 = pointY;
+            }
+            else
+            {
+                wireScreen.X1 = pointX;
+                wireScreen.Y1 = pointY;
+            }
+        }
+
+        public override void moveAbsoluteCommand(double pointX, double pointY)
         {
             if (TerminalNumber == 0)
             {

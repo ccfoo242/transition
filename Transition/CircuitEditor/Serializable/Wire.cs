@@ -76,14 +76,24 @@ namespace Transition.CircuitEditor.Serializable
 
         public WireScreen OnScreenWire { get; }
 
-        public event ComponentLayoutChanged ComponentChanged;
+       /* public event ComponentLayoutChanged ComponentChanged; */
         public delegate void ComponentLayoutChanged();
 
         public Wire()
         {
             OnScreenWire = new WireScreen(this);
         }
-        
+
+        public SerializableElement BoundedObject(byte terminal)
+        {
+            return (terminal == 0) ? BoundedObject0 : BoundedObject1;
+        }
+
+        public byte BoundedTerminal(byte terminal)
+        {
+            return (terminal == 0) ? BoundedTerminal0 : BoundedTerminal1;
+        }
+
         public void bind(SerializableElement element, byte elementTerminal, byte thisWireTerminal)
         {
             if (element is SerializableComponent)
@@ -173,7 +183,8 @@ namespace Transition.CircuitEditor.Serializable
 
         public void RaiseLayoutChanged()
         {
-            ComponentChanged?.Invoke();
+       //     ComponentChanged?.Invoke();
+            WireLayoutChanged?.Invoke();
         }
 
         public void deleted0()

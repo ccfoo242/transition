@@ -29,6 +29,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public abstract void moveRelative(double pointX, double pointY);
         public abstract void moveAbsolute(double pointX, double pointY);
+        public abstract void moveAbsoluteCommand(double pointX, double pointY);
         public abstract double getDistance(double pointX, double pointY);
         public abstract double getDistance(byte terminal, double pointX, double pointY);
 
@@ -333,6 +334,14 @@ namespace Transition.CircuitEditor.OnScreenComponents
         }
 
         public override void moveAbsolute(double positionX, double positionY)
+        {
+            SerializableComponent.PositionX = positionX;
+            SerializableComponent.PositionY = positionY;
+
+            TerminalsPositionsChanged();
+        }
+
+        public override void moveAbsoluteCommand(double positionX, double positionY)
         {
             SerializableComponent.PositionX = positionX;
             SerializableComponent.PositionY = positionY;

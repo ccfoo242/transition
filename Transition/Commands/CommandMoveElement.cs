@@ -27,13 +27,13 @@ namespace Transition.Commands
 
         public void execute()
         {
-            Element.moveAbsolute(NewPositionX, NewPositionY);
+            Element.moveAbsoluteCommand(NewPositionX, NewPositionY);
             Element.updateOriginalPosition();
         }
 
         public void unExecute()
         {
-            Element.moveAbsolute(OldPositionX, OldPositionX);
+            Element.moveAbsoluteCommand(OldPositionX, OldPositionX);
             Element.updateOriginalPosition();
         }
 

@@ -22,82 +22,30 @@ namespace Transition.CircuitEditor.OnScreenComponents
         Binding bY0;
         Binding bX1;
         Binding bY1;
-        
-        public double X0
-        {
-            get
-            {
-                if (wire.IsBounded0)
-                {
-                    if (!wire.IsWireBounded0)
-                        return wire.BoundedObject0.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal0).X;
-                    else
-                        if (wire.BoundedTerminal0 == 0)
-                        return ((Wire)wire.BoundedObject0).OnScreenWire.X0;
-                    else
-                        return ((Wire)wire.BoundedObject0).OnScreenWire.X1;
-                }
-                else
-                { return wire.X0; }
-            }
-        }
 
-        public double Y0
-        {
-            get
-            {
-                if (wire.IsBounded0)
-                {
-                    if (!wire.IsWireBounded0)
-                        return wire.BoundedObject0.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal0).Y;
-                     else
-                        if (wire.BoundedTerminal0 == 0)
-                        return ((Wire)wire.BoundedObject0).OnScreenWire.Y0;
-                    else
-                        return ((Wire)wire.BoundedObject0).OnScreenWire.Y1;
-                }
-                else
-                { return wire.Y0; }
-            }
-        }
+        private double x0;
+        public double X0 { get { return x0; }
+            set { x0 = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("X0"));
+            } }
 
-        public double X1
-        {
-            get
-            {
-                if (wire.IsBounded1)
-                {
-                    if (!wire.IsWireBounded1)
-                        return wire.BoundedObject1.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal1).X;
-                    else
-                        if (wire.BoundedTerminal1 == 0)
-                        return ((Wire)wire.BoundedObject1).OnScreenWire.X0;
-                    else
-                        return ((Wire)wire.BoundedObject1).OnScreenWire.X1;
-                }
-                else
-                { return wire.X1; }
-            }
-        }
+        private double y0;
+        public double Y0 { get { return y0; }
+            set { y0 = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Y0"));
+            } }
 
-        public double Y1
-        {
-            get
-            {
-                if (wire.IsBounded1)
-                {
-                    if (!wire.IsWireBounded1)
-                        return wire.BoundedObject1.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal1).Y;
-                    else
-                        if (wire.BoundedTerminal1 == 0)
-                        return ((Wire)wire.BoundedObject1).OnScreenWire.Y0;
-                    else
-                        return ((Wire)wire.BoundedObject1).OnScreenWire.Y1;
-                }
-                else
-                { return wire.Y1; }
-            }
-        }
+        private double x1;
+        public double X1 { get { return x1; }
+            set { x1 = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("X1"));
+            } }
+
+        private double y1;
+        public double Y1 { get { return y1; }
+            set { y1 = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Y1"));
+            } }
 
         public Wire wire;
         public WireTerminal wt0;
@@ -118,7 +66,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             this.wire = wire;
 
             wire.PropertyChanged += checkBounds;
-            wire.ComponentChanged += checkBounds2;
+            wire.WireLayoutChanged += checkBounds2;
 
             bX0 = new Binding()
             {
@@ -165,6 +113,61 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public void checkBounds2()
         {
+            if (wire.IsBounded0)
+            {
+                if (!wire.IsWireBounded0)
+                {
+                    X0 = wire.BoundedObject0.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal0).X;
+                    Y0 = wire.BoundedObject0.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal0).Y;
+                }
+                else
+                {
+                    if (wire.BoundedTerminal0 == 0)
+                    {
+                        X0 = ((Wire)wire.BoundedObject0).OnScreenWire.X0;
+                        Y0 = ((Wire)wire.BoundedObject0).OnScreenWire.Y0;
+                    }
+                    else
+                    {
+                        X0 = ((Wire)wire.BoundedObject0).OnScreenWire.X1;
+                        Y0 = ((Wire)wire.BoundedObject0).OnScreenWire.Y1;
+                    }
+                }
+            }
+            else
+            {
+                X0 = wire.X0;
+                Y0 = wire.Y0;
+            }
+
+
+            if (wire.IsBounded1)
+            {
+                if (!wire.IsWireBounded1)
+                {
+                    X1 = wire.BoundedObject1.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal1).X;
+                    Y1 = wire.BoundedObject1.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal1).Y;
+                }
+                else
+                {
+                    if (wire.BoundedTerminal1 == 0)
+                    {
+                        X1 = ((Wire)wire.BoundedObject1).OnScreenWire.X0;
+                        Y1 = ((Wire)wire.BoundedObject1).OnScreenWire.Y0;
+                    }
+                    else
+                    {
+                        X1 = ((Wire)wire.BoundedObject1).OnScreenWire.X1;
+                        Y1 = ((Wire)wire.BoundedObject1).OnScreenWire.Y1;
+                    }
+                }
+            }
+            else
+            {
+                X1 = wire.X1;
+                Y1 = wire.Y1;
+            }
+            
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("X0"));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Y0"));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("X1"));
