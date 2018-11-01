@@ -33,7 +33,9 @@ namespace Transition.Commands
 
             foreach (Tuple<SerializableElement, byte, byte> tuple in binds)
                 if (tuple.Item1 is Wire)
-                    ((Wire)tuple.Item1).unBind(tuple.Item2);
+                { ((Wire)tuple.Item1).unBind(tuple.Item2);
+                  ((Wire)tuple.Item1).OnScreenWire.getWireTerminal(tuple.Item2).updateOriginalPosition();
+                }
 
         }
 

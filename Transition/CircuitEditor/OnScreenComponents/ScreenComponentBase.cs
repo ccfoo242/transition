@@ -54,6 +54,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             originalPositionX = PositionX;
             originalPositionY = PositionY;
+            lowlightAllTerminals();
         }
 
         public bool isClicked(double pointX, double pointY)
@@ -347,6 +348,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             SerializableComponent.PositionY = positionY;
 
             TerminalsPositionsChanged();
+            updateOriginalPosition();
         }
 
         public Point getRelativeTerminalPosition(byte terminal)

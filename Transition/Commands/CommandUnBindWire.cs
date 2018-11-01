@@ -25,9 +25,13 @@ namespace Transition.Commands
         {
             Wire.unBind(Terminal);
             if (Terminal == 0)
-                { Wire.X0 = newPositionX; Wire.Y0 = newPositionY; }
+                { Wire.X0 = newPositionX; Wire.Y0 = newPositionY;
+                Wire.OnScreenWire.wt0.updateOriginalPosition();
+            }
             else
-                { Wire.X1 = newPositionX; Wire.Y1 = newPositionY; }
+                { Wire.X1 = newPositionX; Wire.Y1 = newPositionY;
+                Wire.OnScreenWire.wt1.updateOriginalPosition();
+            }
         }
 
         public void unExecute()

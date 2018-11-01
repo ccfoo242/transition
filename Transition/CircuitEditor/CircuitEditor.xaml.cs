@@ -71,8 +71,8 @@ namespace Transition.CircuitEditor
 
             CircuitEditor.currentInstance = this;   //XAML constructed singleton?
 
-            lstStackUndo.ItemsSource = UndoStack;
-            lstStackRedo.ItemsSource = RedoStack;
+          //  lstStackUndo.ItemsSource = UndoStack;
+          //  lstStackRedo.ItemsSource = RedoStack;
 
         }
 
@@ -673,7 +673,7 @@ namespace Transition.CircuitEditor
                         ElementTerminal nearest = getNearestElementTerminalExcept(ptCanvas.X, ptCanvas.Y, wt);
 
                         if (!wt.isBounded)
-                        {
+                        {   /*the wt is free */
                             if (nearest != null) /* if there is some terminal nearby, we bind the wire to it*/
                             {
                                 if (nearest.element.Serializable != wt.Serializable) /* we cannot bind the wire to itself! */
@@ -701,8 +701,8 @@ namespace Transition.CircuitEditor
                                     {
                                         OldPositionX = wt.originalPositionX,
                                         OldPositionY = wt.originalPositionY,
-                                        NewPositionX = wt.PositionX,
-                                        NewPositionY = wt.PositionY,
+                                        NewPositionX =  /*wt.PositionX*/ snapCoordinate(ptCanvas.X),
+                                        NewPositionY =  /*wt.PositionY*/ snapCoordinate(ptCanvas.Y),
                                         Element = wt
                                     };
                                     executeCommand(command);
@@ -751,8 +751,8 @@ namespace Transition.CircuitEditor
                                     Terminal = wt.TerminalNumber,
                                     BoundedObject = wt.SerializableWire.BoundedObject(wt.TerminalNumber),
                                     ObjectTerminal = wt.SerializableWire.BoundedTerminal(wt.TerminalNumber),
-                                    newPositionX = ptCanvas.X,
-                                    newPositionY = ptCanvas.Y
+                                    newPositionX = snapCoordinate(ptCanvas.X),
+                                    newPositionY = snapCoordinate(ptCanvas.Y)
                                 };
                                 executeCommand(command);
                             }

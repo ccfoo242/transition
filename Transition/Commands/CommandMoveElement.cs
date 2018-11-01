@@ -33,7 +33,7 @@ namespace Transition.Commands
 
         public void unExecute()
         {
-            Element.moveAbsoluteCommand(OldPositionX, OldPositionX);
+            Element.moveAbsoluteCommand(OldPositionX, OldPositionY);
             Element.updateOriginalPosition();
         }
 

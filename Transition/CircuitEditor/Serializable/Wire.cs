@@ -74,6 +74,9 @@ namespace Transition.CircuitEditor.Serializable
         public delegate void WireLayoutChangedHandler();
         public event WireLayoutChangedHandler WireLayoutChanged;
 
+        public delegate void WireBind(byte terminal);
+        public event WireBind WireBeingBinded;
+
         public WireScreen OnScreenWire { get; }
 
        /* public event ComponentLayoutChanged ComponentChanged; */
@@ -151,6 +154,7 @@ namespace Transition.CircuitEditor.Serializable
             component.ElementDeleted += deleted0;
             component.UnBindElement += deleted0;
             BoundedTerminal0 = componentTerminal;
+            WireBeingBinded?.Invoke(0);
         }
         
         public void bind1(SerializableComponent component, byte componentTerminal)
@@ -161,6 +165,7 @@ namespace Transition.CircuitEditor.Serializable
             component.ElementDeleted += deleted1;
             component.UnBindElement += deleted1;
             BoundedTerminal1 = componentTerminal;
+            WireBeingBinded?.Invoke(1);
         }
         
         public void bind0(Wire otherWire, byte otherWireTerminal)
@@ -170,6 +175,7 @@ namespace Transition.CircuitEditor.Serializable
 
             otherWire.ElementDeleted += deleted0;
             otherWire.WireLayoutChanged += RaiseLayoutChanged;
+            WireBeingBinded?.Invoke(0);
         }
         
         public void bind1(Wire otherWire, byte otherWireTerminal)
@@ -179,6 +185,7 @@ namespace Transition.CircuitEditor.Serializable
 
             otherWire.ElementDeleted += deleted1;
             otherWire.WireLayoutChanged += RaiseLayoutChanged;
+            WireBeingBinded?.Invoke(1);
         }
 
         public void RaiseLayoutChanged()

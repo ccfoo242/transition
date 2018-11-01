@@ -92,8 +92,31 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
             Children.Add(highlightRect);
             terminalsRectangles.Add(0, highlightRect);
+
+            SerializableWire.WireBeingBinded += Bindingwire;
+
         }
-        
+
+        private void Bindingwire(byte terminal)
+        {
+            var el = SerializableWire.BoundedObject(terminal);
+            var t = SerializableWire.BoundedTerminal(terminal);
+
+            if (el is Wire)
+            {
+                var w = (Wire)el;
+                var wt = (t == 0) ? w.OnScreenWire.wt0 : w.OnScreenWire.wt1;
+                originalPositionX = wt.PositionX;
+                originalPositionY = wt.PositionY;
+            }
+            else
+            {
+                originalPositionX = el.OnScreenComponent.getAbsoluteTerminalPosition(t).X;
+                originalPositionY = el.OnScreenComponent.getAbsoluteTerminalPosition(t).Y;
+            }
+            
+        }
+
         public override double getDistance(double pointX, double pointY)
         {
             return Math.Sqrt(Math.Pow(PositionX - pointX, 2) + Math.Pow(PositionY - pointY, 2));
@@ -103,11 +126,17 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             if (TerminalNumber == 0)
             {
+                wireScreen.wire.X0 = originalPositionX - pointX;
+                wireScreen.wire.Y0 = originalPositionY - pointY;
+
                 wireScreen.X0 = originalPositionX - pointX;
                 wireScreen.Y0 = originalPositionY - pointY;
+
             }
             else
             {
+                wireScreen.wire.X1 = originalPositionX - pointX;
+                wireScreen.wire.Y1 = originalPositionY - pointY;
                 wireScreen.X1 = originalPositionX - pointX;
                 wireScreen.Y1 = originalPositionY - pointY;
             }
@@ -117,13 +146,13 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             if (TerminalNumber == 0)
             {
-                wireScreen.X0 = pointX;
-                wireScreen.Y0 = pointY;
+                wireScreen.wire.X0 = pointX;
+                wireScreen.wire.Y0 = pointY;
             }
             else
             {
-                wireScreen.X1 = pointX;
-                wireScreen.Y1 = pointY;
+                wireScreen.wire.X1 = pointX;
+                wireScreen.wire.Y1 = pointY;
             }
         }
 

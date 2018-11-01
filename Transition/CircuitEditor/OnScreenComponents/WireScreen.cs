@@ -67,7 +67,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
             wire.PropertyChanged += checkBounds;
             wire.WireLayoutChanged += checkBounds2;
-
+            
             bX0 = new Binding()
             {
                 Path = new PropertyPath("X0"),
@@ -105,7 +105,12 @@ namespace Transition.CircuitEditor.OnScreenComponents
             wt0 = new WireTerminal(this, 0);
             wt1 = new WireTerminal(this, 1);
         }
-        
+
+        public WireTerminal getWireTerminal(byte terminal)
+        {
+            return (terminal == 0) ? wt0 : wt1;
+        }
+
         public void checkBounds(object sender, PropertyChangedEventArgs e)
         {
             checkBounds2();

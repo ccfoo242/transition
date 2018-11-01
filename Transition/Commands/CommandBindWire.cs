@@ -32,7 +32,10 @@ namespace Transition.Commands
             if (previousStateBounded)
                 Wt.Wire.bind(previousBoundedObject, previuosBoundedTerminal, Wt.Terminal);
             else
+            {
                 Wt.Wire.unBind(Wt.Terminal);
+                Wt.Wire.OnScreenWire.getWireTerminal(Wt.Terminal).updateOriginalPosition();
+            };
         }
 
         public override string ToString()
