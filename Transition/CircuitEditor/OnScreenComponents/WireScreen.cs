@@ -47,13 +47,15 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Y1"));
             } }
 
-        public Wire wire;
-        public WireTerminal wt0;
-        public WireTerminal wt1;
+        public SerializableWire wire;
+      //  public WireTerminal wt0;
+       // public WireTerminal wt1;
+
+        public List<WireTerminal> terminals = new List<WireTerminal>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public WireScreen(Wire wire) : base()
+        public WireScreen(SerializableWire wire) : base()
         {
             line = new Line()
             {
@@ -102,15 +104,14 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
             Children.Add(line);
 
-            wt0 = new WireTerminal(this, 0);
-            wt1 = new WireTerminal(this, 1);
+            //wt0 = new WireTerminal(this, 0);
+            //wt1 = new WireTerminal(this, 1);
+
+            terminals.Add(new WireTerminal(this, 0));
+            terminals.Add(new WireTerminal(this, 1));
         }
 
-        public WireTerminal getWireTerminal(byte terminal)
-        {
-            return (terminal == 0) ? wt0 : wt1;
-        }
-
+        
         public void checkBounds(object sender, PropertyChangedEventArgs e)
         {
             checkBounds2();
@@ -129,13 +130,13 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 {
                     if (wire.BoundedTerminal0 == 0)
                     {
-                        X0 = ((Wire)wire.BoundedObject0).OnScreenWire.X0;
-                        Y0 = ((Wire)wire.BoundedObject0).OnScreenWire.Y0;
+                        X0 = ((SerializableWire)wire.BoundedObject0).OnScreenWire.X0;
+                        Y0 = ((SerializableWire)wire.BoundedObject0).OnScreenWire.Y0;
                     }
                     else
                     {
-                        X0 = ((Wire)wire.BoundedObject0).OnScreenWire.X1;
-                        Y0 = ((Wire)wire.BoundedObject0).OnScreenWire.Y1;
+                        X0 = ((SerializableWire)wire.BoundedObject0).OnScreenWire.X1;
+                        Y0 = ((SerializableWire)wire.BoundedObject0).OnScreenWire.Y1;
                     }
                 }
             }
@@ -157,13 +158,13 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 {
                     if (wire.BoundedTerminal1 == 0)
                     {
-                        X1 = ((Wire)wire.BoundedObject1).OnScreenWire.X0;
-                        Y1 = ((Wire)wire.BoundedObject1).OnScreenWire.Y0;
+                        X1 = ((SerializableWire)wire.BoundedObject1).OnScreenWire.X0;
+                        Y1 = ((SerializableWire)wire.BoundedObject1).OnScreenWire.Y0;
                     }
                     else
                     {
-                        X1 = ((Wire)wire.BoundedObject1).OnScreenWire.X1;
-                        Y1 = ((Wire)wire.BoundedObject1).OnScreenWire.Y1;
+                        X1 = ((SerializableWire)wire.BoundedObject1).OnScreenWire.X1;
+                        Y1 = ((SerializableWire)wire.BoundedObject1).OnScreenWire.Y1;
                     }
                 }
             }

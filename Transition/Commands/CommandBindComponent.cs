@@ -13,28 +13,28 @@ namespace Transition.Commands
         public string Title => "Command Bind Component";
 
         public SerializableComponent Component { get; set; }
-        private List<Wire> wiresForComponents;
+        private List<SerializableWire> wiresForComponents;
         private List<Tuple<SerializableElement, byte, byte>> binds;
         public void execute()
         {
-            foreach (Wire wire in wiresForComponents)
+            foreach (SerializableWire wire in wiresForComponents)
                 CircuitEditor.CircuitEditor.currentInstance.currentDesign.addWire(wire);
 
             foreach (Tuple<SerializableElement, byte, byte> tuple in binds)
-                if (tuple.Item1 is Wire)
-                    ((Wire)tuple.Item1).bind(Component, tuple.Item3, tuple.Item2);
+                if (tuple.Item1 is SerializableWire)
+                    ((SerializableWire)tuple.Item1).bind(Component, tuple.Item3, tuple.Item2);
                 
         }
 
         public void unExecute()
         {
-            foreach (Wire wire in wiresForComponents)
+            foreach (SerializableWire wire in wiresForComponents)
                 CircuitEditor.CircuitEditor.currentInstance.currentDesign.removeWire(wire);
 
             foreach (Tuple<SerializableElement, byte, byte> tuple in binds)
-                if (tuple.Item1 is Wire)
-                { ((Wire)tuple.Item1).unBind(tuple.Item2);
-                  ((Wire)tuple.Item1).OnScreenWire.getWireTerminal(tuple.Item2).updateOriginalPosition();
+                if (tuple.Item1 is SerializableWire)
+                { ((SerializableWire)tuple.Item1).unBind(tuple.Item2);
+                  ((SerializableWire)tuple.Item1).OnScreenWire.terminals[tuple.Item2].updateOriginalPosition();
                 }
 
         }
@@ -44,8 +44,8 @@ namespace Transition.Commands
             Component = comp;
             this.binds = binds;
 
-            wiresForComponents = new List<Wire>();
-            Wire wire;
+            wiresForComponents = new List<SerializableWire>();
+            SerializableWire wire;
 
             foreach (Tuple<SerializableElement,byte,byte> tuple in binds)
                 if (tuple.Item1 is SerializableComponent)

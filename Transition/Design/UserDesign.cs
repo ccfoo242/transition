@@ -27,7 +27,7 @@ namespace Transition.Design
          That means there is a strong coupling between UserDesign and CircuitEditor*/
 
         public ObservableCollection<SerializableComponent> Components { get; }
-        public ObservableCollection<Wire> Wires { get; }
+        public ObservableCollection<SerializableWire> Wires { get; }
         
         public delegate void ElementDelegate(UserDesign sender, SerializableElement element);
         public event ElementDelegate ElementAdded;
@@ -50,7 +50,7 @@ namespace Transition.Design
             };
             
             Components = new ObservableCollection<SerializableComponent>();
-            Wires = new ObservableCollection<Wire>();
+            Wires = new ObservableCollection<SerializableWire>();
 
             Components.CollectionChanged += Components_CollectionChanged;
             Wires.CollectionChanged += Wires_CollectionChanged;
@@ -73,15 +73,15 @@ namespace Transition.Design
         {
 
             if (e.NewItems!=null)
-                foreach (Wire wire in e.NewItems)
+                foreach (SerializableWire wire in e.NewItems)
                 {
                     CanvasCircuit.Children.Add(wire.OnScreenWire);
-                    CanvasCircuit.Children.Add(wire.OnScreenWire.wt0);
-                    CanvasCircuit.Children.Add(wire.OnScreenWire.wt1);
+                    CanvasCircuit.Children.Add(wire.OnScreenWire.terminals[0]);
+                    CanvasCircuit.Children.Add(wire.OnScreenWire.terminals[1]);
                 }
 
             if (e.OldItems!=null)
-                foreach (Wire wire in e.OldItems)
+                foreach (SerializableWire wire in e.OldItems)
                     removedWire(wire);
             
         }
@@ -96,7 +96,7 @@ namespace Transition.Design
         public void removeElement(SerializableElement element)
         {
             if (element is SerializableComponent) removeComponent((SerializableComponent)element);
-            if (element is Wire) removeWire((Wire)element);
+            if (element is SerializableWire) removeWire((SerializableWire)element);
         }
 
         public void removeComponent(SerializableComponent component)
@@ -104,7 +104,7 @@ namespace Transition.Design
             Components.Remove(component);
         }
 
-        public void removeWire(Wire wire)
+        public void removeWire(SerializableWire wire)
         {
             Wires.Remove(wire);
         }
@@ -117,7 +117,7 @@ namespace Transition.Design
             ElementRemoved?.Invoke(this, component);
         }
         
-        public void addWire(Wire wire)
+        public void addWire(SerializableWire wire)
         {
             Wires.Add(wire);
             ElementAdded?.Invoke(this, wire);
@@ -127,7 +127,7 @@ namespace Transition.Design
         {
             var output = new List<SerializableWireTerminal>();
 
-            foreach (Wire wire in Wires)
+            foreach (SerializableWire wire in Wires)
             {
                 if (wire.IsBounded0)
                     if (wire.BoundedObject0 == el && wire.BoundedTerminal0 == terminal)
@@ -143,26 +143,26 @@ namespace Transition.Design
             return output;
         }
         
-        public void removedWire(Wire wire)
+        public void removedWire(SerializableWire wire)
         { 
             wire.deletedElement();
                // wires.Remove(wire);
             CanvasCircuit.Children.Remove(wire.OnScreenWire);
-            CanvasCircuit.Children.Remove(wire.OnScreenWire.wt0);
-            CanvasCircuit.Children.Remove(wire.OnScreenWire.wt1);
+            CanvasCircuit.Children.Remove(wire.OnScreenWire.terminals[0]);
+            CanvasCircuit.Children.Remove(wire.OnScreenWire.terminals[1]);
 
             ElementRemoved?.Invoke(this, wire);
             
         }
 
-        public Wire bindTwoComponentsTerminals(SerializableComponent comp1, byte terminal1, SerializableComponent comp2, byte terminal2)
+        public SerializableWire bindTwoComponentsTerminals(SerializableComponent comp1, byte terminal1, SerializableComponent comp2, byte terminal2)
         {
             if (areTwoComponentsTerminalsBounded(comp1, terminal1, comp2, terminal2))
                 return null;
 
             if ((comp1 == comp2) && (terminal1 == terminal2)) return null;
 
-            Wire wire = new Wire();
+            SerializableWire wire = new SerializableWire();
             
             wire.bind0(comp1, terminal1);
             wire.bind1(comp2, terminal2);
@@ -175,7 +175,7 @@ namespace Transition.Design
 
         public bool areTwoComponentsTerminalsBounded(SerializableComponent comp1, byte terminal1, SerializableComponent comp2, byte terminal2)
         {
-            foreach (Wire wire in Wires)
+            foreach (SerializableWire wire in Wires)
             {
                 if ((wire.BoundedObject0 == comp1) && (wire.BoundedTerminal0 == terminal1)
                    && (wire.BoundedObject1 == comp2) && (wire.BoundedTerminal1 == terminal2) ||
@@ -209,7 +209,7 @@ namespace Transition.Design
             int result;
             int maximum = 0;
 
-            foreach (Wire wire in Wires)
+            foreach (SerializableWire wire in Wires)
                 if (wire.ElementName != null)
                     if (wire.ElementName.Substring(0, 1) == "W")
                         if (int.TryParse(wire.ElementName.Substring(1, wire.ElementName.Length - 1), out result))
@@ -230,7 +230,7 @@ namespace Transition.Design
         /* this is just a holder of a Wire and its terminal number
          there is other class WireTerminal but it is used for GUI purposes.*/
 
-        public Wire Wire { get; set; }
+        public SerializableWire Wire { get; set; }
         public byte Terminal { get; set; }
 
         public override bool Equals(object obj)

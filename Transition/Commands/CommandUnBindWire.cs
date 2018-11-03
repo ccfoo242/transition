@@ -12,7 +12,7 @@ namespace Transition.Commands
     {
         public string Title => throw new NotImplementedException();
 
-        public Wire Wire { get; set; }
+        public SerializableWire Wire { get; set; }
         public byte Terminal { get; set; }
 
         public SerializableElement BoundedObject { get; set; }
@@ -24,14 +24,9 @@ namespace Transition.Commands
         public void execute()
         {
             Wire.unBind(Terminal);
-            if (Terminal == 0)
-                { Wire.X0 = newPositionX; Wire.Y0 = newPositionY;
-                Wire.OnScreenWire.wt0.updateOriginalPosition();
-            }
-            else
-                { Wire.X1 = newPositionX; Wire.Y1 = newPositionY;
-                Wire.OnScreenWire.wt1.updateOriginalPosition();
-            }
+           
+            Wire.X0 = newPositionX; Wire.Y0 = newPositionY;
+            Wire.OnScreenWire.terminals[Terminal].updateOriginalPosition();
         }
 
         public void unExecute()

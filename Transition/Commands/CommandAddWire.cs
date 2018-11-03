@@ -12,7 +12,7 @@ namespace Transition.Commands
     {
         public string Title => "Add Wire Command: " + Wire.ToString();
 
-        public Wire Wire { get; set; }
+        public SerializableWire Wire { get; set; }
 
         public override string ToString() => Title;
 

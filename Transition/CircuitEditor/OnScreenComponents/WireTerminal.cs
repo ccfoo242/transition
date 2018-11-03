@@ -25,7 +25,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public override byte QuantityOfTerminals => 1;
         
-        public Wire SerializableWire => wireScreen.wire;
+        public SerializableWire SerializableWire => wireScreen.wire;
         public override SerializableElement Serializable => SerializableWire;
 
         public bool isBounded => TerminalNumber == 0 ? SerializableWire.IsBounded0 : SerializableWire.IsBounded1;
@@ -102,10 +102,10 @@ namespace Transition.CircuitEditor.OnScreenComponents
             var el = SerializableWire.BoundedObject(terminal);
             var t = SerializableWire.BoundedTerminal(terminal);
 
-            if (el is Wire)
+            if (el is SerializableWire)
             {
-                var w = (Wire)el;
-                var wt = (t == 0) ? w.OnScreenWire.wt0 : w.OnScreenWire.wt1;
+                var w = (SerializableWire)el;
+                var wt = w.OnScreenWire.terminals[t];
                 originalPositionX = wt.PositionX;
                 originalPositionY = wt.PositionY;
             }

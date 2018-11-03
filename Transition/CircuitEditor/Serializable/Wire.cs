@@ -8,7 +8,7 @@ using Transition.CircuitEditor.OnScreenComponents;
 
 namespace Transition.CircuitEditor.Serializable
 {
-    public class Wire : SerializableElement
+    public class SerializableWire : SerializableElement
     {
         private double x0;
         public double X0 {
@@ -68,8 +68,8 @@ namespace Transition.CircuitEditor.Serializable
         public bool IsBounded0 => BoundedObject0 != null;
         public bool IsBounded1 => BoundedObject1 != null;
 
-        public bool IsWireBounded0 => BoundedObject0 is Wire;
-        public bool IsWireBounded1 => BoundedObject1 is Wire;
+        public bool IsWireBounded0 => BoundedObject0 is SerializableWire;
+        public bool IsWireBounded1 => BoundedObject1 is SerializableWire;
 
         public delegate void WireLayoutChangedHandler();
         public event WireLayoutChangedHandler WireLayoutChanged;
@@ -82,7 +82,7 @@ namespace Transition.CircuitEditor.Serializable
        /* public event ComponentLayoutChanged ComponentChanged; */
         public delegate void ComponentLayoutChanged();
 
-        public Wire()
+        public SerializableWire()
         {
             OnScreenWire = new WireScreen(this);
         }
@@ -101,8 +101,8 @@ namespace Transition.CircuitEditor.Serializable
         {
             if (element is SerializableComponent)
                 bind((SerializableComponent)element, elementTerminal, thisWireTerminal);
-            if (element is Wire)
-                bind((Wire)element, elementTerminal, thisWireTerminal);
+            if (element is SerializableWire)
+                bind((SerializableWire)element, elementTerminal, thisWireTerminal);
         }
 
         public void bind(SerializableComponent component, byte componentTerminal, byte thisWireTerminal)
@@ -128,7 +128,7 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        public void bind(Wire otherWire, byte otherWireTerminal, byte thisWireTerminal)
+        public void bind(SerializableWire otherWire, byte otherWireTerminal, byte thisWireTerminal)
         {
             //we check to not bound to a wire, that is already bounded to this one
 
@@ -168,7 +168,7 @@ namespace Transition.CircuitEditor.Serializable
             WireBeingBinded?.Invoke(1);
         }
         
-        public void bind0(Wire otherWire, byte otherWireTerminal)
+        public void bind0(SerializableWire otherWire, byte otherWireTerminal)
         {
             BoundedObject0 = otherWire;
             BoundedTerminal0 = otherWireTerminal;
@@ -178,7 +178,7 @@ namespace Transition.CircuitEditor.Serializable
             WireBeingBinded?.Invoke(0);
         }
         
-        public void bind1(Wire otherWire, byte otherWireTerminal)
+        public void bind1(SerializableWire otherWire, byte otherWireTerminal)
         {
             BoundedObject1 = otherWire;
             BoundedTerminal1 = otherWireTerminal;

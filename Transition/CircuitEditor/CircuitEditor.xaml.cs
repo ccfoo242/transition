@@ -208,7 +208,7 @@ namespace Transition.CircuitEditor
             }
             else
             {
-                var wire = new Wire()
+                var wire = new SerializableWire()
                 {
                     X0 = snapCoordinate(ptCanvas.X),
                     Y0 = snapCoordinate(ptCanvas.Y),
@@ -226,7 +226,7 @@ namespace Transition.CircuitEditor
         private void bindComponentTerminalPair(ElementTerminal et1, ElementTerminal et2)
         {
            
-            Wire wire = currentDesign.bindTwoComponentsTerminals(
+            SerializableWire wire = currentDesign.bindTwoComponentsTerminals(
                 ((ScreenComponentBase)et1.element).SerializableComponent, et1.terminal,
                 ((ScreenComponentBase)et2.element).SerializableComponent, et2.terminal);
 

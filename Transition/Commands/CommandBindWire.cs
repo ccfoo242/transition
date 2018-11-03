@@ -34,7 +34,7 @@ namespace Transition.Commands
             else
             {
                 Wt.Wire.unBind(Wt.Terminal);
-                Wt.Wire.OnScreenWire.getWireTerminal(Wt.Terminal).updateOriginalPosition();
+                Wt.Wire.OnScreenWire.terminals[Wt.Terminal].updateOriginalPosition();
             };
         }
 

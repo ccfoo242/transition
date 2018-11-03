@@ -13,7 +13,7 @@ namespace Transition.Commands
         public string Title => "Remove Wire Command: " + Wire.ToString();
         public override string ToString() => Title;
 
-        public Wire Wire { get; set; }
+        public SerializableWire Wire { get; set; }
 
         public void execute()
         {
