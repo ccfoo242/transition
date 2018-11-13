@@ -25,26 +25,29 @@ namespace Transition.CircuitEditor.Serializable
         public abstract byte QuantityOfTerminals { get; set; }
         public ScreenComponentBase OnScreenComponent { get; set; }
 
-        public delegate void ElementDeletedHandler();
-        public event ElementDeletedHandler ElementDeleted;
-        public event ElementDeletedHandler UnBindElement;
+        public delegate void EmptyDelegate();
+        public event ElementDelegate ElementDeleted;
 
+        public delegate void ElementDelegate(SerializableElement el);
+        public event ElementDelegate LayoutChanged;
+
+        
         public virtual void SetProperty(string property, object value)
         {
             switch (property)
             {
-                case "ElementName": ElementName = (string)value;break;
+                case "ElementName": ElementName = (string)value; break;
             }
         }
 
         public void deletedElement()
         {
-            ElementDeleted?.Invoke();
+            ElementDeleted?.Invoke(this);
         }
 
-        public void unbindElement()
+        public void raiseLayoutChanged()
         {
-            ElementDeleted?.Invoke();
+            LayoutChanged?.Invoke(this);
         }
 
         public override string ToString()
@@ -58,39 +61,65 @@ namespace Transition.CircuitEditor.Serializable
     {
         private double rotation;
         public double Rotation { get { return rotation; }
-            set { SetProperty(ref rotation, value);
-                ComponentLayoutChanged?.Invoke();
+            set {
+                double correctedValue = value;
+
+                while ((correctedValue < 0) || (correctedValue >= 360))
+                {
+                    if (correctedValue < 0) correctedValue += 360;
+                    if (correctedValue >= 360) correctedValue -= 360;
+                }
+
+                SetProperty(ref rotation, correctedValue);
+           //     ComponentLayoutChanged?.Invoke();
+                raiseLayoutChanged();
             } }
 
         private bool flipX;
         public bool FlipX { get { return flipX; }
             set { SetProperty(ref flipX, value);
-                ComponentLayoutChanged?.Invoke();
+          //      ComponentLayoutChanged?.Invoke();
+                raiseLayoutChanged();
             } }
 
         private bool flipY;
         public bool FlipY { get { return flipY; }
             set { SetProperty(ref flipY, value);
-                ComponentLayoutChanged?.Invoke();
+           //     ComponentLayoutChanged?.Invoke();
+                raiseLayoutChanged();
             } }
 
+        private Point2D componentPosition;
+        public Point2D ComponentPosition
+        {
+            get { return componentPosition; }
+            set
+            {
+                SetProperty(ref componentPosition, value);
+                raiseLayoutChanged();
+            }
+        }
+        /*
         private double positionX;
         public double PositionX { get { return positionX; }
             set { SetProperty(ref positionX, value);
-                ComponentPositionChanged?.Invoke();
+           //     ComponentPositionChanged?.Invoke();
+                raiseLayoutChanged();
             } }
 
         private double positionY;
         public double PositionY { get { return positionY; }
             set { SetProperty(ref positionY, value);
-                ComponentPositionChanged?.Invoke();
+            //    ComponentPositionChanged?.Invoke();
+                raiseLayoutChanged();
             } }
+            */
 
-        public delegate void ComponentLayoutChangedHandler();
-        public event ComponentLayoutChangedHandler ComponentLayoutChanged;
+     //   public delegate void ComponentLayoutChangedHandler();
+     //   public event ComponentLayoutChangedHandler ComponentLayoutChanged;
 
-        public delegate void ComponentPositionChangedHandler();
-        public event ComponentPositionChangedHandler ComponentPositionChanged;
+      //  public delegate void ComponentPositionChangedHandler();
+      //  public event ComponentPositionChangedHandler ComponentPositionChanged;
 
         // ParametersControl is the UI Control that allows user to
         // configure the component parameters
@@ -102,23 +131,7 @@ namespace Transition.CircuitEditor.Serializable
         // or other parameters.
         // it is a Canvas that must be added to the canvas of CircuitEditor
         // 
-
-        public void rotate()
-        {
-            Rotation += 90;
-            if (Rotation == 360) Rotation = 0;
-        }
-
-        public void doFlipX()
-        {
-            FlipX ^= true;
-        }
-
-        public void doFlipY()
-        {
-            FlipY ^= true;
-        }
-
+        
         public override void SetProperty(string property, object value)
         {
             base.SetProperty(property, value);
@@ -128,8 +141,7 @@ namespace Transition.CircuitEditor.Serializable
                 case "Rotation":  Rotation = (double)value; break;
                 case "FlipX":     FlipX = (bool)value; break;
                 case "FlipY":     FlipY = (bool)value; break;
-                case "PositionX": PositionX = (double)value; break;
-                case "PositionY": PositionY = (double)value; break;
+                case "Position":  ComponentPosition = (Point2D)value; break;
                 case "QuantityOfTerminals":
                                   QuantityOfTerminals = (byte)value; break;
             }

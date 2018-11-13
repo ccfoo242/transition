@@ -105,6 +105,7 @@
     <Compile Include="CircuitEditor\OnScreenComponents\PotentiometerScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\ResistorScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\ScreenComponentBase.cs" />
+    <Compile Include="CircuitEditor\OnScreenComponents\Terminal.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\TransformerScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\VoltageSourceScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\WireScreen.cs" />
@@ -144,7 +145,7 @@
     <Compile Include="CircuitEditor\Serializable\Resistor.cs" />
     <Compile Include="CircuitEditor\Serializable\Transformer.cs" />
     <Compile Include="CircuitEditor\Serializable\VoltageSource.cs" />
-    <Compile Include="CircuitEditor\Serializable\Wire.cs" />
+    <Compile Include="CircuitEditor\Serializable\SerializableWire.cs" />
     <Compile Include="Commands\CommandAddComponent.cs" />
     <Compile Include="Commands\CommandAddWire.cs" />
     <Compile Include="Commands\CommandBindComponent.cs" />
@@ -157,6 +158,7 @@
     <Compile Include="Common\BindableBase.cs" />
     <Compile Include="Common\BoolVisibilityConverter.cs" />
     <Compile Include="Common\ObservableStack.cs" />
+    <Compile Include="Common\Point2D.cs" />
     <Compile Include="CurveLibrary\LibraryBase.cs" />
     <Compile Include="CurveLibrary\LibraryFolder.cs" />
     <Compile Include="CurveLibrary\LibraryItem.cs" />

@@ -24,8 +24,8 @@ namespace Transition.Commands
         public void execute()
         {
             Wire.unBind(Terminal);
-           
-            Wire.X0 = newPositionX; Wire.Y0 = newPositionY;
+
+            Wire.updatePosition(newPositionX, newPositionY, Terminal);
             Wire.OnScreenWire.terminals[Terminal].updateOriginalPosition();
         }
 

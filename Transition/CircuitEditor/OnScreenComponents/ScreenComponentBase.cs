@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.Serializable;
+using Transition.Common;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -19,20 +20,16 @@ namespace Transition.CircuitEditor.OnScreenComponents
     /* i had to use Grid class because it has a border
      as for Border class, it is sealed...*/
 
-    public abstract class ScreenElementBase : Grid
+    public abstract class ScreenElementBase : Grid , ICircuitSelectable
     {
-        public double originalPositionX;
-        public double originalPositionY;
+        //public Point2D originalPosition;
 
-        public abstract double PositionX { get; }
-        public abstract double PositionY { get; }
+      //  public abstract Point2D Position { get; set; }
 
-        public abstract void moveRelative(double pointX, double pointY);
-        public abstract void moveAbsolute(double pointX, double pointY);
-        public abstract void moveAbsoluteCommand(double pointX, double pointY);
-        public abstract double getDistance(double pointX, double pointY);
-        public abstract double getDistance(byte terminal, double pointX, double pointY);
-
+     //   public abstract void moveRelative(Point2D destination);
+      //  public abstract void moveAbsolute(Point2D destination);
+      //  public abstract void moveAbsoluteCommand(Point2D destination);
+     
         public abstract void selected();
         public abstract void deselected();
 
@@ -48,19 +45,17 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public abstract byte QuantityOfTerminals { get; }
 
-        public Dictionary<int, Rectangle> terminalsRectangles;
+        public abstract void SerializableLayoutChanged(SerializableElement el);
 
-        public void updateOriginalPosition()
-        {
-            originalPositionX = PositionX;
-            originalPositionY = PositionY;
-            lowlightAllTerminals();
-        }
+        public List<Terminal> Terminals { get; } = new List<Terminal>();
 
-        public bool isClicked(double pointX, double pointY)
+        // public Dictionary<int, Rectangle> terminalsRectangles;
+        
+
+        /* public bool isClicked(Point2D point)
         {
             return getDistance(pointX, pointY) < RadiusClick;
-        }
+        } */
 
         public bool isPointNearTerminal(byte terminal, double pointX, double pointY)
         {
@@ -77,6 +72,11 @@ namespace Transition.CircuitEditor.OnScreenComponents
             output += "OrigPositionY: " + originalPositionY + Environment.NewLine;
 
             return output;
+        }
+
+        public ScreenElementBase(SerializableElement element)
+        {
+            element.LayoutChanged += SerializableLayoutChanged;
         }
     }
 
@@ -99,8 +99,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public bool FlipX => SerializableComponent.FlipX;
         public bool FlipY => SerializableComponent.FlipY;
 
-        public override double PositionX => SerializableComponent.PositionX;
-        public override double PositionY => SerializableComponent.PositionY;
+        public override Point2D Position { get; set; }
 
         public override byte QuantityOfTerminals => SerializableComponent.QuantityOfTerminals;
 
@@ -108,35 +107,13 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-     
-        public double T0X => getAbsoluteTerminalPosition(0).X;
-        public double T0Y => getAbsoluteTerminalPosition(0).Y;
-        public double T1X => getAbsoluteTerminalPosition(1).X;
-        public double T1Y => getAbsoluteTerminalPosition(1).Y;
-        public double T2X => getAbsoluteTerminalPosition(2).X;
-        public double T2Y => getAbsoluteTerminalPosition(2).Y;
-        public double T3X => getAbsoluteTerminalPosition(3).X;
-        public double T3Y => getAbsoluteTerminalPosition(3).Y;
-        public double T4X => getAbsoluteTerminalPosition(4).X;
-        public double T4Y => getAbsoluteTerminalPosition(4).Y;
-        public double T5X => getAbsoluteTerminalPosition(5).X;
-        public double T5Y => getAbsoluteTerminalPosition(5).Y;
 
-        public double RT0X => getRelativeTerminalPosition(0).X;
-        public double RT0Y => getRelativeTerminalPosition(0).Y;
-        public double RT1X => getRelativeTerminalPosition(1).X;
-        public double RT1Y => getRelativeTerminalPosition(1).Y;
-        public double RT2X => getRelativeTerminalPosition(2).X;
-        public double RT2Y => getRelativeTerminalPosition(2).Y;
-        public double RT3X => getRelativeTerminalPosition(3).X;
-        public double RT3Y => getRelativeTerminalPosition(3).Y;
-        public double RT4X => getRelativeTerminalPosition(4).X;
-        public double RT4Y => getRelativeTerminalPosition(4).Y;
-        public double RT5X => getRelativeTerminalPosition(5).X;
-        public double RT5Y => getRelativeTerminalPosition(5).Y;
-        
+        public override void SerializableLayoutChanged(SerializableElement el)
+        {
+            throw new NotImplementedException();
+        }
 
-        public ScreenComponentBase(SerializableComponent component) : base()
+        public ScreenComponentBase(SerializableComponent component) : base(component)
         {
             SerializableComponent = component;
 
@@ -236,12 +213,11 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 Children.Add(rect);
                 terminalsRectangles.Add(i, rect);
             }
-
         }
         
         public void TerminalsPositionsChanged()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T0X"));
+          /*  PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T0X"));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T0Y"));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T1X"));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T1Y"));
@@ -266,6 +242,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT4Y"));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT5X"));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT5Y"));
+            */
         }
 
         protected void postConstruct()

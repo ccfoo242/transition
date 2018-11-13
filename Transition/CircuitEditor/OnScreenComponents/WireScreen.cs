@@ -48,8 +48,6 @@ namespace Transition.CircuitEditor.OnScreenComponents
             } }
 
         public SerializableWire wire;
-      //  public WireTerminal wt0;
-       // public WireTerminal wt1;
 
         public List<WireTerminal> terminals = new List<WireTerminal>();
 
@@ -68,7 +66,6 @@ namespace Transition.CircuitEditor.OnScreenComponents
             this.wire = wire;
 
             wire.PropertyChanged += checkBounds;
-            wire.WireLayoutChanged += checkBounds2;
             
             bX0 = new Binding()
             {

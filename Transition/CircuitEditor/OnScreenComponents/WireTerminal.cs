@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 
 namespace Transition.CircuitEditor.OnScreenComponents
-{
+{/*
     public class WireTerminal : ScreenElementBase
     {
         public override double PositionX => TerminalNumber == 0 ? wireScreen.X0 : wireScreen.X1;
@@ -40,7 +40,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             this.TerminalNumber = terminalNumber;
             this.wireScreen = wireScreen;
             /* this rectangle is for selection, it appears as long
-               the extreme of the wire remains selected */
+               the extreme of the wire remains selected */ /*
             rectangle = new Rectangle()
             {
                 Width = 8,
@@ -58,7 +58,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
                to the position of the WireScreen object
                , the position of this WireTerminal object is handled
                with absolute coordinates with the Top and Left properties
-               of Canvas, which is parent of this class */
+               of Canvas, which is parent of this class */ /*
             Binding bPX1 = new Binding()
             {
                 Path = new PropertyPath("X" + (terminalNumber).ToString()),
@@ -74,7 +74,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             SetBinding(Canvas.TopProperty, bPY1);
 
             /* this other rectangle is for highlighting the extreme
-              when the user makes a bind to other wire*/
+              when the user makes a bind to other wire*/ /*
             terminalsRectangles = new Dictionary<int, Rectangle>();
 
             Rectangle highlightRect;
@@ -229,5 +229,5 @@ namespace Transition.CircuitEditor.OnScreenComponents
             return "WireTerminal Wire: " + SerializableWire.ElementName + " Terminal: " + TerminalNumber.ToString();
         }
     }
-    
+    */
 }

@@ -14,4 +14,10 @@ namespace Transition.CircuitEditor
 
         string Title { get; }
     }
+
+    public interface ICircuitSelectable
+    {
+
+    }
+
 }

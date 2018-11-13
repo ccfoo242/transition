@@ -58,31 +58,38 @@ namespace Transition.Design
         }
         
         private void Components_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {    
-            if (e.NewItems!=null)
-                foreach (SerializableComponent comp in e.NewItems)
-                    CanvasCircuit.Children.Add(comp.OnScreenComponent);
-
-            if (e.OldItems!=null)
-                foreach (SerializableComponent comp in e.OldItems)
-                    removedComponent(comp);
-
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    foreach (SerializableComponent comp in e.NewItems)
+                        CanvasCircuit.Children.Add(comp.OnScreenComponent);
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    foreach (SerializableComponent comp in e.OldItems)
+                        removedComponent(comp);
+                    break;
+            }
+           
         }
 
         private void Wires_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-
-            if (e.NewItems!=null)
-                foreach (SerializableWire wire in e.NewItems)
-                {
-                    CanvasCircuit.Children.Add(wire.OnScreenWire);
-                    CanvasCircuit.Children.Add(wire.OnScreenWire.terminals[0]);
-                    CanvasCircuit.Children.Add(wire.OnScreenWire.terminals[1]);
-                }
-
-            if (e.OldItems!=null)
-                foreach (SerializableWire wire in e.OldItems)
-                    removedWire(wire);
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    foreach (SerializableWire wire in e.NewItems)
+                    {
+                        CanvasCircuit.Children.Add(wire.OnScreenWire);
+                        CanvasCircuit.Children.Add(wire.OnScreenWire.terminals[0]);
+                        CanvasCircuit.Children.Add(wire.OnScreenWire.terminals[1]);
+                    };
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    foreach (SerializableWire wire in e.OldItems)
+                        removedWire(wire);
+                    break;
+            }
             
         }
         
@@ -148,8 +155,8 @@ namespace Transition.Design
             wire.deletedElement();
                // wires.Remove(wire);
             CanvasCircuit.Children.Remove(wire.OnScreenWire);
-            CanvasCircuit.Children.Remove(wire.OnScreenWire.terminals[0]);
-            CanvasCircuit.Children.Remove(wire.OnScreenWire.terminals[1]);
+        //    CanvasCircuit.Children.Remove(wire.OnScreenWire.terminals[0]);
+        //    CanvasCircuit.Children.Remove(wire.OnScreenWire.terminals[1]);
 
             ElementRemoved?.Invoke(this, wire);
             

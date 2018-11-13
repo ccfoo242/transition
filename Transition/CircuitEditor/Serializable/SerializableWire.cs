@@ -2,14 +2,35 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.OnScreenComponents;
+using Transition.Common;
 
 namespace Transition.CircuitEditor.Serializable
 {
     public class SerializableWire : SerializableElement
     {
+        private Point2D positionTerminal0;
+        public Point2D PositionTerminal0
+        {
+            get { return positionTerminal0; }
+            set { SetProperty(ref positionTerminal0, value);
+                  raiseLayoutChanged();
+            }
+        }
+
+        private Point2D positionTerminal1;
+        public Point2D PositionTerminal1
+        {
+            get { return positionTerminal1; }
+            set { SetProperty(ref positionTerminal1, value);
+                  raiseLayoutChanged();
+            }
+        }
+        
+        /*
         private double x0;
         public double X0 {
             get { return x0; }
@@ -34,45 +55,65 @@ namespace Transition.CircuitEditor.Serializable
             get { return y1; }
             set { SetProperty(ref y1, value);
                 WireLayoutChanged?.Invoke(); } }
+                */
 
         public override string ElementLetter => "W";
         public override string ElementType => "Wire";
 
         public override byte QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
-
+        /*
         private SerializableElement boundedObject0;
         public SerializableElement BoundedObject0 {
-            get { return boundedObject0; }
-            set { SetProperty(ref boundedObject0, value); } }
+                    get { return boundedObject0; }
+                    set { SetProperty(ref boundedObject0, value); } }
 
-        private byte boundedTerminal0;
-        public byte BoundedTerminal0 {
-            get { return boundedTerminal0; }
-            set { SetProperty(ref boundedTerminal0, value); } }
+                private byte boundedTerminal0;
+                public byte BoundedTerminal0 {
+                    get { return boundedTerminal0; }
+                    set { SetProperty(ref boundedTerminal0, value); } }
 
 
-        private SerializableElement boundedObject1;
-        public SerializableElement BoundedObject1
+                private SerializableElement boundedObject1;
+                public SerializableElement BoundedObject1
+                {
+                    get { return boundedObject1; }
+                    set { SetProperty(ref boundedObject1, value); }
+                }
+
+                private byte boundedTerminal1;
+                public byte BoundedTerminal1
+                {
+                    get { return boundedTerminal1; }
+                    set { SetProperty(ref boundedTerminal1, value); }
+        }*/
+
+        private Tuple<SerializableElement, byte> bnd0;
+        public Tuple<SerializableElement, byte> Bnd0
         {
-            get { return boundedObject1; }
-            set { SetProperty(ref boundedObject1, value); }
+            get { return bnd0; }
+            set { Tuple<SerializableElement, byte> previousValue = bnd0;
+                  SetProperty(ref bnd0, value);
+                  ChangeBinding(0, previousValue, value);
+            }
         }
 
-        private byte boundedTerminal1;
-        public byte BoundedTerminal1
+        private Tuple<SerializableElement, byte> bnd1;
+        public Tuple<SerializableElement, byte> Bnd1
         {
-            get { return boundedTerminal1; }
-            set { SetProperty(ref boundedTerminal1, value); }
+            get { return bnd1; }
+            set { Tuple<SerializableElement, byte> previousValue = bnd1;
+                  SetProperty(ref bnd1, value);
+                  ChangeBinding(1, previousValue, value);
+            }
         }
         
-        public bool IsBounded0 => BoundedObject0 != null;
-        public bool IsBounded1 => BoundedObject1 != null;
+        public bool IsBounded0 => Bnd0 != null;
+        public bool IsBounded1 => Bnd1 != null;
 
-        public bool IsWireBounded0 => BoundedObject0 is SerializableWire;
-        public bool IsWireBounded1 => BoundedObject1 is SerializableWire;
-
-        public delegate void WireLayoutChangedHandler();
-        public event WireLayoutChangedHandler WireLayoutChanged;
+        public bool IsWireBounded0 => Bnd0.Item1 is SerializableWire;
+        public bool IsWireBounded1 => Bnd1.Item1 is SerializableWire;
+        
+       // public event EmptyDelegate WireLayoutChanged;
 
         public delegate void WireBind(byte terminal);
         public event WireBind WireBeingBinded;
@@ -87,16 +128,32 @@ namespace Transition.CircuitEditor.Serializable
             OnScreenWire = new WireScreen(this);
         }
 
-        public SerializableElement BoundedObject(byte terminal)
+        public Tuple<SerializableElement,byte> bnd(byte terminal)
         {
-            return (terminal == 0) ? BoundedObject0 : BoundedObject1;
+            return (terminal == 0) ? bnd0 : bnd1;
         }
 
-        public byte BoundedTerminal(byte terminal)
+        public void ChangeBinding(byte terminal, Tuple<SerializableElement, byte> previousValue,
+                                                 Tuple<SerializableElement, byte> newValue)
         {
-            return (terminal == 0) ? BoundedTerminal0 : BoundedTerminal1;
+            if (previousValue != null)
+            {
+                previousValue.Item1.LayoutChanged -= BindedElementLayoutChanged;
+                previousValue.Item1.ElementDeleted -= BindedElementDeleted;
+            }
+
+            newValue.Item1.LayoutChanged += BindedElementLayoutChanged;
+            newValue.Item1.ElementDeleted += BindedElementDeleted;
+
         }
 
+        public void BindedElementLayoutChanged(SerializableElement el)
+        {
+            raiseLayoutChanged();
+        }
+
+
+        /*
         public void bind(SerializableElement element, byte elementTerminal, byte thisWireTerminal)
         {
             if (element is SerializableComponent)
@@ -187,22 +244,23 @@ namespace Transition.CircuitEditor.Serializable
             otherWire.WireLayoutChanged += RaiseLayoutChanged;
             WireBeingBinded?.Invoke(1);
         }
+        */
 
-        public void RaiseLayoutChanged()
+        public void updatePosition(Point2D newPosition, byte terminal)
         {
-       //     ComponentChanged?.Invoke();
-            WireLayoutChanged?.Invoke();
+            if (terminal == 0)
+            { PositionTerminal0 = newPosition; }
+            else
+            { PositionTerminal1 = newPosition; }
         }
 
-        public void deleted0()
+        public void BindedElementDeleted(SerializableElement el)
         {
-            BoundedObject0 = null;
+            if (Bnd0.Item1 == el) Bnd0 = null;
+            if (Bnd1.Item1 == el) Bnd1 = null;
         }
 
-        public void deleted1()
-        {
-            BoundedObject1 = null;
-        }
+        
 
         public override string ToString()
         {
@@ -211,7 +269,7 @@ namespace Transition.CircuitEditor.Serializable
 
         public override void SetProperty(string property, object value)
         {
-            
+            base.SetProperty(property, value);
         }
 
        
