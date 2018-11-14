@@ -47,7 +47,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Y1"));
             } }
 
-        public SerializableWire wire;
+        public SerializableWire serializableWire;
 
         public List<WireTerminal> terminals = new List<WireTerminal>();
 
@@ -63,7 +63,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 StrokeStartLineCap = PenLineCap.Round
             };
            
-            this.wire = wire;
+            this.serializableWire = wire;
 
             wire.PropertyChanged += checkBounds;
             
@@ -104,11 +104,14 @@ namespace Transition.CircuitEditor.OnScreenComponents
             //wt0 = new WireTerminal(this, 0);
             //wt1 = new WireTerminal(this, 1);
 
-            terminals.Add(new WireTerminal(this, 0));
-            terminals.Add(new WireTerminal(this, 1));
+            // terminals.Add(new WireTerminal(this, 0));
+            // terminals.Add(new WireTerminal(this, 1));
+            terminals.Add(new WireTerminal() { TerminalPosition = serializableWire.PositionTerminal0 });
+            terminals.Add(new WireTerminal() { TerminalPosition = serializableWire.PositionTerminal1 });
+
         }
 
-        
+
         public void checkBounds(object sender, PropertyChangedEventArgs e)
         {
             checkBounds2();
@@ -116,59 +119,59 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public void checkBounds2()
         {
-            if (wire.IsBounded0)
+            if (serializableWire.IsBounded0)
             {
-                if (!wire.IsWireBounded0)
+                if (!serializableWire.IsWireBounded0)
                 {
-                    X0 = wire.BoundedObject0.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal0).X;
-                    Y0 = wire.BoundedObject0.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal0).Y;
+                    X0 = serializableWire.BoundedObject0.OnScreenComponent.getAbsoluteTerminalPosition(serializableWire.BoundedTerminal0).X;
+                    Y0 = serializableWire.BoundedObject0.OnScreenComponent.getAbsoluteTerminalPosition(serializableWire.BoundedTerminal0).Y;
                 }
                 else
                 {
-                    if (wire.BoundedTerminal0 == 0)
+                    if (serializableWire.BoundedTerminal0 == 0)
                     {
-                        X0 = ((SerializableWire)wire.BoundedObject0).OnScreenWire.X0;
-                        Y0 = ((SerializableWire)wire.BoundedObject0).OnScreenWire.Y0;
+                        X0 = ((SerializableWire)serializableWire.BoundedObject0).OnScreenWire.X0;
+                        Y0 = ((SerializableWire)serializableWire.BoundedObject0).OnScreenWire.Y0;
                     }
                     else
                     {
-                        X0 = ((SerializableWire)wire.BoundedObject0).OnScreenWire.X1;
-                        Y0 = ((SerializableWire)wire.BoundedObject0).OnScreenWire.Y1;
+                        X0 = ((SerializableWire)serializableWire.BoundedObject0).OnScreenWire.X1;
+                        Y0 = ((SerializableWire)serializableWire.BoundedObject0).OnScreenWire.Y1;
                     }
                 }
             }
             else
             {
-                X0 = wire.X0;
-                Y0 = wire.Y0;
+                X0 = serializableWire.X0;
+                Y0 = serializableWire.Y0;
             }
 
 
-            if (wire.IsBounded1)
+            if (serializableWire.IsBounded1)
             {
-                if (!wire.IsWireBounded1)
+                if (!serializableWire.IsWireBounded1)
                 {
-                    X1 = wire.BoundedObject1.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal1).X;
-                    Y1 = wire.BoundedObject1.OnScreenComponent.getAbsoluteTerminalPosition(wire.BoundedTerminal1).Y;
+                    X1 = serializableWire.BoundedObject1.OnScreenComponent.getAbsoluteTerminalPosition(serializableWire.BoundedTerminal1).X;
+                    Y1 = serializableWire.BoundedObject1.OnScreenComponent.getAbsoluteTerminalPosition(serializableWire.BoundedTerminal1).Y;
                 }
                 else
                 {
-                    if (wire.BoundedTerminal1 == 0)
+                    if (serializableWire.BoundedTerminal1 == 0)
                     {
-                        X1 = ((SerializableWire)wire.BoundedObject1).OnScreenWire.X0;
-                        Y1 = ((SerializableWire)wire.BoundedObject1).OnScreenWire.Y0;
+                        X1 = ((SerializableWire)serializableWire.BoundedObject1).OnScreenWire.X0;
+                        Y1 = ((SerializableWire)serializableWire.BoundedObject1).OnScreenWire.Y0;
                     }
                     else
                     {
-                        X1 = ((SerializableWire)wire.BoundedObject1).OnScreenWire.X1;
-                        Y1 = ((SerializableWire)wire.BoundedObject1).OnScreenWire.Y1;
+                        X1 = ((SerializableWire)serializableWire.BoundedObject1).OnScreenWire.X1;
+                        Y1 = ((SerializableWire)serializableWire.BoundedObject1).OnScreenWire.Y1;
                     }
                 }
             }
             else
             {
-                X1 = wire.X1;
-                Y1 = wire.Y1;
+                X1 = serializableWire.X1;
+                Y1 = serializableWire.Y1;
             }
             
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("X0"));

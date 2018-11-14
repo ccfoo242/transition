@@ -65,7 +65,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
         }
 
 
-        public override void setPositionTextBoxes()
+        public override void setPositionTextBoxes(SerializableElement element)
         {
             double leftRV; double topRV;
             double leftCN; double topCN;

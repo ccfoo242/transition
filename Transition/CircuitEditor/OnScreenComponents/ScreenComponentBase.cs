@@ -40,6 +40,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public abstract SerializableElement Serializable { get; }
 
         public abstract double RadiusClick { get; }
+        public double RadiusNear => 15;
         public abstract bool isInside(Rectangle rect);
         public abstract Point2D getAbsoluteTerminalPosition(byte terminal);
 
@@ -59,21 +60,9 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public bool isPointNearTerminal(byte terminal, Point2D point)
         {
-            return (getDistance(terminal, pointX, pointY) < 15) ? true : false;
+            return point.getDistance(getAbsoluteTerminalPosition(terminal)) < RadiusNear;
         }
-
-        public override string ToString()
-        {
-            string output = Serializable.ElementType + Environment.NewLine;
-
-            output += "PositionX: " + PositionX + Environment.NewLine;
-            output += "PositionY: " + PositionY + Environment.NewLine;
-            output += "OrigPositionX: " + originalPositionX + Environment.NewLine;
-            output += "OrigPositionY: " + originalPositionY + Environment.NewLine;
-
-            return output;
-        }
-
+        
         public ScreenElementBase(SerializableElement element)
         {
             element.LayoutChanged += SerializableLayoutChanged;
@@ -89,12 +78,13 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public override SerializableElement Serializable => SerializableComponent;
 
+        public abstract int[,] TerminalPositions { get; }
+
         public abstract double SchematicWidth { get; }
         public abstract double SchematicHeight { get; }
 
         public abstract void setPositionTextBoxes(SerializableElement element);
-      //  public abstract int[,] TerminalPositions { get; }
-
+   
         public double ActualRotation => SerializableComponent.Rotation;
         public bool FlipX => SerializableComponent.FlipX;
         public bool FlipY => SerializableComponent.FlipY;
@@ -108,15 +98,14 @@ namespace Transition.CircuitEditor.OnScreenComponents
             } }
 
         public override byte QuantityOfTerminals => SerializableComponent.QuantityOfTerminals;
-
         public override double RadiusClick => 30;
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-
+       
         public override void SerializableLayoutChanged(SerializableElement el)
         {
-            throw new NotImplementedException();
+            setPositionTerminals(Serializable);
+            setPositionTextBoxes(Serializable);
         }
 
         public ScreenComponentBase(SerializableComponent component) : base(component)
@@ -140,25 +129,25 @@ namespace Transition.CircuitEditor.OnScreenComponents
             BorderThickness = new Thickness(1);
             Children.Add(ComponentCanvas);
             
-            DataContext = SerializableComponent;
+            //DataContext = SerializableComponent;
 
             Binding bPX = new Binding()
             {
-                Path = new PropertyPath("PositionX"),
+                Path = new PropertyPath("ComponentPosition.X"),
                 Mode = BindingMode.OneWay
             };
             SetBinding(Canvas.LeftProperty, bPX);
 
             Binding bPY = new Binding()
             {
-                Path = new PropertyPath("PositionY"),
+                Path = new PropertyPath("ComponentPosition.Y"),
                 Mode = BindingMode.OneWay
             };
             SetBinding(Canvas.TopProperty, bPY);
 
             Binding bRt = new Binding()
             {
-                Path = new PropertyPath("Rotation"),
+                Path = new PropertyPath("ActualRotation"),
                 Mode = BindingMode.OneWay
             };
             BindingOperations.SetBinding(ComponentTransform, CompositeTransform.RotationProperty, bRt);
@@ -188,7 +177,6 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 Children.Add(t);
             }
             
-            
         }
         
 
@@ -208,10 +196,10 @@ namespace Transition.CircuitEditor.OnScreenComponents
             double x2 = Canvas.GetLeft(rect) + rect.Width;
             double y2 = Canvas.GetTop(rect) + rect.Height;
 
-            if ((x1 < (PositionX + (SchematicWidth / 2))) &&
-                (x2 > (PositionX + (SchematicWidth / 2))) &&
-                (y1 < (PositionY + (SchematicHeight / 2))) &&
-                (y2 > (PositionY + (SchematicHeight / 2))))
+            if ((x1 < (ComponentPosition.X + (SchematicWidth / 2))) &&
+                (x2 > (ComponentPosition.X + (SchematicWidth / 2))) &&
+                (y1 < (ComponentPosition.Y + (SchematicHeight / 2))) &&
+                (y2 > (ComponentPosition.Y + (SchematicHeight / 2))))
                 return true;
             else
                 return false;
@@ -219,8 +207,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public bool isPointInsideComponent(Point2D point)
         {
-            return (pointX > PositionX) && (pointX < (PositionX + SchematicWidth)) &&
-                   (pointY > PositionY) && (pointY < (PositionY + SchematicHeight));
+            return (point.X > ComponentPosition.X) && (point.X < (ComponentPosition.X + SchematicWidth)) &&
+                   (point.Y > ComponentPosition.Y) && (point.Y < (ComponentPosition.Y + SchematicHeight));
         }
         
 
@@ -228,7 +216,6 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             BorderBrush = new SolidColorBrush(Colors.Black);
             BorderThickness = new Thickness(1);
-            updateOriginalPosition();
         }
         
         public override void deselected()
@@ -236,31 +223,18 @@ namespace Transition.CircuitEditor.OnScreenComponents
              BorderBrush = new SolidColorBrush(Colors.Transparent);
         }
         
-        public override void moveRelative(double positionX, double positionY)
+        public void moveRelative(Point2D displacement)
         {
-            SerializableComponent.PositionX = originalPositionX - positionX;
-            SerializableComponent.PositionY = originalPositionY - positionY;
+            Point2D originalPosition = SerializableComponent.ComponentPosition;
 
-            TerminalsPositionsChanged();
+            ComponentPosition = originalPosition + displacement;
         }
 
-        public override void moveAbsolute(double positionX, double positionY)
+        public void moveAbsolute(Point2D newPosition)
         {
-            SerializableComponent.PositionX = positionX;
-            SerializableComponent.PositionY = positionY;
-
-            TerminalsPositionsChanged();
+            ComponentPosition = newPosition;
         }
-
-        public override void moveAbsoluteCommand(double positionX, double positionY)
-        {
-            SerializableComponent.PositionX = positionX;
-            SerializableComponent.PositionY = positionY;
-
-            TerminalsPositionsChanged();
-         //   updateOriginalPosition();
-        }
-
+        
         public Point2D getRelativeTerminalPosition(byte terminal)
         {
           

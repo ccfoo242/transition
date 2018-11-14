@@ -94,6 +94,7 @@ namespace Transition.CircuitEditor.Serializable
             set { Tuple<SerializableElement, byte> previousValue = bnd0;
                   SetProperty(ref bnd0, value);
                   ChangeBinding(0, previousValue, value);
+                  raiseLayoutChanged();
             }
         }
 
@@ -104,6 +105,7 @@ namespace Transition.CircuitEditor.Serializable
             set { Tuple<SerializableElement, byte> previousValue = bnd1;
                   SetProperty(ref bnd1, value);
                   ChangeBinding(1, previousValue, value);
+                  raiseLayoutChanged();
             }
         }
         
