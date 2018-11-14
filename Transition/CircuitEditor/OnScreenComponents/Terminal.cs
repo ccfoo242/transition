@@ -4,29 +4,70 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Transition.Common;
+using Windows.UI;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Shapes;
 
 namespace Transition.CircuitEditor.OnScreenComponents
 {
-    public class Terminal : Tuple<ScreenElementBase, byte>
+    public class Terminal : Grid
     {
-        public Point2D Position { get; set; }
+        public delegate void TerminalDelegate(Terminal t);
+        public event TerminalDelegate TerminalPositionChanged;
 
-        public ScreenElementBase Element => Item1;
-        public byte TerminalNumber => Item2;
-
-        public Terminal(ScreenElementBase el, byte terminal) : base(el, terminal)
+        private Point2D terminalPosition;
+        public Point2D TerminalPosition
         {
+            get => terminalPosition;
+            set
+            {
+                if (terminalPosition == value) return;
 
+                terminalPosition = value;
+                rectTransform.X = value.X - rectangleWidth / 2;
+                rectTransform.Y = value.Y - rectangleWidth / 2;
+            }
         }
-        
+
+        private double rectangleWidth => 8;
+
+        private Rectangle rectangle;
+        private TranslateTransform rectTransform;
+
+        public Terminal()
+        {
+            rectTransform = new TranslateTransform();
+
+            rectangle = new Rectangle()
+            {
+                Width = rectangleWidth,
+                Height = rectangleWidth,
+                Stroke = new SolidColorBrush(Colors.Black),
+                StrokeThickness = 1,
+                Visibility = Visibility.Collapsed,
+                RenderTransform = rectTransform
+            };
+
+            Children.Add(rectangle);
+        }
+
+        public void highlight()
+        {
+            rectangle.Visibility = Visibility.Visible;
+        }
+
+        public void lowlight()
+        {
+            rectangle.Visibility = Visibility.Collapsed;
+        }
+
     }
 
     public class WireTerminal : Terminal
     {
-        public WireTerminal(ScreenElementBase el, byte terminal) : base(el, terminal)
-        {
-
-        }
+       
     }
 
 }

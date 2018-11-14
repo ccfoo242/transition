@@ -51,7 +51,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 RenderTransform = new TranslateTransform()
             };
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
-            txtComponentName.SizeChanged += delegate { setPositionTextBoxes(); };
+            txtComponentName.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
             Children.Add(txtComponentName);
             
             txtResistanceValue = new TextBlock()
@@ -66,7 +66,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 Mode = BindingMode.OneWay
             };
             txtResistanceValue.SetBinding(TextBlock.TextProperty, b2);
-            txtResistanceValue.SizeChanged += delegate { setPositionTextBoxes(); };
+            txtResistanceValue.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
             Children.Add(txtResistanceValue);
             
             postConstruct();
@@ -74,7 +74,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
         }
 
 
-        public override void setPositionTextBoxes()
+        public override void setPositionTextBoxes(SerializableElement element)
         {
             double leftRV; double topRV;
             double leftCN; double topCN;

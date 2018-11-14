@@ -41,7 +41,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public abstract double RadiusClick { get; }
         public abstract bool isInside(Rectangle rect);
-        public abstract Point getAbsoluteTerminalPosition(byte terminal);
+        public abstract Point2D getAbsoluteTerminalPosition(byte terminal);
 
         public abstract byte QuantityOfTerminals { get; }
 
@@ -57,7 +57,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             return getDistance(pointX, pointY) < RadiusClick;
         } */
 
-        public bool isPointNearTerminal(byte terminal, double pointX, double pointY)
+        public bool isPointNearTerminal(byte terminal, Point2D point)
         {
             return (getDistance(terminal, pointX, pointY) < 15) ? true : false;
         }
@@ -92,14 +92,20 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public abstract double SchematicWidth { get; }
         public abstract double SchematicHeight { get; }
 
-        public abstract void setPositionTextBoxes();
-        public abstract int[,] TerminalPositions { get; }
+        public abstract void setPositionTextBoxes(SerializableElement element);
+      //  public abstract int[,] TerminalPositions { get; }
 
         public double ActualRotation => SerializableComponent.Rotation;
         public bool FlipX => SerializableComponent.FlipX;
         public bool FlipY => SerializableComponent.FlipY;
 
-        public override Point2D Position { get; set; }
+        public Point2D componentPosition;
+        public Point2D ComponentPosition
+            { get => componentPosition;
+              set  { componentPosition = value;
+                     setPositionTerminals(Serializable);
+                     setPositionTextBoxes(Serializable);
+            } }
 
         public override byte QuantityOfTerminals => SerializableComponent.QuantityOfTerminals;
 
@@ -117,9 +123,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             SerializableComponent = component;
 
-            component.ComponentLayoutChanged += setPositionTextBoxes;
-            component.ComponentLayoutChanged += TerminalsPositionsChanged;
-            component.ComponentPositionChanged += TerminalsPositionsChanged;
+            component.LayoutChanged += setPositionTextBoxes;
+            component.LayoutChanged += setPositionTerminals;
 
             ComponentTransform = new CompositeTransform();
             ComponentTransform.CenterX = SchematicWidth / 2;
@@ -174,80 +179,22 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
             BindingOperations.SetBinding(ComponentTransform, CompositeTransform.ScaleYProperty, bFY);
 
+            Terminal t;
 
-            //rectangles for highlighting terminals
-            terminalsRectangles = new Dictionary<int, Rectangle>();
-
-            Binding bindRectangleX;
-            Binding bindRectangleY;
-            Rectangle rect;
-            TranslateTransform transformTerminalRectangle;
-
-            for (byte i = 0; i < QuantityOfTerminals; i++)
+            for (byte x = 0; x < QuantityOfTerminals; x++)
             {
-                transformTerminalRectangle = new TranslateTransform();
-                bindRectangleX = new Binding()
-                {
-                    Path = new PropertyPath("RT" + i.ToString() + "X"),
-                    Source = this
-                };
-                bindRectangleY = new Binding()
-                {
-                    Path = new PropertyPath("RT" + i.ToString() + "Y"),
-                    Source = this
-                };
-                BindingOperations.SetBinding(transformTerminalRectangle, TranslateTransform.XProperty, bindRectangleX);
-                BindingOperations.SetBinding(transformTerminalRectangle, TranslateTransform.YProperty, bindRectangleY);
-
-                rect = new Rectangle()
-                {
-                    Width = 12,
-                    Height = 12,
-                    Fill = new SolidColorBrush(Colors.Transparent),
-                    Stroke = new SolidColorBrush(Colors.Black),
-                    StrokeThickness = 1,
-                    Visibility = Visibility.Collapsed,
-                    RenderTransform = transformTerminalRectangle,
-                    Tag = i
-                };
-                Children.Add(rect);
-                terminalsRectangles.Add(i, rect);
+                t = new Terminal();
+                Terminals.Add(t);
+                Children.Add(t);
             }
+            
+            
         }
         
-        public void TerminalsPositionsChanged()
-        {
-          /*  PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T0X"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T0Y"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T1X"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T1Y"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T2X"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T2Y"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T3X"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T3Y"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T4X"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T4Y"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T5X"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("T5Y"));
-
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT0X"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT0Y"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT1X"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT1Y"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT2X"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT2Y"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT3X"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT3Y"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT4X"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT4Y"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT5X"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RT5Y"));
-            */
-        }
 
         protected void postConstruct()
         {
-            Width = SchematicWidth ;
+            Width = SchematicWidth;
             Height = SchematicHeight;
         }
         
@@ -270,26 +217,12 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 return false;
         }
 
-        public bool isInside(double pointX, double pointY)
+        public bool isPointInsideComponent(Point2D point)
         {
             return (pointX > PositionX) && (pointX < (PositionX + SchematicWidth)) &&
                    (pointY > PositionY) && (pointY < (PositionY + SchematicHeight));
         }
-
-        public override double getDistance(double pointX, double pointY)
-        {
-            double midPositionX = PositionX + (SchematicWidth / 2);
-            double midPositionY = PositionY + (SchematicHeight / 2);
-
-            return Math.Sqrt(Math.Pow(midPositionX - pointX, 2) +
-                             Math.Pow(midPositionY - pointY, 2));
-        }
-
-        public override double getDistance(byte terminal, double pointX, double pointY)
-        {
-            return Math.Sqrt(Math.Pow(getAbsoluteTerminalPosition(terminal).X - pointX, 2) +
-                             Math.Pow(getAbsoluteTerminalPosition(terminal).Y - pointY, 2));
-        }
+        
 
         public override void selected()
         {
@@ -325,43 +258,51 @@ namespace Transition.CircuitEditor.OnScreenComponents
             SerializableComponent.PositionY = positionY;
 
             TerminalsPositionsChanged();
-            updateOriginalPosition();
+         //   updateOriginalPosition();
         }
 
-        public Point getRelativeTerminalPosition(byte terminal)
+        public Point2D getRelativeTerminalPosition(byte terminal)
         {
-            Point output = new Point();
-
-            output.X =  ((FlipX ? -1 : 1) *
+          
+            double X =  ((FlipX ? -1 : 1) *
                            Math.Cos(Math.PI - (ActualRotation * Math.PI / 180)) * 
                            ((SchematicWidth / 2) - TerminalPositions[terminal, 0])) +
                            ((FlipY ? -1 : 1) *
                            Math.Sin(Math.PI - (ActualRotation * Math.PI / 180)) *
                            ((SchematicHeight / 2) - TerminalPositions[terminal, 1]));
 
-            output.Y =  ((FlipX ? -1 : 1) *
+            double Y =  ((FlipX ? -1 : 1) *
                            Math.Sin(Math.PI - (ActualRotation * Math.PI / 180)) *
                            ((SchematicWidth / 2) - TerminalPositions[terminal, 0])) +
                            ((FlipY ? -1 : 1) *
                            Math.Cos(Math.PI - (ActualRotation * Math.PI / 180)) *
                            ((SchematicHeight / 2) - TerminalPositions[terminal, 1]));
             
-            return output;
+            return new Point2D(X, Y);
         }
-        
 
-        public override Point getAbsoluteTerminalPosition(byte terminal)
+        public void setPositionTerminals(SerializableElement element)
         {
-            Point relative = getRelativeTerminalPosition(terminal);
-            return new Point((SchematicWidth / 2) + relative.X + PositionX, 
-                            (SchematicHeight / 2) + relative.Y + PositionY);
+            for (byte x = 0; x < QuantityOfTerminals; x++)
+                Terminals[x].TerminalPosition = getRelativeTerminalPosition(x);
+            
+        }
+
+
+        public override Point2D getAbsoluteTerminalPosition(byte terminal)
+        {
+            Point2D relative = getRelativeTerminalPosition(terminal);
+
+            double X = (SchematicWidth / 2) + relative.X + ComponentPosition.X;
+            double Y = (SchematicHeight / 2) + relative.Y + ComponentPosition.Y;
+            
+            return new Point2D(X, Y);
         }
 
 
         public override void highlightTerminal(byte terminal)
         {
-            if (terminalsRectangles.ContainsKey(terminal))
-                terminalsRectangles[terminal].Visibility = Visibility.Visible;
+            Terminals[terminal].highlight();
         }
 
         public override void lowlightAllTerminals()
@@ -372,8 +313,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public override void lowlightTerminal(byte terminal)
         {
-            if (terminalsRectangles.ContainsKey(terminal))
-                terminalsRectangles[terminal].Visibility = Visibility.Collapsed;
+            Terminals[terminal].lowlight();
         }
     }
     

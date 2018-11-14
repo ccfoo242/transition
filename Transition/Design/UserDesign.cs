@@ -63,7 +63,8 @@ namespace Transition.Design
             {
                 case NotifyCollectionChangedAction.Add:
                     foreach (SerializableComponent comp in e.NewItems)
-                        CanvasCircuit.Children.Add(comp.OnScreenComponent);
+                    { CanvasCircuit.Children.Add(comp.OnScreenComponent);
+                        ElementAdded?.Invoke(this, component); }
                     break;
                 case NotifyCollectionChangedAction.Remove:
                     foreach (SerializableComponent comp in e.OldItems)
@@ -94,27 +95,12 @@ namespace Transition.Design
         }
         
 
-        public void addComponent(SerializableComponent component)
-        {
-            Components.Add(component);
-            ElementAdded?.Invoke(this, component);
-        }
-
         public void removeElement(SerializableElement element)
         {
-            if (element is SerializableComponent) removeComponent((SerializableComponent)element);
-            if (element is SerializableWire) removeWire((SerializableWire)element);
+            if (element is SerializableComponent) Components.Remove((SerializableComponent)element);
+            if (element is SerializableWire) Wires.Remove((SerializableWire)element);
         }
-
-        public void removeComponent(SerializableComponent component)
-        {
-            Components.Remove(component);
-        }
-
-        public void removeWire(SerializableWire wire)
-        {
-            Wires.Remove(wire);
-        }
+        
 
         public void removedComponent(SerializableComponent component)
         {
