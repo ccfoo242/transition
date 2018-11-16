@@ -122,12 +122,12 @@ namespace Transition.Design
 
             foreach (SerializableWire wire in Wires)
             {
-                if (wire.IsBounded0)
+                if (wire.IsTerminal0Bounded)
                     if (wire.BoundedObject0 == el && wire.BoundedTerminal0 == terminal)
                         output.Add(new SerializableWireTerminal()
                             { Wire = wire, Terminal = 0 });
                             
-                if (wire.IsBounded1)
+                if (wire.IsTerminal1Bounded)
                     if (wire.BoundedObject1 == el && wire.BoundedTerminal1 == terminal)
                         output.Add(new SerializableWireTerminal()
                             { Wire = wire, Terminal = 1 });

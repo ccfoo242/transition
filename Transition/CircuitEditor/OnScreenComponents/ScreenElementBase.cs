@@ -26,7 +26,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
       //  public abstract Point2D Position { get; set; }
 
-     //   public abstract void moveRelative(Point2D destination);
+        public abstract void moveRelative(Point2D destination);
       //  public abstract void moveAbsolute(Point2D destination);
       //  public abstract void moveAbsoluteCommand(Point2D destination);
      
@@ -50,6 +50,9 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public List<Terminal> Terminals { get; } = new List<Terminal>();
 
+        public delegate void ScreenElementDelegate(ScreenElementBase el);
+        public event ScreenElementDelegate ScreenLayoutChanged;
+
         // public Dictionary<int, Rectangle> terminalsRectangles;
         
 
@@ -66,6 +69,11 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public ScreenElementBase(SerializableElement element)
         {
             element.LayoutChanged += SerializableLayoutChanged;
+        }
+
+        public void RaiseScreenLayoutChanged()
+        {
+            ScreenLayoutChanged?.Invoke(this);
         }
     }
 
@@ -223,7 +231,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
              BorderBrush = new SolidColorBrush(Colors.Transparent);
         }
         
-        public void moveRelative(Point2D displacement)
+        public override void moveRelative(Point2D displacement)
         {
             Point2D originalPosition = SerializableComponent.ComponentPosition;
 

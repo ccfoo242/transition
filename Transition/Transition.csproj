@@ -104,7 +104,7 @@
     <Compile Include="CircuitEditor\OnScreenComponents\InductorScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\PotentiometerScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\ResistorScreen.cs" />
-    <Compile Include="CircuitEditor\OnScreenComponents\ScreenComponentBase.cs" />
+    <Compile Include="CircuitEditor\OnScreenComponents\ScreenElementBase.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\Terminal.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\TransformerScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\VoltageSourceScreen.cs" />

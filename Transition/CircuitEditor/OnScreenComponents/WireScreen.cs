@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.Serializable;
+using Transition.Common;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -14,47 +15,81 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Transition.CircuitEditor.OnScreenComponents
 {
-    public class WireScreen : Grid, INotifyPropertyChanged
+    public class WireScreen : ScreenElementBase, INotifyPropertyChanged
     {
         private Line line { get; }
+
+        public SerializableWire serializableWire;
 
         Binding bX0;
         Binding bY0;
         Binding bX1;
         Binding bY1;
 
-        private double x0;
-        public double X0 { get { return x0; }
-            set { x0 = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("X0"));
-            } }
+        private Point2D position0;
+        public Point2D PositionTerminal0
+        {
+            get { return position0; }
+            set
+            {
+                position0 = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Position0"));
+                RaiseScreenLayoutChanged();
+            }
+        }
+        
+        private Point2D position1;
+        public Point2D PositionTerminal1
+        {
+            get { return position1; }
+            set
+            {
+                position1 = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Position1"));
+                RaiseScreenLayoutChanged();
+            }
+        }
 
-        private double y0;
-        public double Y0 { get { return y0; }
-            set { y0 = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Y0"));
-            } }
 
-        private double x1;
-        public double X1 { get { return x1; }
-            set { x1 = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("X1"));
-            } }
+        public Tuple<ScreenElementBase, byte> bind0
+        {
+            get
+            {
+                if (serializableWire.Bind0 != null)
+                    return new Tuple<ScreenElementBase, byte>
+                        (serializableWire.Bind0.Item1.OnScreenComponent,
+                         serializableWire.Bind0.Item2);
+                else return null;
+            }
+        }
 
-        private double y1;
-        public double Y1 { get { return y1; }
-            set { y1 = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Y1"));
-            } }
-
-        public SerializableWire serializableWire;
-
-        public List<WireTerminal> terminals = new List<WireTerminal>();
-
+        public Tuple<ScreenElementBase, byte> bind1
+        {
+            get
+            {
+                if (serializableWire.Bind1 != null)
+                    return new Tuple<ScreenElementBase, byte>
+                        (serializableWire.Bind1.Item1.OnScreenComponent,
+                         serializableWire.Bind1.Item2);
+                else return null;
+            }
+        }
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public WireScreen(SerializableWire wire) : base()
+        public bool IsTerminal0Bounded => serializableWire.IsTerminal0Bounded;
+        public bool IsTerminal1Bounded => serializableWire.IsTerminal1Bounded;
+
+        public override SerializableElement Serializable => serializableWire;
+
+        public override double RadiusClick => 15;
+
+        public override byte QuantityOfTerminals => 2;
+
+        public WireScreen(SerializableWire wire) : base(wire)
         {
+            this.serializableWire = wire;
+
             line = new Line()
             {
                 StrokeThickness = 4,
@@ -63,13 +98,9 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 StrokeStartLineCap = PenLineCap.Round
             };
            
-            this.serializableWire = wire;
-
-            wire.PropertyChanged += checkBounds;
-            
             bX0 = new Binding()
             {
-                Path = new PropertyPath("X0"),
+                Path = new PropertyPath("Position0.X"),
                 Mode = BindingMode.OneWay,
                 Source = this
             };
@@ -77,7 +108,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
             bY0 = new Binding()
             {
-                Path = new PropertyPath("Y0"),
+                Path = new PropertyPath("Position0.Y"),
                 Mode = BindingMode.OneWay,
                 Source = this
             };
@@ -85,7 +116,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
             bX1 = new Binding()
             {
-                Path = new PropertyPath("X1"),
+                Path = new PropertyPath("Position1.X"),
                 Mode = BindingMode.OneWay,
                 Source = this
             };
@@ -93,91 +124,109 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
             bY1 = new Binding()
             {
-                Path = new PropertyPath("Y1"),
+                Path = new PropertyPath("Position1.Y"),
                 Mode = BindingMode.OneWay,
                 Source = this
             };
             line.SetBinding(Line.Y2Property, bY1);
-
-            Children.Add(line);
-
-            //wt0 = new WireTerminal(this, 0);
-            //wt1 = new WireTerminal(this, 1);
-
-            // terminals.Add(new WireTerminal(this, 0));
-            // terminals.Add(new WireTerminal(this, 1));
-            terminals.Add(new WireTerminal() { TerminalPosition = serializableWire.PositionTerminal0 });
-            terminals.Add(new WireTerminal() { TerminalPosition = serializableWire.PositionTerminal1 });
-
-        }
-
-
-        public void checkBounds(object sender, PropertyChangedEventArgs e)
-        {
-            checkBounds2();
-        }
-
-        public void checkBounds2()
-        {
-            if (serializableWire.IsBounded0)
-            {
-                if (!serializableWire.IsWireBounded0)
-                {
-                    X0 = serializableWire.BoundedObject0.OnScreenComponent.getAbsoluteTerminalPosition(serializableWire.BoundedTerminal0).X;
-                    Y0 = serializableWire.BoundedObject0.OnScreenComponent.getAbsoluteTerminalPosition(serializableWire.BoundedTerminal0).Y;
-                }
-                else
-                {
-                    if (serializableWire.BoundedTerminal0 == 0)
-                    {
-                        X0 = ((SerializableWire)serializableWire.BoundedObject0).OnScreenWire.X0;
-                        Y0 = ((SerializableWire)serializableWire.BoundedObject0).OnScreenWire.Y0;
-                    }
-                    else
-                    {
-                        X0 = ((SerializableWire)serializableWire.BoundedObject0).OnScreenWire.X1;
-                        Y0 = ((SerializableWire)serializableWire.BoundedObject0).OnScreenWire.Y1;
-                    }
-                }
-            }
-            else
-            {
-                X0 = serializableWire.X0;
-                Y0 = serializableWire.Y0;
-            }
-
-
-            if (serializableWire.IsBounded1)
-            {
-                if (!serializableWire.IsWireBounded1)
-                {
-                    X1 = serializableWire.BoundedObject1.OnScreenComponent.getAbsoluteTerminalPosition(serializableWire.BoundedTerminal1).X;
-                    Y1 = serializableWire.BoundedObject1.OnScreenComponent.getAbsoluteTerminalPosition(serializableWire.BoundedTerminal1).Y;
-                }
-                else
-                {
-                    if (serializableWire.BoundedTerminal1 == 0)
-                    {
-                        X1 = ((SerializableWire)serializableWire.BoundedObject1).OnScreenWire.X0;
-                        Y1 = ((SerializableWire)serializableWire.BoundedObject1).OnScreenWire.Y0;
-                    }
-                    else
-                    {
-                        X1 = ((SerializableWire)serializableWire.BoundedObject1).OnScreenWire.X1;
-                        Y1 = ((SerializableWire)serializableWire.BoundedObject1).OnScreenWire.Y1;
-                    }
-                }
-            }
-            else
-            {
-                X1 = serializableWire.X1;
-                Y1 = serializableWire.Y1;
-            }
             
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("X0"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Y0"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("X1"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Y1"));
+            wire.WireBindingChanged += updateBinding;
+            Children.Add(line);
+            
+            Terminals.Add(new WireTerminal()
+                { TerminalPosition = serializableWire.PositionTerminal0 });
+
+            Terminals.Add(new WireTerminal()
+                { TerminalPosition = serializableWire.PositionTerminal1 });
+
+        }
+
+        private void updateBinding(SerializableWire wire, byte terminal, Tuple<SerializableElement, byte> previousValue, Tuple<SerializableElement, byte> newValue)
+        {
+            if (previousValue != null)
+                previousValue.Item1.OnScreenComponent.ScreenLayoutChanged -= updateScreenLayoutForBinded;
+            
+            if (newValue != null)
+                newValue.Item1.OnScreenComponent.ScreenLayoutChanged += updateScreenLayoutForBinded;
+        }
+
+        private void updateScreenLayoutForBinded(ScreenElementBase el)
+        {
+            if (IsTerminal0Bounded)
+                PositionTerminal0 = el.getAbsoluteTerminalPosition(bind0.Item2);
+
+            if (IsTerminal1Bounded)
+                PositionTerminal1 = el.getAbsoluteTerminalPosition(bind1.Item2);
+        }
+        
+
+        public override void selected()
+        {
+            highlightTerminal(0);
+            highlightTerminal(1);
+        }
+
+        public override void deselected()
+        {
+            lowlightTerminal(0);
+            lowlightTerminal(1);
+        }
+
+        public override void highlightTerminal(byte terminal)
+        {
+            Terminals[terminal].highlight();
+        }
+
+        public override void lowlightTerminal(byte terminal)
+        {
+            Terminals[terminal].lowlight();
+        }
+
+        public override void lowlightAllTerminals()
+        {
+            lowlightTerminal(0);
+            lowlightTerminal(1);
+        }
+
+        public override bool isInside(Rectangle rect)
+        {
+            if (rect == null) return false;
+
+            double x1 = Canvas.GetLeft(rect);
+            double y1 = Canvas.GetTop(rect);
+            double x2 = Canvas.GetLeft(rect) + rect.Width;
+            double y2 = Canvas.GetTop(rect) + rect.Height;
+
+            double leftExtreme =   (PositionTerminal0.X < PositionTerminal1.X) ? PositionTerminal0.X : PositionTerminal1.X;
+            double rightExtreme =  (PositionTerminal0.X > PositionTerminal1.X) ? PositionTerminal0.X : PositionTerminal1.X;
+            double topExtreme =    (PositionTerminal0.Y < PositionTerminal1.Y) ? PositionTerminal0.Y : PositionTerminal1.Y;
+            double bottomExtreme = (PositionTerminal0.Y > PositionTerminal1.Y) ? PositionTerminal0.Y : PositionTerminal1.Y;
+
+            return (x1 < leftExtreme) && (x2 > rightExtreme) &&
+                   (y1 < topExtreme) && (y2 > bottomExtreme);
+        }
+
+        public override Point2D getAbsoluteTerminalPosition(byte terminal)
+        {
+            return (terminal == 0) ? PositionTerminal0 : PositionTerminal1;
+        }
+
+        public override void SerializableLayoutChanged(SerializableElement el)
+        {
+            if (!IsTerminal0Bounded)
+                PositionTerminal0 = serializableWire.PositionTerminal0;
+
+            if (!IsTerminal1Bounded)
+                PositionTerminal1 = serializableWire.PositionTerminal1;
+        }
+
+        public override void moveRelative(Point2D vector)
+        {
+            Point2D originalPositionTerminal0 = serializableWire.PositionTerminal0;
+            Point2D originalPositionTerminal1 = serializableWire.PositionTerminal1;
+
+            PositionTerminal0 = originalPositionTerminal0 + vector;
+            PositionTerminal1 = originalPositionTerminal1 + vector;
         }
     }
 }
