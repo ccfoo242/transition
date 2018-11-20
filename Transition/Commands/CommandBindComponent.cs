@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor;
+using Transition.CircuitEditor.OnScreenComponents;
 using Transition.CircuitEditor.Serializable;
 
 namespace Transition.Commands
@@ -13,44 +14,35 @@ namespace Transition.Commands
         public string Title => "Command Bind Component";
 
         public SerializableComponent Component { get; set; }
-        private List<SerializableWire> wiresForComponents;
-        private List<Tuple<SerializableElement, byte, byte>> binds;
+
+        private List<SerializableWire> wiresForComponents = new List<SerializableWire>();
+        private Dictionary<byte, ElementTerminal> binds;
+
         public void execute()
         {
             foreach (SerializableWire wire in wiresForComponents)
-                CircuitEditor.CircuitEditor.currentInstance.currentDesign.addWire(wire);
-
-            foreach (Tuple<SerializableElement, byte, byte> tuple in binds)
-                if (tuple.Item1 is SerializableWire)
-                    ((SerializableWire)tuple.Item1).bind(Component, tuple.Item3, tuple.Item2);
-                
+                CircuitEditor.CircuitEditor.currentInstance.currentDesign.Wires.Add(wire);
+          
         }
 
         public void unExecute()
         {
             foreach (SerializableWire wire in wiresForComponents)
-                CircuitEditor.CircuitEditor.currentInstance.currentDesign.removeWire(wire);
-
-            foreach (Tuple<SerializableElement, byte, byte> tuple in binds)
-                if (tuple.Item1 is SerializableWire)
-                { ((SerializableWire)tuple.Item1).unBind(tuple.Item2);
-                  ((SerializableWire)tuple.Item1).OnScreenWire.terminals[tuple.Item2].updateOriginalPosition();
-                }
-
+                CircuitEditor.CircuitEditor.currentInstance.currentDesign.Wires.Remove(wire);
+          
         }
 
-        public CommandBindComponent(List<Tuple<SerializableElement,byte,byte>> binds, SerializableComponent comp)
+        public CommandBindComponent(Dictionary<byte, ElementTerminal> binds, SerializableComponent comp)
         {
             Component = comp;
             this.binds = binds;
-
-            wiresForComponents = new List<SerializableWire>();
+            
             SerializableWire wire;
 
-            foreach (Tuple<SerializableElement,byte,byte> tuple in binds)
-                if (tuple.Item1 is SerializableComponent)
+            foreach (KeyValuePair<byte, ElementTerminal> bind in binds)
+                if (bind.Value.ScreenElement.Serializable is SerializableComponent)
                 {
-                    wire = CircuitEditor.CircuitEditor.currentInstance.currentDesign.bindTwoComponentsTerminals(Component, tuple.Item3, (SerializableComponent)tuple.Item1, tuple.Item2);
+                    wire = CircuitEditor.CircuitEditor.currentInstance.currentDesign.bindTwoComponentsTerminals(comp, bind.Key, (SerializableComponent)bind.Value.ScreenElement.Serializable, bind.Value.TerminalNumber);
                     if (wire!=null) wiresForComponents.Add(wire);
                 }
         }

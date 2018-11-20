@@ -33,7 +33,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             postConstruct();
         }
 
-        public override void setPositionTextBoxes()
+        public override void setPositionTextBoxes(SerializableElement el)
         {
           
         }

@@ -20,7 +20,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
     /* i had to use Grid class because it has a border
      as for Border class, it is sealed...*/
 
-    public abstract class ScreenElementBase : Grid , ICircuitSelectable
+    public abstract class ScreenElementBase : Grid
     {
         //public Point2D originalPosition;
 
@@ -40,7 +40,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public abstract SerializableElement Serializable { get; }
 
         public abstract double RadiusClick { get; }
-        public double RadiusNear => 15;
+      //  public double RadiusNear => 15;
         public abstract bool isInside(Rectangle rect);
         public abstract Point2D getAbsoluteTerminalPosition(byte terminal);
 
@@ -48,24 +48,17 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public abstract void SerializableLayoutChanged(SerializableElement el);
 
-        public List<Terminal> Terminals { get; } = new List<Terminal>();
+        public List<ElementTerminal> Terminals { get; } = new List<ElementTerminal>();
 
         public delegate void ScreenElementDelegate(ScreenElementBase el);
         public event ScreenElementDelegate ScreenLayoutChanged;
 
-        // public Dictionary<int, Rectangle> terminalsRectangles;
-        
-
-        /* public bool isClicked(Point2D point)
-        {
-            return getDistance(pointX, pointY) < RadiusClick;
-        } */
-
+        /*
         public bool isPointNearTerminal(byte terminal, Point2D point)
         {
             return point.getDistance(getAbsoluteTerminalPosition(terminal)) < RadiusNear;
         }
-        
+        */
         public ScreenElementBase(SerializableElement element)
         {
             element.LayoutChanged += SerializableLayoutChanged;
@@ -75,9 +68,10 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             ScreenLayoutChanged?.Invoke(this);
         }
+        
     }
 
-    public abstract class ScreenComponentBase : ScreenElementBase, INotifyPropertyChanged
+    public abstract class ScreenComponentBase : ScreenElementBase, INotifyPropertyChanged, ICircuitSelectable, ICircuitMovable
     {
         public Canvas ComponentCanvas { get; }
         public CompositeTransform ComponentTransform { get; }
@@ -100,10 +94,14 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public Point2D componentPosition;
         public Point2D ComponentPosition
             { get => componentPosition;
-              set  { componentPosition = value;
+              set  { if (componentPosition == value) return;
+                     componentPosition = value;
                      setPositionTerminals(Serializable);
                      setPositionTextBoxes(Serializable);
+                     RaiseScreenLayoutChanged();
             } }
+
+        public Point2D OriginalComponentPosition => SerializableComponent.ComponentPosition;
 
         public override byte QuantityOfTerminals => SerializableComponent.QuantityOfTerminals;
         public override double RadiusClick => 30;
@@ -112,17 +110,13 @@ namespace Transition.CircuitEditor.OnScreenComponents
        
         public override void SerializableLayoutChanged(SerializableElement el)
         {
-            setPositionTerminals(Serializable);
-            setPositionTextBoxes(Serializable);
+            ComponentPosition = SerializableComponent.ComponentPosition;
         }
 
         public ScreenComponentBase(SerializableComponent component) : base(component)
         {
             SerializableComponent = component;
-
-            component.LayoutChanged += setPositionTextBoxes;
-            component.LayoutChanged += setPositionTerminals;
-
+            
             ComponentTransform = new CompositeTransform();
             ComponentTransform.CenterX = SchematicWidth / 2;
             ComponentTransform.CenterY = SchematicHeight / 2;
@@ -137,7 +131,6 @@ namespace Transition.CircuitEditor.OnScreenComponents
             BorderThickness = new Thickness(1);
             Children.Add(ComponentCanvas);
             
-            //DataContext = SerializableComponent;
 
             Binding bPX = new Binding()
             {
@@ -176,11 +169,11 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
             BindingOperations.SetBinding(ComponentTransform, CompositeTransform.ScaleYProperty, bFY);
 
-            Terminal t;
+            ElementTerminal t;
 
             for (byte x = 0; x < QuantityOfTerminals; x++)
             {
-                t = new Terminal();
+                t = new ElementTerminal(x, this);
                 Terminals.Add(t);
                 Children.Add(t);
             }
@@ -297,8 +290,14 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             Terminals[terminal].lowlight();
         }
+
+        public bool isClicked(Point2D point)
+        {
+            return point.getDistance(componentPosition) < RadiusClick;
+        }
+
     }
-    
+
 
 
     public class BoolToIntConverter : IValueConverter

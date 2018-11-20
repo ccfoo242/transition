@@ -17,12 +17,12 @@ namespace Transition.Commands
 
         public void execute()
         {
-            CircuitEditor.CircuitEditor.currentInstance.currentDesign.addComponent(Component);
+            CircuitEditor.CircuitEditor.currentInstance.currentDesign.Components.Add(Component);
         }
 
         public void unExecute()
         {
-            CircuitEditor.CircuitEditor.currentInstance.currentDesign.removeComponent(Component);
+            CircuitEditor.CircuitEditor.currentInstance.currentDesign.Components.Remove(Component);
         }
 
         

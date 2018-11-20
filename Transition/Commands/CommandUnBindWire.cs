@@ -5,33 +5,32 @@ using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor;
 using Transition.CircuitEditor.Serializable;
+using Transition.Common;
 
 namespace Transition.Commands
 {
     public class CommandUnBindWire : ICircuitCommand
     {
-        public string Title => throw new NotImplementedException();
+        public string Title => "UnBindWire " + Wire.ToString() + " Terminal number" + WireTerminalNumber.ToString() + 
+            " From " + BoundedObject.ToString() + " Terminal number " + ObjectTerminalNumber.ToString() ;
 
         public SerializableWire Wire { get; set; }
-        public byte Terminal { get; set; }
+        public byte WireTerminalNumber { get; set; }
 
         public SerializableElement BoundedObject { get; set; }
-        public byte ObjectTerminal { get; set; }
+        public byte ObjectTerminalNumber { get; set; }
 
-        public double newPositionX;
-        public double newPositionY;
+        public Point2D newPosition;
 
         public void execute()
         {
-            Wire.unBind(Terminal);
-
-            Wire.updatePosition(newPositionX, newPositionY, Terminal);
-            Wire.OnScreenWire.terminals[Terminal].updateOriginalPosition();
+            Wire.unBind(WireTerminalNumber);
+            Wire.updatePosition(newPosition, WireTerminalNumber);
         }
 
         public void unExecute()
         {
-            Wire.bind(BoundedObject, ObjectTerminal, Terminal);
+            Wire.doBind(WireTerminalNumber, BoundedObject, ObjectTerminalNumber);
         }
     }
 }

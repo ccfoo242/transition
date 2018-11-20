@@ -44,7 +44,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
             txtComponentName.RenderTransform = new TranslateTransform() { };
-            txtComponentName.SizeChanged += delegate { setPositionTextBoxes(); };
+            txtComponentName.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
             Children.Add(txtComponentName);
 
             txtVoltage = new TextBlock()
@@ -62,7 +62,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             postConstruct();
         }
 
-        public override void setPositionTextBoxes()
+        public override void setPositionTextBoxes(SerializableElement el)
         {
             
         }

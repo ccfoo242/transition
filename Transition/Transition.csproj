@@ -150,7 +150,8 @@
     <Compile Include="Commands\CommandAddWire.cs" />
     <Compile Include="Commands\CommandBindComponent.cs" />
     <Compile Include="Commands\CommandBindWire.cs" />
-    <Compile Include="Commands\CommandMoveElement.cs" />
+    <Compile Include="Commands\CommandMoveComponent.cs" />
+    <Compile Include="Commands\CommandMoveWireTerminal.cs" />
     <Compile Include="Commands\CommandRemoveComponent.cs" />
     <Compile Include="Commands\CommandRemoveWire.cs" />
     <Compile Include="Commands\CommandSetValue.cs" />

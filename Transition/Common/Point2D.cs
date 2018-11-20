@@ -46,12 +46,12 @@ namespace Transition.Common
 
         public static Point2D Add(Point2D n1, Point2D n2)
         {
-            return new Point2D(n1.X + n2.X, n1.Y + n2.y);
+            return new Point2D(n1.X + n2.X, n1.Y + n2.Y);
         }
 
         public static Point2D Substract(Point2D n1, Point2D n2)
         {
-            return new Point2D(n1.X - n2.X, n1.Y - n2.y);
+            return new Point2D(n1.X - n2.X, n1.Y - n2.Y);
         }
 
         public static Point2D Negate(Point2D n)

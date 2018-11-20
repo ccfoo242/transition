@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Transition.CircuitEditor.OnScreenComponents
 {
-    public class WireScreen : ScreenElementBase, INotifyPropertyChanged
+    public class WireScreen : ScreenElementBase, INotifyPropertyChanged 
     {
         private Line line { get; }
 
@@ -35,6 +35,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 position0 = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Position0"));
                 RaiseScreenLayoutChanged();
+                if (Terminals!=null) Terminals[0].TerminalPosition = value;
             }
         }
         
@@ -47,6 +48,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 position1 = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Position1"));
                 RaiseScreenLayoutChanged();
+                if (Terminals != null) Terminals[1].TerminalPosition = value;
             }
         }
 
@@ -133,12 +135,12 @@ namespace Transition.CircuitEditor.OnScreenComponents
             wire.WireBindingChanged += updateBinding;
             Children.Add(line);
             
-            Terminals.Add(new WireTerminal()
+            Terminals.Add(new WireTerminal(0, this)
                 { TerminalPosition = serializableWire.PositionTerminal0 });
 
-            Terminals.Add(new WireTerminal()
+            Terminals.Add(new WireTerminal(1, this)
                 { TerminalPosition = serializableWire.PositionTerminal1 });
-
+            
         }
 
         private void updateBinding(SerializableWire wire, byte terminal, Tuple<SerializableElement, byte> previousValue, Tuple<SerializableElement, byte> newValue)
@@ -170,6 +172,16 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             lowlightTerminal(0);
             lowlightTerminal(1);
+        }
+
+        public void selected(byte terminal)
+        {
+            highlightTerminal(terminal);
+        }
+
+        public void deselected(byte terminal)
+        {
+            lowlightTerminal(terminal);
         }
 
         public override void highlightTerminal(byte terminal)
@@ -227,6 +239,30 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
             PositionTerminal0 = originalPositionTerminal0 + vector;
             PositionTerminal1 = originalPositionTerminal1 + vector;
+        }
+
+        public void moveRelative(byte terminal, Point2D vector)
+        {
+            Point2D originalPositionTerminal = (terminal == 0) ? serializableWire.PositionTerminal0 : 
+                                                                 serializableWire.PositionTerminal1;
+
+            if (terminal == 0)
+                PositionTerminal0 = originalPositionTerminal + vector;
+            else
+                PositionTerminal1 = originalPositionTerminal + vector;
+        }
+
+        public void moveAbsolute(byte terminal, Point2D point)
+        {
+            if (terminal == 0)
+                PositionTerminal0 = point;
+            else
+                PositionTerminal1 = point;
+        }
+
+        public bool isTerminalBounded(byte terminal)
+        {
+            return (terminal == 0) ? IsTerminal0Bounded : IsTerminal1Bounded;
         }
     }
 }

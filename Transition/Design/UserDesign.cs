@@ -5,33 +5,41 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Transition.CircuitEditor;
 using Transition.CircuitEditor.OnScreenComponents;
 using Transition.CircuitEditor.Serializable;
+using Transition.Common;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Shapes;
 
 namespace Transition.Design
 {
     public class UserDesign
     {
-        /* the UserDesign class stores all circuit information, components, wires
-         * and the bounds between them. Also it handles the Canvas where the Design is
-         drawn, and has the responsability for drawing the circuit on this canvas.
-         This allows the UserDesign class to show a circuit on screen. This is useful
-         for showing circuit examples on different UI dialogs (and not only the 
-         circuit is being edited by the user in CircuitEditor)
-         On the other hand the CircuitEditor has all operations for manipulating
-         the design, to add components, wires, move and link them.
-         That means there is a strong coupling between UserDesign and CircuitEditor*/
+        /* the UserDesign class stores all circuit information, components, 
+         * component parameters, wires and the bounds between them. Also it handles
+         * the Canvas where the Design is drawn, and has the responsability for drawing 
+         * the circuit on this canvas. This allows the UserDesign class to show a circuit 
+         * on screen. This is useful for showing circuit examples on different UI dialogs
+         * (and not only the circuit is being edited by the user in CircuitEditor)
+         * On the other hand the CircuitEditor has all operations for manipulating
+         * the design, to add components, wires, move and link them.
+         * That means there is a strong coupling between UserDesign and CircuitEditor*/
 
-        public ObservableCollection<SerializableComponent> Components { get; }
-        public ObservableCollection<SerializableWire> Wires { get; }
-        
+        public ObservableCollection<SerializableComponent> Components { get; } = new ObservableCollection<SerializableComponent>();
+        public ObservableCollection<SerializableWire> Wires { get; } = new ObservableCollection<SerializableWire>();
+
+        public ObservableCollection<ScreenComponentBase> ScreenComponents { get; } = new ObservableCollection<ScreenComponentBase>();
+        public ObservableCollection<WireScreen> ScreenWires { get; } = new ObservableCollection<WireScreen>();
+
         public delegate void ElementDelegate(UserDesign sender, SerializableElement element);
         public event ElementDelegate ElementAdded;
         public event ElementDelegate ElementRemoved;
+
+        public double RadiusNear => 15;
 
         public Canvas CanvasCircuit { get; }
 
@@ -49,9 +57,6 @@ namespace Transition.Design
                 AllowDrop = true
             };
             
-            Components = new ObservableCollection<SerializableComponent>();
-            Wires = new ObservableCollection<SerializableWire>();
-
             Components.CollectionChanged += Components_CollectionChanged;
             Wires.CollectionChanged += Wires_CollectionChanged;
             
@@ -62,13 +67,22 @@ namespace Transition.Design
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    foreach (SerializableComponent comp in e.NewItems)
-                    { CanvasCircuit.Children.Add(comp.OnScreenComponent);
-                        ElementAdded?.Invoke(this, component); }
+                    foreach (SerializableComponent component in e.NewItems)
+                    {
+                        CanvasCircuit.Children.Add(component.OnScreenComponent);
+                        ScreenComponents.Add(component.OnScreenComponent);
+                        ElementAdded?.Invoke(this, component);
+                    }
                     break;
+
                 case NotifyCollectionChangedAction.Remove:
-                    foreach (SerializableComponent comp in e.OldItems)
-                        removedComponent(comp);
+                    foreach (SerializableComponent component in e.OldItems)
+                    {
+                        component.deletedElement();
+                        CanvasCircuit.Children.Remove(component.OnScreenComponent);
+                        ScreenComponents.Remove(component.OnScreenComponent);
+                        ElementRemoved?.Invoke(this, component);
+                    }
                     break;
             }
            
@@ -82,16 +96,20 @@ namespace Transition.Design
                     foreach (SerializableWire wire in e.NewItems)
                     {
                         CanvasCircuit.Children.Add(wire.OnScreenWire);
-                        CanvasCircuit.Children.Add(wire.OnScreenWire.terminals[0]);
-                        CanvasCircuit.Children.Add(wire.OnScreenWire.terminals[1]);
+                        ScreenWires.Add(wire.OnScreenWire);
+                        ElementAdded?.Invoke(this, wire);
                     };
                     break;
                 case NotifyCollectionChangedAction.Remove:
                     foreach (SerializableWire wire in e.OldItems)
-                        removedWire(wire);
+                    {
+                        wire.deletedElement();
+                        CanvasCircuit.Children.Remove(wire.OnScreenWire);
+                        ScreenWires.Remove(wire.OnScreenWire);
+                        ElementRemoved?.Invoke(this, wire);
+                    }
                     break;
             }
-            
         }
         
 
@@ -101,52 +119,25 @@ namespace Transition.Design
             if (element is SerializableWire) Wires.Remove((SerializableWire)element);
         }
         
-
-        public void removedComponent(SerializableComponent component)
+       
+        public List<SerializableWire> getBoundedWires(SerializableElement el, byte terminal)
         {
-            component.deletedElement();
-            
-            CanvasCircuit.Children.Remove(component.OnScreenComponent);
-            ElementRemoved?.Invoke(this, component);
-        }
-        
-        public void addWire(SerializableWire wire)
-        {
-            Wires.Add(wire);
-            ElementAdded?.Invoke(this, wire);
-        }
-
-        public List<SerializableWireTerminal> getBoundedWires(SerializableElement el, byte terminal)
-        {
-            var output = new List<SerializableWireTerminal>();
+            var output = new List<SerializableWire>();
 
             foreach (SerializableWire wire in Wires)
             {
                 if (wire.IsTerminal0Bounded)
-                    if (wire.BoundedObject0 == el && wire.BoundedTerminal0 == terminal)
-                        output.Add(new SerializableWireTerminal()
-                            { Wire = wire, Terminal = 0 });
+                    if (wire.Bind0.Item1 == el && wire.Bind0.Item2 == terminal)
+                        output.Add(wire);
                             
                 if (wire.IsTerminal1Bounded)
-                    if (wire.BoundedObject1 == el && wire.BoundedTerminal1 == terminal)
-                        output.Add(new SerializableWireTerminal()
-                            { Wire = wire, Terminal = 1 });
+                    if (wire.Bind1.Item1 == el && wire.Bind1.Item2 == terminal)
+                        output.Add(wire);
             }
 
             return output;
         }
         
-        public void removedWire(SerializableWire wire)
-        { 
-            wire.deletedElement();
-               // wires.Remove(wire);
-            CanvasCircuit.Children.Remove(wire.OnScreenWire);
-        //    CanvasCircuit.Children.Remove(wire.OnScreenWire.terminals[0]);
-        //    CanvasCircuit.Children.Remove(wire.OnScreenWire.terminals[1]);
-
-            ElementRemoved?.Invoke(this, wire);
-            
-        }
 
         public SerializableWire bindTwoComponentsTerminals(SerializableComponent comp1, byte terminal1, SerializableComponent comp2, byte terminal2)
         {
@@ -156,13 +147,12 @@ namespace Transition.Design
             if ((comp1 == comp2) && (terminal1 == terminal2)) return null;
 
             SerializableWire wire = new SerializableWire();
+
+            wire.Bind0 = new Tuple<SerializableElement, byte>(comp1, terminal1);
+            wire.Bind1 = new Tuple<SerializableElement, byte>(comp2, terminal2);
             
-            wire.bind0(comp1, terminal1);
-            wire.bind1(comp2, terminal2);
             wire.ElementName = "W" + (getMaximumNumberWire() + 1).ToString();
-
-         //   addWire(wire);
-
+            
             return wire;
         }
 
@@ -170,13 +160,28 @@ namespace Transition.Design
         {
             foreach (SerializableWire wire in Wires)
             {
-                if ((wire.BoundedObject0 == comp1) && (wire.BoundedTerminal0 == terminal1)
-                   && (wire.BoundedObject1 == comp2) && (wire.BoundedTerminal1 == terminal2) ||
-                      (wire.BoundedObject0 == comp2) && (wire.BoundedTerminal0 == terminal2)
-                   && (wire.BoundedObject1 == comp1) && (wire.BoundedTerminal1 == terminal1))
+                if (((wire.Bind0.Item1 == comp1) && (wire.Bind0.Item2 == terminal1)
+                   && (wire.Bind1.Item1 == comp2) && (wire.Bind1.Item2 == terminal2)) ||
+                     ((wire.Bind0.Item1 == comp2) && (wire.Bind0.Item2 == terminal2)
+                   && (wire.Bind1.Item1 == comp1) && (wire.Bind1.Item2 == terminal1)))
                 { return true; }
             }
             return false;
+        }
+
+
+        public ICircuitSelectable getClickedElement(Point2D clickedPoint)
+        {
+            foreach (WireTerminal wt in getAllUnboundedWireTerminals())
+                if (wt.isClicked(clickedPoint)) return wt as ICircuitSelectable;
+
+            foreach (WireTerminal wt in getAllBoundedWireTerminals())
+                if (wt.isClicked(clickedPoint)) return wt as ICircuitSelectable;
+
+            foreach (ScreenComponentBase comp in ScreenComponents)
+                if (comp.isClicked(clickedPoint)) return comp as ICircuitSelectable;
+
+            return null;
         }
 
 
@@ -215,61 +220,151 @@ namespace Transition.Design
         {
             return getMaximumNumberElement(ElementLetter) + 1;
         }
-    }
 
-    
-    public class SerializableWireTerminal
-    {
-        /* this is just a holder of a Wire and its terminal number
-         there is other class WireTerminal but it is used for GUI purposes.*/
-
-        public SerializableWire Wire { get; set; }
-        public byte Terminal { get; set; }
-
-        public override bool Equals(object obj)
+        public List<ElementTerminal> getAllTerminals()
         {
-            if (obj is SerializableWireTerminal)
-                return (((SerializableWireTerminal)obj).Wire == Wire) &&
-                       (((SerializableWireTerminal)obj).Terminal == Terminal);
+            var output = new List<ElementTerminal>();
+            foreach (WireScreen wire in ScreenWires)
+            {
+                output.Add(wire.Terminals[0]);
+                output.Add(wire.Terminals[1]);
+            }
+
+            foreach (ScreenComponentBase comp in ScreenComponents)
+                foreach (ElementTerminal t in comp.Terminals)
+                    output.Add(t);
             
-            return false;
+            return output;
         }
 
-        public override int GetHashCode()
+        public List<ElementTerminal> getAllComponentTerminals()
         {
-            return base.GetHashCode();
+            var output = new List<ElementTerminal>();
+
+            foreach (ScreenComponentBase comp in ScreenComponents)
+                foreach (ElementTerminal t in comp.Terminals)
+                    output.Add(t);
+
+            return output;
         }
 
-        public override string ToString()
+        public List<WireTerminal> getAllWireTerminals()
         {
-            return "Wire: " + Wire.ToString() + " Terminal: " + Terminal.ToString();
-        }
-    }
-    
-    
-
-    public class ElementTerminal
-    {
-        public ScreenElementBase element { get; set; }
-        public byte terminal { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is ElementTerminal)
-                return (((ElementTerminal)obj).element == element) &&
-                       (((ElementTerminal)obj).terminal == terminal);
+            var output = new List<WireTerminal>();
+            foreach (WireScreen wire in ScreenWires)
+            {
+                output.Add(wire.Terminals[0] as WireTerminal);
+                output.Add(wire.Terminals[1] as WireTerminal);
+            }
             
-            return false;
+            return output;
         }
 
-        public override int GetHashCode()
+        public List<WireTerminal> getAllUnboundedWireTerminals()
         {
-            return base.GetHashCode();
+            var output = new List<WireTerminal>();
+            foreach (WireTerminal wt in getAllWireTerminals())
+                if (!wt.isBounded) output.Add(wt);
+            return output;
         }
 
-        public override string ToString()
+        public List<ElementTerminal> getAllUnboundedWireAndComponentTerminals()
         {
-            return "Element:" + element.ToString() + " Terminal: " + terminal.ToString();
+            var output = new List<ElementTerminal>();
+
+            foreach (WireTerminal wt in getAllWireTerminals())
+                if (!wt.isBounded) output.Add(wt);
+
+            foreach (ScreenComponentBase comp in ScreenComponents)
+                foreach (ElementTerminal t in comp.Terminals)
+                    output.Add(t);
+
+            return output;
+        }
+
+        public List<WireTerminal> getAllBoundedWireTerminals()
+        {
+            var output = new List<WireTerminal>();
+            foreach (WireTerminal wt in getAllWireTerminals())
+                if (wt.isBounded) output.Add(wt);
+            return output;
+        }
+
+        public List<ICircuitSelectable> enclosingElementsForGroupSelect(Rectangle rect)
+        {
+            var output = new List<ICircuitSelectable>();
+
+            foreach (ICircuitSelectable element in ScreenComponents.OfType<ICircuitSelectable>())
+                if (element.isInside(rect))
+                    output.Add(element);
+
+            foreach (ICircuitSelectable element in getAllUnboundedWireTerminals().OfType<ICircuitSelectable>())
+                if (element.isInside(rect))
+                    output.Add(element);
+            
+            return output;
+        }
+
+        public ElementTerminal getNearestElementTerminalExcept(Point2D point, ScreenElementBase removedElement)
+        {
+            /* when user is dragging a wire terminal across the screen
+               nearby components or wires terminals are highlighted,
+               but we need the dragged terminal not to be highlighted.
+               so the dragging wire terminal is the removed element */
+               
+            ElementTerminal nearestTerminal = null;
+            double nearestDistance = double.MaxValue;
+
+            foreach (ElementTerminal t in getAllTerminals())
+                if (t.ScreenElement != removedElement)
+                    if ((t.TerminalPosition.getDistance(point) < nearestDistance) &&
+                         t.TerminalPosition.getDistance(point) < RadiusNear)
+                    {
+                        nearestTerminal = t;
+                        nearestDistance = t.TerminalPosition.getDistance(point);
+                    }
+            
+            return nearestTerminal;
+        }
+
+        public List<Tuple<ElementTerminal, ElementTerminal>> getListPairedComponentTerminals()
+        {
+            var output = new List<Tuple<ElementTerminal, ElementTerminal>>();
+
+            var alreadyAddedTerminals = new List<ElementTerminal>();
+
+            var allTerminals = getAllUnboundedWireAndComponentTerminals();
+
+            foreach (var t1 in allTerminals)
+                foreach (var t2 in allTerminals)
+                    if (t1.ScreenElement != t2.ScreenElement)
+                        if (t1.TerminalPosition.getDistance(t2.TerminalPosition) < RadiusNear)
+                            if (!alreadyAddedTerminals.Contains(t1) &&
+                                !alreadyAddedTerminals.Contains(t2))
+                            {
+                                output.Add(new Tuple<ElementTerminal, ElementTerminal>(t1, t2));
+                                alreadyAddedTerminals.Add(t1);
+                                alreadyAddedTerminals.Add(t2);
+                            }
+                    
+
+            return output;
+        }
+
+        public Dictionary<byte, ElementTerminal> getListPairedComponentTerminals(ScreenComponentBase component)
+        {
+            var output = new Dictionary<byte, ElementTerminal>();
+
+            var allTerminals = getAllUnboundedWireAndComponentTerminals();
+
+            for (byte i = 0; i < component.QuantityOfTerminals; i++)
+                foreach (var t1 in allTerminals)
+                    if (t1.ScreenElement != component)
+                        if (t1.TerminalPosition.getDistance(component.Terminals[i].TerminalPosition) < RadiusNear)
+                            output.Add(i, t1);
+                               
+            return output;
         }
     }
+
 }

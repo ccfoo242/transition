@@ -12,11 +12,14 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Transition.CircuitEditor.OnScreenComponents
 {
-    public class Terminal : Grid
+    public class ElementTerminal : Grid
     {
-        public delegate void TerminalDelegate(Terminal t);
+        public delegate void TerminalDelegate(ElementTerminal t);
         public event TerminalDelegate TerminalPositionChanged;
 
+        public ScreenElementBase ScreenElement { get; }
+        public byte TerminalNumber { get; }
+        
         private Point2D terminalPosition;
         public Point2D TerminalPosition
         {
@@ -36,7 +39,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
         private Rectangle rectangle;
         private TranslateTransform rectTransform;
 
-        public Terminal()
+        public ElementTerminal(byte terminalNumber, ScreenElementBase element)
         {
             rectTransform = new TranslateTransform();
 
@@ -49,6 +52,9 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 Visibility = Visibility.Collapsed,
                 RenderTransform = rectTransform
             };
+
+            this.TerminalNumber = terminalNumber;
+            this.ScreenElement = element;
 
             Children.Add(rectangle);
         }
@@ -65,9 +71,56 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
     }
 
-    public class WireTerminal : Terminal
+    public class WireTerminal : ElementTerminal , ICircuitSelectable, ICircuitMovable
     {
-       
+        public WireScreen WireScreen { get; }
+        public bool isBounded => WireScreen.isTerminalBounded(TerminalNumber);
+        public Point2D OriginalTerminalPosition => WireScreen.serializableWire.Position(TerminalNumber);
+
+        public WireTerminal(byte terminalNumber, WireScreen wireScreen) : base(terminalNumber, wireScreen)
+        {
+            this.WireScreen = wireScreen;
+        }
+
+        public void selected()
+        {
+            WireScreen.selected(TerminalNumber);
+        }
+
+        public void deselected()
+        {
+            WireScreen.deselected(TerminalNumber);
+        }
+
+        public void moveRelative(Point2D vector)
+        {
+            WireScreen.moveRelative(TerminalNumber, vector);
+        }
+
+        
+        public void moveAbsolute(Point2D vector)
+        {
+            WireScreen.moveAbsolute(TerminalNumber, vector);
+        }
+
+        public bool isInside(Rectangle rect)
+        {
+            if (rect == null) return false;
+
+            double x1 = Canvas.GetLeft(rect);
+            double y1 = Canvas.GetTop(rect);
+            double x2 = Canvas.GetLeft(rect) + rect.Width;
+            double y2 = Canvas.GetTop(rect) + rect.Height;
+
+            return ((x1 < TerminalPosition.X) && (x2 > TerminalPosition.X) &&
+                    (y1 < TerminalPosition.Y) && (y2 > TerminalPosition.Y));
+              
+        }
+
+        public bool isClicked(Point2D point)
+        {
+            return (point.getDistance(TerminalPosition) < WireScreen.RadiusClick);
+        }
     }
 
 }

@@ -71,7 +71,6 @@ namespace Transition.CircuitEditor.Serializable
                 }
 
                 SetProperty(ref rotation, correctedValue);
-           //     ComponentLayoutChanged?.Invoke();
                 raiseLayoutChanged();
             } }
 

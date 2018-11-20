@@ -231,22 +231,36 @@
                                 </StackPanel>
                             </Button.Content>
                         </Button>
-                        <Button Margin="4" x:Name="btnCommonControlFlipX"
-                            Click="clickFlipX" VerticalAlignment="Center">
-                            <Button.Content>
+                        <ToggleButton x:Name="tglbtnCommonControlFlipX"
+                                      IsTapEnabled="True" Tapped="tapFlipX">
+                            <ToggleButton.Content>
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock Text="Flip X" HorizontalAlignment="Center"/>
                                 </StackPanel>
+                            </ToggleButton.Content>
+                        </ToggleButton>
+                        <!-- <Button Margin="4" x:Name="btnCommonControlFlipX"
+                            Click="clickFlipX" VerticalAlignment="Center">
+                            <Button.Content>
+                               
                             </Button.Content>
-                        </Button>
-                        <Button Margin="4" x:Name="btnCommonControlFlipY" 
+                        </Button> -->
+                        <ToggleButton x:Name="tglbtnCommonControlFlipY"
+                                      IsTapEnabled="True" Tapped="tapFlipY">
+                            <ToggleButton.Content>
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="Flip Y" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </ToggleButton.Content>
+                        </ToggleButton>
+                        <!-- <Button Margin="4" x:Name="btnCommonControlFlipY" 
                             Click="clickFlipY" VerticalAlignment="Center">
                             <Button.Content>
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock Text="Flip Y" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </Button.Content>
-                        </Button>
+                        </Button> -->
 
                     </StackPanel>
                     <ScrollViewer x:Name="scrComponentParameters" Grid.Row="1" Margin="4"/>

@@ -45,7 +45,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
             txtComponentName.RenderTransform = new TranslateTransform() { };
-            txtComponentName.SizeChanged += delegate { setPositionTextBoxes(); };
+            txtComponentName.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
             Children.Add(txtComponentName);
             
             txtInductorValue = new TextBlock() { FontWeight = FontWeights.ExtraBold };
@@ -56,14 +56,14 @@ namespace Transition.CircuitEditor.OnScreenComponents
             };
             txtInductorValue.SetBinding(TextBlock.TextProperty, b2);
             txtInductorValue.RenderTransform = new TranslateTransform() { };
-            txtInductorValue.SizeChanged += delegate { setPositionTextBoxes(); };
+            txtInductorValue.SizeChanged += delegate { setPositionTextBoxes(this.SerializableComponent); };
             Children.Add(txtInductorValue);
 
             postConstruct();
         }
 
 
-        public override void setPositionTextBoxes()
+        public override void setPositionTextBoxes(SerializableElement el)
         {
             double leftRV; double topRV;
             double leftCN; double topCN;

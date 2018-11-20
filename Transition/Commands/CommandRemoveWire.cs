@@ -17,12 +17,12 @@ namespace Transition.Commands
 
         public void execute()
         {
-            CircuitEditor.CircuitEditor.currentInstance.currentDesign.removeWire(Wire);
+            CircuitEditor.CircuitEditor.currentInstance.currentDesign.Wires.Remove(Wire);
         }
 
         public void unExecute()
         {
-            CircuitEditor.CircuitEditor.currentInstance.currentDesign.addWire(Wire);
+            CircuitEditor.CircuitEditor.currentInstance.currentDesign.Wires.Add(Wire);
         }
     }
 }

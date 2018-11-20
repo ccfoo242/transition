@@ -13,33 +13,34 @@ namespace Transition.Commands
     {
         public string Title => "Remove Component: " + Component.ToString();
        
-
         public SerializableComponent Component { get; }
-        public Dictionary<byte, List<SerializableWireTerminal>> Bindings { get; }
+        public List<SerializableWire> BindedWires { get; } = new List<SerializableWire>();
 
         public void execute()
         {
-            CircuitEditor.CircuitEditor.currentInstance.currentDesign.removeComponent(Component);
+            CircuitEditor.CircuitEditor.currentInstance.currentDesign.Components.Remove(Component);
         }
         
         public void unExecute()
         {
-            CircuitEditor.CircuitEditor.currentInstance.currentDesign.addComponent(Component);
+            CircuitEditor.CircuitEditor.currentInstance.currentDesign.Components.Add(Component);
 
-            for (byte i = 0; i < Component.QuantityOfTerminals; i++)
-                foreach (SerializableWireTerminal wt in Bindings[i])
+            foreach (SerializableWire wire in BindedWires)
+                CircuitEditor.CircuitEditor.currentInstance.currentDesign.Wires.Add(wire);
+
+           /* for (byte i = 0; i < Component.QuantityOfTerminals; i++)
+                foreach (Tuple<SerializableWire,byte> wt in Bindings[i])
                     wt.Wire.bind(Component, i, wt.Terminal);
-            
+            */
         }
 
         public CommandRemoveComponent(SerializableComponent comp)
         {
             Component = comp;
-            Bindings = new Dictionary<byte, List<SerializableWireTerminal>>();
 
             for (byte i = 0; i < comp.QuantityOfTerminals; i++)
-                Bindings[i] = CircuitEditor.CircuitEditor.currentInstance.currentDesign.getBoundedWires(comp, i);
-            
+                BindedWires.AddRange(CircuitEditor.CircuitEditor.currentInstance.currentDesign.getBoundedWires(comp, i));
+                 
         }
 
         public override string ToString()
@@ -47,14 +48,9 @@ namespace Transition.Commands
             string output = Title;
             output += Environment.NewLine;
 
-            foreach (KeyValuePair<byte, List<SerializableWireTerminal>> kvp in Bindings)
-            {
-                output += "Component terminal " + kvp.Key.ToString() + Environment.NewLine;
-
-                foreach (SerializableWireTerminal wt in kvp.Value)
-                    output += "Wire " + wt.Wire.ToString() + " Terminal: " + wt.Terminal.ToString() + Environment.NewLine;                
-            }
-
+            foreach (SerializableWire wire in BindedWires)
+                output += "Wire " + wire.ToString() + Environment.NewLine;
+            
             return output;
         }
 

@@ -5,36 +5,40 @@ using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor;
 using Transition.CircuitEditor.Serializable;
+using Transition.Common;
 using Transition.Design;
 
 namespace Transition.Commands
 {
     public class CommandBindWire : ICircuitCommand
     {
-        public string Title => "Bind " + Wt.ToString() + " Element: " + boundedObject.ToString() + " Element Terminal: " + boundedTerminal.ToString();
+        public string Title => "Bind " + Wire.ToString() + " terminal: " + WireTerminalNumber.ToString() + " Element: " + BoundedObject.ToString() + " Element Terminal: " + BoundedTerminal.ToString();
 
-        public SerializableWireTerminal Wt { get; set; }
+        public SerializableWire Wire { get; set; }
+        public byte WireTerminalNumber { get; set; }
 
-        public SerializableElement boundedObject { get; set; }
-        public byte boundedTerminal { get; set; }
+        public SerializableElement BoundedObject { get; set; }
+        public byte BoundedTerminal { get; set; }
 
-        public bool previousStateBounded { get; set; }
-        public SerializableElement previousBoundedObject { get; set; }
-        public byte previuosBoundedTerminal { get; set; }
+        public bool PreviousStateBounded { get; set; }
+        public SerializableElement PreviousBoundedObject { get; set; }
+        public byte PreviuosBoundedTerminal { get; set; }
+
+        public Point2D PreviousTerminalPosition { get; set; }
 
         public void execute()
         {
-            Wt.Wire.bind(boundedObject, boundedTerminal, Wt.Terminal);
+            Wire.doBind(WireTerminalNumber, BoundedObject, BoundedTerminal);
         }
 
         public void unExecute()
         {
-            if (previousStateBounded)
-                Wt.Wire.bind(previousBoundedObject, previuosBoundedTerminal, Wt.Terminal);
+            if (PreviousStateBounded)
+                Wire.doBind(WireTerminalNumber, PreviousBoundedObject, PreviuosBoundedTerminal);
             else
             {
-                Wt.Wire.unBind(Wt.Terminal);
-                Wt.Wire.OnScreenWire.terminals[Wt.Terminal].updateOriginalPosition();
+                Wire.unBind(WireTerminalNumber);
+                Wire.updatePosition(PreviousTerminalPosition, WireTerminalNumber);
             };
         }
 

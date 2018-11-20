@@ -101,7 +101,7 @@ namespace Transition.CircuitEditor.Serializable
         public override byte QuantityOfTerminals { get { return quantityOfTerminals; }
             set
             {
-                unbindElement();
+                //unbindElement();
                 SetProperty(ref quantityOfTerminals, value);
                 TerminalsChanged?.Invoke();
             } }
