@@ -33,7 +33,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             set
             {
                 position0 = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Position0"));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("PositionTerminal0"));
                 RaiseScreenLayoutChanged();
                 if (Terminals!=null) Terminals[0].TerminalPosition = value;
             }
@@ -46,7 +46,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             set
             {
                 position1 = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Position1"));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("PositionTerminal1"));
                 RaiseScreenLayoutChanged();
                 if (Terminals != null) Terminals[1].TerminalPosition = value;
             }
@@ -92,6 +92,9 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             this.serializableWire = wire;
 
+            this.HorizontalAlignment = HorizontalAlignment.Left;
+            this.VerticalAlignment = VerticalAlignment.Top;
+
             line = new Line()
             {
                 StrokeThickness = 4,
@@ -102,7 +105,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
            
             bX0 = new Binding()
             {
-                Path = new PropertyPath("Position0.X"),
+                Path = new PropertyPath("PositionTerminal0.X"),
                 Mode = BindingMode.OneWay,
                 Source = this
             };
@@ -110,7 +113,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
             bY0 = new Binding()
             {
-                Path = new PropertyPath("Position0.Y"),
+                Path = new PropertyPath("PositionTerminal0.Y"),
                 Mode = BindingMode.OneWay,
                 Source = this
             };
@@ -118,7 +121,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
             bX1 = new Binding()
             {
-                Path = new PropertyPath("Position1.X"),
+                Path = new PropertyPath("PositionTerminal1.X"),
                 Mode = BindingMode.OneWay,
                 Source = this
             };
@@ -126,7 +129,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
             bY1 = new Binding()
             {
-                Path = new PropertyPath("Position1.Y"),
+                Path = new PropertyPath("PositionTerminal1.Y"),
                 Mode = BindingMode.OneWay,
                 Source = this
             };
@@ -134,12 +137,15 @@ namespace Transition.CircuitEditor.OnScreenComponents
             
             wire.WireBindingChanged += updateBinding;
             Children.Add(line);
-            
-            Terminals.Add(new WireTerminal(0, this)
-                { TerminalPosition = serializableWire.PositionTerminal0 });
 
-            Terminals.Add(new WireTerminal(1, this)
-                { TerminalPosition = serializableWire.PositionTerminal1 });
+            var terminal0 = new WireTerminal(0, this) { TerminalPosition = serializableWire.PositionTerminal0 };
+            var terminal1 = new WireTerminal(1, this) { TerminalPosition = serializableWire.PositionTerminal1 };
+
+            Terminals.Add(terminal0);
+            Terminals.Add(terminal1);
+
+            Children.Add(terminal0);
+            Children.Add(terminal1);
             
         }
 

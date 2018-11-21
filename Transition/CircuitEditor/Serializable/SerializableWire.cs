@@ -30,7 +30,7 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        public Point2D Position(byte terminal) => (terminal == 0) ? PositionTerminal0 : PositionTerminal1;
+        public Point2D PositionTerminal(byte terminal) => (terminal == 0) ? PositionTerminal0 : PositionTerminal1;
         
         public override string ElementLetter => "W";
         public override string ElementType => "Wire";

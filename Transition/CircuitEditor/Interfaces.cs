@@ -19,7 +19,7 @@ namespace Transition.CircuitEditor
     public interface ICircuitSelectable
     {
         void selected();
-        void deselected(); /* deselect? ask Oxford American Dictionary guys */
+        void deselected(); 
         bool isInside(Rectangle rect);
         bool isClicked(Point2D point);
     }

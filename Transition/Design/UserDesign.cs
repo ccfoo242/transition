@@ -118,8 +118,26 @@ namespace Transition.Design
             if (element is SerializableComponent) Components.Remove((SerializableComponent)element);
             if (element is SerializableWire) Wires.Remove((SerializableWire)element);
         }
-        
-       
+
+        public List<ICircuitSelectable> getAllSelectable()
+        {
+            var output = new List<ICircuitSelectable>();
+
+            output.AddRange(ScreenComponents);
+            output.AddRange(getAllUnboundedWireTerminals());
+
+            return output;
+        }
+
+        public List<ScreenElementBase> getAllScreenElements()
+        {
+            var output = new List<ScreenElementBase>();
+            output.AddRange(ScreenWires);
+            output.AddRange(ScreenComponents);
+
+            return output;
+        }
+
         public List<SerializableWire> getBoundedWires(SerializableElement el, byte terminal)
         {
             var output = new List<SerializableWire>();
@@ -315,6 +333,17 @@ namespace Transition.Design
             ElementTerminal nearestTerminal = null;
             double nearestDistance = double.MaxValue;
 
+            foreach (var el in getAllScreenElements())
+                if (el != removedElement)
+                    for (byte i = 0; i < el.QuantityOfTerminals; i++)
+                        if ((el.getAbsoluteTerminalPosition(i).getDistance(point) < nearestDistance) &&
+                            el.getAbsoluteTerminalPosition(i).getDistance(point) < RadiusNear)
+                        {
+                            nearestTerminal = el.Terminals[i];
+                            nearestDistance = el.getAbsoluteTerminalPosition(i).getDistance(point);
+                        }
+                    
+            /*
             foreach (ElementTerminal t in getAllTerminals())
                 if (t.ScreenElement != removedElement)
                     if ((t.TerminalPosition.getDistance(point) < nearestDistance) &&
@@ -323,7 +352,8 @@ namespace Transition.Design
                         nearestTerminal = t;
                         nearestDistance = t.TerminalPosition.getDistance(point);
                     }
-            
+            */
+
             return nearestTerminal;
         }
 
@@ -364,6 +394,12 @@ namespace Transition.Design
                             output.Add(i, t1);
                                
             return output;
+        }
+        
+        public void lowlightAllTerminalsAllElements()
+        {
+            foreach (ElementTerminal t in getAllTerminals())
+                t.lowlight();
         }
     }
 

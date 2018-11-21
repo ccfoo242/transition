@@ -158,9 +158,10 @@ namespace Transition.CircuitEditor
                     break;
 
                 case NotifyCollectionChangedAction.Reset:
-                    foreach (ICircuitSelectable element in currentDesign.CanvasCircuit.Children.OfType<ScreenElementBase>())
-                        element.deselected();
-
+                    {
+                        foreach (ICircuitSelectable element in currentDesign.getAllSelectable())
+                            element.deselected();
+                    }
                     disableComponentEdit();
                     break;
             }
@@ -346,11 +347,6 @@ namespace Transition.CircuitEditor
                 SnapToGrid ? Statics.round20(coordinate.Y) : coordinate.Y);
         }
 
-        private void lowlightAllTerminalsAllElements()
-        {
-            foreach (ScreenElementBase el in currentDesign.CanvasCircuit.Children.OfType<ScreenElementBase>())
-                el.lowlightAllTerminals();
-        }
         
       
 
@@ -401,6 +397,7 @@ namespace Transition.CircuitEditor
 
                 if (groupSelect)
                 {
+                    /* user is making a group select */
                     double left;
                     double top;
                     double width;
@@ -430,7 +427,7 @@ namespace Transition.CircuitEditor
                     if (selectedElements.Count > 1)
                     {
                         foreach (ICircuitMovable element in selectedElements.OfType<ICircuitMovable>())
-                            element.moveRelative(snapCoordinate(clickedPoint - ptCanvas));
+                            element.moveRelative(snapCoordinate(ptCanvas - clickedPoint));
                     }
 
                     if (selectedElements.Count == 1)
@@ -441,18 +438,18 @@ namespace Transition.CircuitEditor
                             WireTerminal wt = (WireTerminal)selectedElements[0];
                             
                             var nearest = currentDesign.getNearestElementTerminalExcept(ptCanvas, wt.ScreenElement);
-                            lowlightAllTerminalsAllElements();
-
+                            currentDesign.lowlightAllTerminalsAllElements();
+                            wt.highlight();
                             if (nearest != null)
                             {
                                 /* there is a terminal of something (component or other wire) nearby
                                  so the dragged wire terminal "snaps" to the nearby terminal*/
                                nearest.highlight();
-                               wt.moveAbsolute(nearest.TerminalPosition);
+                               wt.moveAbsolute(nearest.getAbsoluteTerminalPosition());
                             }
                             else
                             {   //there is nothing nearby so we can move the unbounded wire terminal, freely
-                                wt.moveRelative(snapCoordinate(clickedPoint - ptCanvas));
+                                wt.moveRelative(snapCoordinate(ptCanvas - clickedPoint));
                             }
                             
                         }
@@ -464,9 +461,9 @@ namespace Transition.CircuitEditor
                             the two terminals will be highlighted.
                             */
                             var component = selectedElements[0] as ScreenComponentBase;
-                            component.moveRelative(snapCoordinate(clickedPoint - ptCanvas));
+                            component.moveRelative(snapCoordinate(ptCanvas - clickedPoint));
 
-                            lowlightAllTerminalsAllElements();
+                            currentDesign.lowlightAllTerminalsAllElements();
                             var pairs = currentDesign.getListPairedComponentTerminals(component);
 
                             foreach (KeyValuePair<byte, ElementTerminal> pair in pairs)
@@ -620,6 +617,19 @@ namespace Transition.CircuitEditor
                                 OldPosition = component.OriginalComponentPosition,
                                 NewPosition = component.componentPosition,
                                 Component = component.SerializableComponent
+                            };
+                            executeCommand(command);
+                        }
+
+                    foreach (WireTerminal wt in selectedElements.OfType<WireTerminal>())
+                        if (wt.OriginalTerminalPosition != wt.TerminalPosition)
+                        {
+                            var command = new CommandMoveWireTerminal()
+                            {
+                                OldPosition = wt.OriginalTerminalPosition,
+                                NewPosition = wt.TerminalPosition,
+                                Wire = wt.WireScreen.serializableWire,
+                                WireTerminalNumber = wt.TerminalNumber
                             };
                             executeCommand(command);
                         }

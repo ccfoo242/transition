@@ -31,6 +31,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 terminalPosition = value;
                 rectTransform.X = value.X - rectangleWidth / 2;
                 rectTransform.Y = value.Y - rectangleWidth / 2;
+
+                TerminalPositionChanged?.Invoke(this);
             }
         }
 
@@ -43,18 +45,21 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             rectTransform = new TranslateTransform();
 
+            this.HorizontalAlignment = HorizontalAlignment.Left;
+            this.VerticalAlignment = VerticalAlignment.Top;
+
             rectangle = new Rectangle()
             {
                 Width = rectangleWidth,
                 Height = rectangleWidth,
                 Stroke = new SolidColorBrush(Colors.Black),
                 StrokeThickness = 1,
-                Visibility = Visibility.Collapsed,
-                RenderTransform = rectTransform
+                Visibility = Visibility.Collapsed
             };
 
             this.TerminalNumber = terminalNumber;
             this.ScreenElement = element;
+            this.RenderTransform = rectTransform;
 
             Children.Add(rectangle);
         }
@@ -69,13 +74,18 @@ namespace Transition.CircuitEditor.OnScreenComponents
             rectangle.Visibility = Visibility.Collapsed;
         }
 
+        public Point2D getAbsoluteTerminalPosition()
+        {
+            return ScreenElement.getAbsoluteTerminalPosition(TerminalNumber);
+        }
+
     }
 
     public class WireTerminal : ElementTerminal , ICircuitSelectable, ICircuitMovable
     {
         public WireScreen WireScreen { get; }
         public bool isBounded => WireScreen.isTerminalBounded(TerminalNumber);
-        public Point2D OriginalTerminalPosition => WireScreen.serializableWire.Position(TerminalNumber);
+        public Point2D OriginalTerminalPosition => WireScreen.serializableWire.PositionTerminal(TerminalNumber);
 
         public WireTerminal(byte terminalNumber, WireScreen wireScreen) : base(terminalNumber, wireScreen)
         {

@@ -85,6 +85,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public abstract double SchematicWidth { get; }
         public abstract double SchematicHeight { get; }
 
+        public Point2D HalfComponentVector => new Point2D(SchematicWidth / 2, SchematicHeight / 2);
+
         public abstract void setPositionTextBoxes(SerializableElement element);
    
         public double ActualRotation => SerializableComponent.Rotation;
@@ -99,6 +101,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
                      setPositionTerminals(Serializable);
                      setPositionTextBoxes(Serializable);
                      RaiseScreenLayoutChanged();
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ComponentPosition"));
             } }
 
         public Point2D OriginalComponentPosition => SerializableComponent.ComponentPosition;
@@ -135,21 +138,24 @@ namespace Transition.CircuitEditor.OnScreenComponents
             Binding bPX = new Binding()
             {
                 Path = new PropertyPath("ComponentPosition.X"),
-                Mode = BindingMode.OneWay
+                Mode = BindingMode.OneWay,
+                Source = this
             };
             SetBinding(Canvas.LeftProperty, bPX);
 
             Binding bPY = new Binding()
             {
                 Path = new PropertyPath("ComponentPosition.Y"),
-                Mode = BindingMode.OneWay
+                Mode = BindingMode.OneWay,
+                Source = this
             };
             SetBinding(Canvas.TopProperty, bPY);
 
             Binding bRt = new Binding()
             {
                 Path = new PropertyPath("ActualRotation"),
-                Mode = BindingMode.OneWay
+                Mode = BindingMode.OneWay,
+                Source = this,
             };
             BindingOperations.SetBinding(ComponentTransform, CompositeTransform.RotationProperty, bRt);
 
@@ -157,7 +163,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             {
                 Path = new PropertyPath("FlipX"),
                 Mode = BindingMode.OneWay,
-                Converter = new BoolToIntConverter()
+                Converter = new BoolToIntConverter(),
+                Source = this
             };
             BindingOperations.SetBinding(ComponentTransform, CompositeTransform.ScaleXProperty, bFX);
 
@@ -165,7 +172,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             {
                 Path = new PropertyPath("FlipY"),
                 Mode = BindingMode.OneWay,
-                Converter = new BoolToIntConverter()
+                Converter = new BoolToIntConverter(),
+                Source = this
             };
             BindingOperations.SetBinding(ComponentTransform, CompositeTransform.ScaleYProperty, bFY);
 
@@ -259,7 +267,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public void setPositionTerminals(SerializableElement element)
         {
             for (byte x = 0; x < QuantityOfTerminals; x++)
-                Terminals[x].TerminalPosition = getRelativeTerminalPosition(x);
+                Terminals[x].TerminalPosition = HalfComponentVector + getRelativeTerminalPosition(x);
             
         }
 
@@ -267,11 +275,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public override Point2D getAbsoluteTerminalPosition(byte terminal)
         {
             Point2D relative = getRelativeTerminalPosition(terminal);
-
-            double X = (SchematicWidth / 2) + relative.X + ComponentPosition.X;
-            double Y = (SchematicHeight / 2) + relative.Y + ComponentPosition.Y;
             
-            return new Point2D(X, Y);
+            return relative + ComponentPosition + HalfComponentVector;
         }
 
 
@@ -293,7 +298,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public bool isClicked(Point2D point)
         {
-            return point.getDistance(componentPosition) < RadiusClick;
+            return point.getDistance(componentPosition + HalfComponentVector) < RadiusClick;
         }
 
     }
