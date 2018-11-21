@@ -291,10 +291,19 @@ namespace Transition.CustomControls
 
             if (result == ContentDialogResult.Primary)
             {
+                EngrNumber NewValue;
+                
+                if (!AnyPrecisionSelected)
+                {
+                    NewValue = new EngrNumber(getNextOrEqualValue(box.Value), box.Value.Prefix);
+                }
+                else
+                    NewValue = box.Value; 
+
                 var args = new ValueChangedEventArgs
                 {
                     oldValue = ComponentValue,
-                    newValue = box.Value,
+                    newValue = NewValue,
                     PropertyName = "Value"
                 };
 

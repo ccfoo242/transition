@@ -88,6 +88,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public override byte QuantityOfTerminals => 2;
 
+        public override string ToString() => "WireScreen " + serializableWire.ToString();
         public WireScreen(SerializableWire wire) : base(wire)
         {
             this.serializableWire = wire;
@@ -161,11 +162,11 @@ namespace Transition.CircuitEditor.OnScreenComponents
         private void updateScreenLayoutForBinded(ScreenElementBase el)
         {
             if (IsTerminal0Bounded)
-                if (bind0.Item1==el)
+                if (bind0.Item1 == el)
                     PositionTerminal0 = el.getAbsoluteTerminalPosition(bind0.Item2); 
 
             if (IsTerminal1Bounded)
-                if (bind1.Item1==el)
+                if (bind1.Item1 == el)
                     PositionTerminal1 = el.getAbsoluteTerminalPosition(bind1.Item2);
         }
         

@@ -25,7 +25,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
-            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="180"/>
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.Row="0" Grid.Column="0"
@@ -37,7 +37,8 @@
               HorizontalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>
@@ -61,7 +62,7 @@
                  AllowDrop="False"  InputScope="AlphanumericFullWidth"
                  Text="{x:Bind ComponentValue, Mode=TwoWay, Converter = {StaticResource engrConverter}}" />
 
-            <StackPanel Orientation="Vertical" Grid.Column="1"
+            <StackPanel Orientation="Vertical" Grid.Column="2"
                         x:Name="stkButtonsIncDec" HorizontalAlignment="Left"
                         Visibility="{x:Bind AnyPrecisionSelected, Mode=OneWay, Converter = {StaticResource boolVisibilityConverter}, ConverterParameter=Reverse}" >
                 <RepeatButton x:Name="btnIncrease" 
@@ -83,8 +84,8 @@
                     </RepeatButton.Content>
                 </RepeatButton>
             </StackPanel>
-            <Button Content="..." IsTapEnabled="True" Tapped="TapChangeValue"  Grid.Column="1"
-                    Visibility="{x:Bind AnyPrecisionSelected, Mode=OneWay, Converter = {StaticResource boolVisibilityConverter}}"/>
+            <Button Content="..." IsTapEnabled="True" Tapped="TapChangeValue"  Grid.Column="1"/>
+            <!-- Visibility="{x:Bind AnyPrecisionSelected, Mode=OneWay, Converter = {StaticResource boolVisibilityConverter}}"/> -->
         </Grid>
 
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Precision:" 

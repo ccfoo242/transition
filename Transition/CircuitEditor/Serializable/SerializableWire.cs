@@ -16,7 +16,8 @@ namespace Transition.CircuitEditor.Serializable
         public Point2D PositionTerminal0
         {
             get { return positionTerminal0; }
-            set { SetProperty(ref positionTerminal0, value);
+            set { if (positionTerminal0 == value) return;
+                  SetProperty(ref positionTerminal0, value);
                   raiseLayoutChanged();
             }
         }
@@ -25,7 +26,8 @@ namespace Transition.CircuitEditor.Serializable
         public Point2D PositionTerminal1
         {
             get { return positionTerminal1; }
-            set { SetProperty(ref positionTerminal1, value);
+            set { if (positionTerminal1 == value) return;
+                  SetProperty(ref positionTerminal1, value);
                   raiseLayoutChanged();
             }
         }
@@ -122,8 +124,11 @@ namespace Transition.CircuitEditor.Serializable
 
         public void BindedElementDeleted(SerializableElement el)
         {
-            if (Bind0.Item1 == el) Bind0 = null;
-            if (Bind1.Item1 == el) Bind1 = null;
+            if (Bind0!=null)
+                if (Bind0.Item1 == el) Bind0 = null;
+
+            if (Bind1!=null)
+                if (Bind1.Item1 == el) Bind1 = null;
         }
 
         public void doBind(byte thisWireTerminal, SerializableElement element, byte elementTerminal)

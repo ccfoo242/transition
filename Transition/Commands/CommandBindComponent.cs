@@ -40,11 +40,10 @@ namespace Transition.Commands
             SerializableWire wire;
 
             foreach (KeyValuePair<byte, ElementTerminal> bind in binds)
-                if (bind.Value.ScreenElement.Serializable is SerializableComponent)
-                {
-                    wire = CircuitEditor.CircuitEditor.currentInstance.currentDesign.bindTwoComponentsTerminals(comp, bind.Key, (SerializableComponent)bind.Value.ScreenElement.Serializable, bind.Value.TerminalNumber);
-                    if (wire!=null) wiresForComponents.Add(wire);
-                }
+            { 
+                wire = CircuitEditor.CircuitEditor.currentInstance.currentDesign.bindComponentTerminal(comp, bind.Key, bind.Value.ScreenElement.Serializable, bind.Value.TerminalNumber);
+                if (wire != null) wiresForComponents.Add(wire);
+            }
         }
     }
 }

@@ -157,29 +157,29 @@ namespace Transition.Design
         }
         
 
-        public SerializableWire bindTwoComponentsTerminals(SerializableComponent comp1, byte terminal1, SerializableComponent comp2, byte terminal2)
+        public SerializableWire bindComponentTerminal(SerializableComponent comp1, byte terminal1, SerializableElement el2, byte terminal2)
         {
-            if (areTwoComponentsTerminalsBounded(comp1, terminal1, comp2, terminal2))
+            if (areTwoElementsTerminalsBounded(comp1, terminal1, el2, terminal2))
                 return null;
 
-            if ((comp1 == comp2) && (terminal1 == terminal2)) return null;
+            if ((comp1 == el2) && (terminal1 == terminal2)) return null;
 
             SerializableWire wire = new SerializableWire();
 
             wire.Bind0 = new Tuple<SerializableElement, byte>(comp1, terminal1);
-            wire.Bind1 = new Tuple<SerializableElement, byte>(comp2, terminal2);
+            wire.Bind1 = new Tuple<SerializableElement, byte>(el2, terminal2);
             
             wire.ElementName = "W" + (getMaximumNumberWire() + 1).ToString();
             
             return wire;
         }
 
-        public bool areTwoComponentsTerminalsBounded(SerializableComponent comp1, byte terminal1, SerializableComponent comp2, byte terminal2)
+        public bool areTwoElementsTerminalsBounded(SerializableElement el1, byte terminal1, SerializableElement el2, byte terminal2)
         {
             foreach (SerializableWire wire in Wires)
             {
-                if (wire.isWireBoundedTo(comp1, terminal1) &&
-                    wire.isWireBoundedTo(comp2, terminal2))
+                if (wire.isWireBoundedTo(el1, terminal1) &&
+                    wire.isWireBoundedTo(el2, terminal2))
                     return true;
             }
             return false;
@@ -330,27 +330,28 @@ namespace Transition.Design
                
             ElementTerminal nearestTerminal = null;
             double nearestDistance = double.MaxValue;
-
+            
             foreach (var el in getAllScreenElements())
                 if (el != removedElement)
                     for (byte i = 0; i < el.QuantityOfTerminals; i++)
                         if ((el.getAbsoluteTerminalPosition(i).getDistance(point) < nearestDistance) &&
                             el.getAbsoluteTerminalPosition(i).getDistance(point) < RadiusNear)
-                        {
-                            nearestTerminal = el.Terminals[i];
-                            nearestDistance = el.getAbsoluteTerminalPosition(i).getDistance(point);
+                        {if (el is WireScreen)
+                            { WireScreen ws = (WireScreen)el;
+                                if (!ws.isTerminalBounded(i))
+                                {
+                                    nearestTerminal = el.Terminals[i];
+                                    nearestDistance = el.getAbsoluteTerminalPosition(i).getDistance(point);
+                                }
+                            }
+                            else
+                            {
+                                nearestTerminal = el.Terminals[i];
+                                nearestDistance = el.getAbsoluteTerminalPosition(i).getDistance(point);
+                            }
+                            
                         }
-                    
-            /*
-            foreach (ElementTerminal t in getAllTerminals())
-                if (t.ScreenElement != removedElement)
-                    if ((t.TerminalPosition.getDistance(point) < nearestDistance) &&
-                         t.TerminalPosition.getDistance(point) < RadiusNear)
-                    {
-                        nearestTerminal = t;
-                        nearestDistance = t.TerminalPosition.getDistance(point);
-                    }
-            */
+                   
 
             return nearestTerminal;
         }
@@ -360,7 +361,6 @@ namespace Transition.Design
             var output = new List<Tuple<ElementTerminal, ElementTerminal>>();
 
             var alreadyAddedTerminals = new List<ElementTerminal>();
-
             var allTerminals = getAllUnboundedWireAndComponentTerminals();
 
             foreach (var t1 in allTerminals)
@@ -375,7 +375,6 @@ namespace Transition.Design
                                 alreadyAddedTerminals.Add(t2);
                             }
                     
-
             return output;
         }
 

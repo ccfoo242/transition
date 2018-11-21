@@ -238,7 +238,7 @@ namespace Transition.CircuitEditor
         private void bindComponentTerminalPair(ElementTerminal et1, ElementTerminal et2)
         {
            
-            SerializableWire wire = currentDesign.bindTwoComponentsTerminals(
+            SerializableWire wire = currentDesign.bindComponentTerminal(
                 ((ScreenComponentBase)et1.ScreenElement).SerializableComponent, et1.TerminalNumber,
                 ((ScreenComponentBase)et2.ScreenElement).SerializableComponent, et2.TerminalNumber);
 
