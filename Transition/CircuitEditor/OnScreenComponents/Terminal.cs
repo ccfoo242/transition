@@ -88,7 +88,9 @@ namespace Transition.CircuitEditor.OnScreenComponents
     {
         public WireScreen WireScreen { get; }
         public bool isBounded => WireScreen.isTerminalBounded(TerminalNumber);
-        public Point2D OriginalTerminalPosition => WireScreen.serializableWire.PositionTerminal(TerminalNumber);
+       //  public Point2D OriginalTerminalPosition => WireScreen.serializableWire.PositionTerminal(TerminalNumber);
+
+        public Point2D OriginalTerminalPosition { get; set; }
 
         public WireTerminal(byte terminalNumber, WireScreen wireScreen) : base(terminalNumber, wireScreen)
         {
@@ -97,6 +99,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public void selected()
         {
+            OriginalTerminalPosition = TerminalPosition;
             WireScreen.selected(TerminalNumber);
         }
 
@@ -107,7 +110,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public void moveRelative(Point2D vector)
         {
-            WireScreen.moveRelative(TerminalNumber, vector);
+            WireScreen.moveRelative(TerminalNumber, vector, OriginalTerminalPosition);
         }
 
         

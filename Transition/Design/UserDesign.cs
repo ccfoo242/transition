@@ -388,7 +388,7 @@ namespace Transition.Design
             for (byte i = 0; i < component.QuantityOfTerminals; i++)
                 foreach (var t1 in allTerminals)
                     if (t1.ScreenElement != component)
-                        if (t1.TerminalPosition.getDistance(component.Terminals[i].TerminalPosition) < RadiusNear)
+                        if (t1.getAbsoluteTerminalPosition().getDistance(component.getAbsoluteTerminalPosition(i)) < RadiusNear)
                             output.Add(i, t1);
                                
             return output;

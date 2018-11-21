@@ -21,6 +21,7 @@ namespace Transition.Commands
         public byte ObjectTerminalNumber { get; set; }
 
         public Point2D newPosition;
+        public override string ToString() => Title;
 
         public void execute()
         {
@@ -32,5 +33,7 @@ namespace Transition.Commands
         {
             Wire.doBind(WireTerminalNumber, BoundedObject, ObjectTerminalNumber);
         }
+
+       
     }
 }

@@ -76,8 +76,8 @@ namespace Transition.CircuitEditor
 
             CircuitEditor.currentInstance = this;   //XAML constructed singleton?
 
-          //  lstStackUndo.ItemsSource = UndoStack;
-          //  lstStackRedo.ItemsSource = RedoStack;
+            lstStackUndo.ItemsSource = UndoStack;
+            lstStackRedo.ItemsSource = RedoStack;
 
         }
 
@@ -142,8 +142,12 @@ namespace Transition.CircuitEditor
                         element.selected();
 
                         if (element is ScreenComponentBase)
+                        {
                             scrComponentParameters.Content = ((ScreenComponentBase)element).SerializableComponent.ParametersControl;
+                            tglbtnCommonControlFlipX.IsChecked = ((ScreenComponentBase)element).FlipX;
+                            tglbtnCommonControlFlipY.IsChecked = ((ScreenComponentBase)element).FlipY;
 
+                        }
                         if (element is WireTerminal)
                             scrComponentParameters.Content = grdWiresHaveNoParameters;
                     }
@@ -167,7 +171,7 @@ namespace Transition.CircuitEditor
             }
             
         }
-
+        
 
         private void enableComponentEdit()
         {
@@ -244,7 +248,15 @@ namespace Transition.CircuitEditor
         private void clickRotate(object sender, RoutedEventArgs e)
         {
             foreach (ScreenComponentBase comp in selectedElements.OfType<ScreenComponentBase>())
-                comp.SerializableComponent.Rotation += 90;
+            {
+                var command = new CommandRotateComponent()
+                {
+                    Component = comp.SerializableComponent,
+                    oldValue = comp.ActualRotation,
+                    newValue = comp.ActualRotation + 90
+                };
+                executeCommand(command);
+            }
         }
 
         private void clickFlipX(object sender, RoutedEventArgs e)
@@ -378,6 +390,9 @@ namespace Transition.CircuitEditor
 
                     if (!selectedElements.Contains(clickedElement))
                         selectElement(clickedElement);
+
+                    if (clickedElement is WireTerminal)
+                         ((WireTerminal)clickedElement).selected(); 
                 }
 
             if (e.GetCurrentPoint(cnvGeneral).Properties.IsRightButtonPressed)
@@ -443,12 +458,12 @@ namespace Transition.CircuitEditor
                             if (nearest != null)
                             {
                                 /* there is a terminal of something (component or other wire) nearby
-                                 so the dragged wire terminal "snaps" to the nearby terminal*/
+                                   so the dragged wire terminal "snaps" to the nearby terminal*/
                                nearest.highlight();
                                wt.moveAbsolute(nearest.getAbsoluteTerminalPosition());
                             }
                             else
-                            {   //there is nothing nearby so we can move the unbounded wire terminal, freely
+                            {   //there is nothing nearby so we can move the  wire terminal, freely
                                 wt.moveRelative(snapCoordinate(ptCanvas - clickedPoint));
                             }
                             
@@ -726,12 +741,32 @@ namespace Transition.CircuitEditor
 
         private void tapFlipX(object sender, TappedRoutedEventArgs e)
         {
+            foreach (ScreenComponentBase comp in selectedElements.OfType<ScreenComponentBase>())
+            {
+                var command = new CommandFlipComponent()
+                {
+                    Component = comp.SerializableComponent,
+                    IsFlipY = false,
+                    NewValue = !comp.FlipX
+                };
 
+                executeCommand(command);
+            }
         }
 
         private void tapFlipY(object sender, TappedRoutedEventArgs e)
         {
+            foreach (ScreenComponentBase comp in selectedElements.OfType<ScreenComponentBase>())
+            {
+                var command = new CommandFlipComponent()
+                {
+                    Component = comp.SerializableComponent,
+                    IsFlipY = true,
+                    NewValue = !comp.FlipY
+                };
 
+                executeCommand(command);
+            }
         }
     }
 }

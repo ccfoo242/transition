@@ -11,7 +11,7 @@ namespace Transition.Commands
 {
     public class CommandMoveWireTerminal : ICircuitCommand
     {
-        public string Title => "Move WireTerminal from " + OldPosition.ToString() + " to " + NewPosition.ToString();
+        public string Title => "Move WireTerminal " + Wire.ToString() + " terminal number " + WireTerminalNumber.ToString() + ", from " + OldPosition.ToString() + " to " + NewPosition.ToString();
 
         public SerializableWire Wire { get; set; }
         public byte WireTerminalNumber { get; set; }
@@ -28,5 +28,7 @@ namespace Transition.Commands
         {
             Wire.updatePosition(OldPosition, WireTerminalNumber);
         }
+
+        public override string ToString() => Title;
     }
 }

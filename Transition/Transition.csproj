@@ -149,10 +149,12 @@
     <Compile Include="Commands\CommandAddWire.cs" />
     <Compile Include="Commands\CommandBindComponent.cs" />
     <Compile Include="Commands\CommandBindWire.cs" />
+    <Compile Include="Commands\CommandFlipComponent.cs" />
     <Compile Include="Commands\CommandMoveComponent.cs" />
     <Compile Include="Commands\CommandMoveWireTerminal.cs" />
     <Compile Include="Commands\CommandRemoveComponent.cs" />
     <Compile Include="Commands\CommandRemoveWire.cs" />
+    <Compile Include="Commands\CommandRotateComponent.cs" />
     <Compile Include="Commands\CommandSetValue.cs" />
     <Compile Include="Commands\CommandUnBindWire.cs" />
     <Compile Include="Common\BindableBase.cs" />

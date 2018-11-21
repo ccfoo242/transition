@@ -42,7 +42,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             Binding b1 = new Binding()
             {
                 Path = new PropertyPath("ElementName"),
-                Mode = BindingMode.OneWay
+                Mode = BindingMode.OneWay,
+                Source = resistor
             };
 
             txtComponentName = new TextBlock()
@@ -63,7 +64,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             Binding b2 = new Binding()
             {
                 Path = new PropertyPath("ValueString"),
-                Mode = BindingMode.OneWay
+                Mode = BindingMode.OneWay,
+                Source = resistor
             };
             txtResistanceValue.SetBinding(TextBlock.TextProperty, b2);
             txtResistanceValue.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };

@@ -161,10 +161,12 @@ namespace Transition.CircuitEditor.OnScreenComponents
         private void updateScreenLayoutForBinded(ScreenElementBase el)
         {
             if (IsTerminal0Bounded)
-                PositionTerminal0 = el.getAbsoluteTerminalPosition(bind0.Item2);
+                if (bind0.Item1==el)
+                    PositionTerminal0 = el.getAbsoluteTerminalPosition(bind0.Item2); 
 
             if (IsTerminal1Bounded)
-                PositionTerminal1 = el.getAbsoluteTerminalPosition(bind1.Item2);
+                if (bind1.Item1==el)
+                    PositionTerminal1 = el.getAbsoluteTerminalPosition(bind1.Item2);
         }
         
 
@@ -232,10 +234,22 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public override void SerializableLayoutChanged(SerializableElement el)
         {
             if (!IsTerminal0Bounded)
+            {
                 PositionTerminal0 = serializableWire.PositionTerminal0;
+                ((WireTerminal)Terminals[0]).OriginalTerminalPosition = PositionTerminal0;
+            }
+            else
+                updateScreenLayoutForBinded(bind0.Item1);
 
             if (!IsTerminal1Bounded)
+            {
                 PositionTerminal1 = serializableWire.PositionTerminal1;
+                ((WireTerminal)Terminals[1]).OriginalTerminalPosition = PositionTerminal1;
+            }
+            else
+                updateScreenLayoutForBinded(bind1.Item1);
+
+
         }
 
         public override void moveRelative(Point2D vector)
@@ -247,10 +261,12 @@ namespace Transition.CircuitEditor.OnScreenComponents
             PositionTerminal1 = originalPositionTerminal1 + vector;
         }
 
-        public void moveRelative(byte terminal, Point2D vector)
+        public void moveRelative(byte terminal, Point2D vector, Point2D originalPositionTerminal)
         {
-            Point2D originalPositionTerminal = (terminal == 0) ? serializableWire.PositionTerminal0 : 
-                                                                 serializableWire.PositionTerminal1;
+           /* Point2D originalPositionTerminal = (terminal == 0) ? serializableWire.PositionTerminal0 : 
+                                                                 serializableWire.PositionTerminal1;*/
+
+
 
             if (terminal == 0)
                 PositionTerminal0 = originalPositionTerminal + vector;

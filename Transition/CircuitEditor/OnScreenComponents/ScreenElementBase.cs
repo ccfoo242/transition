@@ -22,13 +22,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
     public abstract class ScreenElementBase : Grid
     {
-        //public Point2D originalPosition;
-
-      //  public abstract Point2D Position { get; set; }
-
         public abstract void moveRelative(Point2D destination);
-      //  public abstract void moveAbsolute(Point2D destination);
-      //  public abstract void moveAbsoluteCommand(Point2D destination);
      
         public abstract void selected();
         public abstract void deselected();
@@ -52,16 +46,11 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public delegate void ScreenElementDelegate(ScreenElementBase el);
         public event ScreenElementDelegate ScreenLayoutChanged;
-
-        /*
-        public bool isPointNearTerminal(byte terminal, Point2D point)
-        {
-            return point.getDistance(getAbsoluteTerminalPosition(terminal)) < RadiusNear;
-        }
-        */
+        
         public ScreenElementBase(SerializableElement element)
         {
             element.LayoutChanged += SerializableLayoutChanged;
+           
         }
 
         public void RaiseScreenLayoutChanged()
@@ -70,6 +59,9 @@ namespace Transition.CircuitEditor.OnScreenComponents
         }
         
     }
+
+
+
 
     public abstract class ScreenComponentBase : ScreenElementBase, INotifyPropertyChanged, ICircuitSelectable, ICircuitMovable
     {
@@ -119,7 +111,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public ScreenComponentBase(SerializableComponent component) : base(component)
         {
             SerializableComponent = component;
-            
+        
+
             ComponentTransform = new CompositeTransform();
             ComponentTransform.CenterX = SchematicWidth / 2;
             ComponentTransform.CenterY = SchematicHeight / 2;
@@ -185,9 +178,21 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 Terminals.Add(t);
                 Children.Add(t);
             }
+
+            SerializableComponent.LayoutChanged += SerializableComponent_LayoutChanged;
             
         }
-        
+
+        private void SerializableComponent_LayoutChanged(SerializableElement el)
+        {
+            setPositionTextBoxes(SerializableComponent);
+            setPositionTerminals(SerializableComponent);
+
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ActualRotation"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("FlipX"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("FlipY"));
+
+        }
 
         protected void postConstruct()
         {
