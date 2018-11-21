@@ -116,7 +116,7 @@ namespace Transition.CircuitEditor.Serializable
             calculateFoQ();
 
             ParametersControl = new CapacitorParametersControl(this);
-            OnScreenComponent = new CapacitorScreen(this);
+            OnScreenElement = new CapacitorScreen(this);
         }
 
 

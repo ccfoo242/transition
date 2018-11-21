@@ -517,7 +517,9 @@ namespace Transition.CircuitEditor
                                         BoundedObject = nearest.ScreenElement.Serializable,
                                         BoundedTerminal = nearest.TerminalNumber,
                                         PreviousStateBounded = false,
-                                        PreviousTerminalPosition = wt.OriginalTerminalPosition
+                                        PreviousTerminalPosition = wt.OriginalTerminalPosition,
+                                        Wire = wt.WireScreen.serializableWire,
+                                        WireTerminalNumber = wt.TerminalNumber
                                     };
                                     executeCommand(command);
                                 }

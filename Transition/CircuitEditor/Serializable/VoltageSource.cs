@@ -17,7 +17,7 @@ namespace Transition.CircuitEditor.Serializable
 
         public VoltageSource() : base()
         {
-            OnScreenComponent = new VoltageSourceScreen(this);
+            OnScreenElement = new VoltageSourceScreen(this);
             ParametersControl = new VoltageSourceComponentParameters(this);
         }
 

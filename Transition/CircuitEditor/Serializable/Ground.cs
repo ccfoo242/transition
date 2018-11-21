@@ -17,7 +17,7 @@ namespace Transition.CircuitEditor.Serializable
 
         public Ground()
         {
-            OnScreenComponent = new GroundScreen(this);
+            OnScreenElement = new GroundScreen(this);
             ParametersControl = new GroundParameters(this);
         }
     }

@@ -59,7 +59,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             {
                 if (serializableWire.Bind0 != null)
                     return new Tuple<ScreenElementBase, byte>
-                        (serializableWire.Bind0.Item1.OnScreenComponent,
+                        (serializableWire.Bind0.Item1.OnScreenElement,
                          serializableWire.Bind0.Item2);
                 else return null;
             }
@@ -71,7 +71,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             {
                 if (serializableWire.Bind1 != null)
                     return new Tuple<ScreenElementBase, byte>
-                        (serializableWire.Bind1.Item1.OnScreenComponent,
+                        (serializableWire.Bind1.Item1.OnScreenElement,
                          serializableWire.Bind1.Item2);
                 else return null;
             }
@@ -152,10 +152,10 @@ namespace Transition.CircuitEditor.OnScreenComponents
         private void updateBinding(SerializableWire wire, byte terminal, Tuple<SerializableElement, byte> previousValue, Tuple<SerializableElement, byte> newValue)
         {
             if (previousValue != null)
-                previousValue.Item1.OnScreenComponent.ScreenLayoutChanged -= updateScreenLayoutForBinded;
+                previousValue.Item1.OnScreenElement.ScreenLayoutChanged -= updateScreenLayoutForBinded;
             
             if (newValue != null)
-                newValue.Item1.OnScreenComponent.ScreenLayoutChanged += updateScreenLayoutForBinded;
+                newValue.Item1.OnScreenElement.ScreenLayoutChanged += updateScreenLayoutForBinded;
         }
 
         private void updateScreenLayoutForBinded(ScreenElementBase el)

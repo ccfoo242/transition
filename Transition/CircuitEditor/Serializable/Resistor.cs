@@ -91,7 +91,7 @@ namespace Transition.CircuitEditor.Serializable
             calculateFoQ();
 
             ParametersControl = new ResistorParametersControl(this);
-            OnScreenComponent = new OnScreenComponents.ResistorScreen(this);
+            OnScreenElement = new OnScreenComponents.ResistorScreen(this);
         }
 
         private void calculateFoQ()

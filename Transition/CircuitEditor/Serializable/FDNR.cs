@@ -42,7 +42,7 @@ namespace Transition.CircuitEditor.Serializable
             FdnrValue = EngrNumber.One;
             
             ParametersControl = new FDNRParametersControl(this);
-            OnScreenComponent = new FDNRScreen(this);
+            OnScreenElement = new FDNRScreen(this);
         }
 
 

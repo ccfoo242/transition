@@ -145,7 +145,7 @@ namespace Transition.CircuitEditor.Serializable
             });
 
 
-            OnScreenComponent = new PotentiometerScreen(this);
+            OnScreenElement = new PotentiometerScreen(this);
             ParametersControl = new PotentiometerParametersControl(this);
         }
 

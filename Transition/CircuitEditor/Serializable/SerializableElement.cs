@@ -23,7 +23,7 @@ namespace Transition.CircuitEditor.Serializable
         public abstract string ElementLetter { get; }
         public abstract string ElementType { get; }
         public abstract byte QuantityOfTerminals { get; set; }
-        public ScreenComponentBase OnScreenComponent { get; set; }
+        public ScreenElementBase OnScreenElement { get; set; }
 
         public delegate void EmptyDelegate();
         public event ElementDelegate ElementDeleted;

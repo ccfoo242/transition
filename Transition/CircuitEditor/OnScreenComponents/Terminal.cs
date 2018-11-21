@@ -7,6 +7,7 @@ using Transition.Common;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 
@@ -29,12 +30,14 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 if (terminalPosition == value) return;
 
                 terminalPosition = value;
-                rectTransform.X = value.X - rectangleWidth / 2;
-                rectTransform.Y = value.Y - rectangleWidth / 2;
+                rectTransform.X = value.X - (rectangleWidth / 2);
+                rectTransform.Y = value.Y - (rectangleWidth / 2);
 
                 TerminalPositionChanged?.Invoke(this);
             }
         }
+        
+        
 
         private double rectangleWidth => 8;
 
@@ -56,7 +59,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 StrokeThickness = 1,
                 Visibility = Visibility.Collapsed
             };
-
+            
             this.TerminalNumber = terminalNumber;
             this.ScreenElement = element;
             this.RenderTransform = rectTransform;

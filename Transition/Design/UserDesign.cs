@@ -69,8 +69,8 @@ namespace Transition.Design
                 case NotifyCollectionChangedAction.Add:
                     foreach (SerializableComponent component in e.NewItems)
                     {
-                        CanvasCircuit.Children.Add(component.OnScreenComponent);
-                        ScreenComponents.Add(component.OnScreenComponent);
+                        CanvasCircuit.Children.Add(component.OnScreenElement);
+                        ScreenComponents.Add((ScreenComponentBase)component.OnScreenElement);
                         ElementAdded?.Invoke(this, component);
                     }
                     break;
@@ -79,8 +79,8 @@ namespace Transition.Design
                     foreach (SerializableComponent component in e.OldItems)
                     {
                         component.deletedElement();
-                        CanvasCircuit.Children.Remove(component.OnScreenComponent);
-                        ScreenComponents.Remove(component.OnScreenComponent);
+                        CanvasCircuit.Children.Remove(component.OnScreenElement);
+                        ScreenComponents.Remove((ScreenComponentBase)component.OnScreenElement);
                         ElementRemoved?.Invoke(this, component);
                     }
                     break;
@@ -178,11 +178,9 @@ namespace Transition.Design
         {
             foreach (SerializableWire wire in Wires)
             {
-                if (((wire.Bind0.Item1 == comp1) && (wire.Bind0.Item2 == terminal1)
-                   && (wire.Bind1.Item1 == comp2) && (wire.Bind1.Item2 == terminal2)) ||
-                     ((wire.Bind0.Item1 == comp2) && (wire.Bind0.Item2 == terminal2)
-                   && (wire.Bind1.Item1 == comp1) && (wire.Bind1.Item2 == terminal1)))
-                { return true; }
+                if (wire.isWireBoundedTo(comp1, terminal1) &&
+                    wire.isWireBoundedTo(comp2, terminal2))
+                    return true;
             }
             return false;
         }

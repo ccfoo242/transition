@@ -79,6 +79,7 @@ namespace Transition.CircuitEditor.Serializable
         public SerializableWire()
         {
             OnScreenWire = new WireScreen(this);
+            OnScreenElement = OnScreenWire;
         }
 
         public Tuple<SerializableElement,byte> bnd(byte terminal)
@@ -151,6 +152,17 @@ namespace Transition.CircuitEditor.Serializable
             base.SetProperty(property, value);
         }
 
-       
+        public bool isWireBoundedTo(SerializableElement el, byte terminalNumber)
+        {
+            if (Bind0 != null)
+                if (Bind0.Item1 == el && Bind0.Item2 == terminalNumber)
+                    return true;
+
+            if (Bind1 != null)
+                if (Bind1.Item1 == el && Bind1.Item2 == terminalNumber)
+                    return true;
+
+            return false;
+        }
     }
 }

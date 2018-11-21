@@ -101,7 +101,7 @@ namespace Transition.CircuitEditor.Serializable
             calculateFoQ();
 
             ParametersControl = new InductorParametersControl(this);
-            OnScreenComponent = new InductorScreen(this);
+            OnScreenElement = new InductorScreen(this);
 
         }
 

@@ -73,7 +73,7 @@ namespace Transition.CircuitEditor.Serializable
             updateM();
 
             ParametersControl = new TransformerParametersControl(this);
-            OnScreenComponent = new OnScreenComponents.TransformerScreen(this);
+            OnScreenElement = new OnScreenComponents.TransformerScreen(this);
         }
 
         private void changeTR()
