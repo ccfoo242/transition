@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Transition.CircuitEditor.OnScreenComponents
 {
-    public class WireScreen : ScreenElementBase, INotifyPropertyChanged 
+    public class WireScreen : ScreenElementBase, INotifyPropertyChanged, ICircuitSelectable
     {
         private Line line { get; }
 
@@ -76,11 +76,14 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 else return null;
             }
         }
-        
+
+        public Tuple<ScreenElementBase, byte> bind(byte terminalNumber) => (terminalNumber == 0) ? bind0 : bind1;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public bool IsTerminal0Bounded => serializableWire.IsTerminal0Bounded;
         public bool IsTerminal1Bounded => serializableWire.IsTerminal1Bounded;
+        public bool AreBothTerminalsFree => !IsTerminal0Bounded && !IsTerminal1Bounded;
 
         public override SerializableElement Serializable => serializableWire;
 
@@ -150,6 +153,12 @@ namespace Transition.CircuitEditor.OnScreenComponents
             
         }
 
+        public WireTerminal getWireTerminal(byte terminal)
+        {
+            return (terminal == 0) ? Terminals[0] as WireTerminal : 
+                                     Terminals[1] as WireTerminal;
+        }
+
         private void updateBinding(SerializableWire wire, byte terminal, Tuple<SerializableElement, byte> previousValue, Tuple<SerializableElement, byte> newValue)
         {
             if (previousValue != null)
@@ -163,11 +172,25 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             if (IsTerminal0Bounded)
                 if (bind0.Item1 == el)
-                    PositionTerminal0 = el.getAbsoluteTerminalPosition(bind0.Item2); 
+                {
+                    PositionTerminal0 = el.getAbsoluteTerminalPosition(bind0.Item2);
+                    serializableWire.PositionTerminal0 = PositionTerminal0; /* here we also
+                    update the serializable (which is the hard authority), this assignment does not
+                    impact directly on the UI because the wireterminal is binded
+                    and its position is dictated by other object
+                    , but it is useful to keep the hard position following the other terminal position
+                    , so in the case the other object is deleted, the bind is erased, 
+                    and this wire terminal is free and recovers its autonomy, 
+                    so the wire terminal is left free but it remains in place , and not change
+                    position abruptely because the hard position in serializable object can be
+                    somewhere else very distant.*/
+                }
 
             if (IsTerminal1Bounded)
                 if (bind1.Item1 == el)
-                    PositionTerminal1 = el.getAbsoluteTerminalPosition(bind1.Item2);
+                { PositionTerminal1 = el.getAbsoluteTerminalPosition(bind1.Item2);
+                    serializableWire.PositionTerminal1 = PositionTerminal1;
+                }
         }
         
 
@@ -286,6 +309,26 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public bool isTerminalBounded(byte terminal)
         {
             return (terminal == 0) ? IsTerminal0Bounded : IsTerminal1Bounded;
+        }
+
+        public override bool isClicked(Point2D point)
+        {
+            double wireLength = PositionTerminal0.getDistance(PositionTerminal1);
+            double stepLength = RadiusClick / 2;
+            double quantityOfSteps = wireLength / stepLength;
+
+            Point2D stepVector = new Point2D((PositionTerminal1 - PositionTerminal0).X / quantityOfSteps,
+                                             (PositionTerminal1 - PositionTerminal0).Y / quantityOfSteps);
+
+            Point2D currentPoint = PositionTerminal0 + stepVector;
+
+            for (int i = 0; i < (quantityOfSteps - 1); i++)
+            {
+                if (currentPoint.getDistance(point) < RadiusClick) return true;
+                currentPoint += stepVector;
+            }
+
+            return false;
         }
     }
 }

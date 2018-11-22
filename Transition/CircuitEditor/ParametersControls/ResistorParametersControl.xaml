@@ -26,6 +26,7 @@
             <customcontrols:ComponentValueBox x:Name="componentValueBox" 
                                               Unit="Ohm" HorizontalAlignment="Left"
                                               UnitShort="Ω" Margin="4" 
+                                              ValueChanged="ResistorValueChanged"
                                               ValueManuallyChanged="ResistorValueChanged"
                                               PrecisionManuallyChanged="ResistorPrecisionChanged"/>
             <!--  ComponentValue="{Binding Path=ResistorValue, Mode=OneWay}"
@@ -62,7 +63,6 @@
                     <customcontrols:EngrNumberBoxDialog VariableName="Eω" Margin="4" 
                                                         x:Name="BoxEw"
                                                         AllowNegativeNumber="True"
-                                                     
                                                         ValueManuallyChanged="ChangeEw"/>
                     <StackPanel Orientation="Horizontal">
                         <!--  Value="{Binding Ew, Mode=OneWay}" -->

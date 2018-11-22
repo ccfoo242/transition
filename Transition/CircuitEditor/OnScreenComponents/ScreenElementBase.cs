@@ -34,7 +34,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public abstract SerializableElement Serializable { get; }
 
         public abstract double RadiusClick { get; }
-      //  public double RadiusNear => 15;
+        public abstract bool isClicked(Point2D point);
+
         public abstract bool isInside(Rectangle rect);
         public abstract Point2D getAbsoluteTerminalPosition(byte terminal);
 
@@ -301,7 +302,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             Terminals[terminal].lowlight();
         }
 
-        public bool isClicked(Point2D point)
+        public override bool isClicked(Point2D point)
         {
             return point.getDistance(componentPosition + HalfComponentVector) < RadiusClick;
         }

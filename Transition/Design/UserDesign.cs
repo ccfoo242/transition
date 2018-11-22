@@ -164,7 +164,11 @@ namespace Transition.Design
 
             if ((comp1 == el2) && (terminal1 == terminal2)) return null;
 
-            SerializableWire wire = new SerializableWire();
+            SerializableWire wire = new SerializableWire()
+            {
+                PositionTerminal0 = new Point2D(40, 40),
+                PositionTerminal1 = new Point2D(140, 40)
+            };
 
             wire.Bind0 = new Tuple<SerializableElement, byte>(comp1, terminal1);
             wire.Bind1 = new Tuple<SerializableElement, byte>(el2, terminal2);
@@ -196,6 +200,9 @@ namespace Transition.Design
 
             foreach (ScreenComponentBase comp in ScreenComponents)
                 if (comp.isClicked(clickedPoint)) return comp as ICircuitSelectable;
+
+            foreach (WireScreen wire in ScreenWires)
+                if (wire.isClicked(clickedPoint)) return wire as ICircuitSelectable;
 
             return null;
         }

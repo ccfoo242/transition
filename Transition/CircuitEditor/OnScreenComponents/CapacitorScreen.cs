@@ -24,42 +24,51 @@ namespace Transition.CircuitEditor.OnScreenComponents
             get => new int[,] { { 20, 40 }, { 100, 40 } };
         }
 
+        public ContentControl SymbolCapacitor { get; }
 
         public CapacitorScreen(Capacitor capacitor) : base(capacitor)
         {
-            ContentControl symbolCapacitor = new ContentControl()
+            SymbolCapacitor = new ContentControl()
             {
                 ContentTemplate = (DataTemplate)Application.Current.Resources["symbolCapacitor"]
             };
 
-            ComponentCanvas.Children.Add(symbolCapacitor);
-            Canvas.SetTop(symbolCapacitor, 19);
-            Canvas.SetLeft(symbolCapacitor, 19);
+            ComponentCanvas.Children.Add(SymbolCapacitor);
+            Canvas.SetTop(SymbolCapacitor, 19);
+            Canvas.SetLeft(SymbolCapacitor, 19);
 
-            txtComponentName = new TextBlock() { FontWeight = FontWeights.ExtraBold };
+            txtComponentName = new TextBlock()
+            {
+                FontWeight = FontWeights.ExtraBold,
+                RenderTransform = new TranslateTransform()
+            };
             Binding b1 = new Binding()
             {
                 Path = new PropertyPath("ElementName"),
-                Mode = BindingMode.OneWay
+                Mode = BindingMode.OneWay,
+                Source = capacitor
             };
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
-            txtComponentName.RenderTransform = new TranslateTransform() { };
             txtComponentName.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
             Children.Add(txtComponentName);
 
 
-            txtCapacitorValue = new TextBlock() { FontWeight = FontWeights.ExtraBold };
+            txtCapacitorValue = new TextBlock()
+            {
+                FontWeight = FontWeights.ExtraBold,
+                RenderTransform = new TranslateTransform()
+            };
+
             Binding b2 = new Binding()
             {
                 Path = new PropertyPath("ValueString"),
-                Mode = BindingMode.OneWay
+                Mode = BindingMode.OneWay,
+                Source = capacitor
             };
             txtCapacitorValue.SetBinding(TextBlock.TextProperty, b2);
-            txtCapacitorValue.RenderTransform = new TranslateTransform() { };
             txtCapacitorValue.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
             Children.Add(txtCapacitorValue);
             
-
             postConstruct();
         }
 

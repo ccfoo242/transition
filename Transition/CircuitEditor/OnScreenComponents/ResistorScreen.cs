@@ -29,7 +29,6 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public ResistorScreen(Resistor resistor) : base(resistor)
         {
-            
             SymbolResistor = new ContentControl()
             {
                 ContentTemplate = (DataTemplate)Application.Current.Resources["symbolResistor"]

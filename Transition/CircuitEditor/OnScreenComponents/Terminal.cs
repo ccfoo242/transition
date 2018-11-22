@@ -82,6 +82,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             return ScreenElement.getAbsoluteTerminalPosition(TerminalNumber);
         }
 
+        public override string ToString() => "Terminal " + TerminalNumber.ToString() + " of element " + ScreenElement.ToString();
     }
 
     public class WireTerminal : ElementTerminal , ICircuitSelectable, ICircuitMovable

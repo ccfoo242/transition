@@ -14,7 +14,6 @@ namespace Transition.CircuitEditor.OnScreenComponents
 {
     public class InductorScreen : ScreenComponentBase
     {
-        
         public override double SchematicWidth => 120;
         public override double SchematicHeight => 80;
 
@@ -41,7 +40,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             Binding b1 = new Binding()
             {
                 Path = new PropertyPath("ElementName"),
-                Mode = BindingMode.OneWay
+                Mode = BindingMode.OneWay,
+                Source = inductor
             };
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
             txtComponentName.RenderTransform = new TranslateTransform() { };
@@ -52,7 +52,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             Binding b2 = new Binding()
             {
                 Path = new PropertyPath("ValueString"),
-                Mode = BindingMode.OneWay
+                Mode = BindingMode.OneWay,
+                Source = inductor
             };
             txtInductorValue.SetBinding(TextBlock.TextProperty, b2);
             txtInductorValue.RenderTransform = new TranslateTransform() { };

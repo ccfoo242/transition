@@ -25,7 +25,7 @@ namespace Transition.CircuitEditor.Components
     public sealed partial class ResistorParametersControl : UserControl
     {
         private Resistor SerializableResistor { get; }
-       
+
         private int SelectedResistorModel { get { return SerializableResistor.ResistorModel; } }
 
         private string oldElementName;
@@ -40,16 +40,16 @@ namespace Transition.CircuitEditor.Components
             InitializeComponent();
 
             SerializableResistor = resistor;
-     
+
             resistor.PropertyChanged += handleChangeOfControls;
 
             handleChangeOfControls(null, null);
         }
-        
+
         private void modelResistorChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!cmbResistorModel.IsDropDownOpen) return;
-
+            
             var command = new CommandSetValue()
             {
                 Component = SerializableResistor,
@@ -59,9 +59,11 @@ namespace Transition.CircuitEditor.Components
             };
 
             if (command.OldValue == command.NewValue) return;
-
+           
             executeCommand(command);
-            
+            handleResistorModel();
+
+
         }
 
         private void handleChangeOfControls(object sender, PropertyChangedEventArgs args)
@@ -80,6 +82,13 @@ namespace Transition.CircuitEditor.Components
             componentValueBox.ComponentPrecision = SerializableResistor.ComponentPrecision;
 
             txtElementName.Text = SerializableResistor.ElementName;
+            handleResistorModel();
+
+            SerializableResistor.PropertyChanged += handleChangeOfControls;
+        }
+
+        private void handleResistorModel()
+        {
 
             pnlExponential.Visibility = Visibility.Collapsed;
             pnlParasitic.Visibility = Visibility.Collapsed;
@@ -90,7 +99,6 @@ namespace Transition.CircuitEditor.Components
             if (SerializableResistor.ResistorModel == 2)
                 pnlExponential.Visibility = Visibility.Visible;
 
-            SerializableResistor.PropertyChanged += handleChangeOfControls;
         }
 
         private void changeLs(object sender, ValueChangedEventArgs e)
@@ -208,12 +216,13 @@ namespace Transition.CircuitEditor.Components
 
         private void executeCommand(ICircuitCommand command)
         {
-            SerializableResistor.PropertyChanged -= handleChangeOfControls;
+           // SerializableResistor.PropertyChanged -= handleChangeOfControls;
 
             CircuitEditor.currentInstance.executeCommand(command);
 
-            SerializableResistor.PropertyChanged += handleChangeOfControls;
+          //  SerializableResistor.PropertyChanged += handleChangeOfControls;
 
         }
+        
     }
 }

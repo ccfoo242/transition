@@ -90,6 +90,7 @@ namespace Transition.CustomControls
                 if (cmbPrecision.IsDropDownOpen) PrecisionManuallyChanged?.Invoke(this, args);
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AnyPrecisionSelected"));
 
+              
                 PrecisionChanged?.Invoke(this, args);
 
                 fixValue();
@@ -152,7 +153,7 @@ namespace Transition.CustomControls
         private void fixValue()
         {
             if (!AnyPrecisionSelected)
-                ComponentValue = new EngrNumber(getNextOrEqualValue(), ComponentValue.Prefix);
+             ComponentValue = new EngrNumber(getNextOrEqualValue(), ComponentValue.Prefix);
 
         }
 
@@ -260,6 +261,10 @@ namespace Transition.CustomControls
             }
         }
 
+        private void precisionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
 
         private async void TapChangeValue(object sender, TappedRoutedEventArgs e)
         {

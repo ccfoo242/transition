@@ -76,8 +76,8 @@ namespace Transition.CircuitEditor
 
             CircuitEditor.currentInstance = this;   //XAML constructed singleton?
 
-            lstStackUndo.ItemsSource = UndoStack;
-            lstStackRedo.ItemsSource = RedoStack;
+           // lstStackUndo.ItemsSource = UndoStack;
+           // lstStackRedo.ItemsSource = RedoStack;
 
         }
 
@@ -365,7 +365,7 @@ namespace Transition.CircuitEditor
         private void cnvPointerPressed(object sender, PointerRoutedEventArgs e)
         {
             clickedPoint = new Point2D(e.GetCurrentPoint(cnvGeneral).Position.X,
-                                               e.GetCurrentPoint(cnvGeneral).Position.Y);
+                                       e.GetCurrentPoint(cnvGeneral).Position.Y);
 
             var clickedElement = currentDesign.getClickedElement(clickedPoint);
 
@@ -387,9 +387,17 @@ namespace Transition.CircuitEditor
                 else
                 {
                     movingComponents = true;
-
+                    /* we can select a component, wire terminal or wire
+                     if the user selects a wire, only a both terminals free wire can be selected*/
                     if (!selectedElements.Contains(clickedElement))
-                        selectElement(clickedElement);
+                    {
+                        if (clickedElement is WireScreen)
+                        {
+                            if (((WireScreen)clickedElement).AreBothTerminalsFree)
+                                selectElement(clickedElement);
+                        }
+                        else { selectElement(clickedElement); }
+                    }
 
                     if (clickedElement is WireTerminal)
                          ((WireTerminal)clickedElement).selected(); 
@@ -446,12 +454,13 @@ namespace Transition.CircuitEditor
                     }
 
                     if (selectedElements.Count == 1)
+                    {
                         if (selectedElements[0] is WireTerminal)
                         {
                             /* user is moving a wire terminal that can be bounded or free,
                              * at button release, a bind or unbind command can be fired */
                             WireTerminal wt = (WireTerminal)selectedElements[0];
-                            
+
                             var nearest = currentDesign.getNearestElementTerminalExcept(ptCanvas, wt.ScreenElement);
                             currentDesign.lowlightAllTerminalsAllElements();
                             wt.highlight();
@@ -459,14 +468,14 @@ namespace Transition.CircuitEditor
                             {
                                 /* there is a terminal of something (component or other wire) nearby
                                    so the dragged wire terminal "snaps" to the nearby terminal*/
-                               nearest.highlight();
-                               wt.moveAbsolute(nearest.getAbsoluteTerminalPosition());
+                                nearest.highlight();
+                                wt.moveAbsolute(nearest.getAbsoluteTerminalPosition());
                             }
                             else
                             {   //there is nothing nearby so we can move the  wire terminal, freely
                                 wt.moveRelative(snapCoordinate(ptCanvas - clickedPoint));
                             }
-                            
+
                         }
                         else
                         if (selectedElements[0] is ScreenComponentBase)
@@ -487,6 +496,13 @@ namespace Transition.CircuitEditor
                                 pair.Value.highlight();
                             };
                         }
+                        else
+                        if (selectedElements[0] is WireScreen)
+                        {
+                            WireScreen ws = (WireScreen)selectedElements[0];
+                            ws.moveRelative(snapCoordinate(ptCanvas - clickedPoint));
+                        }
+                    }
                 }
             }
         }
@@ -508,7 +524,7 @@ namespace Transition.CircuitEditor
                 selectedElements.Clear();
                 
                 /* thanks to MS folks, ObservableCollection does not support the
-                 AddRange method, and I do not want to implement one myself*/
+                 AddRange method, and I do not want to implement one myself */
                 foreach (ICircuitSelectable item in currentDesign.enclosingElementsForGroupSelect(rectGroupSelect))
                     selectedElements.Add(item);
             }
@@ -516,28 +532,28 @@ namespace Transition.CircuitEditor
 
             if (movingComponents) //things are being moved, and the user released them
                 if (selectedElements.Count == 1)
-                    if (selectedElements[0] is WireTerminal)
+                {
+                    var selectedElement = selectedElements[0];
+
+                    if (selectedElement is WireTerminal)
                     {  //one thing is being moved, and it is a Wire Terminal
-                        WireTerminal wt = (WireTerminal)selectedElements[0];
+                        WireTerminal wt = (WireTerminal)selectedElement;
                         ElementTerminal nearest = currentDesign.getNearestElementTerminalExcept(ptCanvas, wt.ScreenElement);
 
                         if (!wt.isBounded)
                         {   /*the wt is free */
                             if (nearest != null) /* if there is some terminal nearby, we bind the wire to it*/
                             {
-                                if (nearest.ScreenElement != wt.ScreenElement) /* we cannot bind the wire to itself! */
+                                var command = new CommandBindWire()
                                 {
-                                    var command = new CommandBindWire()
-                                    {
-                                        BoundedObject = nearest.ScreenElement.Serializable,
-                                        BoundedTerminal = nearest.TerminalNumber,
-                                        PreviousStateBounded = false,
-                                        PreviousTerminalPosition = wt.OriginalTerminalPosition,
-                                        Wire = wt.WireScreen.serializableWire,
-                                        WireTerminalNumber = wt.TerminalNumber
-                                    };
-                                    executeCommand(command);
-                                }
+                                    BoundedObject = nearest.ScreenElement.Serializable,
+                                    BoundedTerminal = nearest.TerminalNumber,
+                                    PreviousStateBounded = false,
+                                    PreviousTerminalPosition = wt.OriginalTerminalPosition,
+                                    Wire = wt.WireScreen.serializableWire,
+                                    WireTerminalNumber = wt.TerminalNumber
+                                };
+                                executeCommand(command);
                             }
                             else
                             { /* the dragged wire terminal is just moved without bind it to something */
@@ -559,8 +575,8 @@ namespace Transition.CircuitEditor
                             /* user had been moving a bounded wire terminal */
                             if (nearest != null)
                             {
-                                if ((nearest.ScreenElement.Serializable == wt.WireScreen.serializableWire.bnd(wt.TerminalNumber).Item1) &&
-                                    (nearest.TerminalNumber == wt.WireScreen.serializableWire.bnd(wt.TerminalNumber).Item2))
+                                if ((nearest.ScreenElement == wt.WireScreen.bind(wt.TerminalNumber).Item1) &&
+                                    (nearest.TerminalNumber == wt.WireScreen.bind(wt.TerminalNumber).Item2))
                                 {
                                     /* here the user did release the wire terminal at the same place it picked off
                                      so we do not alter the binding of the wire terminal */
@@ -575,7 +591,9 @@ namespace Transition.CircuitEditor
                                             BoundedTerminal = nearest.TerminalNumber,
                                             PreviousStateBounded = true,
                                             PreviousBoundedObject = wt.WireScreen.serializableWire.bnd(wt.TerminalNumber).Item1,
-                                            PreviuosBoundedTerminal = wt.WireScreen.serializableWire.bnd(wt.TerminalNumber).Item2
+                                            PreviuosBoundedTerminal = wt.WireScreen.serializableWire.bnd(wt.TerminalNumber).Item2,
+                                            Wire = wt.WireScreen.serializableWire,
+                                            WireTerminalNumber = wt.TerminalNumber
                                         };
                                         executeCommand(command);
                                     }
@@ -598,11 +616,11 @@ namespace Transition.CircuitEditor
                         }
                     }
                     else
-                    {
-                        /* the moved element is a component */
+                    if (selectedElement is ScreenComponentBase)
+                    { /* the moved element is a component */
                         var comp = selectedElements[0] as ScreenComponentBase;
 
-                        if ((comp.ComponentPosition != comp.SerializableComponent.ComponentPosition))
+                        if ((comp.ComponentPosition != comp.OriginalComponentPosition))
                         {   /* we check the component has actually moved and not stayed in place */
                             /* we do a move command */
                             var command = new CommandMoveComponent()
@@ -623,9 +641,28 @@ namespace Transition.CircuitEditor
                             }
                         }
                     }
+                    else
+                    if (selectedElement is WireScreen)
+                    {
+                        WireScreen ws = selectedElement as WireScreen;
+
+                        var command = new CommandMoveFreeWire()
+                        {
+                            OldPositionTerminal0 = ws.getWireTerminal(0).OriginalTerminalPosition,
+                            OldPositionTerminal1 = ws.getWireTerminal(1).OriginalTerminalPosition,
+                            NewPositionTerminal0 = ws.getWireTerminal(0).TerminalPosition,
+                            NewPositionTerminal1 = ws.getWireTerminal(1).TerminalPosition,
+                            Wire = ws.serializableWire
+                        };
+                        executeCommand(command);
+                    }
+
+                }
                 else
                 if (selectedElements.Count > 1)
                 {
+                    var moveCommands = new List<ICircuitCommand>();
+
                     foreach (ScreenComponentBase component in selectedElements.OfType<ScreenComponentBase>())
                         if (component.OriginalComponentPosition != component.componentPosition)
                         {
@@ -635,10 +672,12 @@ namespace Transition.CircuitEditor
                                 NewPosition = component.componentPosition,
                                 Component = component.SerializableComponent
                             };
-                            executeCommand(command);
+                            moveCommands.Add(command);
+                           
                         }
-
-                    foreach (WireTerminal wt in selectedElements.OfType<WireTerminal>())
+                    var wireTerminals = selectedElements.OfType<WireTerminal>();
+                    
+                    foreach (WireTerminal wt in wireTerminals)
                         if (wt.OriginalTerminalPosition != wt.TerminalPosition)
                         {
                             var command = new CommandMoveWireTerminal()
@@ -648,8 +687,10 @@ namespace Transition.CircuitEditor
                                 Wire = wt.WireScreen.serializableWire,
                                 WireTerminalNumber = wt.TerminalNumber
                             };
-                            executeCommand(command);
+                            moveCommands.Add(command);
                         }
+
+                    foreach (ICircuitCommand command in moveCommands) executeCommand(command);
                 }
 
             movingComponents = false;

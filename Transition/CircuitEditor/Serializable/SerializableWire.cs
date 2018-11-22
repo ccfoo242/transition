@@ -18,7 +18,7 @@ namespace Transition.CircuitEditor.Serializable
             get { return positionTerminal0; }
             set { if (positionTerminal0 == value) return;
                   SetProperty(ref positionTerminal0, value);
-                  raiseLayoutChanged();
+                  if (!IsTerminal0Bounded) raiseLayoutChanged();
             }
         }
 
@@ -28,7 +28,7 @@ namespace Transition.CircuitEditor.Serializable
             get { return positionTerminal1; }
             set { if (positionTerminal1 == value) return;
                   SetProperty(ref positionTerminal1, value);
-                  raiseLayoutChanged();
+                  if (!IsTerminal1Bounded) raiseLayoutChanged();
             }
         }
 

@@ -18,17 +18,18 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             get => new int[,] { { 40, 20 } };
         }
+        public ContentControl SymbolInductor { get; }
 
         public GroundScreen(Ground ground) : base(ground)
         {
-            ContentControl symbolInductor = new ContentControl()
+            SymbolInductor = new ContentControl()
             {
                 ContentTemplate = (DataTemplate)Application.Current.Resources["symbolGround"]
             };
 
-            ComponentCanvas.Children.Add(symbolInductor);
-            Canvas.SetTop(symbolInductor, 19);
-            Canvas.SetLeft(symbolInductor, 19);
+            ComponentCanvas.Children.Add(SymbolInductor);
+            Canvas.SetTop(SymbolInductor, 19);
+            Canvas.SetLeft(SymbolInductor, 19);
 
             postConstruct();
         }

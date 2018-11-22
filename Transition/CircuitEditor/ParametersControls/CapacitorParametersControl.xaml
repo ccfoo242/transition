@@ -15,15 +15,21 @@
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
         <StackPanel Orientation="Horizontal">
             <TextBlock Margin="4" Text="Component Name: "/>
-            <TextBox Margin="4" Text="{Binding ElementName, Mode=TwoWay}"/>
+            <TextBox Margin="4" x:Name="txtElementName"
+                     TextChanged="elementNameChanged"
+                     GotFocus="elementNameFocus"/>
         </StackPanel>
 
         <controls:Expander Header="Capacitor Value" ExpandDirection="Down"
                            IsExpanded="True">
             <customcontrols:ComponentValueBox Unit="Farad" Margin="4" HorizontalAlignment="Left"
                              UnitShort="F" x:Name="componentValueBox"
-                             ComponentValue="{Binding CapacitorValue, Mode=TwoWay}"
-                             ComponentPrecision="{Binding ComponentPrecision, Mode=TwoWay}"/>
+                             ValueChanged="CapacitorValueChanged"
+                             ValueManuallyChanged="CapacitorValueChanged"
+                             PrecisionChanged="CapacitorPrecisionChanged"/>
+            <!--
+            ComponentValue="{Binding CapacitorValue, Mode=TwoWay}"
+                             ComponentPrecision="{Binding ComponentPrecision, Mode=TwoWay}"/> -->
         </controls:Expander>
         <controls:Expander Header="Capacitor Model" ExpandDirection="Down"
                            IsExpanded="True">
@@ -35,23 +41,22 @@
 
                 <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Stretch">
                     <TextBlock Text="Model" Margin="4" VerticalAlignment="Center"/>
-                    <ComboBox VerticalAlignment="Center"
-                                  HorizontalAlignment="Center"
-                                  Margin="4" Width="150" 
-                                  SelectedIndex="{Binding CapacitorModel, Mode=TwoWay}"
-                                  SelectionChanged="modelCapacitorChanged">
+                    <ComboBox VerticalAlignment="Center" x:Name="cmbCapacitorModel"
+                              HorizontalAlignment="Center"
+                              Margin="4" Width="150" 
+                              SelectionChanged="modelCapacitorChanged">
                         <ComboBox.Items>
-                            <ComboBoxItem Content="Ideal"/>
-                            <ComboBoxItem Content="Parasitic"/>
-                            <ComboBoxItem Content="Exponent"/>
+                            <ComboBoxItem Content="Ideal" Tag="0"/>
+                            <ComboBoxItem Content="Parasitic" Tag="1"/>
+                            <ComboBoxItem Content="Exponent" Tag="2"/>
                         </ComboBox.Items>
                     </ComboBox>
                 </StackPanel>
                 <StackPanel Orientation="Vertical" x:Name="pnlExponential"
                                 Grid.Row="1" HorizontalAlignment="Stretch">
-                    <customcontrols:EngrNumberBoxDialog VariableName="Eω" Margin="4" 
+                    <customcontrols:EngrNumberBoxDialog VariableName="Eω" Margin="4" x:Name="BoxEw"
                                                         AllowNegativeNumber="True"
-                                                        Value="{Binding Ew, Mode=TwoWay}"/>
+                                                        ValueManuallyChanged="ChangeEw"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Capacitance function: C(ω) = C · ω"/>
                         <TextBlock Text="Eω" FontSize="10" VerticalAlignment="Top"/>
@@ -65,19 +70,19 @@
                         <ContentControl ContentTemplate="{StaticResource capacitorParasiticModelCircuit}"/>
                     </Viewbox>
                     <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
-                                x:Name="BoxLs" Value="{Binding Ls, Mode = TwoWay}"
+                                x:Name="BoxLs" ValueManuallyChanged="ChangeLs"
                                 VariableName="Ls (Henry)"/> 
                     <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
-                                x:Name="BoxRp" Value="{Binding Rp, Mode = TwoWay}"
+                                x:Name="BoxRp" ValueManuallyChanged="ChangeRp"
                                 VariableName="Rp (Ohm)" />
                     <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
-                                x:Name="BoxRs" Value="{Binding Rs, Mode = TwoWay}"
+                                x:Name="BoxRs" ValueManuallyChanged="ChangeRs"
                                 VariableName="Rs (Ohm)" />
                     <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
-                                x:Name="BoxFo" Value="{Binding Fo, Mode = TwoWay}"
+                                x:Name="BoxFo" ValueManuallyChanged="ChangeFo"
                                 VariableName="Fo (Hz)" />
                     <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
-                                x:Name="BoxQ" Value="{Binding Q, Mode = TwoWay}"
+                                x:Name="BoxQ" ValueManuallyChanged="ChangeQ"
                                 VariableName="Q"/>
                 </StackPanel>
             </Grid>

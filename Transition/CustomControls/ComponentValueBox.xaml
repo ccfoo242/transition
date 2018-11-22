@@ -92,7 +92,7 @@
                    HorizontalAlignment="Right"
                    VerticalAlignment="Center" Margin="5"/>
         <ComboBox Grid.Row="1" Grid.Column="1"  VerticalAlignment="Center"
-                  HorizontalAlignment="Stretch" 
+                  HorizontalAlignment="Stretch" SelectionChanged="precisionChanged"
                   SelectedIndex="{x:Bind ComponentPrecision, Mode=TwoWay, Converter={StaticResource precIntConverter}}"
                   x:Name="cmbPrecision">
             <ComboBox.Items>

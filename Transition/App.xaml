@@ -484,34 +484,34 @@
         <DataTemplate x:Key="capacitorParasiticModelCircuit">
             <Canvas Background="Transparent" Width="320" Height="140">
                 <ContentControl ContentTemplate="{StaticResource symbolResistor}"
-                                Canvas.Left="120" Canvas.Top="20"/>
+                                Canvas.Left="100" Canvas.Top="20"/>
                 <ContentControl ContentTemplate="{StaticResource symbolInductor}"
-                                Canvas.Left="120" Canvas.Top="80"/>
+                                Canvas.Left="100" Canvas.Top="80"/>
                 <ContentControl ContentTemplate="{StaticResource symbolCapacitor}"
                                 Canvas.Left="20" Canvas.Top="80"/>
                 <ContentControl ContentTemplate="{StaticResource symbolResistor}"
-                                Canvas.Left="220" Canvas.Top="80"/>
+                                Canvas.Left="180" Canvas.Top="80"/>
 
                 <Line X1="0" Y1="70" X2="20" Y2="70"
                       Stroke="Black" StrokeThickness="4"/>
-                <Line X1="320" Y1="70" X2="340" Y2="70"
+                <Line X1="260" Y1="70" X2="280" Y2="70"
                       Stroke="Black" StrokeThickness="4"/>
                 <Line X1="20" Y1="40" X2="20" Y2="100"
                       Stroke="Black" StrokeThickness="4"/>
-                <Line X1="320" Y1="40" X2="320" Y2="100"
+                <Line X1="260" Y1="40" X2="260" Y2="100"
                       Stroke="Black" StrokeThickness="4"/>
-                <Line X1="20" Y1="40" X2="120" Y2="40"
+                <Line X1="20" Y1="40" X2="100" Y2="40"
                       Stroke="Black" StrokeThickness="4"/>
-                <Line X1="320" Y1="40" X2="220" Y2="40"
+                <Line X1="260" Y1="40" X2="180" Y2="40"
                       Stroke="Black" StrokeThickness="4"/>
 
-                <TextBlock Text="C" Canvas.Left="65" Canvas.Top="60"
+                <TextBlock Text="C" Canvas.Left="55" Canvas.Top="60"
                            FontSize="18"/>
-                <TextBlock Text="Ls" Canvas.Left="163" Canvas.Top="60"
+                <TextBlock Text="Ls" Canvas.Left="133" Canvas.Top="60"
                            FontSize="18"/>
-                <TextBlock Text="Rs" Canvas.Left="263" Canvas.Top="60"
+                <TextBlock Text="Rs" Canvas.Left="213" Canvas.Top="60"
                            FontSize="18"/>
-                <TextBlock Text="Rp" Canvas.Left="160" Canvas.Top="0"
+                <TextBlock Text="Rp" Canvas.Left="130" Canvas.Top="0"
                            FontSize="18"/>
 
             </Canvas>
