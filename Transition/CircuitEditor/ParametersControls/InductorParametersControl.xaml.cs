@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Transition.CircuitEditor.Serializable;
+using Transition.Commands;
+using Transition.CustomControls;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Text;
@@ -23,6 +25,8 @@ namespace Transition.CircuitEditor.Components
     public sealed partial class InductorParametersControl : UserControl
     {
         public Inductor SerializableInductor { get; }
+        private string oldElementName;
+
         private int SelectedInductorModel { get { return SerializableInductor.InductorModel; } }
 
         public InductorParametersControl()
@@ -37,22 +41,194 @@ namespace Transition.CircuitEditor.Components
             this.InitializeComponent();
 
             SerializableInductor = inductor;
-            DataContext = inductor;
+            
+            inductor.PropertyChanged += handleChangeOfControls;
 
-
+            handleChangeOfControls(null, null);
+            
         }
 
-        private void modelInductorChanged(object sender, SelectionChangedEventArgs e)
+        private void handleChangeOfControls(object sender, PropertyChangedEventArgs args)
+        {
+            SerializableInductor.PropertyChanged -= handleChangeOfControls;
+
+            BoxCp.Value = SerializableInductor.Cp;
+            BoxRs.Value = SerializableInductor.Rs;
+            BoxFo.Value = SerializableInductor.Fo;
+            BoxQ.Value = SerializableInductor.Q;
+            BoxEw.Value = SerializableInductor.Ew;
+
+            cmbInductorModel.SelectionChanged -= modelInductorChanged;
+            cmbInductorModel.SelectedIndex = SerializableInductor.InductorModel;
+            cmbInductorModel.SelectionChanged += modelInductorChanged;
+
+            ComponentValueBox.ValueChanged -= InductorValueChanged;
+            ComponentValueBox.ComponentValue = SerializableInductor.InductorValue;
+            ComponentValueBox.ValueChanged += InductorValueChanged;
+
+            ComponentValueBox.PrecisionChanged -= InductorPrecisionChanged;
+            ComponentValueBox.ComponentPrecision = SerializableInductor.ComponentPrecision;
+            ComponentValueBox.PrecisionChanged += InductorPrecisionChanged;
+
+            txtElementName.TextChanged -= ElementNameChanged;
+            txtElementName.Text = SerializableInductor.ElementName;
+            txtElementName.TextChanged += ElementNameChanged;
+
+            handleInductorModel();
+            
+            SerializableInductor.PropertyChanged += handleChangeOfControls;
+        }
+
+        private void handleInductorModel()
         {
             pnlExponential.Visibility = Visibility.Collapsed;
             pnlParasitic.Visibility = Visibility.Collapsed;
 
-            if (SelectedInductorModel == 1)
+            if (SerializableInductor.InductorModel == 1)
                 pnlParasitic.Visibility = Visibility.Visible;
 
-            if (SelectedInductorModel == 2)
+            if (SerializableInductor.InductorModel == 2)
                 pnlExponential.Visibility = Visibility.Visible;
         }
         
+        private void modelInductorChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!cmbInductorModel.IsDropDownOpen) return;
+
+            var command = new CommandSetValue()
+            {
+                Component = SerializableInductor,
+                Property = "InductorModel",
+                OldValue = int.Parse((string)(e.RemovedItems[0] as ComboBoxItem).Tag),
+                NewValue = cmbInductorModel.SelectedIndex
+            };
+
+            if (command.OldValue == command.NewValue) return;
+
+            executeCommand(command);
+
+            handleInductorModel();
+            
+        }
+
+        private void ElementNameChanged(object sender, TextChangedEventArgs e)
+        {
+            if (oldElementName == txtElementName.Text) return;
+
+            var command = new CommandSetValue()
+            {
+                Component = SerializableInductor,
+                Property = "ElementName",
+                OldValue = oldElementName,
+                NewValue = txtElementName.Text
+            };
+
+            executeCommand(command);
+
+            oldElementName = txtElementName.Text;
+        }
+
+        private void InductorValueChanged(object sender, ValueChangedEventArgs args)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableInductor,
+                Property = "InductorValue",
+                OldValue = args.oldValue,
+                NewValue = args.newValue
+            };
+
+            executeCommand(command);
+        }
+
+        private void ChangeRs(object sender, ValueChangedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableInductor,
+                Property = "Rs",
+                OldValue = e.oldValue,
+                NewValue = e.newValue
+            };
+
+            executeCommand(command);
+        }
+        
+        private void ChangeFo(object sender, ValueChangedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableInductor,
+                Property = "Fo",
+                OldValue = e.oldValue,
+                NewValue = e.newValue
+            };
+
+            executeCommand(command);
+        }
+
+        private void ChangeQ(object sender, ValueChangedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableInductor,
+                Property = "Q",
+                OldValue = e.oldValue,
+                NewValue = e.newValue
+            };
+
+            executeCommand(command);
+        }
+
+        private void ChangeCp(object sender, ValueChangedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableInductor,
+                Property = "Cp",
+                OldValue = e.oldValue,
+                NewValue = e.newValue
+            };
+
+            executeCommand(command);
+        }
+
+
+        private void executeCommand(ICircuitCommand command)
+        {
+            CircuitEditor.currentInstance.executeCommand(command);
+        }
+
+        private void ElementNameFocus(object sender, RoutedEventArgs e)
+        {
+            oldElementName = SerializableInductor.ElementName;
+        }
+
+        private void InductorPrecisionChanged(object sender, ValueChangedEventArgs args)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableInductor,
+                Property = "ComponentPrecision",
+                OldValue = args.oldValue,
+                NewValue = args.newValue
+            };
+
+            executeCommand(command);
+
+        }
+
+        private void ChangeEw(object sender, ValueChangedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableInductor,
+                Property = "Ew",
+                OldValue = e.oldValue,
+                NewValue = e.newValue
+            };
+
+            executeCommand(command);
+        }
     }
 }

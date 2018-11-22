@@ -19,7 +19,8 @@ namespace Transition.CircuitEditor.Serializable
         {
             get { return resistorValue; }
             set { SetProperty(ref resistorValue, value, "ResistorValue");
-                OnPropertyChanged("ValueString");
+                  calculateFoQ();
+                  OnPropertyChanged("ValueString");
             }
         }
 
@@ -96,6 +97,10 @@ namespace Transition.CircuitEditor.Serializable
 
         private void calculateFoQ()
         {
+            if (ResistorValue.ValueDouble == 0) return;
+            if (ls.ValueDouble == 0) return;
+            if (cp.ValueDouble == 0) return;
+
             double dR = ResistorValue.ValueDouble;
             double dLs = Ls.ValueDouble;
             double dCp = Cp.ValueDouble;

@@ -168,14 +168,14 @@ namespace Transition
         public static int getExponent(string prefix)
         {
             if (!validPrefix(prefix)) throw new ArgumentException();
-
+            if (prefix == null) return 0;
             return mapPrefixes[prefix];
            
         }
 
         public static bool validPrefix(string prefix)
         {
-            if (prefix == null) return false;
+            if (prefix == null) return true;
 
             return mapPrefixes.Keys.Contains(prefix);
         }

@@ -52,9 +52,7 @@ namespace Transition.CircuitEditor.Components
         private void modelCapacitorChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!cmbCapacitorModel.IsDropDownOpen) return;
-
-           
-
+            
             var command = new CommandSetValue()
             {
                 Component = SerializableCapacitor,
@@ -99,13 +97,8 @@ namespace Transition.CircuitEditor.Components
         }
 
         private void executeCommand(ICircuitCommand command)
-        {
-      //      SerializableCapacitor.PropertyChanged -= handleChangeOfControls;
-
+        { 
             CircuitEditor.currentInstance.executeCommand(command);
-
-          //  SerializableCapacitor.PropertyChanged += handleChangeOfControls;
-
         }
 
 
@@ -120,12 +113,21 @@ namespace Transition.CircuitEditor.Components
             BoxQ.Value = SerializableCapacitor.Q;
             BoxEw.Value = SerializableCapacitor.Ew;
 
+            cmbCapacitorModel.SelectionChanged -= modelCapacitorChanged;
             cmbCapacitorModel.SelectedIndex = SerializableCapacitor.CapacitorModel;
+            cmbCapacitorModel.SelectionChanged += modelCapacitorChanged;
 
+            componentValueBox.ValueChanged -= CapacitorValueChanged;
             componentValueBox.ComponentValue = SerializableCapacitor.CapacitorValue;
-            componentValueBox.ComponentPrecision = SerializableCapacitor.ComponentPrecision;
+            componentValueBox.ValueChanged += CapacitorValueChanged;
 
+            componentValueBox.PrecisionChanged -= CapacitorPrecisionChanged;
+            componentValueBox.ComponentPrecision = SerializableCapacitor.ComponentPrecision;
+            componentValueBox.PrecisionChanged += CapacitorPrecisionChanged;
+
+            txtElementName.TextChanged -= elementNameChanged;
             txtElementName.Text = SerializableCapacitor.ElementName;
+            txtElementName.TextChanged += elementNameChanged;
 
             handleCapacitorModel();
 

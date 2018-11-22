@@ -42,7 +42,6 @@ namespace Transition.CircuitEditor.Components
             SerializableResistor = resistor;
 
             resistor.PropertyChanged += handleChangeOfControls;
-
             handleChangeOfControls(null, null);
         }
 
@@ -62,8 +61,6 @@ namespace Transition.CircuitEditor.Components
            
             executeCommand(command);
             handleResistorModel();
-
-
         }
 
         private void handleChangeOfControls(object sender, PropertyChangedEventArgs args)
@@ -76,12 +73,22 @@ namespace Transition.CircuitEditor.Components
             BoxQ.Value = SerializableResistor.Q;
             BoxEw.Value = SerializableResistor.Ew;
 
+            cmbResistorModel.SelectionChanged -= modelResistorChanged;
             cmbResistorModel.SelectedIndex = SerializableResistor.ResistorModel;
+            cmbResistorModel.SelectionChanged += modelResistorChanged;
 
+            componentValueBox.ValueChanged -= ResistorValueChanged;
             componentValueBox.ComponentValue = SerializableResistor.ResistorValue;
-            componentValueBox.ComponentPrecision = SerializableResistor.ComponentPrecision;
+            componentValueBox.ValueChanged += ResistorValueChanged;
 
+            componentValueBox.PrecisionChanged -= ResistorPrecisionChanged;
+            componentValueBox.ComponentPrecision = SerializableResistor.ComponentPrecision;
+            componentValueBox.PrecisionChanged += ResistorPrecisionChanged;
+
+            txtElementName.TextChanged -= elementNameChanged;
             txtElementName.Text = SerializableResistor.ElementName;
+            txtElementName.TextChanged += elementNameChanged;
+
             handleResistorModel();
 
             SerializableResistor.PropertyChanged += handleChangeOfControls;
@@ -169,7 +176,7 @@ namespace Transition.CircuitEditor.Components
         private void elementNameChanged(object sender, TextChangedEventArgs e)
         {
             if (oldElementName == txtElementName.Text) return;
-
+            
             var command = new CommandSetValue()
             {
                 Component = SerializableResistor,

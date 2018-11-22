@@ -76,9 +76,22 @@ namespace Transition.CircuitEditor
 
             CircuitEditor.currentInstance = this;   //XAML constructed singleton?
 
-           // lstStackUndo.ItemsSource = UndoStack;
-           // lstStackRedo.ItemsSource = RedoStack;
+            UndoStack.StackChanged += HandleUndoStack;
+            RedoStack.StackChanged += HandleRedoStack;
 
+          //  lstStackUndo.ItemsSource = UndoStack;
+         //   lstStackRedo.ItemsSource = RedoStack;
+
+        }
+
+        private void HandleUndoStack(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            btnUndo.IsEnabled = !UndoStack.IsEmpty;
+        }
+
+        private void HandleRedoStack(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            btnRedo.IsEnabled = !RedoStack.IsEmpty;
         }
 
         private void init()

@@ -25,7 +25,6 @@
             <customcontrols:ComponentValueBox Unit="Farad" Margin="4" HorizontalAlignment="Left"
                              UnitShort="F" x:Name="componentValueBox"
                              ValueChanged="CapacitorValueChanged"
-                             ValueManuallyChanged="CapacitorValueChanged"
                              PrecisionChanged="CapacitorPrecisionChanged"/>
             <!--
             ComponentValue="{Binding CapacitorValue, Mode=TwoWay}"

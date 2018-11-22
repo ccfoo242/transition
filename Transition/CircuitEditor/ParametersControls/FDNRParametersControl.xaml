@@ -15,16 +15,17 @@
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
         <StackPanel Orientation="Horizontal">
             <TextBlock Margin="4" Text="Component Name: "/>
-            <TextBox Margin="4" Text="{Binding ElementName, Mode=TwoWay}"/>
+            <TextBox x:Name="txtElementName" Margin="4" 
+                     GotFocus="ElementNameFocus" TextChanged="ElementNameChanged"/>
         </StackPanel>
 
         <controls:Expander Header="FDNR Value" ExpandDirection="Down"
                            IsExpanded="True">
-            <customcontrols:ComponentValueBox Unit="Farad²" HorizontalAlignment="Left"
-                             UnitShort="F²" Margin="4" 
-                             ComponentValue="{Binding Path=FdnrValue, Mode=TwoWay}"
-                             ComponentPrecision="{Binding Path=ComponentPrecision, Mode=TwoWay}"
-                             x:Name="componentValueBox"/>
+            <customcontrols:ComponentValueBox x:Name="componentValueBox"
+                      Unit="Farad²" HorizontalAlignment="Left"
+                      UnitShort="F²" Margin="4" 
+                      ValueChanged="FDNRValueChanged"
+                      PrecisionChanged="FDNRPrecisionChanged"/>
         </controls:Expander>
     </StackPanel>
 </UserControl>

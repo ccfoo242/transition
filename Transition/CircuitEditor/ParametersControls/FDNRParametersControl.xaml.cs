@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Transition.CircuitEditor.Serializable;
+using Transition.Commands;
+using Transition.CustomControls;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Text;
@@ -24,13 +26,88 @@ namespace Transition.CircuitEditor.Components
     {
 
         private FDNR SerializableFDNR { get; }
+        private string oldElementName;
 
         public FDNRParametersControl(FDNR fdnr)
         {
             this.InitializeComponent();
             SerializableFDNR = fdnr;
-            DataContext = fdnr;
+
+            fdnr.PropertyChanged += handleChangeOfControls;
+
+            handleChangeOfControls(null, null);
+        }
+
+        private void ElementNameFocus(object sender, RoutedEventArgs e)
+        {
+            oldElementName = txtElementName.Text;
+        }
+
+        private void ElementNameChanged(object sender, TextChangedEventArgs e)
+        {
+            if (oldElementName == txtElementName.Text) return;
+
+            var command = new CommandSetValue()
+            {
+                Component = SerializableFDNR,
+                Property = "ElementName",
+                OldValue = oldElementName,
+                NewValue = txtElementName.Text
+            };
+
+            executeCommand(command);
+
+            oldElementName = txtElementName.Text;
+        }
+
+        private void FDNRValueChanged(object sender, ValueChangedEventArgs args)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableFDNR,
+                Property = "FdnrValue",
+                OldValue = args.oldValue,
+                NewValue = args.newValue
+            };
+
+            executeCommand(command);
         }
         
+        private void FDNRPrecisionChanged(object sender, ValueChangedEventArgs args)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableFDNR,
+                Property = "ComponentPrecision",
+                OldValue = args.oldValue,
+                NewValue = args.newValue
+            };
+
+            executeCommand(command);
+        }
+
+        private void handleChangeOfControls(object sender, PropertyChangedEventArgs args)
+        {
+            SerializableFDNR.PropertyChanged -= handleChangeOfControls;
+           
+            componentValueBox.ValueChanged -= FDNRValueChanged;
+            componentValueBox.ComponentValue = SerializableFDNR.FdnrValue;
+            componentValueBox.ValueChanged += FDNRValueChanged;
+
+            componentValueBox.PrecisionChanged -= FDNRPrecisionChanged;
+            componentValueBox.ComponentPrecision = SerializableFDNR.ComponentPrecision;
+            componentValueBox.PrecisionChanged += FDNRPrecisionChanged;
+
+            txtElementName.TextChanged -= ElementNameChanged;
+            txtElementName.Text = SerializableFDNR.ElementName;
+            txtElementName.TextChanged += ElementNameChanged;
+            
+            SerializableFDNR.PropertyChanged += handleChangeOfControls;
+        }
+
+        private void executeCommand(ICircuitCommand command)
+        {
+            CircuitEditor.currentInstance.executeCommand(command);
+        }
     }
 }

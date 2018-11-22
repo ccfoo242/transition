@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace Transition.Common
     public class ObservableStack<T> : ObservableCollection<T>
     {
         public bool IsEmpty => (Count == 0);
+        public event NotifyCollectionChangedEventHandler StackChanged;
 
         public T Peek()
         {
@@ -30,5 +32,14 @@ namespace Transition.Common
             Add(obj);
         }
 
+       public ObservableStack() : base()
+       {
+            CollectionChanged += handleCollectionChanged;
+       }
+
+       private void handleCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+       {
+            StackChanged?.Invoke(this, e);
+       }
     }
 }
