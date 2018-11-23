@@ -79,8 +79,8 @@ namespace Transition.CircuitEditor
             UndoStack.StackChanged += HandleUndoStack;
             RedoStack.StackChanged += HandleRedoStack;
 
-          //  lstStackUndo.ItemsSource = UndoStack;
-         //   lstStackRedo.ItemsSource = RedoStack;
+           // lstStackUndo.ItemsSource = UndoStack;
+           // lstStackRedo.ItemsSource = RedoStack;
 
         }
 
@@ -596,20 +596,17 @@ namespace Transition.CircuitEditor
                                 }
                                 else
                                 {
-                                    if (nearest.ScreenElement != wt.ScreenElement) /* we cannot bind the wire to itself! */
+                                    var command = new CommandBindWire()
                                     {
-                                        var command = new CommandBindWire()
-                                        {
-                                            BoundedObject = nearest.ScreenElement.Serializable,
-                                            BoundedTerminal = nearest.TerminalNumber,
-                                            PreviousStateBounded = true,
-                                            PreviousBoundedObject = wt.WireScreen.serializableWire.bnd(wt.TerminalNumber).Item1,
-                                            PreviuosBoundedTerminal = wt.WireScreen.serializableWire.bnd(wt.TerminalNumber).Item2,
-                                            Wire = wt.WireScreen.serializableWire,
-                                            WireTerminalNumber = wt.TerminalNumber
-                                        };
-                                        executeCommand(command);
-                                    }
+                                        BoundedObject = nearest.ScreenElement.Serializable,
+                                        BoundedTerminal = nearest.TerminalNumber,
+                                        PreviousStateBounded = true,
+                                        PreviousBoundedObject = wt.WireScreen.serializableWire.bnd(wt.TerminalNumber).Item1,
+                                        PreviuosBoundedTerminal = wt.WireScreen.serializableWire.bnd(wt.TerminalNumber).Item2,
+                                        Wire = wt.WireScreen.serializableWire,
+                                        WireTerminalNumber = wt.TerminalNumber
+                                    };
+                                    executeCommand(command);
                                 }
                             }
                             else
@@ -631,25 +628,25 @@ namespace Transition.CircuitEditor
                     else
                     if (selectedElement is ScreenComponentBase)
                     { /* the moved element is a component */
-                        var comp = selectedElements[0] as ScreenComponentBase;
+                        var component = selectedElements[0] as ScreenComponentBase;
 
-                        if ((comp.ComponentPosition != comp.OriginalComponentPosition))
+                        if ((component.ComponentPosition != component.OriginalComponentPosition))
                         {   /* we check the component has actually moved and not stayed in place */
                             /* we do a move command */
                             var command = new CommandMoveComponent()
                             {
-                                OldPosition = comp.SerializableComponent.ComponentPosition,
-                                NewPosition = comp.ComponentPosition,
-                                Component = comp.SerializableComponent
+                                OldPosition = component.SerializableComponent.ComponentPosition,
+                                NewPosition = component.ComponentPosition,
+                                Component = component.SerializableComponent
                             };
                             executeCommand(command);
 
                             /* and now we do a bind command, in case the component has moved
                                close enough to other terminals */
-                            var binds = currentDesign.getListPairedComponentTerminals(comp);
+                            var binds = currentDesign.getListPairedComponentTerminals(component);
                             if (binds.Count > 0)
                             {
-                                var command2 = new CommandBindComponent(binds, comp.SerializableComponent);
+                                var command2 = new CommandBindComponent(binds, component.SerializableComponent);
                                 executeCommand(command2);
                             }
                         }
