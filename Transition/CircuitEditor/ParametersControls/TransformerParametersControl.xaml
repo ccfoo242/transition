@@ -14,24 +14,25 @@
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
         <StackPanel Orientation="Horizontal">
             <TextBlock Margin="4" Text="Component Name: "/>
-            <TextBox Margin="4" Text="{Binding ElementName, Mode=TwoWay}"/>
+            <TextBox x:Name="txtElementName" Margin="4" 
+                     TextChanged="ElementNameChanged" GotFocus="ElementNameFocus" />
         </StackPanel>
         <controls:Expander Header="Coupling" ExpandDirection="Down"
                            IsExpanded="True">
             <StackPanel Orientation="Vertical">
-                <customcontrols:EngrNumberBoxDialog 
+                <customcontrols:EngrNumberBoxDialog  x:Name="boxTR"
                          HorizontalAlignment="Right" VariableName="Turns Ratio" Margin="4"
-                                x:Name="boxTR"  Value="{Binding TurnsRatio, Mode=TwoWay}"/>
+                         ValueManuallyChanged="TurnsRatioChange"/>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="K Coupling Coefficient" Margin="4"
                                VerticalAlignment="Center"/>
                     <TextBlock Margin="4" Width="30"
                                VerticalAlignment="Center"
-                               Text="{Binding KCouplingCoef, Mode=OneWay}"/>
-                    <Slider Minimum="0" Maximum="0.99" StepFrequency="0.01" 
+                               Text="{Binding Value, Mode=OneWay, ElementName = sldKCouplingCoef}"/>
+                    <Slider x:Name="sldKCouplingCoef"
+                            Minimum="0" Maximum="0.99" StepFrequency="0.01" 
                             Width="110" VerticalAlignment="Center" 
-                            x:Name="sldKCouplingCoef"
-                            Value="{Binding KCouplingCoef, Mode=TwoWay}"/>
+                            ValueChanged="changeKCouplingCoef"/>
                 </StackPanel>
             </StackPanel>
         </controls:Expander>
@@ -39,12 +40,10 @@
         <controls:Expander Header="Inductance" ExpandDirection="Down"
                            IsExpanded="True">
             <StackPanel Orientation="Vertical">
-                <customcontrols:EngrNumberBoxDialog x:Name="BoxLpri"
-                         HorizontalAlignment="Right" VariableName="Primary Inductance (H)" Margin="4"
-                                                    Value="{Binding Lpri, Mode=TwoWay}"/>
-                <customcontrols:EngrNumberBoxDialog x:Name="BoxLsec"
-                         HorizontalAlignment="Right" VariableName="Secondary Inductance (H)" Margin="4"
-                                                    Value="{Binding Lsec, Mode=TwoWay}"/>
+                <customcontrols:EngrNumberBoxDialog x:Name="BoxLpri" ValueManuallyChanged="LPriChange"
+                         HorizontalAlignment="Right" VariableName="Primary Inductance (H)" Margin="4"/>
+                <customcontrols:EngrNumberBoxDialog x:Name="BoxLsec" ValueManuallyChanged="LSecChange"
+                         HorizontalAlignment="Right" VariableName="Secondary Inductance (H)" Margin="4"/>
                 <NavigationViewItemSeparator/>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -58,16 +57,19 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Text="Mutual Inductance (H)" Grid.Row="0" Grid.Column="0" Margin="4" HorizontalAlignment="Right"/>
-                    <customcontrols:EngrNumberBox Value="{Binding MutualL, Mode=OneWay}" Margin="4" 
-                                             Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left"  IsEnabled="False"/>
+                    <customcontrols:EngrNumberBox x:Name="BoxMutualL"
+                        Value="{Binding MutualL, Mode=OneWay}" Margin="4" 
+                            Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left"  IsEnabled="False"/>
 
                     <TextBlock Text="Lp Leakeage (H)" Grid.Row="1" Grid.Column="0"  Margin="4" HorizontalAlignment="Right"/>
-                    <customcontrols:EngrNumberBox Value="{Binding LpLeak, Mode=OneWay}" Margin="4" 
-                                         IsEnabled="False"  Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left"/>
+                    <customcontrols:EngrNumberBox x:Name="BoxLpLeak"
+                        Value="{Binding LpLeak, Mode=OneWay}" Margin="4" 
+                            IsEnabled="False"  Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left"/>
 
                     <TextBlock Text="Ls Leakeage (H)" Grid.Row="2" Grid.Column="0" Margin="4"  HorizontalAlignment="Right"/>
-                    <customcontrols:EngrNumberBox Value="{Binding LsLeak, Mode=OneWay}" Margin="4" 
-                                      IsEnabled="False"  Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left"/>
+                    <customcontrols:EngrNumberBox x:Name="BoxLsLeak"
+                        Value="{Binding LsLeak, Mode=OneWay}" Margin="4" 
+                            IsEnabled="False"  Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left"/>
                 </Grid>
 
             </StackPanel>

@@ -101,12 +101,20 @@ namespace Transition.CircuitEditor.Serializable
         public override byte QuantityOfTerminals { get { return quantityOfTerminals; }
             set
             {
+                byte oldValue = quantityOfTerminals;
                 //unbindElement();
                 SetProperty(ref quantityOfTerminals, value);
-                TerminalsChanged?.Invoke();
+                TerminalsChanged?.Invoke(oldValue, value);
+
+                if (value < oldValue)
+                    for (byte x = oldValue; x > value; x--)
+                        raiseTerminalDeleted((byte)(x - 1));
+
+                raiseLayoutChanged();
+                
             } }
 
-        public delegate void DelegateTerminalsChanged();
+        public delegate void DelegateTerminalsChanged(byte oldQuantity, byte newQuantity);
         public event DelegateTerminalsChanged TerminalsChanged;
 
         public delegate void DelegateTaperChanged();

@@ -11,6 +11,13 @@ namespace Transition.CircuitEditor.Serializable
 {
     public enum Precision { Arbitrary, p05, p1, p2, p5, p10, p20, p50 }
 
+    /* Element is something that has terminals 
+       An element can be 1) wire or 2) component
+       component are things that performs a function in a circuit
+       things like resistors, opamps, transformers, etc */
+       /* wires and components are very different in their UI operation
+        but they share a few properties , they all have terminals */
+
     public abstract class SerializableElement : BindableBase
     {
         private string elementName = "";
@@ -31,6 +38,8 @@ namespace Transition.CircuitEditor.Serializable
         public delegate void ElementDelegate(SerializableElement el);
         public event ElementDelegate LayoutChanged;
 
+        public delegate void ElementTerminal(SerializableElement el, byte terminalNumber);
+        public event ElementTerminal ElementTerminalDeleted;
         
         public virtual void SetProperty(string property, object value)
         {
@@ -48,6 +57,11 @@ namespace Transition.CircuitEditor.Serializable
         public void raiseLayoutChanged()
         {
             LayoutChanged?.Invoke(this);
+        }
+
+        public void raiseTerminalDeleted(byte terminal)
+        {
+            ElementTerminalDeleted?.Invoke(this, terminal);
         }
 
         public override string ToString()

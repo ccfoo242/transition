@@ -96,15 +96,27 @@ namespace Transition.CircuitEditor.Serializable
             {
                 previousValue.Item1.LayoutChanged -= BindedElementLayoutChanged;
                 previousValue.Item1.ElementDeleted -= BindedElementDeleted;
+                previousValue.Item1.ElementTerminalDeleted -= BindedElementTerminalDeleted;
             }
 
             if (newValue != null)
             {
                 newValue.Item1.LayoutChanged += BindedElementLayoutChanged;
                 newValue.Item1.ElementDeleted += BindedElementDeleted;
+                newValue.Item1.ElementTerminalDeleted += BindedElementTerminalDeleted;
             }
 
             WireBindingChanged?.Invoke(this, terminal, previousValue, newValue);
+        }
+
+        private void BindedElementTerminalDeleted(SerializableElement el, byte terminalNumber)
+        {
+            if (Bind0 != null)
+                if ((Bind0.Item1 == el) && (Bind0.Item2 == terminalNumber)) Bind0 = null;
+
+            if (Bind1 != null)
+                if ((Bind1.Item1 == el) && (Bind1.Item2 == terminalNumber)) Bind1 = null;
+
         }
 
         public void BindedElementLayoutChanged(SerializableElement el)

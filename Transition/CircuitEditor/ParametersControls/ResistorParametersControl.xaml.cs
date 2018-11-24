@@ -223,12 +223,8 @@ namespace Transition.CircuitEditor.Components
 
         private void executeCommand(ICircuitCommand command)
         {
-           // SerializableResistor.PropertyChanged -= handleChangeOfControls;
-
             CircuitEditor.currentInstance.executeCommand(command);
-
-          //  SerializableResistor.PropertyChanged += handleChangeOfControls;
-
+            
         }
         
     }

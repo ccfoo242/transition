@@ -43,7 +43,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             Binding b1 = new Binding()
             {
                 Path = new PropertyPath("ElementName"),
-                Mode = BindingMode.OneWay
+                Mode = BindingMode.OneWay,
+                Source = trans
             };
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
             txtComponentName.RenderTransform = new TranslateTransform() { };
@@ -61,7 +62,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 Path = new PropertyPath("TurnsRatio"),
                 Converter = new EngrConverter()
                     { ShortString = false, AllowNegativeNumber = false },
-                Mode = BindingMode.OneWay
+                Mode = BindingMode.OneWay,
+                Source = trans,
             };
             txtTurnsRatio.SetBinding(TextBlock.TextProperty, b2);
             txtTurnsRatio.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };

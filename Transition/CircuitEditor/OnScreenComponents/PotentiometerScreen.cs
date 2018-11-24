@@ -17,20 +17,23 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public override double SchematicWidth => 120;
         public override double SchematicHeight => 160;
 
-        public override int[,] TerminalPositions { get {
+        public override int[,] TerminalPositions
+        {
+            get
+            {
                 if (QuantityOfTerminals == 3)
-                    { return new int[,] { { 40, 20 }, { 40, 140 }, { 100, 80 } }; }
+                { return new int[,] { { 40, 20 }, { 40, 140 }, { 100, 80 } }; }
                 else
                 if (QuantityOfTerminals == 4)
-                    { return new int[,] { { 40, 20 }, { 40, 140 }, { 100, 80 }, { 20, 80 } }; }
+                { return new int[,] { { 40, 20 }, { 40, 140 }, { 100, 80 }, { 20, 80 } }; }
                 else
                 if (QuantityOfTerminals == 5)
-                    { return new int[,] { { 40, 20 }, { 40, 140 }, { 100, 80 }, { 20, 60 }, { 20, 100 } }; }
+                { return new int[,] { { 40, 20 }, { 40, 140 }, { 100, 80 }, { 20, 60 }, { 20, 100 } }; }
                 else /* 6 */
-                    { return new int[,] { { 40, 20 }, { 40, 140 }, { 100, 80 }, { 20, 60 }, { 20, 80 }, { 20, 100 } }; }
+                { return new int[,] { { 40, 20 }, { 40, 140 }, { 100, 80 }, { 20, 60 }, { 20, 80 }, { 20, 100 } }; }
             }
-        } 
-    
+        }
+
         public TextBlock txtCW;
         public TextBlock txtCCW;
         public TextBlock txtResistanceValue;
@@ -38,7 +41,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public TextBlock txtComponentName;
 
         public ContentControl SymbolPotentiometer { get; }
-  
+
 
         public PotentiometerScreen(Potentiometer pot) : base(pot)
         {
@@ -51,12 +54,12 @@ namespace Transition.CircuitEditor.OnScreenComponents
             Canvas.SetLeft(SymbolPotentiometer, 19);
 
             pot.TerminalsChanged += terminalsChanged;
-            terminalsChanged();
+            // terminalsChanged();
 
             txtComponentName = new TextBlock()
             {
                 FontWeight = FontWeights.ExtraBold,
-                RenderTransform = new TranslateTransform()
+                RenderTransform = new TranslateTransform(),
             };
 
             txtResistanceValue = new TextBlock()
@@ -90,7 +93,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             Binding b1 = new Binding()
             {
                 Path = new PropertyPath("ElementName"),
-                Mode = BindingMode.OneWay
+                Mode = BindingMode.OneWay,
+                Source = pot
             };
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
             txtComponentName.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
@@ -100,7 +104,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             Binding b2 = new Binding()
             {
                 Path = new PropertyPath("ResistanceString"),
-                Mode = BindingMode.OneWay 
+                Mode = BindingMode.OneWay,
+                Source = pot
             };
             txtResistanceValue.SetBinding(TextBlock.TextProperty, b2);
             txtResistanceValue.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
@@ -111,16 +116,26 @@ namespace Transition.CircuitEditor.OnScreenComponents
             {
                 Path = new PropertyPath("PositionValue"),
                 Mode = BindingMode.OneWay,
-                Converter = new PotValueConverter() 
+                Converter = new PotValueConverter(),
+                Source = pot
             };
             txtPositionValue.SetBinding(TextBlock.TextProperty, b3);
             txtPositionValue.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
             Children.Add(txtPositionValue);
 
+            var t3 = new ElementTerminal(3, this);
+            Terminals.Add(t3); Children.Add(t3);
+
+            var t4 = new ElementTerminal(4, this);
+            Terminals.Add(t4); Children.Add(t4);
+
+            var t5 = new ElementTerminal(5, this);
+            Terminals.Add(t5); Children.Add(t5);
+
             postConstruct();
         }
 
-        private void terminalsChanged()
+        private void terminalsChanged(byte oldValue, byte newValue)
         {
             switch (QuantityOfTerminals)
             {
@@ -141,6 +156,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
                         (DataTemplate)Application.Current.Resources["symbolPotentiometer3MidPoint"];
                     break;
             }
+
 
 
         }
@@ -373,8 +389,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             //number to string
             if (value == null) return "";
             double dvalue = (double)value;
-            decimal devalue = Decimal.Round((decimal)dvalue,2);
-            
+            decimal devalue = Decimal.Round((decimal)dvalue, 2);
+
             return devalue.ToString() + " %";
         }
 

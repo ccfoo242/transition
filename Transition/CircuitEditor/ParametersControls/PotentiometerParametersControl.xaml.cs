@@ -9,6 +9,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Transition.CircuitEditor.Serializable;
+using Transition.Commands;
+using Transition.CustomControls;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
@@ -31,6 +33,8 @@ namespace Transition.CircuitEditor.Components
 
         private SeriesCollection seriesCollection;
 
+        private string oldElementName;
+
         public PotentiometerParametersControl()
         {
             this.InitializeComponent();
@@ -41,8 +45,11 @@ namespace Transition.CircuitEditor.Components
             this.InitializeComponent();
 
             SerializablePotentiometer = pot;
-            DataContext = pot;
-            
+            //DataContext = pot;
+
+            pot.PropertyChanged += handleChangeOfControls;
+            handleChangeOfControls(null, null);
+
             seriesCollection = new SeriesCollection();
             lvcTaperCurve.Series = seriesCollection;
 
@@ -72,12 +79,10 @@ namespace Transition.CircuitEditor.Components
                 }
             });
             
-            pot.TerminalsChanged += quantityOfTerminalsChanged;
             pot.TaperChanged += Pot_TaperChanged;
 
             Pot_TaperChanged();
 
-            quantityOfTerminalsChanged();
         }
 
         private void Pot_TaperChanged()
@@ -118,17 +123,60 @@ namespace Transition.CircuitEditor.Components
 
         private void cmbSelectedQuantityOfTerminalsChanged(object sender, SelectionChangedEventArgs e)
         {
+            byte newQuantity;
+
             switch (cmbQuantityOfTerminals.SelectedIndex)
             {
-                case 0: SerializablePotentiometer.QuantityOfTerminals = 3; break;
-                case 1: SerializablePotentiometer.QuantityOfTerminals = 4; break;
-                case 2: SerializablePotentiometer.QuantityOfTerminals = 5; break;
-                case 3: SerializablePotentiometer.QuantityOfTerminals = 6; break;
+                case 0: newQuantity = 3; break;
+                case 1: newQuantity = 4; break;
+                case 2: newQuantity = 5; break;
+                case 3: newQuantity = 6; break;
+                default: newQuantity = 3;break;
             }
+
+            var command = new CommandSetValue()
+            {
+                Component = SerializablePotentiometer,
+                Property = "QuantityOfTerminals",
+                OldValue = SerializablePotentiometer.QuantityOfTerminals,
+                NewValue = newQuantity
+            };
+
+            executeCommand(command);
         }
 
-        private void quantityOfTerminalsChanged()
+
+
+        private void handleChangeOfControls(object sender, PropertyChangedEventArgs args)
         {
+            SerializablePotentiometer.PropertyChanged -= handleChangeOfControls;
+
+            cmbQuantityOfTerminals.SelectionChanged -= cmbSelectedQuantityOfTerminalsChanged;
+            switch (SerializablePotentiometer.QuantityOfTerminals)
+            {
+                case 3: cmbQuantityOfTerminals.SelectedIndex = 0; break;
+                case 4: cmbQuantityOfTerminals.SelectedIndex = 1; break;
+                case 5: cmbQuantityOfTerminals.SelectedIndex = 2; break;
+                case 6: cmbQuantityOfTerminals.SelectedIndex = 3; break;
+            }
+            cmbQuantityOfTerminals.SelectionChanged += cmbSelectedQuantityOfTerminalsChanged;
+            
+            componentValueBox.ValueChanged -= PotValueChanged;
+            componentValueBox.ComponentValue = SerializablePotentiometer.ResistanceValue;
+            componentValueBox.ValueChanged += PotValueChanged;
+
+            componentValueBox.PrecisionChanged -= PrecisionChanged;
+            componentValueBox.ComponentPrecision = SerializablePotentiometer.ComponentPrecision;
+            componentValueBox.PrecisionChanged += PrecisionChanged;
+
+            txtElementName.TextChanged -= ElementNameChanged;
+            txtElementName.Text = SerializablePotentiometer.ElementName;
+            txtElementName.TextChanged += ElementNameChanged;
+
+            sldTapAPosition.ValueChanged -= sldTapAPositionValueChanged;
+            sldTapBPosition.ValueChanged -= sldTapBPositionValueChanged;
+            sldTapCPosition.ValueChanged -= sldTapCPositionValueChanged;
+
             switch (SerializablePotentiometer.QuantityOfTerminals)
             {
                 case 3:
@@ -157,7 +205,135 @@ namespace Transition.CircuitEditor.Components
                     break;
             }
 
+            sldTapAPosition.Value = SerializablePotentiometer.TapAPositionValue;
+            sldTapBPosition.Value = SerializablePotentiometer.TapBPositionValue;
+            sldTapCPosition.Value = SerializablePotentiometer.TapCPositionValue;
+            
+            sldTapAPosition.ValueChanged += sldTapAPositionValueChanged;
+            sldTapBPosition.ValueChanged += sldTapBPositionValueChanged;
+            sldTapCPosition.ValueChanged += sldTapCPositionValueChanged;
+
+            sldPosition.ValueChanged -= sldPositionValueChanged;
+            sldPosition.Value = SerializablePotentiometer.PositionValue;
+            sldPosition.ValueChanged += sldPositionValueChanged;
+
+            SerializablePotentiometer.PropertyChanged += handleChangeOfControls;
+        }
+        
+
+        private void PrecisionChanged(object sender, ValueChangedEventArgs args)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializablePotentiometer,
+                Property = "ComponentPrecision",
+                OldValue = args.oldValue,
+                NewValue = args.newValue
+            };
+
+            executeCommand(command);
 
         }
+
+        private void PotValueChanged(object sender, ValueChangedEventArgs args)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializablePotentiometer,
+                Property = "ResistanceValue",
+                OldValue = args.oldValue,
+                NewValue = args.newValue
+            };
+
+            executeCommand(command);
+
+        }
+
+        private void sldPositionValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+
+            var command = new CommandSetValue()
+            {
+                Component = SerializablePotentiometer,
+                Property = "PositionValue",
+                OldValue = SerializablePotentiometer.PositionValue,
+                NewValue = sldPosition.Value
+            };
+
+            executeCommand(command);
+
+        }
+
+        private void sldTapAPositionValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+
+            var command = new CommandSetValue()
+            {
+                Component = SerializablePotentiometer,
+                Property = "TapAPositionValue",
+                OldValue = SerializablePotentiometer.TapAPositionValue,
+                NewValue = sldTapAPosition.Value
+            };
+
+            executeCommand(command);
+
+        }
+
+        private void sldTapBPositionValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializablePotentiometer,
+                Property = "TapBPositionValue",
+                OldValue = SerializablePotentiometer.TapBPositionValue,
+                NewValue = sldTapBPosition.Value
+            };
+
+            executeCommand(command);
+
+        }
+
+        private void sldTapCPositionValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializablePotentiometer,
+                Property = "TapCPositionValue",
+                OldValue = SerializablePotentiometer.TapCPositionValue,
+                NewValue = sldTapCPosition.Value
+            };
+
+            executeCommand(command);
+
+        }
+
+        private void ElementNameChanged(object sender, TextChangedEventArgs e)
+        {
+            if (oldElementName == txtElementName.Text) return;
+
+            var command = new CommandSetValue()
+            {
+                Component = SerializablePotentiometer,
+                Property = "ElementName",
+                OldValue = oldElementName,
+                NewValue = txtElementName.Text
+            };
+
+            executeCommand(command);
+
+            oldElementName = txtElementName.Text;
+
+        }
+
+        private void ElementNameFocus(object sender, RoutedEventArgs e)
+        {
+            oldElementName = SerializablePotentiometer.ElementName;
+        }
+
+        private void executeCommand(ICircuitCommand command)
+        {
+            CircuitEditor.currentInstance.executeCommand(command);
+        }
+        
     }
 }
