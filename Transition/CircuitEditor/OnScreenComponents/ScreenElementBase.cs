@@ -252,20 +252,13 @@ namespace Transition.CircuitEditor.OnScreenComponents
         
         public Point2D getRelativeTerminalPosition(byte terminal)
         {
-          
-            double X =  ((FlipX ? -1 : 1) *
-                           Math.Cos(Math.PI - (ActualRotation * Math.PI / 180)) * 
-                           ((SchematicWidth / 2) - TerminalPositions[terminal, 0])) +
-                           ((FlipY ? -1 : 1) *
-                           Math.Sin(Math.PI - (ActualRotation * Math.PI / 180)) *
-                           ((SchematicHeight / 2) - TerminalPositions[terminal, 1]));
+            double radRotation = (-1 * ActualRotation * Math.PI / 180);
 
-            double Y =  ((FlipX ? -1 : 1) *
-                           Math.Sin(Math.PI - (ActualRotation * Math.PI / 180)) *
-                           ((SchematicWidth / 2) - TerminalPositions[terminal, 0])) +
-                           ((FlipY ? -1 : 1) *
-                           Math.Cos(Math.PI - (ActualRotation * Math.PI / 180)) *
-                           ((SchematicHeight / 2) - TerminalPositions[terminal, 1]));
+            double X =  ((FlipX ? -1 : 1) * Math.Cos(radRotation) * ((-1 * SchematicWidth / 2) + TerminalPositions[terminal, 0])) +
+                        ((FlipY ? -1 : 1) * Math.Sin(radRotation) * ((SchematicHeight / 2) - TerminalPositions[terminal, 1]));
+
+            double Y =  ((FlipX ? 1 : -1) * Math.Sin(radRotation) * ((-1 * SchematicWidth / 2) + TerminalPositions[terminal, 0])) +
+                        ((FlipY ? -1 : 1) * Math.Cos(radRotation) * ((SchematicHeight / 2) - TerminalPositions[terminal, 1]));
             
             return new Point2D(X, Y);
         }
