@@ -138,6 +138,11 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             return (point.getDistance(TerminalPosition) < WireScreen.RadiusClick);
         }
+
+        public void moveRelativeCommand(Point2D vector)
+        {
+            WireScreen.serializableWire.moveTerminalRelative(TerminalNumber, vector);
+        }
     }
 
 }

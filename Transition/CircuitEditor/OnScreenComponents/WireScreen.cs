@@ -285,14 +285,10 @@ namespace Transition.CircuitEditor.OnScreenComponents
             PositionTerminal1 = originalPositionTerminal1 + vector;
         }
 
-        public void moveRelative(byte terminal, Point2D vector, Point2D originalPositionTerminal)
+        public void moveRelative(byte terminalNumber, Point2D vector, Point2D originalPositionTerminal)
         {
-           /* Point2D originalPositionTerminal = (terminal == 0) ? serializableWire.PositionTerminal0 : 
-                                                                 serializableWire.PositionTerminal1;*/
-
-
-
-            if (terminal == 0)
+         
+            if (terminalNumber == 0)
                 PositionTerminal0 = originalPositionTerminal + vector;
             else
                 PositionTerminal1 = originalPositionTerminal + vector;

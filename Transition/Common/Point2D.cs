@@ -59,8 +59,16 @@ namespace Transition.Common
             return new Point2D(n.X * -1, n.Y * -1);
         }
 
+        public static Point2D Multiply(Point2D n1, double n2)
+        {
+            return new Point2D(n1.X * n2, n1.Y * n2);
+        }
+        
         public static Point2D operator +(Point2D n1, Point2D n2) { return Add(n1, n2); }
         public static Point2D operator -(Point2D n1, Point2D n2) { return Substract(n1, n2); }
+        public static Point2D operator *(Point2D n1, double n2) { return Multiply(n1, n2); }
+        public static Point2D operator *(double n1, Point2D n2) { return Multiply(n2, n1); }
+
 
         public static double getDistance(Point2D point1, Point2D point2)
         {

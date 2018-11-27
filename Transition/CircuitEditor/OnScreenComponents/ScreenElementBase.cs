@@ -300,6 +300,10 @@ namespace Transition.CircuitEditor.OnScreenComponents
             return point.getDistance(componentPosition + HalfComponentVector) < RadiusClick;
         }
 
+        public void moveRelativeCommand(Point2D displacement)
+        {
+            SerializableComponent.ComponentPosition += displacement;
+        }
     }
 
 

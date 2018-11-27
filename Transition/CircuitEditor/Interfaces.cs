@@ -27,7 +27,7 @@ namespace Transition.CircuitEditor
     public interface ICircuitMovable
     {
         void moveRelative(Point2D vector);
-
+        void moveRelativeCommand(Point2D vector);
     }
 
 }

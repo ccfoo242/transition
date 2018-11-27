@@ -181,5 +181,13 @@ namespace Transition.CircuitEditor.Serializable
 
             return false;
         }
+
+        public void moveTerminalRelative(byte terminalNumber, Point2D displacement)
+        {
+            if (terminalNumber == 0)
+                PositionTerminal0 += displacement;
+            else
+                PositionTerminal1 += displacement;
+        }
     }
 }

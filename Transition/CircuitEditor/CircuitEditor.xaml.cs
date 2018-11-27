@@ -671,36 +671,12 @@ namespace Transition.CircuitEditor
                 else
                 if (selectedElements.Count > 1)
                 {
-                    var moveCommands = new List<ICircuitCommand>();
+                    var command = new CommandMoveGroup();
+                    command.Elements.AddRange(selectedElements.OfType<ICircuitMovable>());
+                    command.DistanceVector = snapCoordinate(ptCanvas - clickedPoint);
 
-                    foreach (ScreenComponentBase component in selectedElements.OfType<ScreenComponentBase>())
-                        if (component.OriginalComponentPosition != component.componentPosition)
-                        {
-                            var command = new CommandMoveComponent()
-                            {
-                                OldPosition = component.OriginalComponentPosition,
-                                NewPosition = component.componentPosition,
-                                Component = component.SerializableComponent
-                            };
-                            moveCommands.Add(command);
-                           
-                        }
-                    var wireTerminals = selectedElements.OfType<WireTerminal>();
-                    
-                    foreach (WireTerminal wt in wireTerminals)
-                        if (wt.OriginalTerminalPosition != wt.TerminalPosition)
-                        {
-                            var command = new CommandMoveWireTerminal()
-                            {
-                                OldPosition = wt.OriginalTerminalPosition,
-                                NewPosition = wt.TerminalPosition,
-                                Wire = wt.WireScreen.serializableWire,
-                                WireTerminalNumber = wt.TerminalNumber
-                            };
-                            moveCommands.Add(command);
-                        }
+                    executeCommand(command);
 
-                    foreach (ICircuitCommand command in moveCommands) executeCommand(command);
                 }
 
             movingComponents = false;

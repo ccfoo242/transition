@@ -12,17 +12,20 @@ namespace Transition.Commands
     {
         public string Title => "Move Group of selectable elements";
 
-        public List<ICircuitSelectable> Elements { get; set; } = new List<ICircuitSelectable>();
+        public List<ICircuitMovable> Elements { get; set; } = new List<ICircuitMovable>();
         public Point2D DistanceVector { get; set; }
 
         public void execute()
         {
-            throw new NotImplementedException();
+            foreach (var element in Elements)
+                element.moveRelativeCommand(DistanceVector);
+            
         }
 
         public void unExecute()
         {
-            throw new NotImplementedException();
+            foreach (var element in Elements)
+                element.moveRelativeCommand(-1 * DistanceVector);
         }
     }
 }
