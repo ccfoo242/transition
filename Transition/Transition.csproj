@@ -152,6 +152,7 @@
     <Compile Include="Commands\CommandFlipComponent.cs" />
     <Compile Include="Commands\CommandMoveComponent.cs" />
     <Compile Include="Commands\CommandMoveFreeWire.cs" />
+    <Compile Include="Commands\CommandMoveGroup.cs" />
     <Compile Include="Commands\CommandMoveWireTerminal.cs" />
     <Compile Include="Commands\CommandRemoveComponent.cs" />
     <Compile Include="Commands\CommandRemoveWire.cs" />

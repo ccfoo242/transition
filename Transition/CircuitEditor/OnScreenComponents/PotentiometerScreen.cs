@@ -123,15 +123,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             txtPositionValue.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
             Children.Add(txtPositionValue);
 
-            var t3 = new ElementTerminal(3, this);
-            Terminals.Add(t3); Children.Add(t3);
-
-            var t4 = new ElementTerminal(4, this);
-            Terminals.Add(t4); Children.Add(t4);
-
-            var t5 = new ElementTerminal(5, this);
-            Terminals.Add(t5); Children.Add(t5);
-
+         
             postConstruct();
         }
 
@@ -156,9 +148,30 @@ namespace Transition.CircuitEditor.OnScreenComponents
                         (DataTemplate)Application.Current.Resources["symbolPotentiometer3MidPoint"];
                     break;
             }
+            
+            if (newValue < oldValue)
+            {
+                ElementTerminal t;
+                
+                for (byte x = oldValue; x > newValue; x--)
+                {
+                    t = Terminals[x - 1];
+                    Terminals.Remove(t);
+                    Children.Remove(t);
+                }
+            }
 
+            if (newValue > oldValue)
+            {
+                ElementTerminal t;
 
-
+                for (byte x = oldValue; x < newValue; x++)
+                {
+                    t = new ElementTerminal(x, this);
+                    Terminals.Add(t);Children.Add(t);
+                }
+            }
+            
         }
 
         public override void setPositionTextBoxes(SerializableElement el)
