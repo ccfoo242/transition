@@ -24,7 +24,7 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        private int resistorModel;
+        private int resistorModel;  //0=ideal 1=parasitic 2=exponential
         public int ResistorModel
         {
             get { return resistorModel; }

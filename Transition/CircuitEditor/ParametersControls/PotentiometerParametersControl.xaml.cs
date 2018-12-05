@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Transition.CircuitEditor.Serializable;
 using Transition.Commands;
@@ -45,7 +46,6 @@ namespace Transition.CircuitEditor.Components
             this.InitializeComponent();
 
             SerializablePotentiometer = pot;
-            //DataContext = pot;
 
             pot.PropertyChanged += handleChangeOfControls;
             handleChangeOfControls(null, null);
@@ -98,9 +98,9 @@ namespace Transition.CircuitEditor.Components
                 LineSmoothness = 0
             };
          
-            foreach (TaperPoint point in SerializablePotentiometer.TaperFunction)
-                  l.Values.Add(new ObservablePoint(point.PositionValuePercent,
-                       point.ResistanceValuePercent));
+            foreach (KeyValuePair<double, Complex> point in SerializablePotentiometer.TaperFunction.Data)
+                  l.Values.Add(new ObservablePoint(point.Key,
+                       point.Value.Magnitude));
 
             seriesCollection.Add(l);
              
@@ -334,6 +334,10 @@ namespace Transition.CircuitEditor.Components
         {
             CircuitEditor.currentInstance.executeCommand(command);
         }
-        
+
+        private void btnLibraryTap(object sender, TappedRoutedEventArgs e)
+        {
+
+        }
     }
 }

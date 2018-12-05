@@ -38,6 +38,7 @@ namespace Transition.Functions
             "Power",
             "Pressure",
             "Ratio",
+            "Resistance",
             "Time",
             "Velocity",
             "Volume Velocity",
@@ -61,42 +62,45 @@ namespace Transition.Functions
 
     public class SampledCurve : Function
     {
-        public Dictionary<double, Complex> Data { get; set; }
+        public Dictionary<double, Complex> Data { get; } = new Dictionary<double, Complex>();
         public InterpolationModes InterpolationMode;
 
         public SampledCurve()
         {
-            Data = new Dictionary<double, Complex>();
+            InterpolationMode = InterpolationModes.Linear;
         }
 
         public override Complex Calculate(double point)
         {
-            bool pointExists = false;
-
-            foreach (double pData in Data.Keys)
-                if (pData == point) pointExists = true;
-
-            if (pointExists)
+            if (pointExistsInDomain(point))
                 return Data[point]; 
             else
                 return Interpolate(point);
             
         }
 
+        public bool pointExistsInDomain(double point)
+        {
+            foreach (double pData in Data.Keys)
+                if (pData == point) return true;
+
+            return false;
+        }
+
         public Complex Interpolate(double point)
         {
-            if (Data.Count == 0) throw new InvalidOperationException();
-            
-            try { double x1 = GetPreviuosAbscissa(point); }
-            catch { return Data[GetNextAbscissa(point)]; }
+            return Interpolate(point, InterpolationMode);
+        }
 
-            try { double x2 = GetNextAbscissa(point); }
-            catch { return Data[GetPreviuosAbscissa(point)]; }
-            
-            if (InterpolationMode == InterpolationModes.Linear)
+        public Complex Interpolate(double point, InterpolationModes interpolationMode)
+        {
+            if (interpolationMode == InterpolationModes.NearestNeighbor)
+                return InterpolateNearestNeighbor(point);
+            else
+            if (interpolationMode == InterpolationModes.Linear)
                 return InterpolateLinear(point);
-            else 
-            if (InterpolationMode == InterpolationModes.Quadratic)
+            else
+            if (interpolationMode == InterpolationModes.Quadratic)
                 return InterpolateQuadratic(point);
             else
                 return InterpolateCubic(point);
@@ -129,10 +133,64 @@ namespace Transition.Functions
 
             return current;
         }
-
-        public Complex InterpolateLinear(double point)
+        
+        public bool isThereNextAbscissa(double point)
         {
-          
+            try { Complex x = GetNextAbscissa(point); }
+            catch { return false; }
+            return true;
+        }
+
+        public bool isTherePreviousAbscissa(double point)
+        {
+            try { Complex x = GetPreviuosAbscissa(point); }
+            catch { return false; }
+            return true;
+        }
+
+        public bool isPointOutsideRange(double point)
+        {
+            if (Data.Count == 0) return true;
+            if (!isThereNextAbscissa(point)) return true;
+            if (!isTherePreviousAbscissa(point)) return true;
+
+            return false;
+        }
+
+        public Complex getValueOutsideRange(double point)
+        {
+            if (Data.Count == 0) throw new InvalidOperationException();
+            
+            bool ThereIsNextAbscissa = isThereNextAbscissa(point);
+            bool ThereIsPreviousAbscissa = isTherePreviousAbscissa(point);
+
+            if (!ThereIsPreviousAbscissa)
+                return Data[GetNextAbscissa(point)];
+            else
+                return Data[GetPreviuosAbscissa(point)];
+        }
+
+        private Complex InterpolateNearestNeighbor(double point)
+        {
+            if (Data.Count < 1) throw new InvalidOperationException();
+
+            if (isPointOutsideRange(point)) return getValueOutsideRange(point);
+
+            double distanceToNext = GetNextAbscissa(point) - point;
+            double distanceToPrevious = point - GetPreviuosAbscissa(point);
+
+            if (distanceToNext < distanceToPrevious)
+                return Data[GetNextAbscissa(point)];
+            else
+                return Data[GetPreviuosAbscissa(point)];
+        }
+
+        private Complex InterpolateLinear(double point)
+        {
+            if (Data.Count < 2) throw new InvalidOperationException();
+
+            if (isPointOutsideRange(point)) return getValueOutsideRange(point);
+
             double x1 = GetPreviuosAbscissa(point); 
             double x2 = GetNextAbscissa(point);
             double x = point;
@@ -142,17 +200,37 @@ namespace Transition.Functions
             return y1 + ((x - x1) * (y2 - y1) / (x2 - x1));
         }
 
-        public Complex InterpolateQuadratic(double point)
+        private Complex InterpolateQuadratic(double point)
         {
             return 0;
         }
 
-        public Complex InterpolateCubic(double point)
+        private Complex InterpolateCubic(double point)
         {
             return 0;
         }
+
+        public void addSample(double abscissa, Complex value)
+        {
+            if (Data.Keys.Contains(abscissa))
+                Data[abscissa] = value;
+            else
+                Data.Add(abscissa, value);
+        }
+
+        public bool removeSample(double abscissa)
+        {
+            if (Data.Keys.Contains(abscissa))
+            {
+                Data.Remove(abscissa);
+                return true;
+            }
+            else
+                return false;
+        }
+
     }
 
-    public enum InterpolationModes { Linear, Quadratic, Cubic };
+    public enum InterpolationModes { NearestNeighbor, Linear, Quadratic, Cubic };
 
 }

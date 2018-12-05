@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.Components;
 using Transition.CircuitEditor.OnScreenComponents;
+using Transition.Functions;
 
 namespace Transition.CircuitEditor.Serializable
 {
@@ -79,19 +80,14 @@ namespace Transition.CircuitEditor.Serializable
 
         public bool AnyPrecisionSelected { get { return (ComponentPrecision == Precision.Arbitrary); } }
 
-        private ObservableCollection<TaperPoint> taperFunction ;
-        public ObservableCollection<TaperPoint> TaperFunction
+        private SampledCurve taperFunction;
+        public SampledCurve TaperFunction
             { get { return taperFunction; }
               set { taperFunction = value;
                     TaperChanged?.Invoke();
-                    taperFunction.CollectionChanged += TaperFunction_CollectionChanged;
             }
         }
-
-        private void TaperFunction_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            TaperChanged?.Invoke();
-        }
+        
 
         /* Potentiometer allows to change the quantity
          of terminals, because it can have taps at determined points
@@ -131,28 +127,10 @@ namespace Transition.CircuitEditor.Serializable
             ResistanceValue = 1;
             PositionValue = 50;
 
-            TaperFunction = new ObservableCollection<TaperPoint>();
-
-
-            TaperFunction.Add(new TaperPoint()
-            {
-                PositionValuePercent = 0,
-                ResistanceValuePercent = 0
-            });
-
-            TaperFunction.Add(new TaperPoint()
-            {
-                PositionValuePercent = 50,
-                ResistanceValuePercent = 25
-            });
-
-            TaperFunction.Add(new TaperPoint()
-            {
-                PositionValuePercent = 100,
-                ResistanceValuePercent = 100
-            });
-
-
+            TaperFunction = new SampledCurve();
+            TaperFunction.addSample(0, 0);
+            TaperFunction.addSample(100, 100);
+            
             OnScreenElement = new PotentiometerScreen(this);
             ParametersControl = new PotentiometerParametersControl(this);
         }
@@ -161,7 +139,7 @@ namespace Transition.CircuitEditor.Serializable
         {
             get
             {
-                // this one sets de String for the component in the schematic window
+                // this one sets the String for the component in the schematic window
                 string returnString;
                 EngrConverter conv = new EngrConverter() { ShortString = false };
                 EngrConverter convShort = new EngrConverter() { ShortString = true };
@@ -187,13 +165,9 @@ namespace Transition.CircuitEditor.Serializable
                 case "TapAPositionValue" : TapAPositionValue = (double)value; break;
                 case "TapBPositionValue" : TapBPositionValue = (double)value; break;
                 case "TapCPositionValue" : TapCPositionValue = (double)value; break;
+                case "TaperFunction"     : TaperFunction = (SampledCurve)value;break;
             }
         }
     }
-
-    public class TaperPoint
-    {
-        public double PositionValuePercent { get; set; }
-        public double ResistanceValuePercent { get; set; }
-    }
+    
 }

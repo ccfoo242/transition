@@ -40,17 +40,25 @@ namespace Transition.CircuitEditor.OnScreenComponents
             Binding b1 = new Binding()
             {
                 Path = new PropertyPath("ElementName"),
-                Mode = BindingMode.OneWay
+                Mode = BindingMode.OneWay,
+                Source = vs
             };
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
             txtComponentName.RenderTransform = new TranslateTransform() { };
             txtComponentName.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
             Children.Add(txtComponentName);
 
-            txtVoltage = new TextBlock()
-            {
+            txtVoltage = new TextBlock()  { FontWeight = FontWeights.ExtraBold };
 
+            Binding b2 = new Binding()
+            {
+                Path = new PropertyPath("VoltageString"),
+                Mode = BindingMode.OneWay,
+                Source = vs
             };
+            txtVoltage.SetBinding(TextBlock.TextProperty, b2);
+            txtVoltage.RenderTransform = new TranslateTransform() { };
+            txtVoltage.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
             Children.Add(txtVoltage);
 
             txtImpedance = new TextBlock()
@@ -65,6 +73,84 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public override void setPositionTextBoxes(SerializableElement el)
         {
             
+            double leftCN; double topCN;
+            double leftV; double topV;
+
+            if (ActualRotation == 0)
+            {
+                leftCN = 90;
+                topCN = 20;
+
+                leftV = 90;
+                topV = 40;
+
+                if (!FlipX)
+                {
+                   
+                }
+                else
+                {
+                  
+                }
+
+            }
+            else if (ActualRotation == 90)
+            {
+                leftCN = (SchematicWidth / 2) - (txtComponentName.ActualWidth / 2);
+                topCN = 10;
+
+                leftV = (SchematicWidth / 2) - (txtVoltage.ActualWidth / 2);
+                topV = 90;
+
+                if (!FlipX)
+                {
+                }
+                else
+                {
+                }
+            }
+            else if (ActualRotation == 180)
+            {
+                leftCN = 90;
+                topCN = 20;
+
+                leftV = 90;
+                topV = 40;
+
+                if (!FlipX)
+                {
+                   
+                }
+                else
+                {
+                  
+                }
+
+            }
+            else
+            {
+                leftCN = (SchematicWidth / 2) - (txtComponentName.ActualWidth / 2);
+                topCN = 10;
+
+                leftV = (SchematicWidth / 2) - (txtVoltage.ActualWidth / 2);
+                topV = 90;
+
+                if (!FlipX)
+                {
+                   
+                }
+                else
+                {
+                   
+                }
+            }
+
+            ((TranslateTransform)txtComponentName.RenderTransform).X = leftCN;
+            ((TranslateTransform)txtComponentName.RenderTransform).Y = topCN;
+
+            ((TranslateTransform)txtVoltage.RenderTransform).X = leftV;
+            ((TranslateTransform)txtVoltage.RenderTransform).Y = topV;
+
         }
 
 

@@ -25,6 +25,7 @@ namespace Transition.CustomControls
 
         public string VariableName { get; set; }
         public string Unit { get; set; }
+        public string UnitShort { get; set; } = "";
 
         public delegate void ValueChangedEventHandler (object sender, ValueChangedEventArgs args);
 
@@ -57,14 +58,28 @@ namespace Transition.CustomControls
                 { Orientation = Orientation.Horizontal };
 
             stk.Children.Add(new TextBlock()
-                { Text = "New Value:", Margin = new Thickness(4) });
+            {
+                Text = "New Value:",
+                Margin = new Thickness(4),
+                VerticalAlignment = VerticalAlignment.Center
+            });
 
             EngrNumberBox box = new EngrNumberBox()
-            { Value = this.Value, Margin = new Thickness(4),
-                AllowNegativeNumber = AllowNegativeNumber };
-
+            {
+                Value = this.Value,
+                Margin = new Thickness(4),
+                AllowNegativeNumber = AllowNegativeNumber,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            
             stk.Children.Add(box);
 
+            stk.Children.Add(new TextBlock()
+            {
+                Text = UnitShort,
+                Margin = new Thickness(4),
+                VerticalAlignment = VerticalAlignment.Center
+            });
 
             ContentDialog dialog = new ContentDialog()
             {

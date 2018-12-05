@@ -11,17 +11,18 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <UserControl.Resources>
+    <!-- <UserControl.Resources>
         <DataTemplate x:Key="SchematicComponentLayout">
             <Canvas Width="80" Height="80">
                 <ContentControl ContentTemplate="{StaticResource symbolGenerator}"/>
             </Canvas>
         </DataTemplate>
-    </UserControl.Resources>
+    </UserControl.Resources> -->
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
         <StackPanel Orientation="Horizontal">
             <TextBlock Margin="4" Text="Component Name: "/>
-            <TextBox Margin="4" Text="{Binding ComponentName, Mode=TwoWay}"/>
+            <TextBox x:Name="txtElementName" Margin="4" 
+                     TextChanged="ElementNameChanged" GotFocus="ElementNameFocus" />
         </StackPanel>
         <controls:Expander Header="Output Voltage" 
                            ExpandDirection="Down"
@@ -34,10 +35,11 @@
                 
                 <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Stretch">
                     <TextBlock Text="Frequency Function" Margin="4" VerticalAlignment="Center"/>
-                    <ComboBox HorizontalAlignment="Center" 
+                    <ComboBox x:Name="cmbOutputVoltage"
+                        HorizontalAlignment="Center" 
                           VerticalAlignment="Center"
                           SelectionChanged="voltageFunctionTypeChanged"
-                          Margin="4" Width="150" SelectedIndex="{x:Bind selectedVoltageFunctionType, Mode=TwoWay}">
+                          Margin="4" Width="150" >
                         <ComboBox.Items>
                             <ComboBoxItem Content="Constant Value"/>
                             <ComboBoxItem Content="Curve From Library"/>
@@ -47,7 +49,10 @@
 
                 <StackPanel Orientation="Vertical" Grid.Row="1" HorizontalAlignment="Stretch"
                             x:Name="pnlVoltageConstant">
-                    <customcontrols:EngrNumberBoxDialog x:Name="boxConstVoltage"/>
+                    <customcontrols:EngrNumberBoxDialog x:Name="boxConstVoltage"
+                                                        ValueManuallyChanged="ConstantVoltageChanged"
+                                                        Unit="Volt" UnitShort="V"
+                                                        VariableName="Voltage"/>
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Grid.Row="1" HorizontalAlignment="Stretch"
                             x:Name="pnlVoltageLibraryCurve">
@@ -66,10 +71,11 @@
 
                 <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Stretch">
                     <TextBlock Text="Frequency Function" Margin="4" VerticalAlignment="Center"/>
-                    <ComboBox HorizontalAlignment="Center" 
+                    <ComboBox x:Name="cmbOutputImpedance"
+                          HorizontalAlignment="Center" 
                           VerticalAlignment="Center"
                           SelectionChanged="impedanceFunctionTypeChanged"
-                          Margin="4" Width="150" SelectedIndex="{x:Bind selectedImpedanceFunctionType, Mode=TwoWay}">
+                          Margin="4" Width="150" >
                         <ComboBox.Items>
                             <ComboBoxItem Content="Constant Value"/>
                             <ComboBoxItem Content="Curve From Library"/>
@@ -79,7 +85,9 @@
 
                 <StackPanel Orientation="Vertical" Grid.Row="1" HorizontalAlignment="Stretch"
                             x:Name="pnlImpedanceConstant">
-                    <customcontrols:EngrNumberBoxDialog x:Name="boxConstImpedance"/>
+                    <customcontrols:EngrNumberBoxDialog x:Name="boxConstImpedance" Unit="Ohm"
+                                                        VariableName="Impedance" UnitShort="Ω"
+                                                        ValueManuallyChanged="ConstantImpedanceChanged"/>
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Grid.Row="1" HorizontalAlignment="Stretch"
                             x:Name="pnlImpedanceLibraryCurve">

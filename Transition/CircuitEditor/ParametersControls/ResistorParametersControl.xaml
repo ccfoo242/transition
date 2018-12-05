@@ -28,8 +28,7 @@
                                               UnitShort="Ω" Margin="4" 
                                               ValueChanged="ResistorValueChanged"
                                               PrecisionManuallyChanged="ResistorPrecisionChanged"/>
-            <!--  ComponentValue="{Binding Path=ResistorValue, Mode=OneWay}"
-                  ComponentPrecision="{Binding Path=ComponentPrecision, Mode=OneWay}" -->
+       
         </controls:Expander>
 
         <controls:Expander Header="Resistor Model" 
@@ -48,7 +47,6 @@
                               VerticalAlignment="Center"
                               Margin="4" Width="150"
                               SelectionChanged="modelResistorChanged">
-                        <!-- SelectedIndex="{Binding ResistorModel, Mode=OneWay}" -->
                         <ComboBox.Items>
                             <ComboBoxItem Content="Ideal" Tag="0"/>
                             <ComboBoxItem Content="Parasitic" Tag="1"/>
