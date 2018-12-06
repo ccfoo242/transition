@@ -705,6 +705,7 @@ namespace Transition.CircuitEditor
                 case "potentiometer":   return new Potentiometer();
                 case "transformer":     return new Transformer();
                 case "generator":       return new VoltageSource();
+                case "opamp":           return new OpAmp();
             }
 
             throw new NotSupportedException();

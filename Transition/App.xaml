@@ -353,8 +353,8 @@
             <Canvas Background="Transparent" Width="140" Height="160">
                 <Polyline Points="00,40 20,40"  Stroke="Black" StrokeThickness="4"/>
                 <Polyline Points="00,120 20,120"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="20,10 20,150 120,80 20,10"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="120,80 140,80"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="20,10 20,150 100,80 20,10"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="100,80 120,80"  Stroke="Black" StrokeThickness="4"/>
 
                 <TextBlock Canvas.Left="30" Canvas.Top="19" Text="-" FontSize="26" FontWeight="Bold"/>
                 <TextBlock Canvas.Left="27" Canvas.Top="99" Text="+" FontSize="26" FontWeight="Bold"/>

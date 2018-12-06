@@ -61,11 +61,11 @@ namespace Transition.CircuitEditor.OnScreenComponents
             txtVoltage.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
             Children.Add(txtVoltage);
 
-            txtImpedance = new TextBlock()
+            /*   txtImpedance = new TextBlock()
             {
 
             };
-            Children.Add(txtImpedance);
+            Children.Add(txtImpedance);*/
 
             postConstruct();
         }

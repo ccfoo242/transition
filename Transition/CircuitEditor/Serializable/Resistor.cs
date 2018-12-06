@@ -28,14 +28,14 @@ namespace Transition.CircuitEditor.Serializable
         public int ResistorModel
         {
             get { return resistorModel; }
-            set { SetProperty(ref resistorModel, value, "ResistorModel"); }
+            set { SetProperty(ref resistorModel, value /*, "ResistorModel" */); }
         }
 
         private Precision componentPrecision;
         public Precision ComponentPrecision
         {
             get { return componentPrecision; }
-            set { SetProperty(ref componentPrecision, value, "ComponentPrecision"); }
+            set { SetProperty(ref componentPrecision, value /*, "ComponentPrecision" */); }
         }
 
         private EngrNumber ls;

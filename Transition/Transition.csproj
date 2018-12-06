@@ -102,6 +102,7 @@
     <Compile Include="CircuitEditor\OnScreenComponents\FDNRScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\GroundScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\InductorScreen.cs" />
+    <Compile Include="CircuitEditor\OnScreenComponents\OpAmpScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\PotentiometerScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\ResistorScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\ScreenElementBase.cs" />
@@ -121,6 +122,9 @@
     <Compile Include="CircuitEditor\ParametersControls\InductorParametersControl.xaml.cs">
       <DependentUpon>InductorParametersControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CircuitEditor\ParametersControls\OpAmpParametersControl.xaml.cs">
+      <DependentUpon>OpAmpParametersControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CircuitEditor\ParametersControls\PotentiometerParametersControl.xaml.cs">
       <DependentUpon>PotentiometerParametersControl.xaml</DependentUpon>
     </Compile>
@@ -139,6 +143,7 @@
     <Compile Include="CircuitEditor\Serializable\Ground.cs" />
     <Compile Include="CircuitEditor\Serializable\Impedance.cs" />
     <Compile Include="CircuitEditor\Serializable\Inductor.cs" />
+    <Compile Include="CircuitEditor\Serializable\OpAmp.cs" />
     <Compile Include="CircuitEditor\Serializable\Potentiometer.cs" />
     <Compile Include="CircuitEditor\Serializable\SerializableElement.cs" />
     <Compile Include="CircuitEditor\Serializable\Resistor.cs" />
@@ -234,6 +239,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CircuitEditor\ParametersControls\InductorParametersControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CircuitEditor\ParametersControls\OpAmpParametersControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
