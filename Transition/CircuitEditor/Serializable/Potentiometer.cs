@@ -159,13 +159,14 @@ namespace Transition.CircuitEditor.Serializable
 
             switch (property)
             {
-                case "ResistanceValue"   : ResistanceValue = (EngrNumber)value; break;
-                case "PositionValue"     : PositionValue = (double)value; break;
-                case "ComponentPrecision": ComponentPrecision = (Precision)value; break;
-                case "TapAPositionValue" : TapAPositionValue = (double)value; break;
-                case "TapBPositionValue" : TapBPositionValue = (double)value; break;
-                case "TapCPositionValue" : TapCPositionValue = (double)value; break;
-                case "TaperFunction"     : TaperFunction = (SampledCurve)value;break;
+                case "ResistanceValue"     : ResistanceValue = (EngrNumber)value; break;
+                case "PositionValue"       : PositionValue = (double)value; break;
+                case "ComponentPrecision"  : ComponentPrecision = (Precision)value; break;
+                case "TapAPositionValue"   : TapAPositionValue = (double)value; break;
+                case "TapBPositionValue"   : TapBPositionValue = (double)value; break;
+                case "TapCPositionValue"   : TapCPositionValue = (double)value; break;
+                case "TaperFunction"       : TaperFunction = (SampledCurve)value; break;
+                case "QuantityOfTerminals" : QuantityOfTerminals = (byte)value; break;
             }
         }
     }

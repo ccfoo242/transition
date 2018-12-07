@@ -63,5 +63,21 @@ namespace Transition.CircuitEditor.Serializable
             OnScreenElement = new OnScreenComponents.OpAmpScreen(this);
 
         }
+
+        public override void SetProperty(string property, object value)
+        {
+            base.SetProperty(property, value);
+
+            switch (property)
+            {
+                case "GainBandwidth" : GainBandwidth = (EngrNumber)value; break;
+                case "DcGain"        : DcGain = (EngrNumber)value; break;
+                case "PhaseMargin"   : PhaseMargin = (EngrNumber)value; break;
+                case "RIn"           : RIn = (EngrNumber)value; break;
+                case "ROut"          : ROut = (EngrNumber)value; break;
+                case "ModelName"     : ModelName = (string)value; break;
+                case "Description"   : Description = (string)value; break;
+            }
+        }
     }
 }
