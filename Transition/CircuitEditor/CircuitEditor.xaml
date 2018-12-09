@@ -105,6 +105,16 @@
                     </Viewbox>
                 </Border>
 
+                <Border CornerRadius="5" DragStarting="dragElement" CanDrag="True"
+                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
+                        x:Name="brdSwitch" Tag="switch" Height="50" Width="50">
+                    <Viewbox>
+                        <ContentControl ContentTemplate="{StaticResource symbolSwitch}"
+                                        HorizontalAlignment="Center" Margin="5"
+                                        VerticalAlignment="Center"/>
+                    </Viewbox>
+                </Border>
+                
                 <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
                         Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
                         x:Name="brdTransformer" Tag="transformer" Height="50" Width="50">

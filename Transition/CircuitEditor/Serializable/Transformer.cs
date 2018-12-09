@@ -56,6 +56,7 @@ namespace Transition.CircuitEditor.Serializable
         public EngrNumber MutualL { get { return mutualL; }}
 
         private EngrNumber lpLeak;
+
         public EngrNumber LpLeak { get { return lpLeak; }}
 
         private EngrNumber lsLeak;

@@ -225,7 +225,7 @@ namespace Transition.CircuitEditor
 
             if (stringComponent != "wire")
             {
-                var component = getElement(stringComponent);
+                var component = createElement(stringComponent);
                 component.ComponentPosition = snapCoordinate(ptCanvas);
                 component.ElementName = component.ElementLetter + currentDesign.getNextNumberLetter(component.ElementLetter).ToString();
 
@@ -373,8 +373,6 @@ namespace Transition.CircuitEditor
         }
 
         
-      
-
         private void cnvPointerPressed(object sender, PointerRoutedEventArgs e)
         {
             clickedPoint = new Point2D(e.GetCurrentPoint(cnvGeneral).Position.X,
@@ -693,7 +691,7 @@ namespace Transition.CircuitEditor
         }
 
 
-        public static SerializableComponent getElement(string element)
+        public static SerializableComponent createElement(string element)
         {
             switch (element)
             {
@@ -706,6 +704,7 @@ namespace Transition.CircuitEditor
                 case "transformer":     return new Transformer();
                 case "generator":       return new VoltageSource();
                 case "opamp":           return new OpAmp();
+                case "switch":          return new Switch();
             }
 
             throw new NotSupportedException();

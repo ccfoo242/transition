@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Transition.CircuitEditor.ParametersControls;
 
 namespace Transition.CircuitEditor.Serializable
 {
@@ -46,6 +47,16 @@ namespace Transition.CircuitEditor.Serializable
         public EngrNumber COpen { get => cOpen; set {
                 SetProperty(ref cOpen, value); } }
 
+        public Switch() : base()
+        {
+            RClosed = "10m";
+            COpen = "1p";
+            QuantityOfTerminals = 2;
+            CurrentPosition = 0;
+
+            ParametersControl = new SwitchParametersControl(this);
+            OnScreenElement = new OnScreenComponents.SwitchScreen(this);
+        }
         public override void SetProperty(string property, object value)
         {
             base.SetProperty(property, value);

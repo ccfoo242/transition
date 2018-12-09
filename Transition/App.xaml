@@ -430,6 +430,21 @@
             </Canvas>
         </DataTemplate>
 
+        <DataTemplate x:Key="symbolSwitch">
+            <Canvas Background="Transparent" Width="80" Height="25">
+                <Polyline Points="00,20 75,20" Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="70,15 75,20 70,25" Stroke="Black" StrokeThickness="4"/>
+
+                <Ellipse Width="6" Height="6" Stroke="Black"
+                         Canvas.Left="-3" Canvas.Top="17" Fill="Black"/>
+                <Ellipse Width="6" Height="6" Stroke="Black"
+                         Canvas.Left="77" Canvas.Top="17" Fill="Black"/>
+                <Ellipse Width="6" Height="6" Stroke="Black"
+                         Canvas.Left="77" Canvas.Top="-3" Fill="Black"/>
+
+            </Canvas>
+        
+        </DataTemplate>
 
         <DataTemplate x:Key="resistorParasiticModelCircuit">
             <Canvas Background="Transparent" Width="240" Height="140">
