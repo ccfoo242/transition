@@ -166,7 +166,7 @@ namespace Transition.CircuitEditor.Serializable
                 case "TapBPositionValue"   : TapBPositionValue = (double)value; break;
                 case "TapCPositionValue"   : TapCPositionValue = (double)value; break;
                 case "TaperFunction"       : TaperFunction = (SampledCurve)value; break;
-                case "QuantityOfTerminals" : QuantityOfTerminals = (byte)value; break;
+              /*  case "QuantityOfTerminals" : QuantityOfTerminals = (byte)value; break;*/
             }
         }
     }

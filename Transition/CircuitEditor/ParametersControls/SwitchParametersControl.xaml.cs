@@ -25,6 +25,8 @@ namespace Transition.CircuitEditor.ParametersControls
         private Switch SerializableSwitch { get; }
         private string oldElementName;
 
+
+
         public SwitchParametersControl()
         {
             this.InitializeComponent();
@@ -36,20 +38,77 @@ namespace Transition.CircuitEditor.ParametersControls
 
             SerializableSwitch = sw;
 
+            cmbState.Items.Add(new ComboBoxItem() { Content = "None", Tag = (byte)0 });
+            for (byte x = 1; x < SerializableSwitch.QuantityOfTerminals; x++)
+                cmbState.Items.Add(new ComboBoxItem()
+                {
+                    Content = mapNumberLetters[x],
+                    Tag = x
+                });
+
+            cmbPositions.SelectionChanged -= PositionsChanged;
+            cmbPositions.SelectedIndex = SerializableSwitch.QuantityOfTerminals - 2;
+            cmbPositions.SelectionChanged += PositionsChanged;
+
+            cmbState.SelectionChanged -= StateChanged;
+            cmbState.SelectedIndex = SerializableSwitch.State;
+            cmbState.SelectionChanged += StateChanged;
+
             sw.PropertyChanged += handleChangeOfControls;
+
+            
             handleChangeOfControls(null, null);
 
+
         }
-        
+
         private void handleChangeOfControls(object sender, PropertyChangedEventArgs args)
         {
             SerializableSwitch.PropertyChanged -= handleChangeOfControls;
 
+            var oldPositions = (byte)(cmbPositions.SelectedIndex + 1);
+            var newPositions = (byte)(SerializableSwitch.QuantityOfTerminals - 1);
 
+            cmbPositions.SelectionChanged -= PositionsChanged;
+            cmbPositions.SelectedIndex = SerializableSwitch.QuantityOfTerminals - 2;
+            updateCmbState(oldPositions, newPositions);
+            cmbPositions.SelectionChanged += PositionsChanged;
+
+            cmbState.SelectionChanged -= StateChanged;
+            cmbState.SelectedIndex = SerializableSwitch.State ;
+            cmbState.SelectionChanged += StateChanged;
+
+            boxCOpen.Value = SerializableSwitch.COpen;
+            boxRClosed.Value = SerializableSwitch.RClosed;
 
             SerializableSwitch.PropertyChanged += handleChangeOfControls;
         }
 
+        private void updateCmbState(byte oldPositions, byte newPositions)
+        {
+            if (oldPositions == newPositions) return;
+
+            bool addedPositions = newPositions > oldPositions;
+
+            if (addedPositions)
+            {
+                for (byte x = (byte)(oldPositions + 1); x <= newPositions; x++)
+                    cmbState.Items.Add(new ComboBoxItem()
+                    {
+                        Content = mapNumberLetters[x],
+                        Tag = x
+                    });
+            }
+            else
+            {
+                ComboBoxItem item;
+                for (byte x = oldPositions; x > newPositions; x--)
+                {
+                    item = (ComboBoxItem)cmbState.Items[x];
+                    cmbState.Items.Remove(item);
+                }
+            }
+        }
 
         private void ElementNameFocus(object sender, RoutedEventArgs e)
         {
@@ -77,5 +136,116 @@ namespace Transition.CircuitEditor.ParametersControls
         {
             CircuitEditor.currentInstance.executeCommand(command);
         }
+
+        private void StateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBoxItem oldItem = (ComboBoxItem)e.RemovedItems[0];
+            ComboBoxItem newItem = (ComboBoxItem)e.AddedItems[0];
+            
+            byte oldState = (byte)(oldItem.Tag);
+            byte newState = (byte)(newItem.Tag);
+
+            var command = new CommandSetValue()
+            {
+                Component = SerializableSwitch,
+                Property = "State",
+                OldValue = oldState,
+                NewValue = newState
+            };
+
+            executeCommand(command);
+        }
+
+        private void PositionsChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string oldPositionsValueString = (string)((ComboBoxItem)e.RemovedItems[0]).Content;
+            var oldPositionsValue = byte.Parse(oldPositionsValueString);
+
+            string newPositionsValueString = (string)((ComboBoxItem)e.AddedItems[0]).Content;
+            var newPositionsValue = byte.Parse(newPositionsValueString);
+
+            if (oldPositionsValue == newPositionsValue) return;
+
+            bool selectedStateDeleted = SerializableSwitch.State > newPositionsValue;
+
+            if (selectedStateDeleted)
+                executeCommand(new CommandSetValue()
+                {
+                    Component = SerializableSwitch,
+                    Property = "State",
+                    OldValue = SerializableSwitch.State,
+                    NewValue = newPositionsValue
+                });
+            
+            
+            updateCmbState(oldPositionsValue, newPositionsValue);
+
+            var command = new CommandSetValue()
+            {
+                Component = SerializableSwitch,
+                Property = "QuantityOfTerminals",
+                OldValue = (byte)(oldPositionsValue + 1),
+                NewValue = (byte)(newPositionsValue + 1)
+            };
+
+            executeCommand(command);
+        }
+
+        private void RClosedChanged(object sender, CustomControls.ValueChangedEventArgs args)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableSwitch,
+                Property = "RClosed",
+                OldValue = args.oldValue,
+                NewValue = args.newValue
+            };
+
+            executeCommand(command);
+        }
+
+        private void COpenChanged(object sender, CustomControls.ValueChangedEventArgs args)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableSwitch,
+                Property = "COpen",
+                OldValue = args.oldValue,
+                NewValue = args.newValue
+            };
+
+            executeCommand(command);
+        }
+        
+        private Dictionary<byte, string> mapNumberLetters =
+            new Dictionary<byte, string>() {
+                {  1, "A" },
+                {  2, "B" },
+                {  3, "C" },
+                {  4, "D" },
+                {  5, "E" },
+                {  6, "F" },
+                {  7, "G" },
+                {  8, "H" },
+                {  9, "I" },
+                { 10, "J" },
+                { 11, "K" },
+                { 12, "L" },
+                { 13, "M" },
+                { 14, "N" },
+                { 15, "O" },
+                { 16, "P" },
+                { 17, "Q" },
+                { 18, "R" },
+                { 19, "S" },
+                { 20, "T" },
+                { 21, "U" },
+                { 22, "V" },
+                { 23, "W" },
+                { 24, "X" },
+                { 25, "Y" },
+                { 26, "Z" },
+            }; 
+
     }
 }

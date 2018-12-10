@@ -34,9 +34,9 @@ namespace Transition.CircuitEditor.Serializable
         public delegate void DelegateTerminalsChanged(byte oldQuantity, byte newQuantity);
         public event DelegateTerminalsChanged TerminalsChanged;
 
-        private byte currentPosition;
-        public byte CurrentPosition { get => currentPosition;
-            set { SetProperty(ref currentPosition, value); }
+        private byte state;
+        public byte State { get => state;
+            set { SetProperty(ref state, value); }
         }
 
         private EngrNumber rClosed;
@@ -51,8 +51,8 @@ namespace Transition.CircuitEditor.Serializable
         {
             RClosed = "10m";
             COpen = "1p";
-            QuantityOfTerminals = 2;
-            CurrentPosition = 0;
+            QuantityOfTerminals = 3;
+            State = 0;
 
             ParametersControl = new SwitchParametersControl(this);
             OnScreenElement = new OnScreenComponents.SwitchScreen(this);
@@ -63,7 +63,7 @@ namespace Transition.CircuitEditor.Serializable
 
             switch (property)
             {
-                case "CurrentPosition": CurrentPosition = (byte)value; break;
+                case "State": State = (byte)value; break;
                 case "QuantityOfTerminals": QuantityOfTerminals = (byte)value; break;
                 case "RClosed": RClosed = (EngrNumber)value; break;
                 case "COpen": COpen = (EngrNumber)value; break;

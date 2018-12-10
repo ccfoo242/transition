@@ -36,17 +36,17 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             sw.TerminalsChanged += TerminalsChanged;
 
-            TerminalsChanged(0, sw.QuantityOfTerminals);
+            TerminalsChanged(sw.QuantityOfTerminals, sw.QuantityOfTerminals);
 
             postConstruct();
         }
 
         private void TerminalsChanged(byte oldValue, byte newValue)
         {
-            foreach(Ellipse e in Children.OfType<Ellipse>())
-                Children.Remove(e);
+            ComponentCanvas.Children.Clear();
 
-            Children.Add(new Ellipse()
+
+            ComponentCanvas.Children.Add(new Ellipse()
             {
                 Width = 6,
                 Height = 6,
@@ -60,7 +60,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             });
 
             for (byte x = 1; x < QuantityOfTerminals; x++)
-                Children.Add(new Ellipse()
+                ComponentCanvas.Children.Add(new Ellipse()
                 {
                     Width = 6,
                     Height = 6,
