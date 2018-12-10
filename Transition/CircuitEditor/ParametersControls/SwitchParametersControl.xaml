@@ -64,14 +64,18 @@
         <ComboBox x:Name="cmbState" Margin="4" Grid.Row="2" Grid.Column="1"
                   SelectionChanged="StateChanged"/>
         
-        <TextBlock Margin="4" Text="Closed Resistance" Grid.Row="3" Grid.Column="0"/>
+        <TextBlock Margin="4" Text="Closed Resistance" Grid.Row="3" Grid.Column="0"
+                   VerticalAlignment="Center"/>
         <customcontrols:EngrNumberBoxDialog x:Name="boxRClosed" Margin="4" Grid.Row="3" Grid.Column="1"
-                                   ValueManuallyChanged="RClosedChanged"/>
-        <TextBlock Margin="4" Text="Ohm" Grid.Row="3" Grid.Column="2"/>
+                          Unit="Ω"         ValueManuallyChanged="RClosedChanged"/>
+        <TextBlock Margin="4" Text="Ω" Grid.Row="3" Grid.Column="2"
+                   VerticalAlignment="Center"/>
         
-        <TextBlock Margin="4" Text="Open Capacitance" Grid.Row="4" Grid.Column="0"/>
+        <TextBlock Margin="4" Text="Open Capacitance" Grid.Row="4" Grid.Column="0"
+                   VerticalAlignment="Center"/>
         <customcontrols:EngrNumberBoxDialog x:Name="boxCOpen" Margin="4" Grid.Row="4" Grid.Column="1"
-                                   ValueManuallyChanged="COpenChanged"/>
-        <TextBlock Margin="4" Text="Farad" Grid.Row="4" Grid.Column="2"/>
+                    Unit="Farad"    ValueManuallyChanged="COpenChanged"/>
+        <TextBlock Margin="4" Text="Farad" Grid.Row="4" Grid.Column="2"
+                   VerticalAlignment="Center"/>
     </Grid>
 </UserControl>
