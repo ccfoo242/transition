@@ -21,6 +21,7 @@ namespace Transition.CircuitEditor.Serializable
             set { SetProperty(ref resistorValue, value, "ResistorValue");
                   calculateFoQ();
                   OnPropertyChanged("ValueString");
+                  raiseLayoutChanged();
             }
         }
 

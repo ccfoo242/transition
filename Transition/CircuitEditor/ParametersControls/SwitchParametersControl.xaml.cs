@@ -69,6 +69,10 @@ namespace Transition.CircuitEditor.ParametersControls
             var oldPositions = (byte)(cmbPositions.SelectedIndex + 1);
             var newPositions = (byte)(SerializableSwitch.QuantityOfTerminals - 1);
 
+            txtElementName.TextChanged -= ElementNameChanged;
+            txtElementName.Text = SerializableSwitch.ElementName;
+            txtElementName.TextChanged += ElementNameChanged;
+
             cmbPositions.SelectionChanged -= PositionsChanged;
             cmbPositions.SelectedIndex = SerializableSwitch.QuantityOfTerminals - 2;
             updateCmbState(oldPositions, newPositions);

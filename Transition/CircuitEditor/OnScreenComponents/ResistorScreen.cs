@@ -24,7 +24,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public override int[,] TerminalPositions
         {
-            get => new int[,] { { 20, 40 }, { 100, 40 } };
+            get => new int[,] { { 20, 40 }, { 100, 30 } };
         }
 
         public ResistorScreen(Resistor resistor) : base(resistor)
@@ -89,10 +89,10 @@ namespace Transition.CircuitEditor.OnScreenComponents
             }
             else
             {
-                topCN = 40 - (txtComponentName.ActualHeight / 2);
-                leftCN = 40 - (txtComponentName.ActualWidth);
-                topRV = 40 - (txtResistanceValue.ActualHeight / 2);
-                leftRV = SchematicHeight;
+                topCN = 60 - (txtComponentName.ActualHeight / 2);
+                leftCN = 20 - (txtComponentName.ActualWidth);
+                topRV = 60 - (txtResistanceValue.ActualHeight / 2);
+                leftRV = SchematicHeight - 20;
             }
 
             ((TranslateTransform)txtComponentName.RenderTransform).X = leftCN;

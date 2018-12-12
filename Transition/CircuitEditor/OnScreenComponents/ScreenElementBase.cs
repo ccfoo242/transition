@@ -67,7 +67,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
     public abstract class ScreenComponentBase : ScreenElementBase, INotifyPropertyChanged, ICircuitSelectable, ICircuitMovable
     {
         public Canvas ComponentCanvas { get; }
-        public CompositeTransform ComponentTransform { get; }
+        protected CompositeTransform ComponentTransform { get; }
 
         public SerializableComponent SerializableComponent { get; }
 
@@ -78,8 +78,21 @@ namespace Transition.CircuitEditor.OnScreenComponents
         public abstract double SchematicWidth { get; }
         public abstract double SchematicHeight { get; }
 
-        public Point2D HalfComponentVector => new Point2D(SchematicWidth / 2, SchematicHeight / 2);
+        public double RotatedSchematicWidth { get {
+                if (ActualRotation == 90 || ActualRotation == 270)
+                    return SchematicHeight;
+                else return SchematicWidth;
+            } }
 
+        public double RotatedSchematicHeight { get {
+                if (ActualRotation == 90 || ActualRotation == 270)
+                    return SchematicWidth;
+                else return SchematicHeight;
+            } }
+
+        public Point2D HalfComponentVector =>
+                     new Point2D(RotatedSchematicWidth / 2, RotatedSchematicHeight / 2);
+             
         public abstract void setPositionTextBoxes(SerializableElement element);
    
         public double ActualRotation => SerializableComponent.Rotation;
@@ -113,10 +126,10 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             SerializableComponent = component;
         
-
             ComponentTransform = new CompositeTransform();
             ComponentTransform.CenterX = SchematicWidth / 2;
             ComponentTransform.CenterY = SchematicHeight / 2;
+
 
             ComponentCanvas = new Canvas()
             {
@@ -127,7 +140,8 @@ namespace Transition.CircuitEditor.OnScreenComponents
             Background = new SolidColorBrush(Colors.Transparent);
             BorderThickness = new Thickness(1);
             Children.Add(ComponentCanvas);
-            
+            ComponentCanvas.HorizontalAlignment = HorizontalAlignment.Left;
+            ComponentCanvas.VerticalAlignment = VerticalAlignment.Top;
 
             Binding bPX = new Binding()
             {
@@ -179,19 +193,41 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 Terminals.Add(t);
                 Children.Add(t);
             }
-
+     
             SerializableComponent.LayoutChanged += SerializableComponent_LayoutChanged;
-            
+
         }
 
         private void SerializableComponent_LayoutChanged(SerializableElement el)
         {
-            setPositionTextBoxes(SerializableComponent);
-            setPositionTerminals(SerializableComponent);
-
+       
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ActualRotation"));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("FlipX"));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("FlipY"));
+
+            double CorrectionDisplacement = (SchematicWidth - SchematicHeight) / 2;
+
+            if (ActualRotation == 90 || ActualRotation == 270)
+            {
+                Width = SchematicHeight;
+                Height = SchematicWidth;
+                ComponentTransform.TranslateX = -1 * CorrectionDisplacement;
+                ComponentTransform.TranslateY = CorrectionDisplacement;
+            }
+            else
+            {
+                Width = SchematicWidth;
+                Height = SchematicHeight;
+                ComponentTransform.TranslateX = 0;
+                ComponentTransform.TranslateY = 0;
+            }
+            ComponentCanvas.Width = SchematicWidth;
+            ComponentCanvas.Height = SchematicHeight;
+            ComponentTransform.CenterX = SchematicWidth / 2;
+            ComponentTransform.CenterY = SchematicHeight / 2;
+
+            setPositionTextBoxes(SerializableComponent);
+            setPositionTerminals(SerializableComponent);
 
         }
 
@@ -199,9 +235,11 @@ namespace Transition.CircuitEditor.OnScreenComponents
         {
             Width = SchematicWidth;
             Height = SchematicHeight;
+            SerializableComponent_LayoutChanged(Serializable);
+
         }
-        
-        
+
+
         public override bool isInside(Rectangle rect)
         {
             if (rect == null) return false;
@@ -252,15 +290,21 @@ namespace Transition.CircuitEditor.OnScreenComponents
         
         public Point2D getRelativeTerminalPosition(byte terminal)
         {
-            double radRotation = (-1 * ActualRotation * Math.PI / 180);
+            double radRotation = ( ActualRotation * Math.PI / 180);
 
-            double X =  ((FlipX ? -1 : 1) * Math.Cos(radRotation) * ((-1 * SchematicWidth / 2) + TerminalPositions[terminal, 0])) +
-                        ((FlipY ? -1 : 1) * Math.Sin(radRotation) * ((SchematicHeight / 2) - TerminalPositions[terminal, 1]));
+            Point2D VectorFromCenter = new Point2D(
+                (-1 * SchematicWidth / 2) + TerminalPositions[terminal, 0],
+                (-1 * SchematicHeight / 2) + TerminalPositions[terminal, 1]);
 
-            double Y =  ((FlipX ? 1 : -1) * Math.Sin(radRotation) * ((-1 * SchematicWidth / 2) + TerminalPositions[terminal, 0])) +
-                        ((FlipY ? -1 : 1) * Math.Cos(radRotation) * ((SchematicHeight / 2) - TerminalPositions[terminal, 1]));
+            Point2D FlippedVector = VectorFromCenter;
+
+            if (FlipX) FlippedVector = Point2D.NegateX(FlippedVector);
+            if (FlipY) FlippedVector = Point2D.NegateY(FlippedVector);
+
+            Point2D ShiftedVector = Point2D.AngleShift(FlippedVector, radRotation);
             
-            return new Point2D(X, Y);
+            return ShiftedVector;
+          
         }
 
         public void setPositionTerminals(SerializableElement element)

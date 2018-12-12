@@ -24,7 +24,9 @@ namespace Transition.CircuitEditor.Serializable
         public string ElementName
         {
             get { return elementName; }
-            set { SetProperty(ref elementName, value); }
+            set { SetProperty(ref elementName, value);
+                raiseLayoutChanged();
+            }
         }
 
         public abstract string ElementLetter { get; }

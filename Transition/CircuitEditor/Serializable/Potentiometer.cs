@@ -23,6 +23,7 @@ namespace Transition.CircuitEditor.Serializable
             {
                 SetProperty(ref resistanceValue, value);
                 OnPropertyChanged("ResistanceString");
+                raiseLayoutChanged();
             }
         }
         
@@ -30,7 +31,7 @@ namespace Transition.CircuitEditor.Serializable
         public double PositionValue
         {
             get { return positionValue; }
-            set { SetProperty(ref positionValue, value); }
+            set { SetProperty(ref positionValue, value); raiseLayoutChanged(); }
         }
 
         private double tapAPositionValue;

@@ -78,10 +78,10 @@ namespace Transition.CircuitEditor.OnScreenComponents
             }
             else
             {
-                topCN = 40 - (txtComponentName.ActualHeight / 2);
-                leftCN = 40 - (txtComponentName.ActualWidth);
-                topRV = 40 - (txtInductorValue.ActualHeight / 2);
-                leftRV = 80;
+                topCN = 60 - (txtComponentName.ActualHeight / 2);
+                leftCN = 20 - (txtComponentName.ActualWidth);
+                topRV = 60 - (txtInductorValue.ActualHeight / 2);
+                leftRV = SchematicHeight - 20;
             }
 
             ((TranslateTransform)txtComponentName.RenderTransform).X = leftCN;

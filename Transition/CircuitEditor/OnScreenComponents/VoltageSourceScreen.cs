@@ -84,14 +84,6 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 leftV = 90;
                 topV = 40;
 
-                if (!FlipX)
-                {
-                   
-                }
-                else
-                {
-                  
-                }
 
             }
             else if (ActualRotation == 90)
@@ -101,13 +93,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
                 leftV = (SchematicWidth / 2) - (txtVoltage.ActualWidth / 2);
                 topV = 90;
-
-                if (!FlipX)
-                {
-                }
-                else
-                {
-                }
+                
             }
             else if (ActualRotation == 180)
             {
@@ -116,16 +102,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
                 leftV = 90;
                 topV = 40;
-
-                if (!FlipX)
-                {
-                   
-                }
-                else
-                {
-                  
-                }
-
+                
             }
             else
             {
@@ -134,15 +111,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
                 leftV = (SchematicWidth / 2) - (txtVoltage.ActualWidth / 2);
                 topV = 90;
-
-                if (!FlipX)
-                {
-                   
-                }
-                else
-                {
-                   
-                }
+                
             }
 
             ((TranslateTransform)txtComponentName.RenderTransform).X = leftCN;

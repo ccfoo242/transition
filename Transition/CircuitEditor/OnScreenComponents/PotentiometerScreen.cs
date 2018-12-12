@@ -199,13 +199,13 @@ namespace Transition.CircuitEditor.OnScreenComponents
                     leftCCW = 20 - txtCCW.ActualWidth;
                     if (FlipY)
                     {
-                        topCCW = 40;
-                        topCW = 100;
+                        topCCW = 20;
+                        topCW = 120;
                     }
                     else
                     {
-                        topCW = 40;
-                        topCCW = 100;
+                        topCW = 20;
+                        topCCW = 120;
                     }
                 }
                 else
@@ -222,13 +222,13 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
                     if (FlipY)
                     {
-                        topCCW = 40;
-                        topCW = 100;
+                        topCCW = 20;
+                        topCW = 120;
                     }
                     else
                     {
-                        topCW = 40;
-                        topCCW = 100;
+                        topCW = 20;
+                        topCCW = 120;
                     }
                 }
 
@@ -237,47 +237,47 @@ namespace Transition.CircuitEditor.OnScreenComponents
             {
                 if (!FlipX)
                 {
-                    topCN = 20;
-                    leftCN = 60 - (txtComponentName.ActualWidth / 2);
-                    topRV = 80;
-                    leftRV = 80;
-                    topPV = 80;
-                    leftPV = 0;
+                    topCN = 80;
+                    leftCN = 100;
+                    topRV = 60;
+                    leftRV = 100;
+                    topPV = 60;
+                    leftPV = 60 - txtPositionValue.ActualWidth;
 
-                    topCW = 20;
-                    topCCW = 20;
+                    topCW = 00;
+                    topCCW = 00;
 
                     if (FlipY)
                     {
                         leftCW = 0;
-                        leftCCW = 100;
+                        leftCCW = 120;
                     }
                     else
                     {
-                        leftCW = 100;
+                        leftCW = 120;
                         leftCCW = 0;
                     }
                 }
                 else
                 {
-                    topCN = 120;
-                    leftCN = 60 - (txtComponentName.ActualWidth / 2);
-                    topRV = 60;
-                    leftRV = 80;
-                    topPV = 60;
-                    leftPV = 0;
+                    topCN = 20;
+                    leftCN = 100;
+                    topRV = 40;
+                    leftRV = 100;
+                    topPV = 40;
+                    leftPV = 60 - txtPositionValue.ActualWidth;
 
-                    topCW = 120;
-                    topCCW = 120;
+                    topCW = 100;
+                    topCCW = 100;
 
                     if (FlipY)
                     {
-                        leftCW = 0;
-                        leftCCW = 100;
+                        leftCW = 00;
+                        leftCCW = 120;
                     }
                     else
                     {
-                        leftCW = 100;
+                        leftCW = 120;
                         leftCCW = 0;
                     }
                 }
@@ -298,13 +298,13 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
                     if (FlipY)
                     {
-                        topCCW = 100;
-                        topCW = 40;
+                        topCCW = 120;
+                        topCW = 20;
                     }
                     else
                     {
-                        topCW = 100;
-                        topCCW = 40;
+                        topCW = 120;
+                        topCCW = 20;
                     }
                 }
                 else
@@ -321,62 +321,62 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
                     if (FlipY)
                     {
-                        topCCW = 100;
-                        topCW = 40;
+                        topCCW = 120;
+                        topCW = 20;
                     }
                     else
                     {
-                        topCW = 100;
-                        topCCW = 40;
+                        topCW = 120;
+                        topCCW = 20;
                     }
                 }
             }
             else
-            {
+            {/* rotation = 270 */
                 if (!FlipX)
                 {
-                    topCN = 110;
-                    leftCN = 60 - (txtComponentName.ActualWidth / 2);
-                    topRV = 60;
-                    leftRV = 80;
-                    topPV = 60;
-                    leftPV = 0;
+                    topCN = 120;
+                    leftCN = 120;
+                    topRV = 100;
+                    leftRV = 120;
+                    topPV = 100;
+                    leftPV = 40 - txtPositionValue.ActualWidth;
 
-                    topCW = 110;
-                    topCCW = 110;
+                    topCW = 40;
+                    topCCW = 40;
 
                     if (FlipY)
                     {
-                        leftCW = 80;
-                        leftCCW = 0;
+                        leftCW = 120;
+                        leftCCW = 20;
                     }
                     else
                     {
-                        leftCW = 0;
-                        leftCCW = 80;
+                        leftCW = 20;
+                        leftCCW = 120;
                     }
                 }
                 else
                 {
-                    topCN = 20;
-                    leftCN = 60 - (txtComponentName.ActualWidth / 2);
-                    topRV = 80;
-                    leftRV = 80;
-                    topPV = 80;
-                    leftPV = 0;
+                    topCN = -20;
+                    leftCN = 120;
+                    topRV = 00;
+                    leftRV = 120;
+                    topPV = 00;
+                    leftPV = 40 - txtPositionValue.ActualWidth;
 
-                    topCW = 20;
-                    topCCW = 20;
+                    topCW = 60;
+                    topCCW = 60;
 
                     if (FlipY)
                     {
-                        leftCW = 80;
-                        leftCCW = 0;
+                        leftCW = 120;
+                        leftCCW = 20;
                     }
                     else
                     {
-                        leftCW = 0;
-                        leftCCW = 80;
+                        leftCW = 20;
+                        leftCCW = 120;
                     }
                 }
             }

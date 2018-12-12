@@ -44,26 +44,25 @@ namespace Transition.Common
             return base.GetHashCode();
         }
 
-        public static Point2D Add(Point2D n1, Point2D n2)
-        {
-            return new Point2D(n1.X + n2.X, n1.Y + n2.Y);
-        }
-
-        public static Point2D Substract(Point2D n1, Point2D n2)
-        {
-            return new Point2D(n1.X - n2.X, n1.Y - n2.Y);
-        }
-
-        public static Point2D Negate(Point2D n)
-        {
-            return new Point2D(n.X * -1, n.Y * -1);
-        }
-
-        public static Point2D Multiply(Point2D n1, double n2)
-        {
-            return new Point2D(n1.X * n2, n1.Y * n2);
-        }
+        public static Point2D Add(Point2D n1, Point2D n2) => new Point2D(n1.X + n2.X, n1.Y + n2.Y);
+        public static Point2D Substract(Point2D n1, Point2D n2) => new Point2D(n1.X - n2.X, n1.Y - n2.Y);
+        public static Point2D Negate(Point2D n) => new Point2D(n.X * -1, n.Y * -1);
+        public static Point2D NegateX(Point2D n) => new Point2D(n.X * -1, n.Y);
+        public static Point2D NegateY(Point2D n) => new Point2D(n.X, n.Y * -1);
+        public static Point2D Multiply(Point2D n1, double n2) => new Point2D(n1.X * n2, n1.Y * n2);
         
+
+        public static Point2D AngleShift(Point2D n1, double angle)
+        {
+            double originalAngle = getAngleFromOrigin(n1);
+            double magnitude = getDistanceOrigin(n1);
+            double shiftedAngle = originalAngle + angle;
+
+            return new Point2D(Math.Cos(shiftedAngle) * magnitude,
+                               Math.Sin(shiftedAngle) * magnitude);
+
+        }
+
         public static Point2D operator +(Point2D n1, Point2D n2) { return Add(n1, n2); }
         public static Point2D operator -(Point2D n1, Point2D n2) { return Substract(n1, n2); }
         public static Point2D operator *(Point2D n1, double n2) { return Multiply(n1, n2); }
@@ -76,9 +75,20 @@ namespace Transition.Common
                              Math.Pow(point1.Y - point2.Y, 2));
         }
 
-        public double getDistance(Point2D otherPoint)
+        public double getDistance(Point2D otherPoint) => getDistance(this, otherPoint);
+
+        public static double getDistanceOrigin(Point2D n1) => getDistance(n1, new Point2D(0, 0));
+        public double getDistanceOrigin() => getDistance(this, new Point2D(0, 0));
+
+        public static double getAngleFromOrigin(Point2D point)
         {
-            return getDistance(this, otherPoint);
+            return Math.Atan2(point.Y, point.X);
+        }
+
+    
+        public double getAngleFromOrigin()
+        {
+            return getAngleFromOrigin(this);
         }
 
         public override string ToString()
