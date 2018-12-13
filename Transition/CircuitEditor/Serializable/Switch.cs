@@ -36,7 +36,9 @@ namespace Transition.CircuitEditor.Serializable
 
         private byte state;
         public byte State { get => state;
-            set { SetProperty(ref state, value); }
+            set { SetProperty(ref state, value);
+                raiseLayoutChanged();
+            }
         }
 
         private EngrNumber rClosed;
@@ -52,7 +54,7 @@ namespace Transition.CircuitEditor.Serializable
             RClosed = "10m";
             COpen = "1p";
             QuantityOfTerminals = 3;
-            State = 0;
+            State = 1;
 
             ParametersControl = new SwitchParametersControl(this);
             OnScreenElement = new OnScreenComponents.SwitchScreen(this);

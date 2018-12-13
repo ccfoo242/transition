@@ -24,7 +24,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public override int[,] TerminalPositions
         {
-            get => new int[,] { { 20, 40 }, { 100, 30 } };
+            get => new int[,] { { 20, 40 }, { 100, 40 } };
         }
 
         public ResistorScreen(Resistor resistor) : base(resistor)

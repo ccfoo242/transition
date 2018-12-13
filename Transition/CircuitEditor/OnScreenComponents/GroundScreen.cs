@@ -16,7 +16,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public override int[,] TerminalPositions
         {
-            get => new int[,] { { 40, 60 } };
+            get => new int[,] { { 40, 20 } };
         }
         public ContentControl SymbolInductor { get; }
 
