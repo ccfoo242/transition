@@ -705,6 +705,7 @@ namespace Transition.CircuitEditor
                 case "generator":       return new VoltageSource();
                 case "opamp":           return new OpAmp();
                 case "switch":          return new Switch();
+                case "impedance":       return new Impedance();
             }
 
             throw new NotSupportedException();

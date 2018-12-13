@@ -39,7 +39,9 @@ namespace Transition.CircuitEditor.Serializable
 
         private string modelName;
         public string ModelName { get => modelName;
-            set { SetProperty(ref modelName, value); }
+            set { SetProperty(ref modelName, value);
+                raiseLayoutChanged();
+            }
         }
 
         private string description;

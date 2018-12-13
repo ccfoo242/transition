@@ -335,20 +335,39 @@
             <Canvas Background="Transparent" Width="80" Height="40">
                 <Polyline Points="00,20 10,20"  Stroke="Black" StrokeThickness="4"/>
                 <Polyline Points="70,20 80,20"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="10,5 70,5 70,35 10,35 10,5"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="10,5 70,5 70,35 10,35 10,5 70,5"  Stroke="Black" StrokeThickness="4"/>
 
             </Canvas>
         </DataTemplate>
-
+        
+        <DataTemplate x:Key="symbolImpedanceWithZ">
+            <Canvas Background="Transparent" Width="80" Height="40">
+                <Polyline Points="00,20 10,20"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="70,20 80,20"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="10,5 70,5 70,35 10,35 10,5 70,5"  Stroke="Black" StrokeThickness="4"/>
+                <TextBlock Text="Z" FontSize="22" FontWeight="Bold"
+                            Canvas.Top="4" Canvas.Left="32"/>
+            </Canvas>
+        </DataTemplate>
+        
         <DataTemplate x:Key="symbolSCN">
             <Canvas Background="Transparent" Width="80" Height="40">
                 <Polyline Points="00,20 10,20"  Stroke="Black" StrokeThickness="4"/>
                 <Polyline Points="70,20 80,20"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="10,5 70,5 70,35 10,35 10,5"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="10,5 70,5 70,35 10,35 10,5 70,5"  Stroke="Black" StrokeThickness="4"/>
 
             </Canvas>
         </DataTemplate>
-
+        
+        <DataTemplate x:Key="symbolSCNWithSCNLegend">
+            <Canvas Background="Transparent" Width="80" Height="40">
+                <Polyline Points="00,20 10,20"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="70,20 80,20"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="10,5 70,5 70,35 10,35 10,5 70,5"  Stroke="Black" StrokeThickness="4"/>
+                <TextBlock Text="SCN" FontSize="18" FontWeight="Bold"
+                            Canvas.Top="8" Canvas.Left="22"/>
+            </Canvas>
+        </DataTemplate>
         <DataTemplate x:Key="symbolOpAmp">
             <Canvas Background="Transparent" Width="140" Height="160">
                 <Polyline Points="00,40 20,40"  Stroke="Black" StrokeThickness="4"/>

@@ -11,13 +11,6 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <!-- <UserControl.Resources>
-        <DataTemplate x:Key="SchematicComponentLayout">
-            <Canvas Width="80" Height="80">
-                <ContentControl ContentTemplate="{StaticResource symbolGenerator}"/>
-            </Canvas>
-        </DataTemplate>
-    </UserControl.Resources> -->
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
         <StackPanel Orientation="Horizontal">
             <TextBlock Margin="4" Text="Component Name: "/>

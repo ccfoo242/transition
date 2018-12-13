@@ -139,7 +139,7 @@
                         Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
                         x:Name="brdImpedance" Tag="impedance" Height="50" Width="50">
                     <Viewbox>
-                        <ContentControl ContentTemplate="{StaticResource symbolImpedance}" 
+                        <ContentControl ContentTemplate="{StaticResource symbolImpedanceWithZ}" 
                                     HorizontalAlignment="Center"  Margin="5"
                                     VerticalAlignment="Center"/>
                     </Viewbox>
@@ -148,7 +148,7 @@
                         Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
                         x:Name="brdSCN" Tag="scn" Height="50" Width="50">
                     <Viewbox>
-                        <ContentControl ContentTemplate="{StaticResource symbolSCN}" 
+                        <ContentControl ContentTemplate="{StaticResource symbolSCNWithSCNLegend}" 
                                     HorizontalAlignment="Center"  Margin="5"
                                     VerticalAlignment="Center"/>
                     </Viewbox>

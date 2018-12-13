@@ -101,6 +101,7 @@
     <Compile Include="CircuitEditor\OnScreenComponents\CapacitorScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\FDNRScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\GroundScreen.cs" />
+    <Compile Include="CircuitEditor\OnScreenComponents\ImpedanceScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\InductorScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\OpAmpScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\PotentiometerScreen.cs" />
@@ -119,6 +120,9 @@
     </Compile>
     <Compile Include="CircuitEditor\ParametersControls\GroundParameters.xaml.cs">
       <DependentUpon>GroundParameters.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CircuitEditor\ParametersControls\ImpedanceParametersControl.xaml.cs">
+      <DependentUpon>ImpedanceParametersControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="CircuitEditor\ParametersControls\InductorParametersControl.xaml.cs">
       <DependentUpon>InductorParametersControl.xaml</DependentUpon>
@@ -149,6 +153,7 @@
     <Compile Include="CircuitEditor\Serializable\Inductor.cs" />
     <Compile Include="CircuitEditor\Serializable\OpAmp.cs" />
     <Compile Include="CircuitEditor\Serializable\Potentiometer.cs" />
+    <Compile Include="CircuitEditor\Serializable\SCN.cs" />
     <Compile Include="CircuitEditor\Serializable\SerializableElement.cs" />
     <Compile Include="CircuitEditor\Serializable\Resistor.cs" />
     <Compile Include="CircuitEditor\Serializable\Switch.cs" />
@@ -240,6 +245,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CircuitEditor\ParametersControls\GroundParameters.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CircuitEditor\ParametersControls\ImpedanceParametersControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
