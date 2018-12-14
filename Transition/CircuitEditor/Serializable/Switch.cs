@@ -59,6 +59,7 @@ namespace Transition.CircuitEditor.Serializable
             ParametersControl = new SwitchParametersControl(this);
             OnScreenElement = new OnScreenComponents.SwitchScreen(this);
         }
+
         public override void SetProperty(string property, object value)
         {
             base.SetProperty(property, value);

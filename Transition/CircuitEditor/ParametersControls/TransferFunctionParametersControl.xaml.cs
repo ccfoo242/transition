@@ -52,7 +52,75 @@ namespace Transition.CircuitEditor.ParametersControls
             boxRIn.Value = SerializableTF.RIn;
             boxROut.Value = SerializableTF.ROut;
 
+            cmbFunctionType.SelectionChanged -= FunctionTypeChanged;
+            cmbFunctionType.SelectedIndex = SerializableTF.FunctionType;
+            cmbFunctionType.SelectionChanged += FunctionTypeChanged;
+
+            cmbStandardFunction.SelectionChanged -= StandardFunctionChanged;
+            cmbStandardFunction.SelectedIndex = getIndexStandardFunction(SerializableTF.StandardFunction);
+            cmbStandardFunction.SelectionChanged += StandardFunctionChanged;
+
+
+            boxAo.Value = SerializableTF.Ao;
+            boxFp.Value = SerializableTF.Fp;
+            boxFz.Value = SerializableTF.Fz;
+            boxQp.Value = SerializableTF.Qp;
+            boxQz.Value = SerializableTF.Qz;
+
+            chkInvert.Checked -= checkedInvert;
+            chkInvert.Unchecked -= uncheckedInvert;
+            chkInvert.IsChecked = SerializableTF.Invert;
+            chkInvert.Checked += checkedInvert;
+            chkInvert.Unchecked += uncheckedInvert;
+
+            chkReverse.Checked -= checkedReverse;
+            chkReverse.Unchecked -= uncheckedReverse;
+            chkReverse.IsChecked = SerializableTF.Reverse;
+            chkReverse.Checked += checkedReverse;
+            chkReverse.Unchecked += uncheckedReverse;
+
+            handleStkFunctionType();
             SerializableTF.PropertyChanged += handleChangeOfControls;
+        }
+
+        private void handleStkFunctionType()
+        {
+            stkStandard.Visibility = Visibility.Collapsed;
+            stkLaplace.Visibility = Visibility.Collapsed;
+            stkCustom.Visibility = Visibility.Collapsed;
+
+            switch (SerializableTF.FunctionType)
+            {
+                case 0: stkStandard.Visibility = Visibility.Visible; break;
+                case 1: stkCustom.Visibility = Visibility.Visible; break;
+                case 2: stkLaplace.Visibility = Visibility.Visible; break;
+            }
+
+        }
+
+        private int getIndexStandardFunction(string stFnc)
+        {
+            switch (stFnc)
+            {
+                case "LP1": return 1;
+                case "LP2": return 2;
+                case "HP1": return 3;
+                case "HP2": return 4;
+                case "AP1": return 5;
+                case "AP2": return 6;
+                case "BP1": return 7;
+                case "BR1": return 8;
+
+                case "LP12": return 10;
+                case "HP12": return 11;
+
+                case "LEQ": return 13;
+                case "BEQ": return 14;
+                case "HEQ": return 15;
+
+                case "Sinc": return 17;
+            }
+            return 0;
         }
 
         private void ElementNameChanged(object sender, TextChangedEventArgs e)
@@ -75,12 +143,28 @@ namespace Transition.CircuitEditor.ParametersControls
 
         private void RInChanged(object sender, ValueChangedEventArgs args)
         {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableTF,
+                Property = "RIn",
+                OldValue = SerializableTF.RIn,
+                NewValue = boxRIn.Value
+            };
 
+            executeCommand(command);
         }
 
         private void ROutChanged(object sender, ValueChangedEventArgs args)
         {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableTF,
+                Property = "ROut",
+                OldValue = SerializableTF.ROut,
+                NewValue = boxROut.Value
+            };
 
+            executeCommand(command);
         }
 
         private void ElementNameFocus(object sender, RoutedEventArgs e)
@@ -93,5 +177,147 @@ namespace Transition.CircuitEditor.ParametersControls
             CircuitEditor.currentInstance.executeCommand(command);
         }
 
+        private void FunctionTypeChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableTF,
+                Property = "FunctionType",
+                OldValue = SerializableTF.FunctionType,
+                NewValue = cmbFunctionType.SelectedIndex
+            };
+
+            executeCommand(command);
+        }
+
+        private void StandardFunctionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableTF,
+                Property = "StandardFunction",
+                OldValue = SerializableTF.StandardFunction,
+                NewValue = (string)((ComboBoxItem)cmbStandardFunction.SelectedItem).Tag
+            };
+
+            executeCommand(command);
+        }
+
+        private void AoChanged(object sender, ValueChangedEventArgs args)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableTF,
+                Property = "Ao",
+                OldValue = args.oldValue,
+                NewValue = args.newValue
+            };
+
+            executeCommand(command);
+        }
+
+        private void FpChanged(object sender, ValueChangedEventArgs args)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableTF,
+                Property = "Fp",
+                OldValue = args.oldValue,
+                NewValue = args.newValue
+            };
+
+            executeCommand(command);
+        }
+
+        private void FzChanged(object sender, ValueChangedEventArgs args)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableTF,
+                Property = "Fz",
+                OldValue = args.oldValue,
+                NewValue = args.newValue
+            };
+
+            executeCommand(command);
+        }
+
+        private void QpChanged(object sender, ValueChangedEventArgs args)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableTF,
+                Property = "Qp",
+                OldValue = args.oldValue,
+                NewValue = args.newValue
+            };
+
+            executeCommand(command);
+        }
+
+        private void QzChanged(object sender, ValueChangedEventArgs args)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableTF,
+                Property = "Qz",
+                OldValue = args.oldValue,
+                NewValue = args.newValue
+            };
+
+            executeCommand(command);
+        }
+
+        private void uncheckedInvert(object sender, RoutedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableTF,
+                Property = "Invert",
+                OldValue = SerializableTF.Invert,
+                NewValue = false
+            };
+
+            executeCommand(command);
+        }
+
+        private void checkedInvert(object sender, RoutedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableTF,
+                Property = "Invert",
+                OldValue = SerializableTF.Invert,
+                NewValue = true
+            };
+
+            executeCommand(command);
+        }
+
+        private void uncheckedReverse(object sender, RoutedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableTF,
+                Property = "Reverse",
+                OldValue = SerializableTF.Reverse,
+                NewValue = false
+            };
+
+            executeCommand(command);
+        }
+
+        private void checkedReverse(object sender, RoutedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableTF,
+                Property = "Reverse",
+                OldValue = SerializableTF.Reverse,
+                NewValue = true
+            };
+
+            executeCommand(command);
+        }
     }
 }
