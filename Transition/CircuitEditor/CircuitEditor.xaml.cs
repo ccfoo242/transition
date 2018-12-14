@@ -695,18 +695,19 @@ namespace Transition.CircuitEditor
         {
             switch (element)
             {
-                case "resistor":        return new Resistor();
-                case "capacitor":       return new Capacitor();
-                case "inductor":        return new Inductor();
-                case "fdnr":            return new FDNR();
-                case "ground":          return new Ground();
-                case "potentiometer":   return new Potentiometer();
-                case "transformer":     return new Transformer();
-                case "generator":       return new VoltageSource();
-                case "opamp":           return new OpAmp();
-                case "switch":          return new Switch();
-                case "impedance":       return new Impedance();
-                case "scn":             return new SCN();
+                case "resistor":         return new Resistor();
+                case "capacitor":        return new Capacitor();
+                case "inductor":         return new Inductor();
+                case "fdnr":             return new FDNR();
+                case "ground":           return new Ground();
+                case "potentiometer":    return new Potentiometer();
+                case "transformer":      return new Transformer();
+                case "generator":        return new VoltageSource();
+                case "opamp":            return new OpAmp();
+                case "switch":           return new Switch();
+                case "impedance":        return new Impedance();
+                case "scn":              return new SCN();
+                case "transferfunction": return new TransferFunctionComponent();
             }
 
             throw new NotSupportedException();

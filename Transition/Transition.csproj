@@ -110,6 +110,7 @@
     <Compile Include="CircuitEditor\OnScreenComponents\ScreenElementBase.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\SwitchScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\Terminal.cs" />
+    <Compile Include="CircuitEditor\OnScreenComponents\TransferFunctionScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\TransformerScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\VoltageSourceScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\WireScreen.cs" />
@@ -143,6 +144,9 @@
     <Compile Include="CircuitEditor\ParametersControls\SwitchParametersControl.xaml.cs">
       <DependentUpon>SwitchParametersControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CircuitEditor\ParametersControls\TransferFunctionParametersControl.xaml.cs">
+      <DependentUpon>TransferFunctionParametersControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CircuitEditor\ParametersControls\TransformerParametersControl.xaml.cs">
       <DependentUpon>TransformerParametersControl.xaml</DependentUpon>
     </Compile>
@@ -161,6 +165,7 @@
     <Compile Include="CircuitEditor\Serializable\SerializableElement.cs" />
     <Compile Include="CircuitEditor\Serializable\Resistor.cs" />
     <Compile Include="CircuitEditor\Serializable\Switch.cs" />
+    <Compile Include="CircuitEditor\Serializable\TransferFunctionComponent.cs" />
     <Compile Include="CircuitEditor\Serializable\Transformer.cs" />
     <Compile Include="CircuitEditor\Serializable\VoltageSource.cs" />
     <Compile Include="CircuitEditor\Serializable\SerializableWire.cs" />
@@ -277,6 +282,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CircuitEditor\ParametersControls\SwitchParametersControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CircuitEditor\ParametersControls\TransferFunctionParametersControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

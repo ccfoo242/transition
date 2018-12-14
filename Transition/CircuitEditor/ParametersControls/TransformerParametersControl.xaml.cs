@@ -39,9 +39,9 @@ namespace Transition.CircuitEditor.Components
             
             SerializableTransformer = transformer;
 
-            BoxMutualL.DataContext = transformer;
-            BoxLpLeak.DataContext = transformer;
-            BoxLsLeak.DataContext = transformer;
+         //   BoxMutualL.DataContext = transformer;
+         //   BoxLpLeak.DataContext = transformer;
+         //   BoxLsLeak.DataContext = transformer;
             
             transformer.PropertyChanged += handleChangeOfControls;
             handleChangeOfControls(null, null);
