@@ -106,6 +106,7 @@
     <Compile Include="CircuitEditor\OnScreenComponents\OpAmpScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\PotentiometerScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\ResistorScreen.cs" />
+    <Compile Include="CircuitEditor\OnScreenComponents\SCNScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\ScreenElementBase.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\SwitchScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\Terminal.cs" />
@@ -135,6 +136,9 @@
     </Compile>
     <Compile Include="CircuitEditor\ParametersControls\ResistorParametersControl.xaml.cs">
       <DependentUpon>ResistorParametersControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CircuitEditor\ParametersControls\SCNParametersControl.xaml.cs">
+      <DependentUpon>SCNParametersControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="CircuitEditor\ParametersControls\SwitchParametersControl.xaml.cs">
       <DependentUpon>SwitchParametersControl.xaml</DependentUpon>
@@ -265,6 +269,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CircuitEditor\ParametersControls\ResistorParametersControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CircuitEditor\ParametersControls\SCNParametersControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

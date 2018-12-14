@@ -26,9 +26,7 @@
                              UnitShort="F" x:Name="componentValueBox"
                              ValueChanged="CapacitorValueChanged"
                              PrecisionChanged="CapacitorPrecisionChanged"/>
-            <!--
-            ComponentValue="{Binding CapacitorValue, Mode=TwoWay}"
-                             ComponentPrecision="{Binding ComponentPrecision, Mode=TwoWay}"/> -->
+           
         </controls:Expander>
         <controls:Expander Header="Capacitor Model" ExpandDirection="Down"
                            IsExpanded="True">
@@ -55,6 +53,7 @@
                                 Grid.Row="1" HorizontalAlignment="Stretch">
                     <customcontrols:EngrNumberBoxDialog VariableName="Eω" Margin="4" x:Name="BoxEw"
                                                         AllowNegativeNumber="True"
+                                                        AllowZero="True"
                                                         ValueManuallyChanged="ChangeEw"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Capacitance function: C(ω) = C · ω"/>

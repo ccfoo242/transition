@@ -298,7 +298,7 @@ namespace Transition
 
         public static EngrNumber Reciprocal(EngrNumber n)
         {
-            return new EngrNumber(n.Mantissa, getInversePrefix(n.Prefix));
+            return new EngrNumber(1 / n.Mantissa, getInversePrefix(n.Prefix));
         }
 
         public static EngrNumber operator + (EngrNumber n1, EngrNumber n2) { return Add(n1, n2); }

@@ -44,7 +44,7 @@ namespace Transition.CustomControls
                 typeof(EngrNumber), typeof(EngrNumberBoxDialog), new PropertyMetadata(EngrNumber.One));
 
         public bool AllowNegativeNumber { get; set; }
-
+        public bool AllowZero { get; set; }
 
         public EngrNumberBoxDialog()
         {
@@ -54,6 +54,7 @@ namespace Transition.CustomControls
 
         private async void changeValue(object sender, RoutedEventArgs e)
         {
+            StackPanel stk2 = new StackPanel() { Orientation = Orientation.Vertical };
             StackPanel stk = new StackPanel()
                 { Orientation = Orientation.Horizontal };
 
@@ -81,11 +82,18 @@ namespace Transition.CustomControls
                 VerticalAlignment = VerticalAlignment.Center
             });
 
+            stk2.Children.Add(stk);
+            if (!AllowNegativeNumber) stk2.Children.Add(new TextBlock()
+                { Text = "Only Positive number allowed", FontStyle = Windows.UI.Text.FontStyle.Italic });
+            if (!AllowZero) stk2.Children.Add(new TextBlock()
+                { Text = "Zero value is not allowed", FontStyle = Windows.UI.Text.FontStyle.Italic });
+
+
             ContentDialog dialog = new ContentDialog()
             {
                 Title = "Enter new Value" + Environment.NewLine +
                 VariableName,
-                Content = stk,
+                Content = stk2,
                 CloseButtonText = "Cancel",
                 PrimaryButtonText = "OK"
             };
@@ -94,6 +102,7 @@ namespace Transition.CustomControls
 
             if (result == ContentDialogResult.Primary)
             {
+                if (box.Value == 0 && !AllowZero) return;
                 var args = new ValueChangedEventArgs
                 {
                     oldValue = Value,

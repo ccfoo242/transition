@@ -53,7 +53,9 @@
                 <StackPanel Orientation="Vertical" x:Name="pnlExponential"
                                     Grid.Row="1" HorizontalAlignment="Stretch">
                     <customcontrols:EngrNumberBoxDialog x:Name="BoxEw" VariableName="Eω" Margin="4" 
-                                                        AllowNegativeNumber="True" ValueManuallyChanged="ChangeEw"/>
+                                                        AllowNegativeNumber="True"
+                                                        AllowZero="True"
+                                                        ValueManuallyChanged="ChangeEw"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Inductance function: L(ω) = L · ω"/>
                         <TextBlock Text="Eω" FontSize="10" VerticalAlignment="Top"/>

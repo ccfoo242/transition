@@ -268,11 +268,12 @@ namespace Transition.CustomControls
 
         private async void TapChangeValue(object sender, TappedRoutedEventArgs e)
         {
-            StackPanel stk = new StackPanel()
-            { Orientation = Orientation.Horizontal };
+            var stk2 = new StackPanel() { Orientation = Orientation.Vertical };
+
+            var stk = new StackPanel() { Orientation = Orientation.Horizontal };
 
             stk.Children.Add(new TextBlock()
-            { Text = "Component Value:", Margin = new Thickness(4) });
+                { Text = "Component Value:", Margin = new Thickness(4) });
 
             EngrNumberBox box = new EngrNumberBox()
             {
@@ -284,10 +285,22 @@ namespace Transition.CustomControls
             stk.Children.Add(box);
             stk.Children.Add(new TextBlock() { Text = UnitShort });
 
+            stk2.Children.Add(stk);
+            stk2.Children.Add(new TextBlock()
+            {
+                Text = "Only positive number allowed",
+                FontStyle = Windows.UI.Text.FontStyle.Italic
+            });
+            stk2.Children.Add(new TextBlock()
+            {
+                Text = "Zero value is not allowed",
+                FontStyle = Windows.UI.Text.FontStyle.Italic
+            });
+
             ContentDialog dialog = new ContentDialog()
             {
                 Title = "Enter new Component Value (" + unit + ")",
-                Content = stk,
+                Content = stk2,
                 CloseButtonText = "Cancel",
                 PrimaryButtonText = "OK"
             };
@@ -297,7 +310,10 @@ namespace Transition.CustomControls
             if (result == ContentDialogResult.Primary)
             {
                 EngrNumber NewValue;
-                
+
+                if (box.Value.NegativeSign) return;
+                if (box.Value.IsZero) return;
+
                 if (!AnyPrecisionSelected)
                 {
                     NewValue = new EngrNumber(getNextOrEqualValue(box.Value), box.Value.Prefix);

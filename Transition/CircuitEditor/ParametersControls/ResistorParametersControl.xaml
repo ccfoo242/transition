@@ -60,9 +60,9 @@
                     <customcontrols:EngrNumberBoxDialog VariableName="Eω" Margin="4" 
                                                         x:Name="BoxEw"
                                                         AllowNegativeNumber="True"
+                                                        AllowZero="True"
                                                         ValueManuallyChanged="ChangeEw"/>
                     <StackPanel Orientation="Horizontal">
-                        <!--  Value="{Binding Ew, Mode=OneWay}" -->
                         <TextBlock Text="Resistance function: R(ω) = R · ω"/>
                         <TextBlock Text="Eω" FontSize="10" VerticalAlignment="Top"/>
                     </StackPanel>
