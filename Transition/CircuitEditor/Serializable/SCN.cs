@@ -10,7 +10,7 @@ namespace Transition.CircuitEditor.Serializable
     public class SCN : SerializableComponent
     {
         public override string ElementLetter => "Q";
-        public override string ElementType => "SCN";
+        public override string ElementType => "Switched Capacitor Network";
 
         public override byte QuantityOfTerminals
             { get => 2; set => throw new NotImplementedException(); }

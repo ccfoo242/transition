@@ -156,13 +156,18 @@ namespace Transition.CircuitEditor
 
                         if (element is ScreenComponentBase)
                         {
-                            scrComponentParameters.Content = ((ScreenComponentBase)element).SerializableComponent.ParametersControl;
-                            tglbtnCommonControlFlipX.IsChecked = ((ScreenComponentBase)element).FlipX;
-                            tglbtnCommonControlFlipY.IsChecked = ((ScreenComponentBase)element).FlipY;
+                            var component = (ScreenComponentBase)element;
+
+                            scrComponentParameters.Content = component.SerializableComponent.ParametersControl;
+                            tglbtnCommonControlFlipX.IsChecked = component.FlipX;
+                            tglbtnCommonControlFlipY.IsChecked = component.FlipY;
+                            txtHeaderComponentParameters.Text = component.SerializableComponent.ElementType + " Parameters";
 
                         }
                         if (element is WireTerminal)
-                            scrComponentParameters.Content = grdWiresHaveNoParameters;
+                        { scrComponentParameters.Content = grdWiresHaveNoParameters;
+                            txtHeaderComponentParameters.Text = "Wire Terminal";
+                        }
                     }
                     enableComponentEdit();
                     break;
@@ -202,6 +207,7 @@ namespace Transition.CircuitEditor
             btnDeleteComponent.IsEnabled = false;
 
             scrComponentParameters.Content = grdNoSelectedElement;
+            txtHeaderComponentParameters.Text = "Nothing selected...";
         }
 
         public void selectElement(ICircuitSelectable element)
@@ -678,9 +684,7 @@ namespace Transition.CircuitEditor
                 }
 
             movingComponents = false;
-
-         /*   foreach (ScreenElementBase element in currentDesign.CanvasCircuit.Children.OfType<ScreenElementBase>())
-                element.updateOriginalPosition(); */
+            
         }
 
         public void showParameters(ScreenComponentBase component)
@@ -718,7 +722,7 @@ namespace Transition.CircuitEditor
         {
 
             Border b = (Border)sender;
-            String element = (String)b.Tag;
+            var element = (string)b.Tag;
 
             args.DragUI.SetContentFromDataPackage();
             args.Data.RequestedOperation = DataPackageOperation.Move;
@@ -728,8 +732,8 @@ namespace Transition.CircuitEditor
         private void tapElement(object sender, TappedRoutedEventArgs e)
         {
 
-            Border bd = (Border)sender;
-            String element = (String)bd.Tag;
+            var bd = (Border)sender;
+            var element = (string)bd.Tag;
 
             addElement(element);
         }

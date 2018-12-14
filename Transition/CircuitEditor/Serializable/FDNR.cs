@@ -11,7 +11,7 @@ namespace Transition.CircuitEditor.Serializable
     public class FDNR : SerializableComponent
     {
         public override string ElementLetter => "D";
-        public override string ElementType => "FDNR";
+        public override string ElementType => "Frequency Dependent Negative Resistor";
 
         private EngrNumber fdnrValue;
         public EngrNumber FdnrValue
