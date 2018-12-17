@@ -79,9 +79,9 @@ namespace Transition.Functions
             
         }
 
-        public bool pointExistsInDomain(double point)
+        public bool pointExistsInDomain(Complex point)
         {
-            foreach (double pData in Data.Keys)
+            foreach (var pData in Data.Keys)
                 if (pData == point) return true;
 
             return false;
@@ -108,9 +108,9 @@ namespace Transition.Functions
 
         public double GetNextAbscissa(double point)
         {
-            double current = double.MaxValue;
+            var current = double.MaxValue;
 
-            foreach (double p in Data.Keys)
+            foreach (var p in Data.Keys)
                 if ((p > point) && (p < current))
                     current = p;
 

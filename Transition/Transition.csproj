@@ -205,6 +205,7 @@
     <Compile Include="Design\UserDesign.cs" />
     <Compile Include="Common\EngrNumber.cs" />
     <Compile Include="Function\Function.cs" />
+    <Compile Include="Function\LaplaceFunction.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
