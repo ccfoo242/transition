@@ -22,7 +22,7 @@ namespace Transition.Functions
         }
     }
 
-    public class StandardTransferFunction : LaplaceFunction
+    public class StandardTransferFunction : Function
     {
         public EngrNumber Ao;
         public EngrNumber Fp;
@@ -32,41 +32,89 @@ namespace Transition.Functions
         public bool invert;
         public bool reverse;
 
-        public EngrNumber Wp { get => 2 * Math.PI * Fp; }
-        public EngrNumber Wz { get => 2 * Math.PI * Fz; }
+        public double wp { get => 2 * Math.PI * fp; }
+        public double wz { get => 2 * Math.PI * fz; }
 
-        public static LaplaceExpression LP1
-            (EngrNumber Ao, EngrNumber Fp, EngrNumber Qp, EngrNumber Fz, EngrNumber Qz) =>
-                new LaplaceQuotient()
-                {
-                    num = new LaplaceConstant() { ConstantValue = Ao.ValueDouble },
-                    denom = new LaplaceSum(new LaplaceConstant() { ConstantValue = 1 },
-                    new LaplaceQuotient()
-                    {
-                        num = new LaplaceLiteral(),
-                        denom = new LaplaceConstant()
-                            { ConstantValue = 2 * Math.PI * Fp.ValueDouble }
-                    })
-                };
+        private double ao => Ao.ValueDouble;
+        private double fp => Fp.ValueDouble;
+        private double fz => Fz.ValueDouble;
+        private double qp => Qp.ValueDouble;
+        private double qz => Qz.ValueDouble;
 
+        public enum StandardFunction { LP1, LP2, HP1, HP2, AP1, AP2, BP1, BR1, LP12, HP12, LEQ, BEQ, HEQ, Sinc};
 
-        public static LaplaceExpression HP1
-            (EngrNumber Ao, EngrNumber Fp, EngrNumber Qp, EngrNumber Fz, EngrNumber Qz) =>
-            new LaplaceProduct(new LaplaceConstant() { ConstantValue = Ao.ValueDouble },
-                new LaplaceQuotient()
-                {
-                    num = new LaplaceQuotient()
-                    {
-                        num = new LaplaceLiteral(),
-                        denom = new LaplaceConstant() { ConstantValue = 2 * Math.PI * Fp.ValueDouble }
-                    },
-                    denom = new LaplaceSum(new LaplaceConstant() { ConstantValue = 1 },
-                        new LaplaceQuotient()
-                        {
-                            num = new LaplaceLiteral(),
-                            denom = new LaplaceConstant() { ConstantValue = 2 * Math.PI * Fp.ValueDouble }
-                        })
-                });
+        public StandardFunction CurrentFunction { get; set; }
+
+        public override Complex Calculate(double point)
+        {
+            /* s=jw */
+            return Calculate(Complex.ImaginaryOne * point);
+        }
+
+        public Complex Calculate(Complex s)
+        {
+            switch (CurrentFunction)
+            {
+                case StandardFunction.LP1:
+                    return ao / (1 + (s / wp));
+
+                case StandardFunction.HP1:
+                    return (ao * s / wp) / (1 + (s / wp));
+
+                case StandardFunction.AP1:
+                    return (ao * (1 - (s / wp))) / (1 + (s / wp));
+
+                case StandardFunction.LP2:
+                    return ao / (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Complex.Pow(wp, 2)));
+
+                case StandardFunction.HP2:
+                    return (ao * Complex.Pow(s, 2) / Math.Pow(wp, 2)) / (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)));
+
+                case StandardFunction.AP2:
+                    return (ao * (1 - (s / qp * wp) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)))) / (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)));
+
+                case StandardFunction.BP1:
+                    return (ao * (s / (qp * wp))) / (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)));
+
+                case StandardFunction.BR1:
+                    return (ao * (1 + (Complex.Pow(s, 2) / Math.Pow(wz, 2)))) / (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)));
+
+                case StandardFunction.LP12:
+                    return (ao / (Complex.Sqrt(1 + (s / wp))));
+
+                case StandardFunction.HP12:
+                    return ao * Complex.Sqrt((s / wp) / (1 + (s / wp)));
+
+                case StandardFunction.LEQ:
+                    if (ao >= 1)
+                        return (ao + (s / wp)) / (1 + (s / wp));
+                    else
+                        return (1 + (s / wp)) / ((1 / ao) + (s / wp));
+
+                case StandardFunction.HEQ:
+                    if (ao >= 1)
+                        return (1 + (ao * (s / wp))) / (1 + (s / wp));
+                    else
+                        return (1 + (s / wp)) / (1 + (s / (ao * wp)));
+
+                case StandardFunction.BEQ:
+                    if (ao >= 1)
+                        return (1 + ((ao * s) / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2))) /
+                               (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)));
+                    else
+                        return (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2))) /
+                               (1 + (s / (ao * qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)));
+
+                case StandardFunction.Sinc:
+                    double w = (s / Complex.ImaginaryOne).Magnitude;
+                    double fs = fp;
+                    double lambda = w / (2 * fs);
+                    return ao * (Math.Sin(lambda) / lambda) * Complex.Exp((-1 * s) / (2 * fs));
+            }
+            throw new NotSupportedException();
+        }
+        
+
     }
     
     public abstract class LaplaceExpression
