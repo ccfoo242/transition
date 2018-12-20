@@ -24,10 +24,10 @@ namespace Transition.Design
          * the Canvas where the Design is drawn, and has the responsability for drawing 
          * the circuit on this canvas. This allows the UserDesign class to show a circuit 
          * on screen. This is useful for showing circuit examples on different UI dialogs
-         * (and not only the circuit is being edited by the user in CircuitEditor)
+         * (and not only to draw the circuit that is being edited by the user in CircuitEditor)
          * On the other hand the CircuitEditor has all operations for manipulating
          * the design, to add components, wires, move and link them.
-         * That means there is a strong coupling between UserDesign and CircuitEditor*/
+         * That means there is a strong coupling between UserDesign and CircuitEditor */
 
         public ObservableCollection<SerializableComponent> Components { get; } = new ObservableCollection<SerializableComponent>();
         public ObservableCollection<SerializableWire> Wires { get; } = new ObservableCollection<SerializableWire>();
@@ -39,27 +39,57 @@ namespace Transition.Design
         public event ElementDelegate ElementAdded;
         public event ElementDelegate ElementRemoved;
 
+        public Color Background { get; set; } = Color.FromArgb(255, 255, 255, 255);
+
+        private EngrNumber minimumFrequency = 10;
+        public EngrNumber MinimumFrequency
+        {
+            get => minimumFrequency;
+            set
+            {
+                if (value > MaximumFrequency)
+                    throw new ArgumentException();
+                minimumFrequency = value;
+            }
+        }
+
+
+        private EngrNumber maximumFrequency = 40000;
+        public EngrNumber MaximumFrequency
+        {
+            get => maximumFrequency;
+            set
+            {
+                if (value < MinimumFrequency)
+                    throw new ArgumentException();
+                maximumFrequency = value;
+            }
+        }
+
+        public int NumberOfFrequencyPoints { get; set; } = 400;
+        
+        public enum AxisScale { Logarithmic, Linear };
+        public AxisScale FrequencyScale { get; set; } = AxisScale.Logarithmic;
+        
+
         public double RadiusNear => 15;
 
-        public Canvas CanvasCircuit { get; }
+        public Canvas CanvasCircuit { get; } = new Canvas()
+        {
+            Background = new SolidColorBrush(Colors.Transparent),
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Stretch,
+            Width = 1080,
+            Height = 720,
+            AllowDrop = true
+        };
 
         public bool SnapToGrid { get; set; } = true;
 
         public UserDesign()
-        {
-            CanvasCircuit = new Canvas()
-            {
-                Background = new SolidColorBrush(Colors.Transparent),
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Stretch,
-                Width = 1080,
-                Height = 720,
-                AllowDrop = true
-            };
-            
+        {            
             Components.CollectionChanged += Components_CollectionChanged;
             Wires.CollectionChanged += Wires_CollectionChanged;
-            
         }
         
         private void Components_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -406,6 +436,34 @@ namespace Transition.Design
             foreach (ElementTerminal t in getAllTerminals())
                 t.lowlight();
         }
+
+        public List<EngrNumber> getFrequencyPoints()
+        {
+            var output = new List<EngrNumber>();
+
+            if (FrequencyScale == AxisScale.Logarithmic)
+            {
+                var c = MaximumFrequency / MinimumFrequency;
+                var pitch = EngrNumber.NthRoot(c, NumberOfFrequencyPoints - 1);
+
+                for (int x = 0; x < NumberOfFrequencyPoints; x++)
+                    output.Add(MinimumFrequency * EngrNumber.Pow(pitch, x));
+            }
+
+            if (FrequencyScale == AxisScale.Linear)
+            {
+                var pitch = (MaximumFrequency - MinimumFrequency) / (NumberOfFrequencyPoints - 1);
+
+                for (int x = 0; x < NumberOfFrequencyPoints; x++)
+                    output.Add(MinimumFrequency + x * pitch);
+            }
+
+            return output;
+
+            
+        }
+
+     
     }
 
 }

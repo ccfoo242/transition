@@ -157,7 +157,7 @@ namespace Transition
         {
             if (mapPrefixes.Values.Contains(exponent))
             {
-                foreach (KeyValuePair<String, int> pair in mapPrefixes)
+                foreach (var pair in mapPrefixes)
                     if (pair.Value == exponent) return pair.Key;
                 throw new ArgumentException();
             }
@@ -171,6 +171,22 @@ namespace Transition
             if (prefix == null) return 0;
             return mapPrefixes[prefix];
            
+        }
+
+        public static int findNearestExponent(double nonIntExponent)
+        {
+            double distance = double.MaxValue;
+            int bestExp = 0;
+
+            foreach (var exp in mapPrefixes.Values)
+                if (Math.Abs(exp - nonIntExponent) < distance)
+                {
+                    distance = Math.Abs(exp - nonIntExponent);
+                    bestExp = exp;
+                }
+
+            return bestExp;
+
         }
 
         public static bool validPrefix(string prefix)
@@ -273,12 +289,16 @@ namespace Transition
 
         public static EngrNumber Add(EngrNumber n1, EngrNumber n2)
         {
-            return new EngrNumber(n1.ValueDecimal + n2.ValueDecimal);
+            return new EngrNumber(n1.ValueDouble + n2.ValueDouble);
         }
 
         public static EngrNumber Multiply(EngrNumber n1, EngrNumber n2)
         {
-            return new EngrNumber(n1.ValueDecimal * n2.ValueDecimal);
+            int newExponent = getExponent(n1.Prefix) + getExponent(n2.Prefix);
+            string newPrefix = getPrefix(newExponent);
+
+            return new EngrNumber(n1.Mantissa * n2.Mantissa, newPrefix);
+           // return new EngrNumber(n1.ValueDecimal * n2.ValueDecimal);
         }
 
         public static EngrNumber Substract(EngrNumber n1, EngrNumber n2)
@@ -300,6 +320,24 @@ namespace Transition
         {
             return new EngrNumber(1 / n.Mantissa, getInversePrefix(n.Prefix));
         }
+
+        public static EngrNumber NthRoot(EngrNumber n, double root)
+        {
+            double dividedExp = getExponent(n.Prefix) / root;
+            int nearestExp = findNearestExponent(dividedExp);
+
+            double correctionTerm = Math.Pow(10, dividedExp) / Math.Pow(10, nearestExp);
+            double newMantissa = Math.Pow((double)n.Mantissa, 1 / root) * correctionTerm;
+
+            return new EngrNumber((decimal)newMantissa, getPrefix(nearestExp));
+
+        }
+
+        public static EngrNumber Pow(EngrNumber n, double pow)
+        {
+            return NthRoot(n, 1 / pow);
+        }
+
 
         public static EngrNumber operator + (EngrNumber n1, EngrNumber n2) { return Add(n1, n2); }
         public static EngrNumber operator - (EngrNumber n1, EngrNumber n2) { return Substract(n1, n2); }

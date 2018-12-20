@@ -16,16 +16,19 @@ namespace Transition.Functions
         public double StrokeThickness;
         public DoubleCollection strokeArray;
 
-        public string DependentVariableQuantity { get; set; }
-        public string IndependentVariableQuantity { get; set; }
+        public string DependentVariableUnit { get; set; }
+        public string IndependentVariableUnit { get; set; }
 
         public static string[] PhysicalQuantities = new string[] {
             "Acceleration",
             "Acoustic Impedance",
             "Admittance",
+            "Angular Frequency",
             "Area",
-            "Electric Voltage",
+            "Electric Charge",
             "Electric Current",
+            "Electric Voltage",
+            "Energy",
             "Force",
             "Frequency",
             "Impedance",
@@ -38,9 +41,11 @@ namespace Transition.Functions
             "Power",
             "Pressure",
             "Ratio",
+            "Reactance",
             "Resistance",
             "Time",
             "Velocity",
+            "Volume",
             "Volume Velocity",
         };
     }
@@ -60,12 +65,17 @@ namespace Transition.Functions
         }
     }
 
-    public class SampledCurve : Function
+
+
+
+
+
+    public class SampledFunction : Function
     {
         public Dictionary<double, Complex> Data { get; } = new Dictionary<double, Complex>();
         public InterpolationModes InterpolationMode;
 
-        public SampledCurve()
+        public SampledFunction()
         {
             InterpolationMode = InterpolationModes.Linear;
         }
@@ -81,6 +91,7 @@ namespace Transition.Functions
 
         public bool pointExistsInDomain(Complex point)
         {
+            
             foreach (var pData in Data.Keys)
                 if (pData == point) return true;
 
@@ -228,7 +239,6 @@ namespace Transition.Functions
             else
                 return false;
         }
-
     }
 
     public enum InterpolationModes { NearestNeighbor, Linear, Quadratic, Cubic };

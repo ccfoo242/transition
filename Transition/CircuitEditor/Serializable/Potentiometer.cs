@@ -81,8 +81,8 @@ namespace Transition.CircuitEditor.Serializable
 
         public bool AnyPrecisionSelected { get { return (ComponentPrecision == Precision.Arbitrary); } }
 
-        private SampledCurve taperFunction;
-        public SampledCurve TaperFunction
+        private SampledFunction taperFunction;
+        public SampledFunction TaperFunction
             { get { return taperFunction; }
               set { taperFunction = value;
                     TaperChanged?.Invoke();
@@ -128,7 +128,7 @@ namespace Transition.CircuitEditor.Serializable
             ResistanceValue = 1;
             PositionValue = 50;
 
-            TaperFunction = new SampledCurve();
+            TaperFunction = new SampledFunction();
             TaperFunction.addSample(0, 0);
             TaperFunction.addSample(100, 100);
             
@@ -166,7 +166,7 @@ namespace Transition.CircuitEditor.Serializable
                 case "TapAPositionValue"   : TapAPositionValue = (double)value; break;
                 case "TapBPositionValue"   : TapBPositionValue = (double)value; break;
                 case "TapCPositionValue"   : TapCPositionValue = (double)value; break;
-                case "TaperFunction"       : TaperFunction = (SampledCurve)value; break;
+                case "TaperFunction"       : TaperFunction = (SampledFunction)value; break;
               /*  case "QuantityOfTerminals" : QuantityOfTerminals = (byte)value; break;*/
             }
         }
