@@ -100,26 +100,14 @@ namespace Transition.CircuitEditor.ParametersControls
 
         private int getIndexStandardFunction(string stFnc)
         {
-            switch (stFnc)
+            ComboBoxItem item;
+
+            for (int x = 0; x < cmbStandardFunction.Items.Count; x++)
             {
-                case "LP1": return 1;
-                case "LP2": return 2;
-                case "HP1": return 3;
-                case "HP2": return 4;
-                case "AP1": return 5;
-                case "AP2": return 6;
-                case "BP1": return 7;
-                case "BR1": return 8;
-
-                case "LP12": return 10;
-                case "HP12": return 11;
-
-                case "LEQ": return 13;
-                case "BEQ": return 14;
-                case "HEQ": return 15;
-
-                case "Sinc": return 17;
+                item = (ComboBoxItem)cmbStandardFunction.Items[x];
+                if ((string)item.Tag == stFnc) return x;
             }
+            
             return 0;
         }
 

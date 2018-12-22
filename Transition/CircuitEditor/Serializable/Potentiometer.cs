@@ -99,7 +99,6 @@ namespace Transition.CircuitEditor.Serializable
             set
             {
                 byte oldValue = quantityOfTerminals;
-                //unbindElement();
                 SetProperty(ref quantityOfTerminals, value);
                 TerminalsChanged?.Invoke(oldValue, value);
 
@@ -108,7 +107,6 @@ namespace Transition.CircuitEditor.Serializable
                         raiseTerminalDeleted((byte)(x - 1));
 
                 raiseLayoutChanged();
-                
             } }
 
         public delegate void DelegateTerminalsChanged(byte oldQuantity, byte newQuantity);

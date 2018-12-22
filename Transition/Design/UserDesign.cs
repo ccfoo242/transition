@@ -67,7 +67,7 @@ namespace Transition.Design
         }
 
         public int NumberOfFrequencyPoints { get; set; } = 400;
-        
+
         public enum AxisScale { Logarithmic, Linear };
         public AxisScale FrequencyScale { get; set; } = AxisScale.Logarithmic;
         

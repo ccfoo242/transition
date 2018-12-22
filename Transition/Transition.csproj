@@ -199,8 +199,14 @@
     <Compile Include="CustomControls\EngrNumberBoxDialog.xaml.cs">
       <DependentUpon>EngrNumberBoxDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomControls\FrequencyCurveControl.xaml.cs">
+      <DependentUpon>FrequencyCurveControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomControls\GroupBox.xaml.cs">
       <DependentUpon>GroupBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\TaperCurveControl.xaml.cs">
+      <DependentUpon>TaperCurveControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Design\UserDesign.cs" />
     <Compile Include="Common\EngrNumber.cs" />
@@ -311,7 +317,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="CustomControls\FrequencyCurveControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CustomControls\GroupBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomControls\TaperCurveControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

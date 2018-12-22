@@ -56,47 +56,53 @@
                         <ComboBox x:Name="cmbStandardFunction" Margin="4" Grid.Row="0"
                                   SelectionChanged="StandardFunctionChanged" Header="Standard Function">
                             <ComboBox.Items>
-                                <ComboBoxItem Content="-- 1st and 2nd Order --" 
+                                <ComboBoxItem Content="-- 1st Order --" 
                                               IsHitTestVisible="False"/>
 
                                 <ComboBoxItem Content="LP1" Tag="LP1"/> <!-- 1 -->
-                                <ComboBoxItem Content="LP2" Tag="LP2"/> <!-- 2 -->
-                                <ComboBoxItem Content="HP1" Tag="HP1"/> <!-- 3 -->
-                                <ComboBoxItem Content="HP2" Tag="HP2"/> <!-- 4 -->
-                                <ComboBoxItem Content="AP1" Tag="AP1"/> <!-- 5 -->
-                                <ComboBoxItem Content="AP2" Tag="AP2"/> <!-- 6 -->
-                                <ComboBoxItem Content="BP1" Tag="BP1"/> <!-- 7 -->
-                                <ComboBoxItem Content="BR1" Tag="BR1"/> <!-- 8 -->
+                                <ComboBoxItem Content="HP1" Tag="HP1"/> <!-- 2 -->
+                                <ComboBoxItem Content="AP1" Tag="AP1"/> <!-- 3 -->
+                                <ComboBoxItem Content="BP1" Tag="BP1"/> <!-- 4 -->
+                                <ComboBoxItem Content="BR1" Tag="BR1"/> <!-- 5 -->
+
+                                <ComboBoxItem Content="-- 2nd Order --"
+                                              IsHitTestVisible="False"/>
+                                <ComboBoxItem Content="LP2" Tag="LP2"/> <!-- 7 -->
+                                <ComboBoxItem Content="HP2" Tag="HP2"/> <!-- 8 -->
+                                <ComboBoxItem Content="AP2" Tag="AP2"/> <!-- 9 -->
 
                                 <ComboBoxItem Content="-- Fractional Order --" 
                                               IsHitTestVisible="False"/>
 
-                                <ComboBoxItem Content="LP½" Tag="LP12"/> <!-- 10 -->
-                                <ComboBoxItem Content="HP½" Tag="HP12"/> <!-- 11 -->
+                                <ComboBoxItem Content="LP½" Tag="LP12"/> <!-- 11 -->
+                                <ComboBoxItem Content="HP½" Tag="HP12"/> <!-- 12 -->
 
                                 <ComboBoxItem Content="-- Equalizers --" 
                                               IsHitTestVisible="False"/>
 
-                                <ComboBoxItem Content="LEQ" Tag="LEQ"/> <!-- 13 -->
-                                <ComboBoxItem Content="BEQ" Tag="BEQ"/> <!-- 14 -->
-                                <ComboBoxItem Content="HEQ" Tag="HEQ"/> <!-- 15 -->
+                                <ComboBoxItem Content="LEQ" Tag="LEQ"/> <!-- 14 -->
+                                <ComboBoxItem Content="BEQ" Tag="BEQ"/> <!-- 15 -->
+                                <ComboBoxItem Content="HEQ" Tag="HEQ"/> <!-- 16 -->
 
                                 <ComboBoxItem Content="-- Other --" 
                                               IsHitTestVisible="False"/>
-                                <ComboBoxItem Content="Sinc" Tag="Sinc"/> <!-- 17 -->
+                                <ComboBoxItem Content="Sinc" Tag="Sinc"/> <!-- 18 -->
                             </ComboBox.Items>
                         </ComboBox>
 
                         <customcontrols:EngrNumberBoxDialog x:Name="boxAo" Grid.Row="1" VariableName="Ao" 
-                                                            ValueManuallyChanged="AoChanged" Unit="dB" UnitShort="dB"
+                                                            ValueManuallyChanged="AoChanged" 
+                                                            Unit="dB" UnitShort="dB"
                                                             HorizontalAlignment="Right"
                                                             AllowNegativeNumber="True"
                                                             AllowZero="True"/>
                         <customcontrols:EngrNumberBoxDialog x:Name="boxFp" Grid.Row="2" VariableName="Fp"
-                                                            ValueManuallyChanged="FpChanged" Unit="Hertz" UnitShort="Hz"
+                                                            ValueManuallyChanged="FpChanged" 
+                                                            Unit="Hertz" UnitShort="Hz"
                                                             HorizontalAlignment="Right"/>
                         <customcontrols:EngrNumberBoxDialog x:Name="boxFz" Grid.Row="3" VariableName="Fz"
-                                                            ValueManuallyChanged="FzChanged" Unit="Hertz" UnitShort="Hz"
+                                                            ValueManuallyChanged="FzChanged" 
+                                                            Unit="Hertz" UnitShort="Hz"
                                                             HorizontalAlignment="Right"/>
                         <customcontrols:EngrNumberBoxDialog x:Name="boxQp" Grid.Row="4" VariableName="Qp"
                                                             ValueManuallyChanged="QpChanged"
@@ -104,9 +110,12 @@
                         <customcontrols:EngrNumberBoxDialog x:Name="boxQz" Grid.Row="5" VariableName="Qz"
                                                             ValueManuallyChanged="QzChanged"
                                                             HorizontalAlignment="Right"/>
-                        <CheckBox x:Name="chkInvert" Grid.Row="6" Content="Invert" HorizontalAlignment="Right"
+                        
+                        <CheckBox x:Name="chkInvert" Grid.Row="6" 
+                                  Content="Invert" HorizontalAlignment="Right"
                                   Checked="checkedInvert" Unchecked="uncheckedInvert"/>
-                        <CheckBox x:Name="chkReverse" Grid.Row="7" Content="Reverse" HorizontalAlignment="Right"
+                        <CheckBox x:Name="chkReverse" Grid.Row="7" 
+                                  Content="Reverse" HorizontalAlignment="Right"
                                   Checked="checkedReverse" Unchecked="uncheckedReverse"/>
                     </Grid>
                 </StackPanel>
