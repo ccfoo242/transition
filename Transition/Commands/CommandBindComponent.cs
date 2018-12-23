@@ -21,14 +21,14 @@ namespace Transition.Commands
         public void execute()
         {
             foreach (SerializableWire wire in wiresForComponents)
-                CircuitEditor.CircuitEditor.currentInstance.currentDesign.Wires.Add(wire);
+                CircuitEditor.CircuitEditor.currentInstance.CurrentDesign.Wires.Add(wire);
           
         }
 
         public void unExecute()
         {
             foreach (SerializableWire wire in wiresForComponents)
-                CircuitEditor.CircuitEditor.currentInstance.currentDesign.Wires.Remove(wire);
+                CircuitEditor.CircuitEditor.currentInstance.CurrentDesign.Wires.Remove(wire);
           
         }
 
@@ -41,7 +41,7 @@ namespace Transition.Commands
 
             foreach (KeyValuePair<byte, ElementTerminal> bind in binds)
             { 
-                wire = CircuitEditor.CircuitEditor.currentInstance.currentDesign.bindComponentTerminal(comp, bind.Key, bind.Value.ScreenElement.Serializable, bind.Value.TerminalNumber);
+                wire = CircuitEditor.CircuitEditor.currentInstance.CurrentDesign.bindComponentTerminal(comp, bind.Key, bind.Value.ScreenElement.Serializable, bind.Value.TerminalNumber);
                 if (wire != null) wiresForComponents.Add(wire);
             }
         }

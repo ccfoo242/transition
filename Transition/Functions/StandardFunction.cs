@@ -9,29 +9,55 @@ namespace Transition.Functions
 {
     public class StandardTransferFunction : Function
     {
-        public EngrNumber Ao;
-        public EngrNumber Fp;
-        public EngrNumber Fz;
-        public EngrNumber Qp;
-        public EngrNumber Qz;
-        public bool invert;
-        public bool reverse;
+
+        private EngrNumber _ao;
+        public EngrNumber Ao { get => _ao; set { _ao = value; RaiseFunctionChanged(); RecalculatePoints()} }
+
+        private EngrNumber _fp;
+        public EngrNumber Fp { get => _fp; set { _fp = value; RaiseFunctionChanged(); RecalculatePoints() } }
+
+        private EngrNumber _fz;
+        public EngrNumber Fz { get => _fz; set { _fz = value; RaiseFunctionChanged(); RecalculatePoints() } }
+
+        private EngrNumber _qp;
+        public EngrNumber Qp { get => _qp; set { _qp = value; RaiseFunctionChanged(); RecalculatePoints() } }
+
+        private EngrNumber _qz;
+        public EngrNumber Qz { get => _qz; set { _qz = value; RaiseFunctionChanged(); RecalculatePoints()} }
+
+        private bool _invert;
+        public bool invert { get => _invert; set { _invert = value; RaiseFunctionChanged(); RecalculatePoints() } }
+
+        private bool _reverse;
+        public bool reverse { get => _reverse; set { _reverse = value; RaiseFunctionChanged(); RecalculatePoints() } }
 
         public double wp { get => 2 * Math.PI * fp; }
         public double wz { get => 2 * Math.PI * fz; }
 
-        private double ao => Ao.ValueDouble;
-        private double fp => Fp.ValueDouble;
-        private double fz => Fz.ValueDouble;
-        private double qp => Qp.ValueDouble;
-        private double qz => Qz.ValueDouble;
+        private double ao => Ao.ToDouble;
+        private double fp => Fp.ToDouble;
+        private double fz => Fz.ToDouble;
+        private double qp => Qp.ToDouble;
+        private double qz => Qz.ToDouble;
+
+        private List<EngrNumber> FrequencyPoints => CircuitEditor.CircuitEditor.StaticCurrentDesign.getFrequencyPoints();
 
         public enum StandardFunction { LP1, LP2,  HP1,  HP2, AP1, AP2, BP1,
                                        BR1, LP12, HP12, LEQ, BEQ, HEQ, Sinc};
 
         public StandardFunction CurrentFunction { get; set; }
+        private Dictionary<EngrNumber, Complex> points = new Dictionary<EngrNumber, Complex>();
 
-        public override Complex Calculate(double f)
+        private void RecalculatePoints()
+        {
+            points = new Dictionary<EngrNumber, Complex>();
+            foreach (var freq in FrequencyPoints)
+                points.Add(freq, Calculate(freq));
+        }
+
+        public override Dictionary<EngrNumber, Complex> Points => points;
+
+        public override Complex Calculate(EngrNumber f)
         {
             /* s = jw */
             return Calculate(Complex.ImaginaryOne * f * 2 * Math.PI);

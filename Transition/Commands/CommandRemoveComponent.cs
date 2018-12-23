@@ -18,15 +18,15 @@ namespace Transition.Commands
 
         public void execute()
         {
-            CircuitEditor.CircuitEditor.currentInstance.currentDesign.Components.Remove(Component);
+            CircuitEditor.CircuitEditor.currentInstance.CurrentDesign.Components.Remove(Component);
         }
         
         public void unExecute()
         {
-            CircuitEditor.CircuitEditor.currentInstance.currentDesign.Components.Add(Component);
+            CircuitEditor.CircuitEditor.currentInstance.CurrentDesign.Components.Add(Component);
 
             foreach (SerializableWire wire in BindedWires)
-                CircuitEditor.CircuitEditor.currentInstance.currentDesign.Wires.Add(wire);
+                CircuitEditor.CircuitEditor.currentInstance.CurrentDesign.Wires.Add(wire);
 
            /* for (byte i = 0; i < Component.QuantityOfTerminals; i++)
                 foreach (Tuple<SerializableWire,byte> wt in Bindings[i])
@@ -39,7 +39,7 @@ namespace Transition.Commands
             Component = comp;
 
             for (byte i = 0; i < comp.QuantityOfTerminals; i++)
-                BindedWires.AddRange(CircuitEditor.CircuitEditor.currentInstance.currentDesign.getBoundedWires(comp, i));
+                BindedWires.AddRange(CircuitEditor.CircuitEditor.currentInstance.CurrentDesign.getBoundedWires(comp, i));
                  
         }
 

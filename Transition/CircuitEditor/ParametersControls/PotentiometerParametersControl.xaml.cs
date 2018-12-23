@@ -98,8 +98,8 @@ namespace Transition.CircuitEditor.Components
                 LineSmoothness = 0
             };
          
-            foreach (KeyValuePair<double, Complex> point in SerializablePotentiometer.TaperFunction.Data)
-                  l.Values.Add(new ObservablePoint(point.Key,
+            foreach (KeyValuePair<EngrNumber, Complex> point in SerializablePotentiometer.TaperFunction.Data)
+                  l.Values.Add(new ObservablePoint(point.Key.ToDouble,
                        point.Value.Magnitude));
 
             seriesCollection.Add(l);

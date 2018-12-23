@@ -98,13 +98,13 @@ namespace Transition.CircuitEditor.Serializable
 
         private void calculateFoQ()
         {
-            if (ResistorValue.ValueDouble == 0) return;
-            if (ls.ValueDouble == 0) return;
-            if (cp.ValueDouble == 0) return;
+            if (ResistorValue.ToDouble == 0) return;
+            if (ls.ToDouble == 0) return;
+            if (cp.ToDouble == 0) return;
 
-            double dR = ResistorValue.ValueDouble;
-            double dLs = Ls.ValueDouble;
-            double dCp = Cp.ValueDouble;
+            double dR = ResistorValue.ToDouble;
+            double dLs = Ls.ToDouble;
+            double dCp = Cp.ToDouble;
             
             double dWop = Math.Sqrt(1 / (dLs * dCp));
             
@@ -118,9 +118,9 @@ namespace Transition.CircuitEditor.Serializable
 
         private void calculateLsCp()
         {
-            double dQ = Q.ValueDouble;
-            double dFo = Fo.ValueDouble;
-            double dR = ResistorValue.ValueDouble;
+            double dQ = Q.ToDouble;
+            double dFo = Fo.ToDouble;
+            double dR = ResistorValue.ToDouble;
 
             double dWo = 2 * Math.PI * dFo;
 

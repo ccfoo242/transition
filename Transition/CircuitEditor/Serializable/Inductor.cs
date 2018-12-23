@@ -108,12 +108,12 @@ namespace Transition.CircuitEditor.Serializable
 
         private void calculateFoQ()
         {
-            if (Rs.ValueDouble == 0) return;
-            if (Cp.ValueDouble == 0) return;
+            if (Rs.ToDouble == 0) return;
+            if (Cp.ToDouble == 0) return;
 
-            double dL = inductorValue.ValueDouble;
-            double dRs = Rs.ValueDouble;
-            double dCp = Cp.ValueDouble;
+            double dL = inductorValue.ToDouble;
+            double dRs = Rs.ToDouble;
+            double dCp = Cp.ToDouble;
 
             double dWop = Math.Sqrt(1 / (dL * dCp));
 
@@ -127,9 +127,9 @@ namespace Transition.CircuitEditor.Serializable
 
         private void calculateRsCp()
         {
-            double dQ = Q.ValueDouble;
-            double dFo = Fo.ValueDouble;
-            double dL = inductorValue.ValueDouble;
+            double dQ = Q.ToDouble;
+            double dFo = Fo.ToDouble;
+            double dL = inductorValue.ToDouble;
 
             double dWo = 2 * Math.PI * dFo;
 

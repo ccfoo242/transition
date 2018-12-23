@@ -79,8 +79,8 @@ namespace Transition.CircuitEditor.Serializable
 
         private void changeTR()
         {
-            double tr = TurnsRatio.ValueDouble;
-            double lp = Lpri.ValueDouble;
+            double tr = TurnsRatio.ToDouble;
+            double lp = Lpri.ToDouble;
 
             double ls = tr * tr * lp;
             SetProperty(ref lsec, ls, "Lsec");
@@ -89,8 +89,8 @@ namespace Transition.CircuitEditor.Serializable
 
         private void changeLpri()
         {
-            double lp = Lpri.ValueDouble;
-            double tr = TurnsRatio.ValueDouble;
+            double lp = Lpri.ToDouble;
+            double tr = TurnsRatio.ToDouble;
 
             double ls = tr * tr * lp;
             SetProperty(ref lsec, ls, "Lsec");
@@ -99,8 +99,8 @@ namespace Transition.CircuitEditor.Serializable
         
         private void changeLsec()
         {
-            double ls = Lsec.ValueDouble;
-            double lp = Lpri.ValueDouble;
+            double ls = Lsec.ToDouble;
+            double lp = Lpri.ToDouble;
 
             double tr = Math.Sqrt(ls / lp);
             SetProperty(ref turnsRatio, tr, "TurnsRatio");
@@ -109,8 +109,8 @@ namespace Transition.CircuitEditor.Serializable
 
         private void updateM()
         {
-            double lp = Lpri.ValueDouble;
-            double ls = Lsec.ValueDouble;
+            double lp = Lpri.ToDouble;
+            double ls = Lsec.ToDouble;
             double k = (double)KCouplingCoef;
 
             SetProperty(ref mutualL, new EngrNumber(k * Math.Sqrt(lp * ls)), "MutualL");

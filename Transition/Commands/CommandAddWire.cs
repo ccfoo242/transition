@@ -18,12 +18,12 @@ namespace Transition.Commands
 
         public void execute()
         {
-            CircuitEditor.CircuitEditor.currentInstance.currentDesign.Wires.Add(Wire);
+            CircuitEditor.CircuitEditor.currentInstance.CurrentDesign.Wires.Add(Wire);
         }
 
         public void unExecute()
         {
-            CircuitEditor.CircuitEditor.currentInstance.currentDesign.Wires.Remove(Wire);
+            CircuitEditor.CircuitEditor.currentInstance.CurrentDesign.Wires.Remove(Wire);
         }
 
 

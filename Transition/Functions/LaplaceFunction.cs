@@ -11,6 +11,8 @@ namespace Transition.Functions
     {
         public LaplaceExpression Expression { get; set; }
 
+        public override Dictionary<EngrNumber, Complex> Points => throw new NotImplementedException();
+
         public override Complex Calculate(double f)
         {
             /* s = jw */

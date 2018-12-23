@@ -123,13 +123,13 @@ namespace Transition.CircuitEditor.Serializable
 
         private void calculateFoQ()
         {
-            if (CapacitorValue.ValueDouble == 0) return;
-            if (Rs.ValueDouble == 0) return;
-            if (Ls.ValueDouble == 0) return;
+            if (CapacitorValue.ToDouble == 0) return;
+            if (Rs.ToDouble == 0) return;
+            if (Ls.ToDouble == 0) return;
 
-            double dC = capacitorValue.ValueDouble;
-            double dLs = Ls.ValueDouble;
-            double dRs = Rs.ValueDouble;
+            double dC = capacitorValue.ToDouble;
+            double dLs = Ls.ToDouble;
+            double dRs = Rs.ToDouble;
 
             double dWo = Math.Sqrt(1 / (dLs * dC));
 
@@ -142,9 +142,9 @@ namespace Transition.CircuitEditor.Serializable
 
         private void calculateRsLs()
         {
-            double dQ = Q.ValueDouble;
-            double dFo = Fo.ValueDouble;
-            double dC = capacitorValue.ValueDouble;
+            double dQ = Q.ToDouble;
+            double dFo = Fo.ToDouble;
+            double dC = capacitorValue.ToDouble;
 
             double dWo = 2 * Math.PI * dFo;
 

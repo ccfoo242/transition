@@ -34,17 +34,18 @@ namespace Transition.CircuitEditor
     public sealed partial class CircuitEditor : UserControl
     {
         public static CircuitEditor currentInstance;
-
-        public UserDesign currentDesign { get; set; }
+        public static UserDesign StaticCurrentDesign => currentInstance.CurrentDesign;
+        
+        public UserDesign CurrentDesign { get; set; }
 
         public ObservableCollection<ICircuitSelectable> selectedElements = new ObservableCollection<ICircuitSelectable>();
         public List<Line> gridLines;
 
         private bool SnapToGrid { get {
                 if (Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
-                    return !currentDesign.SnapToGrid;
+                    return !CurrentDesign.SnapToGrid;
                 else
-                    return currentDesign.SnapToGrid; } }
+                    return CurrentDesign.SnapToGrid; } }
 
         public bool groupSelect = false;
         private bool movingComponents = false;
@@ -118,7 +119,7 @@ namespace Transition.CircuitEditor
 
         public void loadDesign(UserDesign design)
         {
-            currentDesign = design;
+            CurrentDesign = design;
 
             design.CanvasCircuit.PointerPressed += cnvPointerPressed;
             design.CanvasCircuit.PointerMoved += cnvPointerMoved;
@@ -181,7 +182,7 @@ namespace Transition.CircuitEditor
 
                 case NotifyCollectionChangedAction.Reset:
                     {
-                        foreach (ICircuitSelectable element in currentDesign.getAllSelectable())
+                        foreach (ICircuitSelectable element in CurrentDesign.getAllSelectable())
                             element.deselected();
                     }
                     disableComponentEdit();
@@ -233,7 +234,7 @@ namespace Transition.CircuitEditor
             {
                 var component = createElement(stringComponent);
                 component.ComponentPosition = snapCoordinate(ptCanvas);
-                component.ElementName = component.ElementLetter + currentDesign.getNextNumberLetter(component.ElementLetter).ToString();
+                component.ElementName = component.ElementLetter + CurrentDesign.getNextNumberLetter(component.ElementLetter).ToString();
 
                 command = new CommandAddComponent() { Component = component };
             }
@@ -245,7 +246,7 @@ namespace Transition.CircuitEditor
                 {
                     PositionTerminal0 = snapCoordinate(ptCanvas),
                     PositionTerminal1 = snapCoordinate(ptCanvas2),
-                    ElementName = "W" + (currentDesign.getMaximumNumberWire() + 1).ToString()
+                    ElementName = "W" + (CurrentDesign.getMaximumNumberWire() + 1).ToString()
                 };
 
                 command = new CommandAddWire() { Wire = wire };
@@ -257,7 +258,7 @@ namespace Transition.CircuitEditor
         private void bindComponentTerminalPair(ElementTerminal et1, ElementTerminal et2)
         {
            
-            SerializableWire wire = currentDesign.bindComponentTerminal(
+            SerializableWire wire = CurrentDesign.bindComponentTerminal(
                 ((ScreenComponentBase)et1.ScreenElement).SerializableComponent, et1.TerminalNumber,
                 ((ScreenComponentBase)et2.ScreenElement).SerializableComponent, et2.TerminalNumber);
 
@@ -384,7 +385,7 @@ namespace Transition.CircuitEditor
             clickedPoint = new Point2D(e.GetCurrentPoint(cnvGeneral).Position.X,
                                        e.GetCurrentPoint(cnvGeneral).Position.Y);
 
-            var clickedElement = currentDesign.getClickedElement(clickedPoint);
+            var clickedElement = CurrentDesign.getClickedElement(clickedPoint);
 
             if (e.GetCurrentPoint(cnvGeneral).Properties.IsLeftButtonPressed)
 
@@ -478,8 +479,8 @@ namespace Transition.CircuitEditor
                              * at button release, a bind or unbind command can be fired */
                             WireTerminal wt = (WireTerminal)selectedElements[0];
 
-                            var nearest = currentDesign.getNearestElementTerminalExcept(ptCanvas, wt.ScreenElement);
-                            currentDesign.lowlightAllTerminalsAllElements();
+                            var nearest = CurrentDesign.getNearestElementTerminalExcept(ptCanvas, wt.ScreenElement);
+                            CurrentDesign.lowlightAllTerminalsAllElements();
                             wt.highlight();
                             if (nearest != null)
                             {
@@ -504,8 +505,8 @@ namespace Transition.CircuitEditor
                             var component = selectedElements[0] as ScreenComponentBase;
                             component.moveRelative(snapCoordinate(ptCanvas - clickedPoint));
 
-                            currentDesign.lowlightAllTerminalsAllElements();
-                            var pairs = currentDesign.getListPairedComponentTerminals(component);
+                            CurrentDesign.lowlightAllTerminalsAllElements();
+                            var pairs = CurrentDesign.getListPairedComponentTerminals(component);
 
                             foreach (KeyValuePair<byte, ElementTerminal> pair in pairs)
                             {
@@ -542,7 +543,7 @@ namespace Transition.CircuitEditor
                 
                 /* thanks to MS folks, ObservableCollection does not support the
                  AddRange method, and I do not want to implement one myself */
-                foreach (ICircuitSelectable item in currentDesign.enclosingElementsForGroupSelect(rectGroupSelect))
+                foreach (ICircuitSelectable item in CurrentDesign.enclosingElementsForGroupSelect(rectGroupSelect))
                     selectedElements.Add(item);
             }
 
@@ -555,7 +556,7 @@ namespace Transition.CircuitEditor
                     if (selectedElement is WireTerminal)
                     {  //one thing is being moved, and it is a Wire Terminal
                         WireTerminal wt = (WireTerminal)selectedElement;
-                        ElementTerminal nearest = currentDesign.getNearestElementTerminalExcept(ptCanvas, wt.ScreenElement);
+                        ElementTerminal nearest = CurrentDesign.getNearestElementTerminalExcept(ptCanvas, wt.ScreenElement);
 
                         if (!wt.isBounded)
                         {   /*the wt is free */
@@ -647,7 +648,7 @@ namespace Transition.CircuitEditor
 
                             /* and now we do a bind command, in case the component has moved
                                close enough to other terminals */
-                            var binds = currentDesign.getListPairedComponentTerminals(component);
+                            var binds = CurrentDesign.getListPairedComponentTerminals(component);
                             if (binds.Count > 0)
                             {
                                 var command2 = new CommandBindComponent(binds, component.SerializableComponent);

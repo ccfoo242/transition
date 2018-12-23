@@ -10,6 +10,10 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
     <Grid>
-        <uwp:CartesianChart/>
+        <uwp:CartesianChart x:Name="chartControl">
+            <uwp:CartesianChart.AxisX>
+                <uwp:Axis Title="Frequency"/>
+            </uwp:CartesianChart.AxisX>
+        </uwp:CartesianChart>
     </Grid>
 </UserControl>

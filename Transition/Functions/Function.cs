@@ -11,13 +11,20 @@ namespace Transition.Functions
 {
     public abstract class Function
     {
-        public abstract Complex Calculate(double point);
+        public abstract Complex Calculate(EngrNumber point);
         public Brush StrokeColor;
         public double StrokeThickness;
         public DoubleCollection strokeArray;
 
+        public abstract Dictionary<EngrNumber, Complex> Points { get; } 
+        
         public string DependentVariableUnit { get; set; }
         public string IndependentVariableUnit { get; set; }
+
+        public static EngrNumber MinimumFrequency => CircuitEditor.CircuitEditor.StaticCurrentDesign.MinimumFrequency;
+        public static EngrNumber MaximumFrequency => CircuitEditor.CircuitEditor.StaticCurrentDesign.MaximumFrequency;
+
+        public static int NumberOfFrequencyPoints => CircuitEditor.CircuitEditor.StaticCurrentDesign.NumberOfFrequencyPoints;
 
         public static string[] PhysicalQuantities = new string[] {
             "Acceleration",
@@ -48,21 +55,46 @@ namespace Transition.Functions
             "Volume",
             "Volume Velocity",
         };
+
+        public event Action<Function> FunctionChanged;
+
+        protected void RaiseFunctionChanged() => FunctionChanged?.Invoke(this);
+        
     }
 
     public class ConstantValueFunction : Function
     {
-        public Complex FixedValue { get; set; }
+        private Complex fixedValue;
+        public Complex FixedValue
+        {
+            get => fixedValue;
+            set
+            {
+                fixedValue = value;
+                RaiseFunctionChanged();
+            }
+        }
 
+        public override Dictionary<EngrNumber, Complex> Points { get
+            {
+                var output = new Dictionary<EngrNumber, Complex>();
+
+                output.Add(MinimumFrequency, FixedValue);
+                output.Add(MaximumFrequency, FixedValue);
+
+                return output;
+            } }
+        
         public ConstantValueFunction(Complex fixedValue)
         {
             FixedValue = fixedValue;
         }
 
-        public override Complex Calculate(double point)
+        public override Complex Calculate(EngrNumber point)
         {
             return FixedValue;
         }
+        
     }
 
 
@@ -72,7 +104,10 @@ namespace Transition.Functions
 
     public class SampledFunction : Function
     {
-        public Dictionary<double, Complex> Data { get; } = new Dictionary<double, Complex>();
+        public Dictionary<EngrNumber, Complex> Data { get; } = new Dictionary<EngrNumber, Complex>();
+
+        public override Dictionary<EngrNumber, Complex> Points => Data;
+
         public InterpolationModes InterpolationMode;
 
         public SampledFunction()
@@ -80,7 +115,7 @@ namespace Transition.Functions
             InterpolationMode = InterpolationModes.Linear;
         }
 
-        public override Complex Calculate(double point)
+        public override Complex Calculate(EngrNumber point)
         {
             if (pointExistsInDomain(point))
                 return Data[point]; 
@@ -89,21 +124,20 @@ namespace Transition.Functions
             
         }
 
-        public bool pointExistsInDomain(Complex point)
+        public bool pointExistsInDomain(EngrNumber point)
         {
-            
             foreach (var pData in Data.Keys)
                 if (pData == point) return true;
 
             return false;
         }
 
-        public Complex Interpolate(double point)
+        public Complex Interpolate(EngrNumber point)
         {
             return Interpolate(point, InterpolationMode);
         }
 
-        public Complex Interpolate(double point, InterpolationModes interpolationMode)
+        public Complex Interpolate(EngrNumber point, InterpolationModes interpolationMode)
         {
             if (interpolationMode == InterpolationModes.NearestNeighbor)
                 return InterpolateNearestNeighbor(point);
@@ -117,49 +151,49 @@ namespace Transition.Functions
                 return InterpolateCubic(point);
         }
 
-        public double GetNextAbscissa(double point)
+        public EngrNumber GetNextAbscissa(EngrNumber point)
         {
-            var current = double.MaxValue;
+            var current = EngrNumber.MaxValue;
 
             foreach (var p in Data.Keys)
                 if ((p > point) && (p < current))
                     current = p;
 
-            if (current == double.MaxValue)
+            if (current == EngrNumber.MaxValue)
                 throw new ArgumentException();
 
             return current;
         }
 
-        public double GetPreviuosAbscissa(double point)
+        public EngrNumber GetPreviuosAbscissa(EngrNumber point)
         {
-            double current = double.MinValue;
+            var current = EngrNumber.MinValue;
 
             foreach (double p in Data.Keys)
                 if ((p < point) && (p > current))
                     current = p;
 
-            if (current == double.MinValue)
+            if (current == EngrNumber.MinValue)
                 throw new ArgumentException(); 
 
             return current;
         }
         
-        public bool isThereNextAbscissa(double point)
+        public bool isThereNextAbscissa(EngrNumber point)
         {
-            try { Complex x = GetNextAbscissa(point); }
+            try { EngrNumber x = GetNextAbscissa(point); }
             catch { return false; }
             return true;
         }
 
-        public bool isTherePreviousAbscissa(double point)
+        public bool isTherePreviousAbscissa(EngrNumber point)
         {
-            try { Complex x = GetPreviuosAbscissa(point); }
+            try { EngrNumber x = GetPreviuosAbscissa(point); }
             catch { return false; }
             return true;
         }
 
-        public bool isPointOutsideRange(double point)
+        public bool isPointOutsideRange(EngrNumber point)
         {
             if (Data.Count == 0) return true;
             if (!isThereNextAbscissa(point)) return true;
@@ -168,7 +202,7 @@ namespace Transition.Functions
             return false;
         }
 
-        public Complex getValueOutsideRange(double point)
+        public Complex getValueOutsideRange(EngrNumber point)
         {
             if (Data.Count == 0) throw new InvalidOperationException();
             
@@ -181,14 +215,14 @@ namespace Transition.Functions
                 return Data[GetPreviuosAbscissa(point)];
         }
 
-        private Complex InterpolateNearestNeighbor(double point)
+        private Complex InterpolateNearestNeighbor(EngrNumber point)
         {
             if (Data.Count < 1) throw new InvalidOperationException();
 
             if (isPointOutsideRange(point)) return getValueOutsideRange(point);
 
-            double distanceToNext = GetNextAbscissa(point) - point;
-            double distanceToPrevious = point - GetPreviuosAbscissa(point);
+            EngrNumber distanceToNext = GetNextAbscissa(point) - point;
+            EngrNumber distanceToPrevious = point - GetPreviuosAbscissa(point);
 
             if (distanceToNext < distanceToPrevious)
                 return Data[GetNextAbscissa(point)];
@@ -196,14 +230,14 @@ namespace Transition.Functions
                 return Data[GetPreviuosAbscissa(point)];
         }
 
-        private Complex InterpolateLinear(double point)
+        private Complex InterpolateLinear(EngrNumber point)
         {
             if (Data.Count < 2) throw new InvalidOperationException();
 
             if (isPointOutsideRange(point)) return getValueOutsideRange(point);
 
-            double x1 = GetPreviuosAbscissa(point); 
-            double x2 = GetNextAbscissa(point);
+            EngrNumber x1 = GetPreviuosAbscissa(point);
+            EngrNumber x2 = GetNextAbscissa(point);
             double x = point;
             Complex y1 = Data[x1];
             Complex y2 = Data[x2];
@@ -211,29 +245,32 @@ namespace Transition.Functions
             return y1 + ((x - x1) * (y2 - y1) / (x2 - x1));
         }
 
-        private Complex InterpolateQuadratic(double point)
+        private Complex InterpolateQuadratic(EngrNumber point)
         {
             return 0;
         }
 
-        private Complex InterpolateCubic(double point)
+        private Complex InterpolateCubic(EngrNumber point)
         {
             return 0;
         }
 
-        public void addSample(double abscissa, Complex value)
+        public void addSample(EngrNumber abscissa, Complex value)
         {
             if (Data.Keys.Contains(abscissa))
                 Data[abscissa] = value;
             else
                 Data.Add(abscissa, value);
+
+            RaiseFunctionChanged();
         }
 
-        public bool removeSample(double abscissa)
+        public bool removeSample(EngrNumber abscissa)
         {
             if (Data.Keys.Contains(abscissa))
             {
                 Data.Remove(abscissa);
+                RaiseFunctionChanged();
                 return true;
             }
             else
