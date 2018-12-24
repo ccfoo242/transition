@@ -13,7 +13,7 @@ namespace Transition.Functions
 
         public override Dictionary<EngrNumber, Complex> Points => throw new NotImplementedException();
 
-        public override Complex Calculate(double f)
+        public override Complex Calculate(EngrNumber f)
         {
             /* s = jw */
             return Expression.Evaluate(2 * Math.PI * f * Complex.ImaginaryOne);

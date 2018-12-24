@@ -130,7 +130,7 @@
            
         </controls:Expander>
         <controls:Expander Header="Curve" IsExpanded="True" ExpandDirection="Down">
-            
+            <customcontrols:FrequencyCurveControl x:Name="crvCurveControl" />
         </controls:Expander>
     </StackPanel>
 </UserControl>

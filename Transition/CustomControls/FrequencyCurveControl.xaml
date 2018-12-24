@@ -9,11 +9,13 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
-    <Grid>
-        <uwp:CartesianChart x:Name="chartControl">
-            <uwp:CartesianChart.AxisX>
-                <uwp:Axis Title="Frequency"/>
-            </uwp:CartesianChart.AxisX>
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <uwp:CartesianChart x:Name="chartControl" Height="300" Width="400"
+                            HorizontalAlignment="Stretch" 
+                            VerticalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch">
+           
         </uwp:CartesianChart>
     </Grid>
 </UserControl>

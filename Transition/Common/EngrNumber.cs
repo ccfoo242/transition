@@ -17,7 +17,7 @@ namespace Transition
 
         public static readonly EngrNumber One = new EngrNumber(1M, "");
         public static readonly EngrNumber MaxValue = new EngrNumber(999.9999M, "Y");
-        public static readonly EngrNumber MinValue = new EngrNumber(1.0, "y");
+        public static readonly EngrNumber MinValue = new EngrNumber(1.0M, "y");
         public decimal Mantissa { get; }
         public string Prefix { get; }
 
@@ -313,6 +313,10 @@ namespace Transition
             return new EngrNumber(n1.Mantissa * (decimal)n2, n1.Prefix);
         }
 
+        public static EngrNumber Multiply(EngrNumber n1, int n2)
+        {
+            return new EngrNumber(n1.Mantissa * (decimal)n2, n1.Prefix);
+        }
 
         public static EngrNumber Substract(EngrNumber n1, EngrNumber n2)
         {
@@ -369,6 +373,9 @@ namespace Transition
         public static EngrNumber operator *(double n1, EngrNumber n2) { return Multiply(n2, n1); }
         public static EngrNumber operator *(EngrNumber n1, decimal n2) { return Multiply(n1, n2); }
         public static EngrNumber operator *(decimal n1, EngrNumber n2) { return Multiply(n2, n1); }
+        public static EngrNumber operator *(EngrNumber n1, int n2) { return Multiply(n1, n2); }
+        public static EngrNumber operator *(int n1, EngrNumber n2) { return Multiply(n2, n1); }
+
         public static Complex operator *(EngrNumber n1, Complex n2) { return Multiply(n1, n2); }
         public static Complex operator *(Complex n1, EngrNumber n2) { return Multiply(n2, n1); }
         public static Complex operator /(Complex n1, EngrNumber n2) { return Divide(n1, n2); }
@@ -434,7 +441,7 @@ namespace Transition
                 catch { output = EngrNumber.One; }
 
               
-                if (!AllowNegativeNumber && output.NegativeSign) output = output * -1;
+                if (!AllowNegativeNumber && output.NegativeSign) output = EngrNumber.Negate( output );
 
                 return output;
             }

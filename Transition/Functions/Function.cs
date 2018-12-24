@@ -238,7 +238,7 @@ namespace Transition.Functions
 
             EngrNumber x1 = GetPreviuosAbscissa(point);
             EngrNumber x2 = GetNextAbscissa(point);
-            double x = point;
+            EngrNumber x = point;
             Complex y1 = Data[x1];
             Complex y2 = Data[x2];
 

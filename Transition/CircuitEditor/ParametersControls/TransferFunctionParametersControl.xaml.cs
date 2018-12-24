@@ -38,6 +38,8 @@ namespace Transition.CircuitEditor.ParametersControls
             SerializableTF = tf;
 
             tf.PropertyChanged += handleChangeOfControls;
+
+            crvCurveControl.functions.Add(tf.standardTf);
             handleChangeOfControls(null, null);
         }
 
@@ -59,8 +61,7 @@ namespace Transition.CircuitEditor.ParametersControls
             cmbStandardFunction.SelectionChanged -= StandardFunctionChanged;
             cmbStandardFunction.SelectedIndex = getIndexStandardFunction(SerializableTF.StandardFunction);
             cmbStandardFunction.SelectionChanged += StandardFunctionChanged;
-
-
+            
             boxAo.Value = SerializableTF.Ao;
             boxFp.Value = SerializableTF.Fp;
             boxFz.Value = SerializableTF.Fz;
@@ -79,7 +80,9 @@ namespace Transition.CircuitEditor.ParametersControls
             chkReverse.Checked += checkedReverse;
             chkReverse.Unchecked += uncheckedReverse;
 
+
             handleStkFunctionType();
+
             SerializableTF.PropertyChanged += handleChangeOfControls;
         }
 

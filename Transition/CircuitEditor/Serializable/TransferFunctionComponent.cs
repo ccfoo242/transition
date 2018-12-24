@@ -36,50 +36,104 @@ namespace Transition.CircuitEditor.Serializable
                 raiseLayoutChanged(); }
         }
 
+        public StandardTransferFunction standardTf = new StandardTransferFunction();
+
         private string standardFunction;
-        public string StandardFunction { get => standardFunction;
-            set { SetProperty(ref standardFunction, value);
+        public string StandardFunction
+        {
+            get => standardTf.CurrentFunction;
+            set
+            {
+                standardTf.CurrentFunction = value;
+                OnPropertyChanged("StandardFunction");
                 raiseLayoutChanged();
             }
         }
 
-        private EngrNumber ao;
-        public EngrNumber Ao { get => ao; set { SetProperty(ref ao, value); } }
 
-        private EngrNumber fp;
-        public EngrNumber Fp { get => fp; set { SetProperty(ref fp, value); } }
+        public EngrNumber Ao
+        {
+            get => standardTf.Ao; set
+            {
+                standardTf.Ao = value;
+                OnPropertyChanged("Ao");
+            }
+        }
 
-        private EngrNumber fz;
-        public EngrNumber Fz { get => fz; set { SetProperty(ref fz, value); } }
+        public EngrNumber Fp
+        {
+            get => standardTf.Fp; set
+            {
+                standardTf.Fp = value;
+                OnPropertyChanged("Fp");
+            }
+        }
 
-        private EngrNumber qp;
-        public EngrNumber Qp { get => qp; set { SetProperty(ref qp, value); } }
+        public EngrNumber Fz
+        {
+            get => standardTf.Fz; set
+            {
+                standardTf.Fz = value;
+                OnPropertyChanged("Fz");
+            }
+        }
 
-        private EngrNumber qz;
-        public EngrNumber Qz { get => qz; set { SetProperty(ref qz, value); } }
+        public EngrNumber Qp
+        {
+            get => standardTf.Qp; set
+            {
+                standardTf.Qp = value;
+                OnPropertyChanged("Qp");
+            }
+        }
 
-        private bool invert;
-        public bool Invert { get => invert; set { SetProperty(ref invert, value); } }
+        public EngrNumber Qz
+        {
+            get => standardTf.Qz; set
+            {
+                standardTf.Qz = value;
+                OnPropertyChanged("Qz");
+            }
+        }
 
-        private bool reverse;
-        public bool Reverse { get => reverse; set { SetProperty(ref reverse, value); } }
+        public bool Invert
+        {
+            get => standardTf.Invert; set
+            {
+                standardTf.Invert = value;
+                OnPropertyChanged("Invert");
+            }
+        }
+
+        public bool Reverse
+        {
+            get => standardTf.Reverse; set
+            {
+                standardTf.Reverse = value;
+                OnPropertyChanged("Reverse");
+            }
+        }
+
+        public LaplaceFunction laplaceTf;
+        public Function customCurve;
 
         public TransferFunctionComponent() : base()
         {
             rIn = "1T";
             rOut = "1u";
 
-            ao = 0;
-            fp = "1K";
-            fz = "1K";
-            qp = 1;
-            qz = 1;
+            Ao = 1;
+            Fp = "1K";
+            Fz = "1K";
+            Qp = 1;
+            Qz = 1;
+
+            StandardFunction = "LP1";
+
+            Invert = false;
+            Reverse = false;
 
             functionType = 0;
-            standardFunction = "LP1";
-
-            invert = false;
-            reverse = false;
 
             ParametersControl = new TransferFunctionParametersControl(this);
             OnScreenElement = new OnScreenComponents.TransferFunctionScreen(this);

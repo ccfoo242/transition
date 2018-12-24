@@ -50,7 +50,7 @@ namespace Transition.CircuitEditor.Serializable
         {
             r = "1K";
             c = "1n";
-            fs = 1 / (r * c);
+            fs = EngrNumber.One / (r * c);
 
             PositivePolarity = true;
 
@@ -60,13 +60,13 @@ namespace Transition.CircuitEditor.Serializable
 
         private void reCalculateC()
         {
-            EngrNumber newC = 1 / (R * Fs);
+            EngrNumber newC = EngrNumber.One / (R * Fs);
             SetProperty(ref c, newC, "C");
         }
 
         private void reCalculateFs()
         {
-            EngrNumber newFs = 1 / (R * C);
+            EngrNumber newFs = EngrNumber.One / (R * C);
             SetProperty(ref fs, newFs, "Fs");
         }
 
