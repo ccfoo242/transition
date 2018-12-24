@@ -66,7 +66,6 @@ namespace Transition.CircuitEditor.ParametersControls
             boxFp.Value = SerializableTF.Fp;
             boxFz.Value = SerializableTF.Fz;
             boxQp.Value = SerializableTF.Qp;
-            boxQz.Value = SerializableTF.Qz;
 
             chkInvert.Checked -= checkedInvert;
             chkInvert.Unchecked -= uncheckedInvert;
@@ -245,20 +244,7 @@ namespace Transition.CircuitEditor.ParametersControls
 
             executeCommand(command);
         }
-
-        private void QzChanged(object sender, ValueChangedEventArgs args)
-        {
-            var command = new CommandSetValue()
-            {
-                Component = SerializableTF,
-                Property = "Qz",
-                OldValue = args.oldValue,
-                NewValue = args.newValue
-            };
-
-            executeCommand(command);
-        }
-
+        
         private void uncheckedInvert(object sender, RoutedEventArgs e)
         {
             var command = new CommandSetValue()

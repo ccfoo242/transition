@@ -28,49 +28,107 @@ namespace Transition.CustomControls
 {
     public sealed partial class FrequencyCurveControl : UserControl
     {
-        public enum AxisScale { Logarithmic, Linear };
-        public AxisScale FrequencyScale { get; set; }
+        public enum AxisScale { Logarithmic, Linear, dB };
+
+        private AxisScale frequencyScale;
+        public AxisScale FrequencyScale
+        {
+            get => frequencyScale; set
+            {
+                frequencyScale = value;
+                setScale();
+            }
+        }
+
+        private AxisScale magnitudScale;
+        public AxisScale MagnitudeScale
+        {
+            get => magnitudScale; set
+            {
+                magnitudScale = value;
+                setScale();
+            }
+        }
 
         public ObservableCollection<Function> functions = new ObservableCollection<Function>();
         private Dictionary<Function, LineSeries> seriesMag = new Dictionary<Function, LineSeries>();
         private Dictionary<Function, LineSeries> seriesPhase = new Dictionary<Function, LineSeries>();
 
         private SeriesCollection sc ;
-        public Func<double, string> Formatter { get; set; }
+        /* public Func<double, string> Formatter { get; set; } */
         
+        private Axis magAxis;
+        private Axis phaseAxis;
+
+        private CartesianMapper<ObservablePoint> mpPhaseLinFreq = Mappers.Xy<ObservablePoint>()
+                .X(point => point.X)
+                .Y(point => point.Y);
+
+        private CartesianMapper<ObservablePoint> mpPhaseLogFreq = Mappers.Xy<ObservablePoint>()
+                .X(point => Math.Log(point.X, 10))
+                .Y(point => point.Y);
+
+        private CartesianMapper<ObservablePoint> mpdBMagLogFreq = Mappers.Xy<ObservablePoint>()
+                .X(point => Math.Log(point.X, 10))
+                .Y(point => 20 * Math.Log10(point.Y));
+
+        private CartesianMapper<ObservablePoint> mpLogMagLogFreq = Mappers.Xy<ObservablePoint>()
+                .X(point => Math.Log(point.X, 10))
+                .Y(point => Math.Log10(point.Y));
+
+        private CartesianMapper<ObservablePoint> mpLinMagLogFreq = Mappers.Xy<ObservablePoint>()
+                .X(point => Math.Log(point.X, 10))
+                .Y(point => point.Y);
+
+        private CartesianMapper<ObservablePoint> mpdBMagLinFreq = Mappers.Xy<ObservablePoint>()
+                .X(point => point.X)
+                .Y(point => 20 * Math.Log10(point.Y));
+
+        private CartesianMapper<ObservablePoint> mpLogMagLinFreq = Mappers.Xy<ObservablePoint>()
+                .X(point => point.X)
+                .Y(point => Math.Log10(point.Y));
+
+        private CartesianMapper<ObservablePoint> mpLinMagLinFreq = Mappers.Xy<ObservablePoint>()
+                .X(point => point.X)
+                .Y(point => point.Y);
+
         public FrequencyCurveControl()
         {
             this.InitializeComponent();
 
-            functions.CollectionChanged += functionsChanged;
-
-           
             double Base = 10;
-
-            var mapper = Mappers.Xy<ObservablePoint>()
-                .X(point => Math.Log(point.X, Base)) //a 10 base log scale in the X axis
-                .Y(point => point.Y);
-            sc = new SeriesCollection(mapper);
-            chartControl.Series = sc;
-
-            Formatter = value => Math.Pow(Base, value).ToString("N");
+            FrequencyScale = AxisScale.Logarithmic;
+            MagnitudeScale = AxisScale.dB;
 
             chartControl.AxisX.Add(new Axis()
             {
-                MinValue = 10,
-                MaxValue = 40000
+                Title = "Frequency",
+                LabelFormatter = value => Math.Pow(Base, value).ToString("N")
             });
 
-            chartControl.AxisY.Add(new Axis()
+            magAxis = new Axis()
             {
-                MinValue = 0,
-                MaxValue = 2
-            }
-            );
+                Title = "Gain",
+                Position=AxisPosition.LeftBottom
+            };
 
-          //  chartControl.AxisX[0].LabelFormatter = Formatter;
+            phaseAxis = new Axis()
+            {
+                Title = "Phase",
+                Position = AxisPosition.RightTop
+            };
+            chartControl.AxisY.Add(magAxis);
+            chartControl.AxisY.Add(phaseAxis);
 
-
+            functions.CollectionChanged += functionsChanged;
+            
+          /*  var mapper = Mappers.Xy<ObservablePoint>()
+                .X(point => Math.Log(point.X, Base)) //a 10 base log scale in the X axis
+                .Y(point => point.Y);
+                */
+            sc = new SeriesCollection();
+            chartControl.Series = sc;
+            
         }
 
         private void functionsChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -78,7 +136,6 @@ namespace Transition.CustomControls
             LineSeries sMag;
             LineSeries sPhase;
             
-
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
@@ -91,7 +148,10 @@ namespace Transition.CustomControls
                             Values = new ChartValues<ObservablePoint>(),
                             StrokeThickness = 2,
                             Stroke = new SolidColorBrush(Colors.Black),
-                            LineSmoothness = 0
+                            LineSmoothness = 0,
+                            PointGeometry = null,
+                            PointGeometrySize = 0,
+                            Title = "Magnitude"
                         };
 
                         sPhase = new LineSeries()
@@ -99,7 +159,10 @@ namespace Transition.CustomControls
                             Values = new ChartValues<ObservablePoint>(),
                             StrokeThickness = 2,
                             Stroke = new SolidColorBrush(Colors.Gray),
-                            LineSmoothness = 0
+                            LineSmoothness = 0,
+                            PointGeometry = null,
+                            PointGeometrySize = 0,
+                            Title = "Phase"
                         };
 
                         seriesMag.Add(function, sMag);
@@ -110,8 +173,9 @@ namespace Transition.CustomControls
                         foreach (var pair in function.Points)
                         {
                             sMag.Values.Add(new ObservablePoint(pair.Key.ToDouble, pair.Value.Magnitude));
-                            sMag.Values.Add(new ObservablePoint(pair.Key.ToDouble, pair.Value.Phase * 180 / Math.PI));
+                            sPhase.Values.Add(new ObservablePoint(pair.Key.ToDouble, pair.Value.Phase * 180 / Math.PI));
                         }
+                        
                     }
                     break;
 
@@ -131,6 +195,36 @@ namespace Transition.CustomControls
                 
             }
 
+            setScale();
+
+        }
+
+        public void setScale()
+        {
+            foreach (LineSeries ser in seriesMag.Values)
+            {
+                if ((FrequencyScale == AxisScale.Linear) && (MagnitudeScale == AxisScale.Linear))
+                    ser.Configuration = mpLinMagLinFreq;
+                if ((FrequencyScale == AxisScale.Linear) && (MagnitudeScale == AxisScale.Logarithmic))
+                    ser.Configuration = mpLogMagLinFreq;
+                if ((FrequencyScale == AxisScale.Linear) && (MagnitudeScale == AxisScale.dB))
+                    ser.Configuration = mpdBMagLinFreq;
+
+                if ((FrequencyScale == AxisScale.Logarithmic) && (MagnitudeScale == AxisScale.Linear))
+                    ser.Configuration = mpLinMagLogFreq;
+                if ((FrequencyScale == AxisScale.Logarithmic) && (MagnitudeScale == AxisScale.Logarithmic))
+                    ser.Configuration = mpLogMagLogFreq;
+                if ((FrequencyScale == AxisScale.Logarithmic) && (MagnitudeScale == AxisScale.dB))
+                    ser.Configuration = mpdBMagLogFreq;
+            }
+
+            foreach (LineSeries ser in seriesPhase.Values)
+            {
+                if (FrequencyScale == AxisScale.Linear)
+                    ser.Configuration = mpPhaseLinFreq;
+                if (FrequencyScale == AxisScale.Logarithmic)
+                    ser.Configuration = mpPhaseLogFreq;
+            }
         }
 
         private void FunctionChanged(Function func)

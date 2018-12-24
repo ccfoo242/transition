@@ -11,25 +11,22 @@ namespace Transition.Functions
     {
 
         private EngrNumber _ao;
-        public EngrNumber Ao { get => _ao; set { _ao = value; RaiseFunctionChanged(); RecalculatePoints(); } }
+        public EngrNumber Ao { get => _ao; set { _ao = value; RecalculatePoints(); RaiseFunctionChanged(); } }
 
         private EngrNumber _fp;
-        public EngrNumber Fp { get => _fp; set { _fp = value; RaiseFunctionChanged(); RecalculatePoints(); } }
+        public EngrNumber Fp { get => _fp; set { _fp = value; RecalculatePoints(); RaiseFunctionChanged(); } }
 
         private EngrNumber _fz;
-        public EngrNumber Fz { get => _fz; set { _fz = value; RaiseFunctionChanged(); RecalculatePoints(); } }
+        public EngrNumber Fz { get => _fz; set { _fz = value; RecalculatePoints(); RaiseFunctionChanged(); } }
 
         private EngrNumber _qp;
-        public EngrNumber Qp { get => _qp; set { _qp = value; RaiseFunctionChanged(); RecalculatePoints(); } }
-
-        private EngrNumber _qz;
-        public EngrNumber Qz { get => _qz; set { _qz = value; RaiseFunctionChanged(); RecalculatePoints(); } }
+        public EngrNumber Qp { get => _qp; set { _qp = value; RecalculatePoints(); RaiseFunctionChanged(); } }
 
         private bool _invert;
-        public bool Invert { get => _invert; set { _invert = value; RaiseFunctionChanged(); RecalculatePoints(); } }
+        public bool Invert { get => _invert; set { _invert = value; RecalculatePoints(); RaiseFunctionChanged(); } }
 
         private bool _reverse;
-        public bool Reverse { get => _reverse; set { _reverse = value; RaiseFunctionChanged(); RecalculatePoints(); } }
+        public bool Reverse { get => _reverse; set { _reverse = value; RecalculatePoints(); RaiseFunctionChanged(); } }
 
         public double wp { get => 2 * Math.PI * fp; }
         public double wz { get => 2 * Math.PI * fz; }
@@ -38,7 +35,6 @@ namespace Transition.Functions
         private double fp => Fp.ToDouble;
         private double fz => Fz.ToDouble;
         private double qp => Qp.ToDouble;
-        private double qz => Qz.ToDouble;
 
         private List<EngrNumber> FrequencyPoints => CircuitEditor.CircuitEditor.StaticCurrentDesign.getFrequencyPoints();
 
@@ -48,8 +44,8 @@ namespace Transition.Functions
             get => currentFunction; set
             {
                 currentFunction = value;
-                RaiseFunctionChanged();
                 RecalculatePoints();
+                RaiseFunctionChanged();
             }
         }
         private Dictionary<EngrNumber, Complex> points = new Dictionary<EngrNumber, Complex>();
@@ -60,7 +56,6 @@ namespace Transition.Functions
             _fp = 1000;
             _fz = 1000;
             _qp = 1;
-            _qz = 1;
             _invert = false;
             _reverse = false;
             currentFunction = "LP1";
@@ -69,6 +64,7 @@ namespace Transition.Functions
         private void RecalculatePoints()
         {
             points = new Dictionary<EngrNumber, Complex>();
+
             foreach (var freq in FrequencyPoints)
                 points.Add(freq, Calculate(freq));
         }
@@ -83,66 +79,75 @@ namespace Transition.Functions
 
         public Complex Calculate(Complex s)
         {
+            /* here s is equal to jw */
+
+            Complex output = 0;
+
             switch (CurrentFunction)
             {
                 case "LP1":
-                    return ao / (1 + (s / wp));
-
+                    output = ao / (1 + (s / wp));
+                    break;
                 case "HP1":
-                    return (ao * s / wp) / (1 + (s / wp));
-
+                    output = (ao * s / wp) / (1 + (s / wp));
+                    break;
                 case "AP1":
-                    return (ao * (1 - (s / wp))) / (1 + (s / wp));
-
+                    output = (ao * (1 - (s / wp))) / (1 + (s / wp));
+                    break;
                 case "LP2":
-                    return ao / (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Complex.Pow(wp, 2)));
-
+                    output = ao / (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Complex.Pow(wp, 2)));
+                    break;
                 case "HP2":
-                    return (ao * Complex.Pow(s, 2) / Math.Pow(wp, 2)) / (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)));
-
+                    output = (ao * Complex.Pow(s, 2) / Math.Pow(wp, 2)) / (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)));
+                    break;
                 case "AP2":
-                    return (ao * (1 - (s / qp * wp) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)))) / (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)));
-
+                    output = (ao * (1 - (s / qp * wp) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)))) / (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)));
+                    break;
                 case "BP1":
-                    return (ao * (s / (qp * wp))) / (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)));
-
+                    output = (ao * (s / (qp * wp))) / (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)));
+                    break;
                 case "BR1":
-                    return (ao * (1 + (Complex.Pow(s, 2) / Math.Pow(wz, 2)))) / (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)));
-
+                    output = (ao * (1 + (Complex.Pow(s, 2) / Math.Pow(wz, 2)))) / (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)));
+                    break;
                 case "LP12":
-                    return (ao / (Complex.Sqrt(1 + (s / wp))));
-
+                    output = (ao / (Complex.Sqrt(1 + (s / wp))));
+                    break;
                 case "HP12":
-                    return ao * Complex.Sqrt((s / wp) / (1 + (s / wp)));
-
+                    output = ao * Complex.Sqrt((s / wp) / (1 + (s / wp)));
+                    break;
                 case "LEQ":
                     if (ao >= 1)
-                        return (ao + (s / wp)) / (1 + (s / wp));
+                        output = (ao + (s / wp)) / (1 + (s / wp));
                     else
-                        return (1 + (s / wp)) / ((1 / ao) + (s / wp));
-
+                        output = (1 + (s / wp)) / ((1 / ao) + (s / wp));
+                    break;
                 case "HEQ":
                     if (ao >= 1)
-                        return (1 + (ao * (s / wp))) / (1 + (s / wp));
+                        output = (1 + (ao * (s / wp))) / (1 + (s / wp));
                     else
-                        return (1 + (s / wp)) / (1 + (s / (ao * wp)));
-
+                        output = (1 + (s / wp)) / (1 + (s / (ao * wp)));
+                    break;
                 case "BEQ":
                     if (ao >= 1)
-                        return (1 + ((ao * s) / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2))) /
+                        output = (1 + ((ao * s) / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2))) /
                                (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)));
                     else
-                        return (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2))) /
+                        output = (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2))) /
                                (1 + (s / (ao * qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)));
-
+                    break;
                 case "Sinc":
                     double w = (s / Complex.ImaginaryOne).Magnitude;
                     double fs = fp;
                     double lambda = w / (2 * fs);
-                    return ao * (Math.Sin(lambda) / lambda) * Complex.Exp((-1 * s) / (2 * fs));
+                    output = ao * (Math.Sin(lambda) / lambda) * Complex.Exp((-1 * s) / (2 * fs));
+                    break;
+                 default: throw new NotSupportedException();
             }
 
-            throw new NotSupportedException();
+            if (Invert) output = Complex.Reciprocal(output);
+            if (Reverse) output = Complex.Negate(output);
+
+            return output;
         }
         
 

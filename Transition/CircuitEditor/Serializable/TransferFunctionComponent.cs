@@ -86,16 +86,7 @@ namespace Transition.CircuitEditor.Serializable
                 OnPropertyChanged("Qp");
             }
         }
-
-        public EngrNumber Qz
-        {
-            get => standardTf.Qz; set
-            {
-                standardTf.Qz = value;
-                OnPropertyChanged("Qz");
-            }
-        }
-
+        
         public bool Invert
         {
             get => standardTf.Invert; set
@@ -126,7 +117,6 @@ namespace Transition.CircuitEditor.Serializable
             Fp = "1K";
             Fz = "1K";
             Qp = 1;
-            Qz = 1;
 
             StandardFunction = "LP1";
 
@@ -153,7 +143,6 @@ namespace Transition.CircuitEditor.Serializable
                 case "Fp": Fp = (EngrNumber)value; break;
                 case "Fz": Fz = (EngrNumber)value; break;
                 case "Qp": Qp = (EngrNumber)value; break;
-                case "Qz": Qz = (EngrNumber)value; break;
 
                 case "Invert": Invert = (bool)value;break;
                 case "Reverse": Reverse = (bool)value;break;

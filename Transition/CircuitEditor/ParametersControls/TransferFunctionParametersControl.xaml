@@ -107,15 +107,12 @@
                         <customcontrols:EngrNumberBoxDialog x:Name="boxQp" Grid.Row="4" VariableName="Qp"
                                                             ValueManuallyChanged="QpChanged"
                                                             HorizontalAlignment="Right"/>
-                        <customcontrols:EngrNumberBoxDialog x:Name="boxQz" Grid.Row="5" VariableName="Qz"
-                                                            ValueManuallyChanged="QzChanged"
-                                                            HorizontalAlignment="Right"/>
-                        
+
                         <CheckBox x:Name="chkInvert" Grid.Row="6" 
-                                  Content="Invert" HorizontalAlignment="Right"
+                                  Content="Invert Function" HorizontalAlignment="Right"
                                   Checked="checkedInvert" Unchecked="uncheckedInvert"/>
                         <CheckBox x:Name="chkReverse" Grid.Row="7" 
-                                  Content="Reverse" HorizontalAlignment="Right"
+                                  Content="Reverse Phase" HorizontalAlignment="Right"
                                   Checked="checkedReverse" Unchecked="uncheckedReverse"/>
                     </Grid>
                 </StackPanel>
@@ -129,8 +126,17 @@
                 
            
         </controls:Expander>
-        <controls:Expander Header="Curve" IsExpanded="True" ExpandDirection="Down">
-            <customcontrols:FrequencyCurveControl x:Name="crvCurveControl" />
+        <controls:Expander Header="Curve" IsExpanded="True" ExpandDirection="Down"
+                           HorizontalAlignment="Stretch"
+                           HorizontalContentAlignment="Stretch"
+                           VerticalAlignment="Stretch"
+                           VerticalContentAlignment="Stretch">
+            <customcontrols:FrequencyCurveControl x:Name="crvCurveControl"
+                                                  HorizontalAlignment="Stretch"
+                                                  HorizontalContentAlignment="Stretch"
+                                                  VerticalAlignment="Stretch"
+                                                  VerticalContentAlignment="Stretch"
+                                                  MinHeight="300"/>
         </controls:Expander>
     </StackPanel>
 </UserControl>
