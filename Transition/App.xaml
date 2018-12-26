@@ -35,8 +35,7 @@
                 <Polyline Points="00,20 12,20 16,10 24,30 32,10 40,30 48,10 56,30 64,10 68,20 80,20"
                    Stroke="Black" StrokeLineJoin="Round"
                    StrokeThickness="4"
-                   StrokeEndLineCap="Round" StrokeStartLineCap="Round"
-                          />
+                   StrokeEndLineCap="Round" StrokeStartLineCap="Round"/>
             </Canvas>
         </DataTemplate>
 
@@ -395,7 +394,7 @@
             </Canvas>
         </DataTemplate>
 
-        <DataTemplate x:Key="symbolSummer">
+        <DataTemplate x:Key="symbolSummer2Input">
             <Canvas Background="Transparent" Width="120" Height="120">
 
                 <Polyline Points="60,00 60,20"
@@ -424,6 +423,41 @@
 
             </Canvas>
         </DataTemplate>
+
+
+        <DataTemplate x:Key="symbolSummer3Input">
+            <Canvas Background="Transparent" Width="120" Height="120">
+
+                <Polyline Points="60,00 60,20"
+                   Stroke="Black" StrokeLineJoin="Round"
+                   StrokeThickness="4"/>
+
+                <Polyline Points="60,100 60,120"
+                   Stroke="Black" StrokeLineJoin="Round"
+                   StrokeThickness="4"/>
+
+                <Polyline Points="100,60 120,60"
+                   Stroke="Black" StrokeLineJoin="Round"
+                   StrokeThickness="4"/>
+                
+                <Polyline Points="0,60 20,60"
+                   Stroke="Black" StrokeLineJoin="Round"
+                   StrokeThickness="4"/>
+                
+                <Ellipse Width="80" Height="80" Stroke="Black"
+                         StrokeThickness="4"
+                         Canvas.Left="20"
+                         Canvas.Top="20"
+                         Fill="Transparent"/>
+
+                <TextBlock Canvas.Left="50" Canvas.Top="30" Text="Σ" 
+                           FontSize="40"/>
+
+                <TextBlock Canvas.Left="75" Canvas.Top="39" 
+                           Text=">" FontSize="26" FontWeight="Bold"/>
+            </Canvas>
+        </DataTemplate>
+
 
         <DataTemplate x:Key="symbolBuffer">
             <Canvas Background="Transparent" Width="100" Height="80">

@@ -713,6 +713,7 @@ namespace Transition.CircuitEditor
                 case "impedance":        return new Impedance();
                 case "scn":              return new SCN();
                 case "transferfunction": return new TransferFunctionComponent();
+                case "summer":           return new Summer();
             }
 
             throw new NotSupportedException();

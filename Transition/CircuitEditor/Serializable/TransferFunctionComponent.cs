@@ -33,12 +33,21 @@ namespace Transition.CircuitEditor.Serializable
         private int functionType;   /* 0=standard, 1=custom curve, 2=laplace expression */
         public int FunctionType { get => functionType;
             set { SetProperty(ref functionType, value);
-                raiseLayoutChanged(); }
+                raiseLayoutChanged();
+                OnPropertyChanged("TFString");
+            }
         }
 
         public StandardTransferFunction standardTf = new StandardTransferFunction();
 
-        private string standardFunction;
+        public string TFString { get {
+                if (FunctionType == 0) return StandardFunction;
+                else
+                if (FunctionType == 1) return "Custom";
+                else
+                    return "Laplace";
+            } }
+        
         public string StandardFunction
         {
             get => standardTf.CurrentFunction;
@@ -46,6 +55,7 @@ namespace Transition.CircuitEditor.Serializable
             {
                 standardTf.CurrentFunction = value;
                 OnPropertyChanged("StandardFunction");
+                OnPropertyChanged("TFString");
                 raiseLayoutChanged();
             }
         }

@@ -16,14 +16,14 @@ namespace Transition.CircuitEditor.OnScreenComponents
     {
         public override int[,] TerminalPositions
         {
-            get => new int[,] { { 20, 40 }, { 20, 120 }, { 140, 40 }, { 140, 120} };
+            get => new int[,] { { 20, 40 }, { 20, 120 }, { 140, 40 }, { 140, 120 } };
         }
 
         public override double SchematicWidth => 160;
         public override double SchematicHeight => 160;
 
-        private TextBlock txtComponentName { get; }
-        private TextBlock txtTF { get; }
+        private TextBlock TxtComponentName { get; }
+        private TextBlock TxtTF { get; }
         
         public ContentControl SymbolTF { get; }
         
@@ -45,16 +45,16 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 Source = tf
             };
 
-            txtComponentName = new TextBlock()
+            TxtComponentName = new TextBlock()
             {
                 FontWeight = FontWeights.ExtraBold,
                 RenderTransform = new TranslateTransform()
             };
-            txtComponentName.SetBinding(TextBlock.TextProperty, b1);
-            txtComponentName.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
-            Children.Add(txtComponentName);
+            TxtComponentName.SetBinding(TextBlock.TextProperty, b1);
+            TxtComponentName.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
+            Children.Add(TxtComponentName);
 
-            txtTF = new TextBlock()
+            TxtTF = new TextBlock()
             {
                 FontWeight = FontWeights.ExtraBold,
                 RenderTransform = new TranslateTransform()
@@ -66,16 +66,57 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 Mode = BindingMode.OneWay,
                 Source = tf
             };
-            txtTF.SetBinding(TextBlock.TextProperty, b2);
-            txtTF.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
-            Children.Add(txtTF);
+            TxtTF.SetBinding(TextBlock.TextProperty, b2);
+            TxtTF.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
+            Children.Add(TxtTF);
 
             postConstruct();
         }
 
         public override void setPositionTextBoxes(SerializableElement element)
         {
-           
+            double leftCN; double topCN;
+            double leftTF; double topTF;
+
+            if (ActualRotation == 0)
+            {
+                leftCN = (SchematicWidth / 2) - (TxtComponentName.ActualWidth / 2);
+                topCN = 00;
+
+                leftTF = (SchematicWidth / 2) - (TxtTF.ActualWidth / 2);
+                topTF = 60;
+            }
+            else if (ActualRotation == 90)
+            {
+                leftCN = (SchematicHeight / 2) - (TxtComponentName.ActualWidth / 2);
+                topCN = 00;
+
+                leftTF = (SchematicHeight / 2) - (TxtTF.ActualWidth / 2);
+                topTF = 60;
+
+            }
+            else if (ActualRotation == 180)
+            {
+                leftCN = (SchematicWidth / 2) - (TxtComponentName.ActualWidth / 2);
+                topCN = 00;
+
+                leftTF = (SchematicWidth / 2) - (TxtTF.ActualWidth / 2);
+                topTF = 60;
+            }
+            else
+            {
+                leftCN = (SchematicHeight / 2) - (TxtComponentName.ActualWidth / 2);
+                topCN = 00;
+
+                leftTF = (SchematicHeight / 2) - (TxtTF.ActualWidth / 2);
+                topTF = 60;
+            }
+
+            ((TranslateTransform)TxtComponentName.RenderTransform).X = leftCN;
+            ((TranslateTransform)TxtComponentName.RenderTransform).Y = topCN;
+
+            ((TranslateTransform)TxtTF.RenderTransform).X = leftTF;
+            ((TranslateTransform)TxtTF.RenderTransform).Y = topTF;
         }
     }
 }

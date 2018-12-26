@@ -54,8 +54,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             Canvas.SetLeft(SymbolPotentiometer, 19);
 
             pot.TerminalsChanged += terminalsChanged;
-            // terminalsChanged();
-
+        
             txtComponentName = new TextBlock()
             {
                 FontWeight = FontWeights.ExtraBold,

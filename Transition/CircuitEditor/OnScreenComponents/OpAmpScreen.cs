@@ -56,9 +56,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
             txtComponentName.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
             Children.Add(txtComponentName);
-
-
-
+            
             txtModelName = new TextBlock()
             {
                 FontWeight = FontWeights.ExtraBold,
@@ -94,64 +92,45 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 topMN = 90;
 
                 if (!FlipX)
-                {
                     leftCN = 80;
-                }
                 else
-                {
                     leftCN = 80 - txtComponentName.ActualWidth;
-                }
-
             }
             else if (ActualRotation == 90)
             {
                 leftCN = 120;
                 
-                leftMN = (SchematicWidth / 2) - (txtModelName.ActualWidth / 2);
-                topMN = 90;
+                leftMN = (SchematicHeight / 2) - (txtModelName.ActualWidth / 2);
+                topMN = 70;
 
                 if (!FlipX)
-                {
                     topCN = 140;
-                }
                 else
-                {
                     topCN = 40;
-                }
             }
             else if (ActualRotation == 180)
             {
-
                 topCN = 20;
 
                 leftMN = 55;
                 topMN = 90;
 
                 if (!FlipX)
-                {
                     leftCN = 80 - txtComponentName.ActualWidth;
-                }
                 else
-                {
                     leftCN = 80;
-                }
-
             }
             else
             {
                 leftCN = 120;
 
-                leftMN = (SchematicWidth / 2) - (txtModelName.ActualWidth / 2);
-                topMN = 90;
+                leftMN = (SchematicHeight / 2) - (txtModelName.ActualWidth / 2);
+                topMN = 70;
 
                 if (!FlipX)
-                {
                     topCN = 40;
-                }
                 else
-                {
                     topCN = 140;
-                }
             }
 
             ((TranslateTransform)txtComponentName.RenderTransform).X = leftCN;

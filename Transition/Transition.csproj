@@ -108,6 +108,7 @@
     <Compile Include="CircuitEditor\OnScreenComponents\ResistorScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\SCNScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\ScreenElementBase.cs" />
+    <Compile Include="CircuitEditor\OnScreenComponents\SummerScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\SwitchScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\Terminal.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\TransferFunctionScreen.cs" />
@@ -141,6 +142,9 @@
     <Compile Include="CircuitEditor\ParametersControls\SCNParametersControl.xaml.cs">
       <DependentUpon>SCNParametersControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CircuitEditor\ParametersControls\SummerParametersControl.xaml.cs">
+      <DependentUpon>SummerParametersControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CircuitEditor\ParametersControls\SwitchParametersControl.xaml.cs">
       <DependentUpon>SwitchParametersControl.xaml</DependentUpon>
     </Compile>
@@ -164,6 +168,7 @@
     <Compile Include="CircuitEditor\Serializable\SCN.cs" />
     <Compile Include="CircuitEditor\Serializable\SerializableElement.cs" />
     <Compile Include="CircuitEditor\Serializable\Resistor.cs" />
+    <Compile Include="CircuitEditor\Serializable\Summer.cs" />
     <Compile Include="CircuitEditor\Serializable\Switch.cs" />
     <Compile Include="CircuitEditor\Serializable\TransferFunctionComponent.cs" />
     <Compile Include="CircuitEditor\Serializable\Transformer.cs" />
@@ -286,6 +291,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CircuitEditor\ParametersControls\SCNParametersControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CircuitEditor\ParametersControls\SummerParametersControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

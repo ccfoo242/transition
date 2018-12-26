@@ -178,7 +178,7 @@
                         Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
                         x:Name="brdSummer" Tag="summer" Width="50" Height="50">
                     <Viewbox>
-                        <ContentControl ContentTemplate="{StaticResource symbolSummer}" 
+                        <ContentControl ContentTemplate="{StaticResource symbolSummer2Input}" 
                                     HorizontalAlignment="Center"  Margin="5"
                                     VerticalAlignment="Center"/>
                     </Viewbox>

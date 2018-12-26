@@ -88,45 +88,57 @@ namespace Transition.Functions
                 case "LP1":
                     output = ao / (1 + (s / wp));
                     break;
+
                 case "HP1":
                     output = (ao * s / wp) / (1 + (s / wp));
                     break;
+
                 case "AP1":
                     output = (ao * (1 - (s / wp))) / (1 + (s / wp));
                     break;
+
                 case "LP2":
                     output = ao / (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Complex.Pow(wp, 2)));
                     break;
+
                 case "HP2":
                     output = (ao * Complex.Pow(s, 2) / Math.Pow(wp, 2)) / (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)));
                     break;
+
                 case "AP2":
                     output = (ao * (1 - (s / qp * wp) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)))) / (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)));
                     break;
+
                 case "BP1":
                     output = (ao * (s / (qp * wp))) / (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)));
                     break;
+
                 case "BR1":
                     output = (ao * (1 + (Complex.Pow(s, 2) / Math.Pow(wz, 2)))) / (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)));
                     break;
+
                 case "LP12":
-                    output = (ao / (Complex.Sqrt(1 + (s / wp))));
+                    output = ao / Complex.Sqrt(1 + (s / wp));
                     break;
+
                 case "HP12":
                     output = ao * Complex.Sqrt((s / wp) / (1 + (s / wp)));
                     break;
+
                 case "LEQ":
                     if (ao >= 1)
                         output = (ao + (s / wp)) / (1 + (s / wp));
                     else
                         output = (1 + (s / wp)) / ((1 / ao) + (s / wp));
                     break;
+
                 case "HEQ":
                     if (ao >= 1)
                         output = (1 + (ao * (s / wp))) / (1 + (s / wp));
                     else
                         output = (1 + (s / wp)) / (1 + (s / (ao * wp)));
                     break;
+
                 case "BEQ":
                     if (ao >= 1)
                         output = (1 + ((ao * s) / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2))) /
@@ -135,12 +147,14 @@ namespace Transition.Functions
                         output = (1 + (s / (qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2))) /
                                (1 + (s / (ao * qp * wp)) + (Complex.Pow(s, 2) / Math.Pow(wp, 2)));
                     break;
+
                 case "Sinc":
                     double w = (s / Complex.ImaginaryOne).Magnitude;
                     double fs = fp;
                     double lambda = w / (2 * fs);
                     output = ao * (Math.Sin(lambda) / lambda) * Complex.Exp((-1 * s) / (2 * fs));
                     break;
+
                  default: throw new NotSupportedException();
             }
 
