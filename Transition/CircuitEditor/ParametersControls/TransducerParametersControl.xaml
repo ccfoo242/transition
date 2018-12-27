@@ -47,5 +47,10 @@
                       ValueManuallyChanged="boxMicDistChange"/>
             </StackPanel>
         </controls:Expander>
+        <controls:Expander Header="Response Curves">
+            <StackPanel Orientation="Vertical">
+               
+            </StackPanel>
+        </controls:Expander>
     </StackPanel>
 </UserControl>
