@@ -470,11 +470,11 @@
         </DataTemplate>
 
         <DataTemplate x:Key="symbolSpeaker">
-            <Canvas Background="Transparent" Width="80" Height="100">
+            <Canvas Background="Transparent" Width="80" Height="120">
                 <Polyline Points="20,00 20,30"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="20,70 20,100"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="00,30 40,30 40,70 00,70 00,30"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="40,30 70,10 70,90 40,70 40,30"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="20,90 20,120"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="00,30 40,30 40,90 00,90 00,30"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="40,30 70,10 70,110 40,90 40,30"  Stroke="Black" StrokeThickness="4"/>
                 <!-- dot -->
                 <Ellipse Width="6" Height="6" Stroke="Black"
                          Canvas.Left="17"
@@ -482,6 +482,22 @@
                          Fill="Black"/>
             </Canvas>
         </DataTemplate>
+
+
+        <DataTemplate x:Key="symbolSpeakerReversed">
+            <Canvas Background="Transparent" Width="80" Height="120">
+                <Polyline Points="20,00 20,30"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="20,90 20,120"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="00,30 40,30 40,90 00,90 00,30"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="40,30 70,10 70,110 40,90 40,30"  Stroke="Black" StrokeThickness="4"/>
+                <!-- dot -->
+                <Ellipse Width="6" Height="6" Stroke="Black"
+                         Canvas.Left="17"
+                         Canvas.Top="75"
+                         Fill="Black"/>
+            </Canvas>
+        </DataTemplate>
+
 
         <DataTemplate x:Key="symbolSwitch">
             <Canvas Background="Transparent" Width="80" Height="25">

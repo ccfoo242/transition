@@ -196,7 +196,7 @@
 
                 <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
                         Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
-                        x:Name="brdSpeaker" Tag="speaker" Width="50" Height="50">
+                        x:Name="brdSpeaker" Tag="transducer" Width="50" Height="50">
                     <Viewbox>
                         <ContentControl ContentTemplate="{StaticResource symbolSpeaker}" 
                                     HorizontalAlignment="Center"  Margin="5"

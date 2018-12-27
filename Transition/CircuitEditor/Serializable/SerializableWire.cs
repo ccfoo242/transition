@@ -74,8 +74,7 @@ namespace Transition.CircuitEditor.Serializable
         public event WireBindDelegate WireBindingChanged;
 
         public WireScreen OnScreenWire { get; }
-
-       /* public event ComponentLayoutChanged ComponentChanged; */
+        
         public delegate void ComponentLayoutChanged();
 
         public SerializableWire()

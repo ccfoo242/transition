@@ -715,6 +715,7 @@ namespace Transition.CircuitEditor
                 case "transferfunction": return new TransferFunctionComponent();
                 case "summer":           return new Summer();
                 case "buffer":           return new Serializable.Buffer();
+                case "transducer":       return new Transducer();
             }
 
             throw new NotSupportedException();

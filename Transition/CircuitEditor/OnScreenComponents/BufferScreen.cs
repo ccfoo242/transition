@@ -46,6 +46,9 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 RenderTransform = new TranslateTransform()
             };
 
+
+
+
             Binding b1 = new Binding()
             {
                 Path = new PropertyPath("ElementName"),
@@ -59,8 +62,11 @@ namespace Transition.CircuitEditor.OnScreenComponents
             txtPolarity = new TextBlock()
             {
                 FontWeight = FontWeights.ExtraBold,
-                RenderTransform = new TranslateTransform()
+                RenderTransform = new TranslateTransform(),
+                FontSize = 18
             };
+
+
 
             Binding b2 = new Binding()
             {
@@ -79,15 +85,19 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 RenderTransform = new TranslateTransform()
             };
 
+
+
             Binding b3 = new Binding()
             {
-                Path = new PropertyPath("GainString"),
+                Path = new PropertyPath("Gain"),
                 Mode = BindingMode.OneWay,
-                Source = buf
+                Source = buf,
+                Converter = new GainEngrConverter() 
             };
             txtGain.SetBinding(TextBlock.TextProperty, b3);
             txtGain.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
             Children.Add(txtGain);
+
 
 
             txtDelay = new TextBlock()
@@ -95,12 +105,13 @@ namespace Transition.CircuitEditor.OnScreenComponents
                 FontWeight = FontWeights.ExtraBold,
                 RenderTransform = new TranslateTransform()
             };
-
+            
             Binding b4 = new Binding()
             {
-                Path = new PropertyPath("DelayString"),
+                Path = new PropertyPath("Delay"),
                 Mode = BindingMode.OneWay,
-                Source = buf
+                Source = buf,
+                Converter = new DelayEngrConverter() 
             };
             txtDelay.SetBinding(TextBlock.TextProperty, b4);
             txtDelay.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
@@ -112,7 +123,53 @@ namespace Transition.CircuitEditor.OnScreenComponents
 
         public override void setPositionTextBoxes(SerializableElement element)
         {
-          
+            double leftCN; double topCN;
+            double leftPL; double topPL;
+            double leftGT; double topGT;
+            double leftDT; double topDT;
+
+            if ((ActualRotation == 0) || (ActualRotation == 180))
+            {
+                topCN = 0;
+                leftCN = (SchematicWidth / 2) - (txtComponentName.ActualWidth / 2);
+
+                topPL = (SchematicHeight / 2) - (txtPolarity.ActualHeight / 2);
+                leftPL = (SchematicWidth / 2) - (txtPolarity.ActualWidth / 2) + (FlipX ^ (ActualRotation >= 180) ? 10 : -10);
+
+                topGT = 100;
+                leftGT = (SchematicWidth / 2) - (txtGain.ActualWidth / 2);
+
+                topDT = 120;
+                leftDT = (SchematicWidth / 2) - (txtGain.ActualWidth / 2);
+
+            }
+            else
+            {
+                topCN = 80 - (txtComponentName.ActualHeight / 2);
+                leftCN = 20 - (txtComponentName.ActualWidth);
+
+                topPL = (SchematicWidth / 2) - (txtPolarity.ActualHeight / 2) + (FlipX ^ (ActualRotation >= 180) ? 10 : -10);
+                leftPL = (SchematicHeight / 2) - (txtPolarity.ActualWidth / 2);
+
+                topGT = 60 - (txtGain.ActualHeight / 2);
+                leftGT = 100;
+
+                topDT = 80 - (txtDelay.ActualHeight / 2);
+                leftDT = 100;
+            }
+
+            ((TranslateTransform)txtComponentName.RenderTransform).X = leftCN;
+            ((TranslateTransform)txtComponentName.RenderTransform).Y = topCN;
+
+            ((TranslateTransform)txtPolarity.RenderTransform).X = leftPL;
+            ((TranslateTransform)txtPolarity.RenderTransform).Y = topPL;
+
+            ((TranslateTransform)txtGain.RenderTransform).X = leftGT;
+            ((TranslateTransform)txtGain.RenderTransform).Y = topGT;
+
+            ((TranslateTransform)txtDelay.RenderTransform).X = leftDT;
+            ((TranslateTransform)txtDelay.RenderTransform).Y = topDT;
+
         }
 
         public class PolarityStringValueConverter : IValueConverter
@@ -129,6 +186,40 @@ namespace Transition.CircuitEditor.OnScreenComponents
             public object ConvertBack(object value, Type targetType, object parameter, string language)
             {
                 throw new NotImplementedException();
+            }
+        }
+        
+        public class DelayEngrConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, string language)
+            {
+                //number to string
+                if (value == null) return "";
+                EngrNumber engrNumber = (EngrNumber)value;
+
+                return "T: " + engrNumber.ToString();
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, string language)
+            {
+                return null;
+            }
+        }
+
+        public class GainEngrConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, string language)
+            {
+                //number to string
+                if (value == null) return "";
+                EngrNumber engrNumber = (EngrNumber)value;
+
+                return "A: " + engrNumber.ToString();
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, string language)
+            {
+                return null;
             }
         }
     }

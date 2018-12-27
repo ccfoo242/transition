@@ -63,8 +63,7 @@ namespace Transition.CircuitEditor.ParametersControls
         private void handleChangeOfControls(object sender, PropertyChangedEventArgs args)
         {
             SerializableBuffer.PropertyChanged -= handleChangeOfControls;
-
-
+            
             txtElementName.TextChanged -= ElementNameChanged;
             txtElementName.Text = SerializableBuffer.ElementName;
             txtElementName.TextChanged += ElementNameChanged;

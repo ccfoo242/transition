@@ -12,37 +12,42 @@ using Windows.UI.Xaml.Media;
 
 namespace Transition.CircuitEditor.OnScreenComponents
 {
-    public class ImpedanceScreen : ScreenComponentBase
+    public class TransducerScreen : ScreenComponentBase
     {
-        public override double SchematicWidth => 120;
-        public override double SchematicHeight => 80;
-
         public override int[,] TerminalPositions
         {
-            get => new int[,] { { 20, 40 }, { 100, 40 } };
+            get => new int[,] { { 40, 20 }, { 40, 140 } };
         }
+
+        public override double SchematicWidth => 120;
+        public override double SchematicHeight => 160;
 
         public TextBlock txtComponentName;
         public TextBlock txtDescription;
-        private ContentControl symbolImpedance;
 
-        public ImpedanceScreen(Impedance imp) : base(imp)
+        private ContentControl symbolTransducer;
+        private Transducer SerializableTransducer { get; }
+
+        public TransducerScreen(Transducer transducer) : base(transducer)
         {
-            symbolImpedance = new ContentControl()
-            {
-                ContentTemplate = (DataTemplate)Application.Current.Resources["symbolImpedance"]
-            };
+            SerializableTransducer = transducer;
 
-            ComponentCanvas.Children.Add(symbolImpedance);
-            Canvas.SetTop(symbolImpedance, 19);
-            Canvas.SetLeft(symbolImpedance, 19);
+            symbolTransducer = new ContentControl()
+            {
+                ContentTemplate = (DataTemplate)Application.Current.Resources["symbolSpeaker"]
+            };
+            transducer.TransducerReversed += reverse;
+
+            ComponentCanvas.Children.Add(symbolTransducer);
+            Canvas.SetTop(symbolTransducer, 19);
+            Canvas.SetLeft(symbolTransducer, 19);
 
             txtComponentName = new TextBlock() { FontWeight = FontWeights.ExtraBold };
             Binding b1 = new Binding()
             {
                 Path = new PropertyPath("ElementName"),
                 Mode = BindingMode.OneWay,
-                Source = imp
+                Source = transducer
             };
             txtComponentName.SetBinding(TextBlock.TextProperty, b1);
             txtComponentName.RenderTransform = new TranslateTransform() { };
@@ -54,7 +59,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             {
                 Path = new PropertyPath("Description"),
                 Mode = BindingMode.OneWay,
-                Source = imp
+                Source = transducer
             };
             txtDescription.SetBinding(TextBlock.TextProperty, b2);
             txtDescription.RenderTransform = new TranslateTransform() { };
@@ -62,34 +67,20 @@ namespace Transition.CircuitEditor.OnScreenComponents
             Children.Add(txtDescription);
 
             postConstruct();
+        }
 
+        private void reverse()
+        {
+            if (!SerializableTransducer.PolarityReverse)
+                symbolTransducer.ContentTemplate = (DataTemplate)Application.Current.Resources["symbolSpeaker"];
+            else
+                symbolTransducer.ContentTemplate = (DataTemplate)Application.Current.Resources["symbolSpeakerReversed"];
+            
         }
 
         public override void setPositionTextBoxes(SerializableElement element)
         {
-            double leftDesc; double topDesc;
-            double leftCN; double topCN;
 
-            if ((ActualRotation == 0) || (ActualRotation == 180))
-            {
-                topCN = 0;
-                leftCN = (SchematicWidth / 2) - (txtComponentName.ActualWidth / 2);
-                topDesc = 30;
-                leftDesc = (SchematicWidth / 2) - (txtDescription.ActualWidth / 2);
-            }
-            else
-            {
-                topCN = 60 - (txtComponentName.ActualHeight / 2);
-                leftCN = 20 - (txtComponentName.ActualWidth);
-                topDesc = 60 - (txtDescription.ActualHeight / 2);
-                leftDesc = SchematicHeight - 20;
-            }
-
-            ((TranslateTransform)txtComponentName.RenderTransform).X = leftCN;
-            ((TranslateTransform)txtComponentName.RenderTransform).Y = topCN;
-
-            ((TranslateTransform)txtDescription.RenderTransform).X = leftDesc;
-            ((TranslateTransform)txtDescription.RenderTransform).Y = topDesc;
         }
     }
 }

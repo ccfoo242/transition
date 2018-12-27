@@ -18,6 +18,28 @@ namespace Transition.CircuitEditor.Serializable
        /* wires and components are very different in their UI operation
         but they share a few properties , they all have terminals */
 
+
+     /* these SerializableElements are the instances that have the responsability
+      * of storing the components information, they do not perform nothing but that
+      * , to store the component data, and to save the integrity of that information.
+      * the purpose of this class is to serialize and deserialize it, so it can be
+      * saved on design file.
+      * Also is to be said, SerializableElements are the instances stored in the
+      * Component collection, of the UserDesign class.
+      * On the other hand. There are two classes that have the responsability to show the component
+      * data on screen, 1)Screen and 2)ParametersControl, these two classes query
+      * the data stored in SerializableElement directly.
+      * Screen class shows the component data in the electric circuit canvas
+      * ParametersControl allows to user to input data, and stores the data
+      * in SerializableElement.
+      * as soon a SerializableComponent object is created, the Screen and ParametersControl
+      * instances are created, and tied up to the original Serializable object.
+      * so the three clases are strongly coupled together.
+      * All data changes must be done via Command objects, so these changes can be
+      * undone via undo & redo functionality. (This is called commanding pattern,
+      * using the Undo & Redo stacks)
+      
+         */
     public abstract class SerializableElement : BindableBase
     {
         private string elementName = "";
@@ -32,10 +54,10 @@ namespace Transition.CircuitEditor.Serializable
         public abstract string ElementLetter { get; }   /* "R" for resistor, "L" for inductor etc.. */
         public abstract string ElementType { get; }     /* Resistor, Wire, etc..*/
 
-        /* QuantityOfTerminals is a get;set; 
+        /* QuantityOfTerminals is a get; set; 
          * because it can be modified at runtime,
          * some components can change their terminals at runtime,
-           examples of that are Potentiometer and Summer */
+           examples of that are Transducer, Potentiometer and Summer */
         public abstract byte QuantityOfTerminals { get; set; }
     
 
