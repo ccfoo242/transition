@@ -29,9 +29,21 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        public abstract string ElementLetter { get; }
-        public abstract string ElementType { get; }
+        public abstract string ElementLetter { get; }   /* "R" for resistor, "L" for inductor etc.. */
+        public abstract string ElementType { get; }     /* Resistor, Wire, etc..*/
+
+        /* QuantityOfTerminals is a get;set; 
+         * because it can be modified at runtime,
+         * some components can change their terminals at runtime,
+           examples of that are Potentiometer and Summer */
         public abstract byte QuantityOfTerminals { get; set; }
+    
+
+        // OnScreenComponent is the class that has responsability
+        // for showing the component on screen of the CircuitEditor
+        // it manages position of textboxes like component values, names
+        // or other parameters.
+        // it is a Canvas that must be added to the canvas of CircuitEditor
         public ScreenElementBase OnScreenElement { get; set; }
 
         public delegate void EmptyDelegate();
@@ -75,6 +87,7 @@ namespace Transition.CircuitEditor.Serializable
 
     public abstract class SerializableComponent : SerializableElement
     {
+        /* Rotation, FlipX, FlipY and ComponentPosition are UI parameters */
         private double rotation;
         public double Rotation { get { return rotation; }
             set {
@@ -93,14 +106,12 @@ namespace Transition.CircuitEditor.Serializable
         private bool flipX;
         public bool FlipX { get { return flipX; }
             set { SetProperty(ref flipX, value);
-          //      ComponentLayoutChanged?.Invoke();
                 raiseLayoutChanged();
             } }
 
         private bool flipY;
         public bool FlipY { get { return flipY; }
             set { SetProperty(ref flipY, value);
-           //     ComponentLayoutChanged?.Invoke();
                 raiseLayoutChanged();
             } }
 
@@ -114,39 +125,12 @@ namespace Transition.CircuitEditor.Serializable
                 raiseLayoutChanged();
             }
         }
-        /*
-        private double positionX;
-        public double PositionX { get { return positionX; }
-            set { SetProperty(ref positionX, value);
-           //     ComponentPositionChanged?.Invoke();
-                raiseLayoutChanged();
-            } }
-
-        private double positionY;
-        public double PositionY { get { return positionY; }
-            set { SetProperty(ref positionY, value);
-            //    ComponentPositionChanged?.Invoke();
-                raiseLayoutChanged();
-            } }
-            */
-
-     //   public delegate void ComponentLayoutChangedHandler();
-     //   public event ComponentLayoutChangedHandler ComponentLayoutChanged;
-
-      //  public delegate void ComponentPositionChangedHandler();
-      //  public event ComponentPositionChangedHandler ComponentPositionChanged;
 
         // ParametersControl is the UI Control that allows user to
         // configure the component parameters
         public UserControl ParametersControl { get; set; }
 
-        // OnScreenComponent is the class that has responsability
-        // for showing the component on screen of the CircuitEditor
-        // it manages position of textboxes like component values, names
-        // or other parameters.
-        // it is a Canvas that must be added to the canvas of CircuitEditor
-        // 
-        
+       
         public override void SetProperty(string property, object value)
         {
             base.SetProperty(property, value);

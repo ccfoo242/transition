@@ -98,6 +98,7 @@
     <Compile Include="CircuitEditor\CircuitEditor.xaml.cs">
       <DependentUpon>CircuitEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CircuitEditor\OnScreenComponents\BufferScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\CapacitorScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\FDNRScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\GroundScreen.cs" />
@@ -115,6 +116,9 @@
     <Compile Include="CircuitEditor\OnScreenComponents\TransformerScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\VoltageSourceScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\WireScreen.cs" />
+    <Compile Include="CircuitEditor\ParametersControls\BufferParametersControl.xaml.cs">
+      <DependentUpon>BufferParametersControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CircuitEditor\ParametersControls\CapacitorParametersControl.xaml.cs">
       <DependentUpon>CapacitorParametersControl.xaml</DependentUpon>
     </Compile>
@@ -158,6 +162,7 @@
       <DependentUpon>VoltageSourceParametersControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="CircuitEditor\Interfaces.cs" />
+    <Compile Include="CircuitEditor\Serializable\Buffer.cs" />
     <Compile Include="CircuitEditor\Serializable\Capacitor.cs" />
     <Compile Include="CircuitEditor\Serializable\FDNR.cs" />
     <Compile Include="CircuitEditor\Serializable\Ground.cs" />
@@ -255,6 +260,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="CircuitEditor\CircuitEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CircuitEditor\ParametersControls\BufferParametersControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

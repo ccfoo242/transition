@@ -460,10 +460,10 @@
 
 
         <DataTemplate x:Key="symbolBuffer">
-            <Canvas Background="Transparent" Width="100" Height="80">
+            <Canvas Background="Transparent" Width="120" Height="80">
                 <Polyline Points="00,40 20,40"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="80,40 100,40"  Stroke="Black" StrokeThickness="4"/>
-                <Polyline Points="20,10 20,70 80,40 20,10"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="100,40 120,40"  Stroke="Black" StrokeThickness="4"/>
+                <Polyline Points="20,0 20,80 100,40 20,0"  Stroke="Black" StrokeThickness="4"/>
 
 
             </Canvas>

@@ -71,7 +71,9 @@ namespace Transition.CircuitEditor.ParametersControls
             cmbQuantityOfInputs.SelectedIndex = SerializableSummer.QuantityOfTerminals - 3;
             cmbQuantityOfInputs.SelectionChanged += cmbQuantityInputsChanged;
 
-            
+            boxRIn.Value = SerializableSummer.RIn;
+            boxROut.Value = SerializableSummer.ROut;
+
             chkInvertC.IsEnabled = (SerializableSummer.QuantityOfTerminals > 3);
 
             SerializableSummer.PropertyChanged += handleChangeOfControls;

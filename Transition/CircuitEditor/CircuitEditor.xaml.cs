@@ -714,6 +714,7 @@ namespace Transition.CircuitEditor
                 case "scn":              return new SCN();
                 case "transferfunction": return new TransferFunctionComponent();
                 case "summer":           return new Summer();
+                case "buffer":           return new Serializable.Buffer();
             }
 
             throw new NotSupportedException();
