@@ -331,6 +331,7 @@ namespace Transition
         public static Complex Divide(Complex n1, EngrNumber n2)
         {
             return n1 / n2.ToDouble;
+            
         }
 
         public static EngrNumber Negate(EngrNumber n)
@@ -447,7 +448,64 @@ namespace Transition
             }
         }
     }
-    
-    
+
+
+    public class ComplexEngrConverter : IValueConverter
+    {
+        public bool AllowNegativeNumber { get; set; }
+        public bool ShortString { get; set; }
+
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            //complex number to engrString
+            if (value == null) return "";
+            Complex complexValue = (Complex)value;
+            double doubleValue = complexValue.Real;
+
+            int exp;
+            
+
+            if ((doubleValue < 1) && (doubleValue > -1))
+                 exp = System.Convert.ToInt32(Math.Truncate(Math.Log10(Math.Abs(doubleValue))) - 1);
+            else exp = System.Convert.ToInt32(Math.Truncate(Math.Log10(Math.Abs(doubleValue))));
+
+            double mantissa = doubleValue / (Math.Pow(10, exp));
+            int normalizedExp;
+
+            if (exp < 0)
+                normalizedExp = (int)Math.Truncate((double)exp / 3);
+            else
+                normalizedExp = (int)Math.Truncate((double)exp / 3) - 1;
+
+            double normalizedMantissa = mantissa * Math.Pow(10, exp - normalizedExp);
+
+           
+
+            return "";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            //string to number
+            String valueString = (String)value;
+
+            if (valueString == "")
+                return EngrNumber.One;
+            else
+            {
+                EngrNumber output;
+                try
+                {
+                    output = EngrNumber.Parse(valueString);
+                }
+                catch { output = EngrNumber.One; }
+
+
+                if (!AllowNegativeNumber && output.NegativeSign) output = EngrNumber.Negate(output);
+
+                return output;
+            }
+        }
+    }
 
 }
