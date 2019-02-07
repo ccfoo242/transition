@@ -106,7 +106,19 @@ namespace Transition.Common
         /// <returns></returns>
         public static decimal Power(decimal value, decimal pow)
         {
-            return Exp(pow * Log(value));
+            if (value == 0m) return 0m;
+            bool powIsInt = (pow == (int)pow);
+            bool valueIsNegative = (value < 0);
+            bool powIsEven = ((pow % 2) == 0);
+            decimal signCorrection = 1m;
+
+            if (valueIsNegative && !powIsInt)
+                throw new InvalidOperationException("result would be complex");
+            
+            if (valueIsNegative && !powIsEven)
+                signCorrection = -1m;
+            
+            return Exp(pow * Log(Abs(value))) * signCorrection;
         }
 
         /// <summary>
@@ -121,21 +133,14 @@ namespace Transition.Common
             if (power < Zero) return PowerN(One / value, -power);
 
             var q = power;
-            var prod = One;
             var current = value;
-            while (q > 0)
+            while (q > 1)
             {
-                if (q % 2 == 1)
-                {
-                    // detects the 1s in the binary expression of power
-                    prod = current * prod; // picks up the relevant power
-                    q--;
-                }
-                current *= current; // value^i -> value^(2*i)
-                q = q / 2;
+                current *= value; 
+                q--;
             }
 
-            return prod;
+            return current;
         }
 
         /// <summary>
@@ -411,7 +416,20 @@ namespace Transition.Common
         {
             if (x == Zero) return Zero;
             if (x == One) return PIdiv4;
-            return Asin(x / Sqrt(One + x * x));
+            
+            /* if the x value is too large, >E14
+               being squared, overflows, in this case we omit
+               the procedure of square it, sum one and make sqrt */
+               
+            if (Log10(Abs(x)) > 14m)
+            {
+                return Asin(x / Math.Abs(x));
+            }
+            else
+            {
+                return Asin(x / Sqrt(One + x * x));
+            }
+            
         }
         /// <summary>
         /// Analogy of Math.Acos

@@ -211,8 +211,14 @@
     <Compile Include="CustomControls\ComponentValueBox.xaml.cs">
       <DependentUpon>ComponentValueBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CustomControls\ComponentValueBoxComplex.xaml.cs">
-      <DependentUpon>ComponentValueBoxComplex.xaml</DependentUpon>
+    <Compile Include="CustomControls\ComponentValueBoxDecimal.xaml.cs">
+      <DependentUpon>ComponentValueBoxDecimal.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\EngrDecimalBox.xaml.cs">
+      <DependentUpon>EngrDecimalBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\EngrDecimalBoxDialog.xaml.cs">
+      <DependentUpon>EngrDecimalBoxDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="CustomControls\EngrNumberBox.xaml.cs">
       <DependentUpon>EngrNumberBox.xaml</DependentUpon>
@@ -342,7 +348,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CustomControls\ComponentValueBoxComplex.xaml">
+    <Page Include="CustomControls\ComponentValueBoxDecimal.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomControls\EngrDecimalBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomControls\EngrDecimalBoxDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

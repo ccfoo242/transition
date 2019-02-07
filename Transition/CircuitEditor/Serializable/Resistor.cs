@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.Components;
+using Transition.Common;
 using static Transition.CustomControls.ComponentValueBox;
 
 namespace Transition.CircuitEditor.Serializable
@@ -14,8 +15,8 @@ namespace Transition.CircuitEditor.Serializable
         public override string ElementLetter => "R";
         public override string ElementType => "Resistor";
 
-        private EngrNumber resistorValue;
-        public EngrNumber ResistorValue
+        private decimal resistorValue;
+        public decimal ResistorValue
         {
             get { return resistorValue; }
             set { SetProperty(ref resistorValue, value, "ResistorValue");
@@ -39,39 +40,39 @@ namespace Transition.CircuitEditor.Serializable
             set { SetProperty(ref componentPrecision, value /*, "ComponentPrecision" */); }
         }
 
-        private EngrNumber ls;
-        public EngrNumber Ls
+        private decimal ls;
+        public decimal Ls
         {
             get { return ls; }
             set { SetProperty(ref ls, value,"Ls");
                   calculateFoQ(); }
         }
 
-        private EngrNumber cp;
-        public EngrNumber Cp
+        private decimal cp;
+        public decimal Cp
         {
             get { return cp; }
             set { SetProperty(ref cp, value, "Cp");
                   calculateFoQ(); }
         }
 
-        private EngrNumber ew;
-        public EngrNumber Ew
+        private decimal ew;
+        public decimal Ew
         {
             get { return ew; }
             set { SetProperty(ref ew, value, "Ew"); }
         }
 
-        private EngrNumber fo;
-        public EngrNumber Fo
+        private decimal fo;
+        public decimal Fo
         {
             get { return fo;}
             set { SetProperty(ref fo, value, "Fo");
                   calculateLsCp(); }
         }
 
-        private EngrNumber q;
-        public EngrNumber Q
+        private decimal q;
+        public decimal Q
         {
             get { return q; }
             set { SetProperty(ref q, value, "Q");
@@ -85,11 +86,11 @@ namespace Transition.CircuitEditor.Serializable
 
         public Resistor() : base()
         {
-            ResistorValue = EngrNumber.One ;
+            ResistorValue = 1m ;
             ResistorModel = 0;
 
-            SetProperty(ref ls, new EngrNumber(1, "p"), "Ls");
-            SetProperty(ref cp, new EngrNumber(1, "p"), "Cp");
+            SetProperty(ref ls, 1e-12m, "Ls");
+            SetProperty(ref cp, 1e-12m, "Cp");
             calculateFoQ();
 
             ParametersControl = new ResistorParametersControl(this);
@@ -98,38 +99,30 @@ namespace Transition.CircuitEditor.Serializable
 
         private void calculateFoQ()
         {
-            if (ResistorValue.ToDouble == 0) return;
-            if (ls.ToDouble == 0) return;
-            if (cp.ToDouble == 0) return;
-
-            double dR = ResistorValue.ToDouble;
-            double dLs = Ls.ToDouble;
-            double dCp = Cp.ToDouble;
+            if (ResistorValue == 0m) return;
+            if (ls == 0m) return;
+            if (cp == 0m) return;
             
-            double dWop = Math.Sqrt(1 / (dLs * dCp));
+            var dWop = DecimalMath.Sqrt(1 / (Ls * Cp));
             
-            double dQ = (dWop * dLs) / dR;
-            double dFo = dWop / (2 * Math.PI);
+            var dQ = (dWop * Ls) / ResistorValue;
+            var dFo = dWop / (2 * DecimalMath.Pi);
 
-            SetProperty(ref fo, new EngrNumber(dFo), "Fo");
-            SetProperty(ref q, new EngrNumber(dQ), "Q");
+            SetProperty(ref fo, dFo, "Fo");
+            SetProperty(ref q, dQ, "Q");
             SetProperty(ref ls, Ls, "Ls");
         }
 
         private void calculateLsCp()
         {
-            double dQ = Q.ToDouble;
-            double dFo = Fo.ToDouble;
-            double dR = ResistorValue.ToDouble;
-
-            double dWo = 2 * Math.PI * dFo;
+            decimal dWo = 2 * DecimalMath.Pi * Fo;
 
             //  double dLs = Math.Sqrt(Math.Abs( ((dQ * dQ * dR * dR) - (dR * dR)) / Math.Pow(dWo, 2) ));
-            double dLs = dR * dQ / dWo;
-            double dCp = dLs / (dQ * dQ * dR * dR);
+            decimal dLs = ResistorValue * Q / dWo;
+            decimal dCp = dLs / (Q * Q * ResistorValue * ResistorValue);
 
-            SetProperty(ref ls, new EngrNumber(dLs), "Ls");
-            SetProperty(ref cp, new EngrNumber(dCp), "Cp");
+            SetProperty(ref ls, dLs, "Ls");
+            SetProperty(ref cp, dCp, "Cp");
 
         }
         
@@ -139,8 +132,8 @@ namespace Transition.CircuitEditor.Serializable
             {
                 // this one sets de String for the component in the schematic window
                 string returnString;
-                EngrConverter conv = new EngrConverter() { ShortString = false };
-                EngrConverter convShort = new EngrConverter() { ShortString = true };
+                var conv = new DecimalEngrConverter() { ShortString = false };
+                var convShort = new DecimalEngrConverter() { ShortString = true };
 
                 if (AnyPrecisionSelected)
                     returnString = (string)conv.Convert(ResistorValue, typeof(string), null, "");
@@ -157,14 +150,14 @@ namespace Transition.CircuitEditor.Serializable
 
             switch (property)
             {
-                case "ResistorValue":       ResistorValue = (EngrNumber)value; break;
+                case "ResistorValue":       ResistorValue = (decimal)value; break;
                 case "ResistorModel":       ResistorModel = (int)value; break;
                 case "ComponentPrecision":  ComponentPrecision = (Precision)value; break;
-                case "Ls":                  Ls = (EngrNumber)value; break;
-                case "Cp":                  Cp = (EngrNumber)value; break;
-                case "Fo":                  Fo = (EngrNumber)value; break;
-                case "Q":                   Q = (EngrNumber)value; break;
-                case "Ew":                  Ew = (EngrNumber)value; break;
+                case "Ls":                  Ls = (decimal)value; break;
+                case "Cp":                  Cp = (decimal)value; break;
+                case "Fo":                  Fo = (decimal)value; break;
+                case "Q":                   Q = (decimal)value; break;
+                case "Ew":                  Ew = (decimal)value; break;
             }
         }
     }

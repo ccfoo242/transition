@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Transition.Common;
 using Transition.Design;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
