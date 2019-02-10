@@ -5,16 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.Components;
 using Transition.CircuitEditor.OnScreenComponents;
+using Transition.Common;
 
 namespace Transition.CircuitEditor.Serializable
 {
-    public class Capacitor : SerializableComponent
+    public class Capacitor : SerializableComponent, IPassive
     {
         public override string ElementLetter => "C";
         public override string ElementType => "Capacitor";
 
-        private EngrNumber capacitorValue;
-        public EngrNumber CapacitorValue
+        private decimal capacitorValue;
+        public decimal CapacitorValue
         {
             get { return capacitorValue; }
             set { SetProperty(ref capacitorValue, value);
@@ -39,8 +40,8 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        private EngrNumber ls;
-        public EngrNumber Ls
+        private decimal ls;
+        public decimal Ls
         {
             get { return ls; }
             set
@@ -50,8 +51,8 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        private EngrNumber rs;
-        public EngrNumber Rs
+        private decimal rs;
+        public decimal Rs
         {
             get { return rs; }
             set
@@ -62,8 +63,8 @@ namespace Transition.CircuitEditor.Serializable
         }
 
 
-        private EngrNumber rp;
-        public EngrNumber Rp
+        private decimal rp;
+        public decimal Rp
         {
             get { return rp; }
             set
@@ -73,15 +74,15 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        private EngrNumber ew;
-        public EngrNumber Ew
+        private decimal ew;
+        public decimal Ew
         {
             get { return ew; }
             set { SetProperty(ref ew, value); }
         }
 
-        private EngrNumber fo;
-        public EngrNumber Fo
+        private decimal fo;
+        public decimal Fo
         {
             get { return fo; }
             set
@@ -91,8 +92,8 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        private EngrNumber q;
-        public EngrNumber Q
+        private decimal q;
+        public decimal Q
         {
             get { return q; }
             set
@@ -108,12 +109,12 @@ namespace Transition.CircuitEditor.Serializable
 
         public Capacitor()
         {
-            CapacitorValue = EngrNumber.One;
+            CapacitorValue = 1m;
             CapacitorModel = 0;
             
-            SetProperty(ref ls, new EngrNumber(1, "p"), "Ls");
-            SetProperty(ref rs, new EngrNumber(1, "p"), "Rs");
-            SetProperty(ref rp, new EngrNumber(1, "T"), "Rp");
+            SetProperty(ref ls, 1e-12m, "Ls");
+            SetProperty(ref rs, 1e-12m, "Rs");
+            SetProperty(ref rp, 1e12m, "Rp");
             calculateFoQ();
 
             ParametersControl = new CapacitorParametersControl(this);
@@ -123,18 +124,14 @@ namespace Transition.CircuitEditor.Serializable
 
         private void calculateFoQ()
         {
-            if (CapacitorValue.ToDouble == 0) return;
-            if (Rs.ToDouble == 0) return;
-            if (Ls.ToDouble == 0) return;
+            if (CapacitorValue == 0m) return;
+            if (Rs == 0m) return;
+            if (Ls == 0m) return;
+            
+            decimal dWo = DecimalMath.Sqrt(1m / (Ls * CapacitorValue));
 
-            double dC = capacitorValue.ToDouble;
-            double dLs = Ls.ToDouble;
-            double dRs = Rs.ToDouble;
-
-            double dWo = Math.Sqrt(1 / (dLs * dC));
-
-            double dQ = (dWo * dLs) / dRs;
-            double dFo = dWo / (2 * Math.PI);
+            decimal dQ = (dWo * Ls) / Rs;
+            decimal dFo = dWo / (2m * DecimalMath.Pi);
 
             SetProperty(ref fo, dFo, "Fo");
             SetProperty(ref q, dQ, "Q");
@@ -142,15 +139,11 @@ namespace Transition.CircuitEditor.Serializable
 
         private void calculateRsLs()
         {
-            double dQ = Q.ToDouble;
-            double dFo = Fo.ToDouble;
-            double dC = capacitorValue.ToDouble;
-
-            double dWo = 2 * Math.PI * dFo;
+            decimal dWo = 2 * DecimalMath.Pi * Fo;
 
             //  double dLs = Math.Sqrt(Math.Abs( ((dQ * dQ * dR * dR) - (dR * dR)) / Math.Pow(dWo, 2) ));
-            double dRs = 1 / (dQ * dWo * dC);
-            double dLs = 1 / (dC * dWo * dWo);
+            decimal dRs = 1m / (Q * dWo * CapacitorValue);
+            decimal dLs = 1m / (CapacitorValue * dWo * dWo);
 
             SetProperty(ref ls, dLs, "Ls");
             SetProperty(ref rs, dRs, "Rs");
@@ -163,8 +156,8 @@ namespace Transition.CircuitEditor.Serializable
             {
                 // this one sets de String for the component in the schematic window
                 string returnString;
-                EngrConverter conv = new EngrConverter() { ShortString = false };
-                EngrConverter convShort = new EngrConverter() { ShortString = true };
+                var conv = new DecimalEngrConverter() { ShortString = false };
+                var convShort = new DecimalEngrConverter() { ShortString = true };
 
                 if (AnyPrecisionSelected)
                     returnString = (string)conv.Convert(CapacitorValue, typeof(string), null, "");
@@ -181,17 +174,33 @@ namespace Transition.CircuitEditor.Serializable
 
             switch (property)
             {
-                case "CapacitorValue": CapacitorValue = (EngrNumber)value; break;
+                case "CapacitorValue": CapacitorValue = (decimal)value; break;
                 case "CapacitorModel": CapacitorModel = (int)value; break;
                 case "ComponentPrecision": ComponentPrecision = (Precision)value; break;
-                case "Ls": Ls = (EngrNumber)value; break;
-                case "Rp": Rp = (EngrNumber)value; break;
-                case "Rs": Rs = (EngrNumber)value; break;
-                case "Fo": Fo = (EngrNumber)value; break;
-                case "Q":  Q = (EngrNumber)value; break;
-                case "Ew": Ew = (EngrNumber)value; break;
+                case "Ls": Ls = (decimal)value; break;
+                case "Rp": Rp = (decimal)value; break;
+                case "Rs": Rs = (decimal)value; break;
+                case "Fo": Fo = (decimal)value; break;
+                case "Q":  Q = (decimal)value; break;
+                case "Ew": Ew = (decimal)value; break;
             }
         }
 
+        public ComplexDecimal getImpedance(decimal frequency)
+        {
+            var w = 2m * DecimalMath.Pi * frequency;
+
+            var ZC = 1 / (ComplexDecimal.ImaginaryOne * w * CapacitorValue);
+            var ZLs = ComplexDecimal.ImaginaryOne * w * Ls;
+
+            switch (CapacitorModel)
+            {
+                case 0: return ZC;
+                case 1: return (ZC + Rs + ZLs) | Rp;
+                case 2: return (CapacitorModel * DecimalMath.Power(w, Ew)) / (ComplexDecimal.ImaginaryOne * w);
+            }
+
+            throw new NotImplementedException();
+        }
     }
 }

@@ -21,7 +21,8 @@
                            IsExpanded="True">
             <StackPanel Orientation="Vertical">
                 <customcontrols:EngrNumberBoxDialog  x:Name="boxTR"
-                         HorizontalAlignment="Right" VariableName="Turns Ratio" Margin="4"
+                         HorizontalAlignment="Right" 
+                         VariableName="Turns Ratio" Margin="4"
                          ValueManuallyChanged="TurnsRatioChange"/>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="K Coupling Coefficient" Margin="4"

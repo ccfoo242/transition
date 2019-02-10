@@ -17,8 +17,8 @@ namespace Transition.CircuitEditor.Serializable
         {
             get { return positionTerminal0; }
             set { if (positionTerminal0 == value) return;
-                  SetProperty(ref positionTerminal0, value);
-                  if (!IsTerminal0Bounded) raiseLayoutChanged();
+                SetProperty(ref positionTerminal0, value);
+                if (!IsTerminal0Bounded) raiseLayoutChanged();
             }
         }
 
@@ -27,27 +27,26 @@ namespace Transition.CircuitEditor.Serializable
         {
             get { return positionTerminal1; }
             set { if (positionTerminal1 == value) return;
-                  SetProperty(ref positionTerminal1, value);
-                  if (!IsTerminal1Bounded) raiseLayoutChanged();
+                SetProperty(ref positionTerminal1, value);
+                if (!IsTerminal1Bounded) raiseLayoutChanged();
             }
         }
 
         public Point2D PositionTerminal(byte terminal) => (terminal == 0) ? PositionTerminal0 : PositionTerminal1;
-        
+
         public override string ElementLetter => "W";
         public override string ElementType => "Wire";
 
         public override byte QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
-       
 
         private Tuple<SerializableElement, byte> bind0;
         public Tuple<SerializableElement, byte> Bind0
         {
             get { return bind0; }
             set { Tuple<SerializableElement, byte> previousValue = bind0;
-                  SetProperty(ref bind0, value);
-                  ChangeBinding(0, previousValue, value);
-                  raiseLayoutChanged();
+                SetProperty(ref bind0, value);
+                ChangeBinding(0, previousValue, value);
+                raiseLayoutChanged();
             }
         }
 
@@ -56,22 +55,64 @@ namespace Transition.CircuitEditor.Serializable
         {
             get { return bind1; }
             set { Tuple<SerializableElement, byte> previousValue = bind1;
-                  SetProperty(ref bind1, value);
-                  ChangeBinding(1, previousValue, value);
-                  raiseLayoutChanged();
+                SetProperty(ref bind1, value);
+                ChangeBinding(1, previousValue, value);
+                raiseLayoutChanged();
             }
         }
-        
+
         public bool IsTerminal0Bounded => Bind0 != null;
         public bool IsTerminal1Bounded => Bind1 != null;
 
-        public bool IsWireBounded0 => Bind0.Item1 is SerializableWire;
-        public bool IsWireBounded1 => Bind1.Item1 is SerializableWire;
-        
-    
-        public delegate void WireBindDelegate(SerializableWire wire, byte terminal, Tuple<SerializableElement, byte> previousValue,
-                                                 Tuple<SerializableElement, byte> newValue);
+        public bool IsOtherWireBoundedAtTerminal0
+        {
+            get
+            {
+                if (Bind0 != null) return Bind0.Item1 is SerializableWire;
+                else return false;
+            }
+        }
+
+        public bool IsOtherWireBoundedAtTerminal1
+        {
+            get
+            {
+                if (Bind1 != null) return Bind1.Item1 is SerializableWire;
+                else return false;
+            }
+        }
+
+        public bool IsWireGroundedAtTerminal0 { get { if (Bind0 != null) return Bind0.Item1 is Ground; else return false; } }
+        public bool IsWireGroundedAtTerminal1 { get { if (Bind1 != null) return Bind1.Item1 is Ground; else return false; } }
+
+        public bool IsWireGrounded => IsWireGroundedAtTerminal0 || IsWireGroundedAtTerminal1; 
+
+        public bool IsIndependent => (!IsOtherWireBoundedAtTerminal0 && !IsOtherWireBoundedAtTerminal1);
+
+        public delegate void WireBindDelegate(SerializableWire wire, byte terminal, 
+                                            Tuple<SerializableElement, byte> previousValue,
+                                            Tuple<SerializableElement, byte> newValue);
         public event WireBindDelegate WireBindingChanged;
+
+        public List<Tuple<SerializableComponent, byte>> GetBoundedComponents
+        {
+            get
+            {
+                var output = new List<Tuple<SerializableComponent, byte>>();
+
+                if (IsTerminal0Bounded)
+                    if (bind0.Item1 is SerializableComponent)
+                        output.Add(new Tuple<SerializableComponent, byte>
+                            ((SerializableComponent)Bind0.Item1, Bind0.Item2));
+
+                if (IsTerminal1Bounded)
+                    if (bind1.Item1 is SerializableComponent)
+                        output.Add(new Tuple<SerializableComponent, byte>
+                            ((SerializableComponent)Bind1.Item1, Bind1.Item2));
+
+                return output;
+            }
+        }
 
         public WireScreen OnScreenWire { get; }
         
@@ -168,7 +209,7 @@ namespace Transition.CircuitEditor.Serializable
             base.SetProperty(property, value);
         }
 
-        public bool isWireBoundedTo(SerializableElement el, byte terminalNumber)
+        public bool isThisWireBoundedTo(SerializableElement el, byte terminalNumber)
         {
             if (Bind0 != null)
                 if (Bind0.Item1 == el && Bind0.Item2 == terminalNumber)
@@ -180,6 +221,36 @@ namespace Transition.CircuitEditor.Serializable
 
             return false;
         }
+
+        public bool isThisWireBoundedTo(SerializableElement el)
+        {
+            if (Bind0 != null)
+                if (Bind0.Item1 == el) return true;
+
+            if (Bind1 != null)
+                if (Bind1.Item1 == el) return true;
+
+            return false;
+        }
+
+        public bool isThisWireBoundedToOtherWire(SerializableWire Wire)
+        {
+            if (isThisWireBoundedTo(Wire)) return true;
+            if (Wire.isThisWireBoundedTo(this)) return true;
+
+            var components1 = Wire.GetBoundedComponents;
+            var components2 = this.GetBoundedComponents;
+
+            foreach (var comp1 in components1)
+                foreach (var comp2 in components2)
+                    if ((comp1.Item1 == comp2.Item1) &&
+                        (comp1.Item2 == comp2.Item2))
+                        return true;
+
+            return false;
+        }
+
+
 
         public void moveTerminalRelative(byte terminalNumber, Point2D displacement)
         {

@@ -10,7 +10,7 @@ using static Transition.CustomControls.ComponentValueBox;
 
 namespace Transition.CircuitEditor.Serializable
 {
-    public class Resistor : SerializableComponent
+    public class Resistor : SerializableComponent, IPassive
     {
         public override string ElementLetter => "R";
         public override string ElementType => "Resistor";
@@ -159,6 +159,23 @@ namespace Transition.CircuitEditor.Serializable
                 case "Q":                   Q = (decimal)value; break;
                 case "Ew":                  Ew = (decimal)value; break;
             }
+        }
+
+        public ComplexDecimal getImpedance(decimal frequency)
+        {
+            var w = 2m * DecimalMath.Pi * frequency;
+
+            var ZCp = -1 * ComplexDecimal.ImaginaryOne / (w * Cp);
+            var ZLs = ComplexDecimal.ImaginaryOne * w * Ls;
+
+            switch (ResistorModel)
+            {
+                case 0: return ResistorValue;
+                case 1: return (ResistorValue + ZLs) | ZCp;
+                case 2: return ResistorValue * DecimalMath.Power(w, Ew);
+            }
+
+            throw new NotImplementedException();
         }
     }
 }

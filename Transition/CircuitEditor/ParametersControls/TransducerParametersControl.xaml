@@ -39,10 +39,10 @@
         </Grid>
         <controls:Expander Header="Measurement Conditions">
             <StackPanel Orientation="Vertical">
-                <customcontrols:EngrNumberBoxDialog x:Name="boxVoltage"
+                <customcontrols:EngrDecimalBoxDialog x:Name="boxVoltage"
                       VariableName="Measurement Voltage" Unit="Volt" UnitShort="V"
                       ValueManuallyChanged="boxVoltageChange"/>
-                <customcontrols:EngrNumberBoxDialog x:Name="boxMicDist"
+                <customcontrols:EngrDecimalBoxDialog x:Name="boxMicDist"
                       VariableName="Microphone Distance" Unit="Meter" UnitShort="M"
                       ValueManuallyChanged="boxMicDistChange"/>
             </StackPanel>

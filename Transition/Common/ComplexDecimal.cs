@@ -18,6 +18,9 @@ namespace Transition.Common
         public decimal Magnitude { get => Modulus(this); }
         public decimal Phase { get => Argument(this); }
 
+        public ComplexDecimal Reciprocal { get => 1 / this; }
+        public ComplexDecimal Conjugate { get => new ComplexDecimal(RealPart, -1 * ImaginaryPart); }
+
         public static readonly ComplexDecimal Zero = new ComplexDecimal(0, 0);
         public static readonly ComplexDecimal One = new ComplexDecimal(1, 0);
         public static readonly ComplexDecimal ImaginaryOne = new ComplexDecimal(1, 0);
@@ -91,12 +94,7 @@ namespace Transition.Common
 
             return new ComplexDecimal(real, imag);
         }
-
-        public static ComplexDecimal Reciprocal(ComplexDecimal number)
-        {
-            return 1 / number;
-        }
-
+        
         public static decimal Modulus(ComplexDecimal number)
         {
             return DecimalMath.Sqrt(DecimalMath.Power(number.RealPart, 2) + DecimalMath.Power(number.ImaginaryPart, 2));
@@ -105,6 +103,13 @@ namespace Transition.Common
         public static decimal Argument(ComplexDecimal number)
         {
             return DecimalMath.Atan2(number.ImaginaryPart, number.RealPart);
+        }
+
+        public static ComplexDecimal Parallel(ComplexDecimal z1, ComplexDecimal z2)
+        {
+            if (z1.Magnitude == 0m || z2.Magnitude == 0m) return 0m;
+
+            return (z1.Reciprocal + z2.Reciprocal).Reciprocal;
         }
 
         public static ComplexDecimal Exp(ComplexDecimal number)
@@ -138,6 +143,8 @@ namespace Transition.Common
         public static ComplexDecimal operator -(ComplexDecimal n1, ComplexDecimal n2) { return Subtract(n1, n2); }
         public static ComplexDecimal operator *(ComplexDecimal n1, ComplexDecimal n2) { return Product(n1, n2); }
         public static ComplexDecimal operator /(ComplexDecimal n1, ComplexDecimal n2) { return Divide(n1, n2); }
+        
+        public static ComplexDecimal operator |(ComplexDecimal n1, ComplexDecimal n2) { return Parallel(n1, n2); }
 
         public static bool operator ==(ComplexDecimal n1, ComplexDecimal n2)
         { return (n1.RealPart == n2.RealPart) && (n1.ImaginaryPart == n2.ImaginaryPart); }
@@ -251,7 +258,7 @@ namespace Transition.Common
         {
             return Parse(input, CultureInfo.CurrentCulture, imaginaryUnit);
         }
-
+        
         public static ComplexDecimal Parse(string input, IFormatProvider formatProvider, string imaginarySymbol)
         {
             /* this can ONLY parse first real part, second imaginary part 
@@ -475,6 +482,7 @@ namespace Transition.Common
                  { "p", -12 },
                  { "n", -9 },
                  { "μ", -6 },
+                 { "u", -6 },
                  { "m", -3 },
                  { "k", 3 },
                  { "K", 3 }, 
@@ -496,7 +504,7 @@ namespace Transition.Common
             decimal d = (decimal)value;
             if (d == 0m) return (0.0000m).ToString();
 
-            decimal exponent = (int)Math.Floor(DecimalMath.Log10(DecimalMath.Abs(d)));
+            decimal exponent = (int)Math.Floor(Math.Log10((double)Math.Abs(d)));
             decimal output = 0m;
             string prefix = "";
             bool hasPrefix = false;
@@ -620,6 +628,10 @@ namespace Transition.Common
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             //string to decimal
+            /* here we accept general, engineering and scientific notations */
+
+            bool isEngrNotation = false;
+
             if (value == null) throw new ArgumentException();
             
             var valueString = (string)value;
@@ -648,15 +660,18 @@ namespace Transition.Common
             if (numbers.Contains(lastChar))
                 exponent = 0;
             else
+            {
                 exponent = prefixes[lastChar];
+                isEngrNotation = true;
+            }
 
-            string valueStringWithoutPrefix = valueString.Substring(0, valueString.Length - 1);
+            string valueString2 = isEngrNotation ? valueString.Substring(0, valueString.Length - 1) : valueString;
 
             decimal result;
-            bool didParse = decimal.TryParse(valueStringWithoutPrefix, NumberStyles.Float, culture, out result);
+            bool didParse = decimal.TryParse(valueString2, NumberStyles.Float, culture, out result);
 
             if (didParse)
-               return result * DecimalMath.Power(10m, (decimal)exponent); 
+               return result * DecimalMath.PowerN(10m, exponent); 
             else
                throw new ArgumentException(); 
 

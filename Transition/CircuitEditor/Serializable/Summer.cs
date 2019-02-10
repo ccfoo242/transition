@@ -30,15 +30,15 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        private EngrNumber rIn;
-        public EngrNumber RIn
+        private decimal rIn;
+        public decimal RIn
         {
             get => rIn;
             set { SetProperty(ref rIn, value); }
         }
 
-        private EngrNumber rOut;
-        public EngrNumber ROut
+        private decimal rOut;
+        public decimal ROut
         {
             get => rOut;
             set { SetProperty(ref rOut, value); }
@@ -80,8 +80,8 @@ namespace Transition.CircuitEditor.Serializable
         
         public Summer() : base()
         {
-            rIn = "1T";
-            rOut = "1u";
+            rIn = 1e12m;
+            rOut = 1e-6m;
             QuantityOfTerminals = 3;
 
             ParametersControl = new SummerParametersControl(this);
@@ -94,8 +94,8 @@ namespace Transition.CircuitEditor.Serializable
 
             switch (property)
             {
-                case "RIn": RIn = (EngrNumber)value; break;
-                case "ROut": ROut = (EngrNumber)value; break;
+                case "RIn": RIn = (decimal)value; break;
+                case "ROut": ROut = (decimal)value; break;
                     
                 case "InAInverterInput": InAInverterInput = (bool)value; break;
                 case "InBInverterInput": InBInverterInput = (bool)value; break;

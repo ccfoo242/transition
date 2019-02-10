@@ -5,16 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.Components;
 using Transition.CircuitEditor.OnScreenComponents;
+using Transition.Common;
 
 namespace Transition.CircuitEditor.Serializable
 {
-    public class Inductor : SerializableComponent
+    public class Inductor : SerializableComponent, IPassive
     {
         public override string ElementLetter => "L";
         public override string ElementType => "Inductor";
 
-        private EngrNumber inductorValue;
-        public EngrNumber InductorValue
+        private decimal inductorValue;
+        public decimal InductorValue
         {
             get { return inductorValue; }
             set { SetProperty(ref inductorValue, value);
@@ -37,8 +38,8 @@ namespace Transition.CircuitEditor.Serializable
             set { SetProperty(ref componentPrecision, value); }
         }
 
-        private EngrNumber rs;
-        public EngrNumber Rs
+        private decimal rs;
+        public decimal Rs
         {
             get { return rs; }
             set
@@ -48,8 +49,8 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        private EngrNumber cp;
-        public EngrNumber Cp
+        private decimal cp;
+        public decimal Cp
         {
             get { return cp; }
             set
@@ -59,15 +60,15 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        private EngrNumber ew;
-        public EngrNumber Ew
+        private decimal ew;
+        public decimal Ew
         {
             get { return ew; }
             set { SetProperty(ref ew, value); }
         }
 
-        private EngrNumber fo;
-        public EngrNumber Fo
+        private decimal fo;
+        public decimal Fo
         {
             get { return fo; }
             set
@@ -77,8 +78,8 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        private EngrNumber q;
-        public EngrNumber Q
+        private decimal q;
+        public decimal Q
         {
             get { return q; }
             set
@@ -94,11 +95,11 @@ namespace Transition.CircuitEditor.Serializable
 
         public Inductor()
         {
-            InductorValue = EngrNumber.One;
+            InductorValue = 1m;
             InductorModel = 0;
             
-            SetProperty(ref rs, new EngrNumber(1, "p"), "Rs");
-            SetProperty(ref cp, new EngrNumber(1, "p"), "Cp");
+            SetProperty(ref rs, 1e-12m, "Rs");
+            SetProperty(ref cp, 1e-12m, "Cp");
             calculateFoQ();
 
             ParametersControl = new InductorParametersControl(this);
@@ -108,17 +109,13 @@ namespace Transition.CircuitEditor.Serializable
 
         private void calculateFoQ()
         {
-            if (Rs.ToDouble == 0) return;
-            if (Cp.ToDouble == 0) return;
+            if (Rs == 0m) return;
+            if (Cp == 0m) return;
 
-            double dL = inductorValue.ToDouble;
-            double dRs = Rs.ToDouble;
-            double dCp = Cp.ToDouble;
+            decimal dWop = DecimalMath.Sqrt(1m / (InductorValue * Cp));
 
-            double dWop = Math.Sqrt(1 / (dL * dCp));
-
-            double dQ = (dWop * dL) / dRs;
-            double dFo = dWop / (2 * Math.PI);
+            decimal dQ = (dWop * InductorValue) / Rs;
+            decimal dFo = dWop / (2 * DecimalMath.Pi);
 
             SetProperty(ref fo, dFo, "Fo");
             SetProperty(ref q, dQ, "Q");
@@ -127,14 +124,11 @@ namespace Transition.CircuitEditor.Serializable
 
         private void calculateRsCp()
         {
-            double dQ = Q.ToDouble;
-            double dFo = Fo.ToDouble;
-            double dL = inductorValue.ToDouble;
 
-            double dWo = 2 * Math.PI * dFo;
+            decimal dWo = 2m * DecimalMath.Pi * Fo;
 
-            double dRs = (dWo * dL) / dQ;
-            double dCp = 1 / (dL * dWo * dWo);
+            decimal dRs = (dWo * inductorValue) / Q;
+            decimal dCp = 1 / (inductorValue * dWo * dWo);
 
             SetProperty(ref rs, dRs, "Rs");
             SetProperty(ref cp, dCp, "Cp");
@@ -148,8 +142,8 @@ namespace Transition.CircuitEditor.Serializable
             {
                 // this one sets de String for the component in the schematic window
                 string returnString;
-                EngrConverter conv = new EngrConverter() { ShortString = false };
-                EngrConverter convShort = new EngrConverter() { ShortString = true };
+                var conv = new DecimalEngrConverter() { ShortString = false };
+                var convShort = new DecimalEngrConverter() { ShortString = true };
 
                 if (AnyPrecisionSelected)
                     returnString = (string)conv.Convert(InductorValue, typeof(string), null, "");
@@ -166,15 +160,32 @@ namespace Transition.CircuitEditor.Serializable
 
             switch (property)
             {
-                case "InductorValue": InductorValue = (EngrNumber)value; break;
+                case "InductorValue": InductorValue = (decimal)value; break;
                 case "InductorModel": InductorModel = (int)value; break;
                 case "ComponentPrecision": ComponentPrecision = (Precision)value; break;
-                case "Rs": Rs = (EngrNumber)value; break;
-                case "Cp": Cp = (EngrNumber)value; break;
-                case "Fo": Fo = (EngrNumber)value; break;
-                case "Q": Q = (EngrNumber)value; break;
-                case "Ew": Ew = (EngrNumber)value; break;
+                case "Rs": Rs = (decimal)value; break;
+                case "Cp": Cp = (decimal)value; break;
+                case "Fo": Fo = (decimal)value; break;
+                case "Q": Q = (decimal)value; break;
+                case "Ew": Ew = (decimal)value; break;
             }
+        }
+
+        public ComplexDecimal getImpedance(decimal frequency)
+        {
+            var w = 2m * DecimalMath.Pi * frequency;
+
+            var ZCp = -1 * ComplexDecimal.ImaginaryOne / (w * Cp);
+            var ZL = ComplexDecimal.ImaginaryOne * w * InductorValue;
+
+            switch (InductorModel)
+            {
+                case 0: return ZL;
+                case 1: return (Rs + ZL) | ZCp;
+                case 2: return (InductorValue * DecimalMath.Power(w, Ew)) * ComplexDecimal.ImaginaryOne * w;
+            }
+
+            throw new NotImplementedException();
         }
     }
 }

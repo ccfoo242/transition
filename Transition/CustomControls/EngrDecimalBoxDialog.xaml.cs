@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Transition.Common;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -55,8 +56,8 @@ namespace Transition.CustomControls
         private async void changeValue(object sender, RoutedEventArgs e)
         {
             StackPanel stk2 = new StackPanel() { Orientation = Orientation.Vertical };
-            StackPanel stk = new StackPanel()
-            { Orientation = Orientation.Horizontal };
+            StackPanel stk = new StackPanel() { Orientation = Orientation.Horizontal };
+            var converter = new DecimalEngrConverter();
 
             stk.Children.Add(new TextBlock()
             {
@@ -64,17 +65,24 @@ namespace Transition.CustomControls
                 Margin = new Thickness(4),
                 VerticalAlignment = VerticalAlignment.Center
             });
+            
+            var txtResource = Application.Current.Resources["EngrNumberBoxStyle"];
+            InputScope inp = new InputScope();
+            InputScopeName inpn = new InputScopeName();
+            inpn.NameValue = InputScopeNameValue.AlphanumericFullWidth;
+            inp.Names.Add(inpn);
 
-            var box = new EngrDecimalBox()
+            var txtValue = new TextBox()
             {
-                Value = this.Value,
-                Margin = new Thickness(4),
-                AllowNegativeNumber = AllowNegativeNumber,
-                VerticalAlignment = VerticalAlignment.Center
+                Style = (Style)txtResource,
+                IsSpellCheckEnabled = false,
+                IsTextPredictionEnabled = false,
+                AllowDrop = false,
+                InputScope = inp,
+                Text = (string)converter.Convert(Value, null, null, null)
             };
 
-            stk.Children.Add(box);
-
+            stk.Children.Add(txtValue);
             stk.Children.Add(new TextBlock()
             {
                 Text = UnitShort,
@@ -82,13 +90,13 @@ namespace Transition.CustomControls
                 VerticalAlignment = VerticalAlignment.Center
             });
 
+            stk2.Children.Add(new TextBlock() { Text = "Engineering and Scientific notations allowed" });
             stk2.Children.Add(stk);
             if (!AllowNegativeNumber) stk2.Children.Add(new TextBlock()
             { Text = "Only Positive number allowed", FontStyle = Windows.UI.Text.FontStyle.Italic });
             if (!AllowZero) stk2.Children.Add(new TextBlock()
             { Text = "Zero value is not allowed", FontStyle = Windows.UI.Text.FontStyle.Italic });
-
-
+            
             ContentDialog dialog = new ContentDialog()
             {
                 Title = "Enter new Value" + Environment.NewLine +
@@ -102,15 +110,33 @@ namespace Transition.CustomControls
 
             if (result == ContentDialogResult.Primary)
             {
-                if (box.Value == 0 && !AllowZero) return;
+                decimal result2 = 0m;
+                bool didConvert = false;
+
+                try
+                {
+                    result2 = (decimal)converter.ConvertBack(txtValue.Text, null, null, null);
+                    didConvert = true;
+                }
+                catch { }
+
+                if (!didConvert) {
+                    var invdialog = new Windows.UI.Popups.MessageDialog("Incorrect format value");
+                    await invdialog.ShowAsync();
+                    return;
+                }
+
+                if (result2 == 0 && !AllowZero) return;
+                if (result2 < 0 && !AllowNegativeNumber) return;
+
                 var args = new ValueChangedEventArgs
                 {
                     oldValue = Value,
-                    newValue = box.Value,
+                    newValue = result2,
                     PropertyName = "Value"
                 };
 
-                Value = box.Value;
+                Value = result2;
                 ValueManuallyChanged?.Invoke(this, args);
             }
         }

@@ -30,4 +30,11 @@ namespace Transition.CircuitEditor
         void moveRelativeCommand(Point2D vector);
     }
 
+    public interface IPassive
+    {
+        ComplexDecimal getImpedance(decimal frequency); /* not angular frequency */
+       
+    }
+
+
 }

@@ -27,7 +27,6 @@ namespace Transition.CustomControls
             this.InitializeComponent();
         }
 
-        
         private string unit;
         public string Unit
         {
@@ -182,17 +181,25 @@ namespace Transition.CustomControls
 
         private decimal getOneDigitMantissaValue(decimal val)
         {
-            int exponent = (int)Math.Floor(DecimalMath.Log10(DecimalMath.Abs(val)));
+            var log2 = Math.Log10((double)Math.Abs(val));
+        
+            int exponent = (int)Math.Floor(log2);
             
             decimal power = DecimalMath.PowerN(10, -1 * exponent);
 
             return val * power;
-
         }
 
         private int getValueExponent()
         {
-            return (int)Math.Floor(DecimalMath.Log10(DecimalMath.Abs(ComponentValue)));
+            return getValueExponent(ComponentValue);
+        }
+
+        private int getValueExponent(decimal val)
+        {
+            var log2 = Math.Log10((double)Math.Abs(val));
+            int exponent = (int)Math.Floor(log2);
+            return exponent;
         }
 
         public decimal getNextOrEqualValue()
@@ -203,7 +210,8 @@ namespace Transition.CustomControls
         public decimal getNextOrEqualValue(decimal val)
         {
             decimal currentOneDigitMantissa = getOneDigitMantissaValue(val);
-            int exponent = (int)Math.Floor(DecimalMath.Log10(DecimalMath.Abs(val))); 
+            
+            int exponent = getValueExponent(val);
 
             foreach (decimal number in arraySelectedPrecision())
             {
@@ -211,7 +219,12 @@ namespace Transition.CustomControls
                     return number * DecimalMath.PowerN(10m, exponent);
             }
 
-            return 10M * arraySelectedPrecision()[0] * DecimalMath.PowerN(10m, exponent);
+            decimal output = 10M * arraySelectedPrecision()[0] * DecimalMath.PowerN(10m, exponent);
+
+            if (output > 1E27m)
+                output = 1E27m;
+
+            return output;
         }
 
         public bool isValueAdjustedToPrecision()
@@ -243,6 +256,8 @@ namespace Transition.CustomControls
             decimal output = arraySelectedPrecision()[0] * 10m;
             output *= DecimalMath.PowerN(10m, exponent);
 
+            if (output > 1E27m)
+                output = 1E27m;
             return output;
         }
 
@@ -289,28 +304,53 @@ namespace Transition.CustomControls
         private async void TapChangeValue(object sender, TappedRoutedEventArgs e)
         {
             var stk2 = new StackPanel() { Orientation = Orientation.Vertical };
-
             var stk = new StackPanel() { Orientation = Orientation.Horizontal };
+            var converter = new DecimalEngrConverter();
 
             stk.Children.Add(new TextBlock()
-            { Text = "Component Value:", Margin = new Thickness(4) });
-
-            var box = new EngrDecimalBox()
             {
-                Value = this.ComponentValue,
+                Text = "Component Value:",
                 Margin = new Thickness(4),
-                AllowNegativeNumber = false
+                VerticalAlignment = VerticalAlignment.Center
+            });
+
+
+            var txtResource = Application.Current.Resources["EngrNumberBoxStyle"];
+            InputScope inp = new InputScope();
+            InputScopeName inpn = new InputScopeName();
+            inpn.NameValue = InputScopeNameValue.AlphanumericFullWidth;
+            inp.Names.Add(inpn);
+
+            var txtValue = new TextBox()
+            {
+                Style = (Style)txtResource,
+                IsSpellCheckEnabled = false,
+                IsTextPredictionEnabled = false,
+                AllowDrop = false,
+                InputScope = inp,
+                Text = (string)converter.Convert(ComponentValue, null, null, null),
+                Margin = new Thickness(4)
             };
 
-            stk.Children.Add(box);
-            stk.Children.Add(new TextBlock() { Text = UnitShort });
+            stk.Children.Add(txtValue);
+            stk.Children.Add(new TextBlock()
+            {
+                Text = UnitShort ,
+                VerticalAlignment = VerticalAlignment.Center
+            });
 
             stk2.Children.Add(stk);
+            stk2.Children.Add(new TextBlock()
+            {
+                Text = "Engineering and Scientific notations are allowed"
+            });
+
             stk2.Children.Add(new TextBlock()
             {
                 Text = "Only positive number allowed",
                 FontStyle = Windows.UI.Text.FontStyle.Italic
             });
+
             stk2.Children.Add(new TextBlock()
             {
                 Text = "Zero value is not allowed",
@@ -324,19 +364,35 @@ namespace Transition.CustomControls
                 CloseButtonText = "Cancel",
                 PrimaryButtonText = "OK"
             };
-
-            ContentDialogResult result = await dialog.ShowAsync();
+            
+            var result = await dialog.ShowAsync();
 
             if (result == ContentDialogResult.Primary)
             {
-                EngrNumber NewValue;
+                decimal result2 = 0;
+                decimal NewValue = 0m;
 
-                if (box.Value <= 0m) return;
+                bool didConvert = false;
+                try
+                {
+                    result2 = (decimal)converter.ConvertBack(txtValue.Text, null, null, null);
+                    didConvert = true;
+                }
+                catch { }
+
+                if (!didConvert)
+                {
+                    var invdialog = new Windows.UI.Popups.MessageDialog("Incorrect format value");
+                    await invdialog.ShowAsync();
+                    return;
+                }
+
+                if (result2 <= 0m) return;
                 
                 if (!AnyPrecisionSelected)
-                    NewValue = getNextOrEqualValue(box.Value);
+                    NewValue = getNextOrEqualValue(result2);
                 else
-                    NewValue = box.Value;
+                    NewValue = result2;
 
                 var args = new ValueChangedEventArgs
                 {
@@ -345,7 +401,7 @@ namespace Transition.CustomControls
                     PropertyName = "Value"
                 };
 
-                ComponentValue = box.Value;
+                ComponentValue = NewValue;
                 ValueManuallyChanged?.Invoke(this, args);
             }
         }

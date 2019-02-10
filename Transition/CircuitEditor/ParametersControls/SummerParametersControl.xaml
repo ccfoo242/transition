@@ -19,10 +19,10 @@
         </StackPanel>
         <controls:Expander Header="Electric" IsExpanded="True" ExpandDirection="Down">
             <StackPanel Orientation="Vertical">
-                <customcontrols:EngrNumberBoxDialog x:Name="boxRIn" Margin="4" HorizontalAlignment="Right"
+                <customcontrols:EngrDecimalBoxDialog x:Name="boxRIn" Margin="4" HorizontalAlignment="Right"
                        ValueManuallyChanged="RInChanged" Unit="Ohm" UnitShort="Ω"
                        VariableName="Input Resistance" />
-                <customcontrols:EngrNumberBoxDialog x:Name="boxROut" Margin="4" HorizontalAlignment="Right"
+                <customcontrols:EngrDecimalBoxDialog x:Name="boxROut" Margin="4" HorizontalAlignment="Right"
                        ValueManuallyChanged="ROutChanged" Unit="Ohm" UnitShort="Ω"
                        VariableName="Output Resistance" />
 

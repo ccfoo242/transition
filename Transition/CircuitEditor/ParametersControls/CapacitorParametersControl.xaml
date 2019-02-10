@@ -22,7 +22,7 @@
 
         <controls:Expander Header="Capacitor Value" ExpandDirection="Down"
                            IsExpanded="True">
-            <customcontrols:ComponentValueBox Unit="Farad" Margin="4" HorizontalAlignment="Left"
+            <customcontrols:ComponentValueBoxDecimal Unit="Farad" Margin="4" HorizontalAlignment="Left"
                              UnitShort="F" x:Name="componentValueBox"
                              ValueChanged="CapacitorValueChanged"
                              PrecisionChanged="CapacitorPrecisionChanged"/>
@@ -51,7 +51,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Vertical" x:Name="pnlExponential"
                                 Grid.Row="1" HorizontalAlignment="Stretch">
-                    <customcontrols:EngrNumberBoxDialog VariableName="Eω" Margin="4" x:Name="BoxEw"
+                    <customcontrols:EngrDecimalBoxDialog VariableName="Eω" Margin="4" x:Name="BoxEw"
                                                         AllowNegativeNumber="True"
                                                         AllowZero="True"
                                                         ValueManuallyChanged="ChangeEw"/>
@@ -67,19 +67,19 @@
                     <Viewbox MaxHeight="80" MaxWidth="160" HorizontalAlignment="Center">
                         <ContentControl ContentTemplate="{StaticResource capacitorParasiticModelCircuit}"/>
                     </Viewbox>
-                    <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
+                    <customcontrols:EngrDecimalBoxDialog HorizontalAlignment="Right"
                                 x:Name="BoxLs" ValueManuallyChanged="ChangeLs"
-                                VariableName="Ls (Henry)"/> 
-                    <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
+                                VariableName="Ls (Henry)"/>
+                    <customcontrols:EngrDecimalBoxDialog HorizontalAlignment="Right"
                                 x:Name="BoxRp" ValueManuallyChanged="ChangeRp"
                                 VariableName="Rp (Ohm)" />
-                    <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
+                    <customcontrols:EngrDecimalBoxDialog HorizontalAlignment="Right"
                                 x:Name="BoxRs" ValueManuallyChanged="ChangeRs"
                                 VariableName="Rs (Ohm)" />
-                    <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
+                    <customcontrols:EngrDecimalBoxDialog HorizontalAlignment="Right"
                                 x:Name="BoxFo" ValueManuallyChanged="ChangeFo"
                                 VariableName="Fo (Hz)" />
-                    <customcontrols:EngrNumberBoxDialog HorizontalAlignment="Right"
+                    <customcontrols:EngrDecimalBoxDialog HorizontalAlignment="Right"
                                 x:Name="BoxQ" ValueManuallyChanged="ChangeQ"
                                 VariableName="Q"/>
                 </StackPanel>

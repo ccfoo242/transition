@@ -806,5 +806,10 @@ namespace Transition.CircuitEditor
                 executeCommand(command);
             }
         }
+
+        private void TapCalculate(object sender, TappedRoutedEventArgs e)
+        {
+            CurrentDesign.Calculate();
+        }
     }
 }

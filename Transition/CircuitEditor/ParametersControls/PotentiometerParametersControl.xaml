@@ -21,7 +21,7 @@
         <controls:Expander Header="Potentiometer total Resistance"
                            IsExpanded="True" ExpandDirection="Down" HorizontalContentAlignment="Stretch">
 
-            <customcontrols:ComponentValueBox Unit="Ohm" HorizontalAlignment="Left"
+            <customcontrols:ComponentValueBoxDecimal Unit="Ohm" HorizontalAlignment="Left"
                                  UnitShort="Ω" Margin="4" x:Name="componentValueBox"
                                  ValueChanged="PotValueChanged"
                                  PrecisionChanged="PrecisionChanged"/>

@@ -41,18 +41,18 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        private EngrNumber rClosed;
-        public EngrNumber RClosed { get => rClosed; set {
+        private decimal rClosed;
+        public decimal RClosed { get => rClosed; set {
                 SetProperty(ref rClosed, value); } }
 
-        private EngrNumber cOpen;
-        public EngrNumber COpen { get => cOpen; set {
+        private decimal cOpen;
+        public decimal COpen { get => cOpen; set {
                 SetProperty(ref cOpen, value); } }
 
         public Switch() : base()
         {
-            RClosed = "10m";
-            COpen = "1p";
+            RClosed = 10e-3m;
+            COpen = 1e-12m;
             QuantityOfTerminals = 3;
             State = 1;
 
@@ -68,8 +68,8 @@ namespace Transition.CircuitEditor.Serializable
             {
                 case "State": State = (byte)value; break;
                 case "QuantityOfTerminals": QuantityOfTerminals = (byte)value; break;
-                case "RClosed": RClosed = (EngrNumber)value; break;
-                case "COpen": COpen = (EngrNumber)value; break;
+                case "RClosed": RClosed = (decimal)value; break;
+                case "COpen": COpen = (decimal)value; break;
             }
         }
     }

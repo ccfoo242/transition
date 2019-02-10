@@ -32,8 +32,8 @@ namespace Transition.CircuitEditor.Serializable
             set { SetProperty(ref outputImpedanceFunctionType, value); }
         }
 
-        private EngrNumber constantOutputVoltage;
-        public EngrNumber ConstantOutputVoltage
+        private decimal constantOutputVoltage;
+        public decimal ConstantOutputVoltage
         {
             get { return constantOutputVoltage; }
             set { SetProperty(ref constantOutputVoltage, value);
@@ -48,8 +48,8 @@ namespace Transition.CircuitEditor.Serializable
             set { SetProperty(ref functionOutputVoltage, value); }
         }
 
-        private EngrNumber constantOutputImpedance;
-        public EngrNumber ConstantOutputImpedance
+        private decimal constantOutputImpedance;
+        public decimal ConstantOutputImpedance
         {
             get { return constantOutputImpedance; }
             set { SetProperty(ref constantOutputImpedance, value); }
@@ -65,7 +65,7 @@ namespace Transition.CircuitEditor.Serializable
         public VoltageSource() : base()
         {
             ConstantOutputVoltage = 1;
-            ConstantOutputImpedance = new EngrNumber(1M, "u");
+            ConstantOutputImpedance = 1e-6m;
 
             OnScreenElement = new VoltageSourceScreen(this);
             ParametersControl = new VoltageSourceComponentParameters(this);
@@ -80,11 +80,10 @@ namespace Transition.CircuitEditor.Serializable
             {
                 case "OutputVoltageFunctionType": OutputVoltageFunctionType = (int)value; break;
                 case "OutputImpedanceFunctionType": OutputImpedanceFunctionType = (int)value; break;
-                case "ConstantOutputVoltage": ConstantOutputVoltage = (EngrNumber)value; break;
+                case "ConstantOutputVoltage": ConstantOutputVoltage = (decimal)value; break;
                 case "FunctionOutputVoltage": FunctionOutputVoltage = (Function)value; break;
-                case "ConstantOutputImpedance": ConstantOutputImpedance= (EngrNumber)value; break;
+                case "ConstantOutputImpedance": ConstantOutputImpedance= (decimal)value; break;
                 case "FunctionOutputImpedance": FunctionOutputImpedance = (Function)value; break;
-
             }
         }
 

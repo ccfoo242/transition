@@ -4,23 +4,24 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Transition.Common;
 
 namespace Transition.Functions
 {
     public class StandardTransferFunction : Function
     {
 
-        private EngrNumber _ao;
-        public EngrNumber Ao { get => _ao; set { _ao = value; RecalculatePoints(); RaiseFunctionChanged(); } }
+        private decimal _ao;
+        public decimal Ao { get => _ao; set { _ao = value; RecalculatePoints(); RaiseFunctionChanged(); } }
 
-        private EngrNumber _fp;
-        public EngrNumber Fp { get => _fp; set { _fp = value; RecalculatePoints(); RaiseFunctionChanged(); } }
+        private decimal _fp;
+        public decimal Fp { get => _fp; set { _fp = value; RecalculatePoints(); RaiseFunctionChanged(); } }
 
-        private EngrNumber _fz;
-        public EngrNumber Fz { get => _fz; set { _fz = value; RecalculatePoints(); RaiseFunctionChanged(); } }
+        private decimal _fz;
+        public decimal Fz { get => _fz; set { _fz = value; RecalculatePoints(); RaiseFunctionChanged(); } }
 
-        private EngrNumber _qp;
-        public EngrNumber Qp { get => _qp; set { _qp = value; RecalculatePoints(); RaiseFunctionChanged(); } }
+        private decimal _qp;
+        public decimal Qp { get => _qp; set { _qp = value; RecalculatePoints(); RaiseFunctionChanged(); } }
 
         private bool _invert;
         public bool Invert { get => _invert; set { _invert = value; RecalculatePoints(); RaiseFunctionChanged(); } }
@@ -31,12 +32,13 @@ namespace Transition.Functions
         public double wp { get => 2 * Math.PI * fp; }
         public double wz { get => 2 * Math.PI * fz; }
 
-        private double ao => Ao.ToDouble;
-        private double fp => Fp.ToDouble;
-        private double fz => Fz.ToDouble;
-        private double qp => Qp.ToDouble;
 
-        private List<EngrNumber> FrequencyPoints => CircuitEditor.CircuitEditor.StaticCurrentDesign.getFrequencyPoints();
+        public double ao => Convert.ToDouble(Ao);
+        public double fp => Convert.ToDouble(Fp);
+        public double fz => Convert.ToDouble(Fz);
+        public double qp => Convert.ToDouble(Qp);
+
+        private List<decimal> FrequencyPoints => CircuitEditor.CircuitEditor.StaticCurrentDesign.getFrequencyPoints();
 
         private string currentFunction;
         public string CurrentFunction

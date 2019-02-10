@@ -56,36 +56,36 @@ namespace Transition.CircuitEditor.Serializable
             set { SetProperty(ref functionImpedance, value); }
         }
 
-        private EngrNumber inputVoltage;
-        public EngrNumber InputVoltage
+        private decimal inputVoltage;
+        public decimal InputVoltage
         {
             get => inputVoltage;
             set { SetProperty(ref inputVoltage, value); }
         }
 
-        private EngrNumber micDistance;
-        public EngrNumber MicDistance
+        private decimal micDistance;
+        public decimal MicDistance
         {
             get => micDistance;
             set { SetProperty(ref micDistance, value); }
         }
 
-        private EngrNumber refDistanceX;
-        public EngrNumber RefDistanceX
+        private decimal refDistanceX;
+        public decimal RefDistanceX
         {
             get => refDistanceX;
             set { SetProperty(ref refDistanceX, value); }
         }
 
-        private EngrNumber refDistanceY;
-        public EngrNumber RefDistanceY
+        private decimal refDistanceY;
+        public decimal RefDistanceY
         {
             get => refDistanceY;
             set { SetProperty(ref refDistanceY, value); }
         }
 
-        private EngrNumber refDistanceZ;
-        public EngrNumber RefDistanceZ
+        private decimal refDistanceZ;
+        public decimal RefDistanceZ
         {
             get => refDistanceZ;
             set { SetProperty(ref refDistanceZ, value); }
@@ -107,15 +107,15 @@ namespace Transition.CircuitEditor.Serializable
 
         public Transducer() : base()
         {
-            inputVoltage = 2.83;
-            micDistance = 1;
+            inputVoltage = 2.83m;
+            micDistance = 1m;
 
             quantityOfTerminals = 2;
             description = "Spkr";
 
-            refDistanceX = 0;
-            refDistanceY = 0;
-            refDistanceZ = 0;
+            refDistanceX = 0m;
+            refDistanceY = 0m;
+            refDistanceZ = 0m;
 
             polarityReverse = false;
             
@@ -131,14 +131,14 @@ namespace Transition.CircuitEditor.Serializable
             switch (property)
             {
                 case "Description": Description = (string)value; break;
-                case "InputVoltage": InputVoltage = (EngrNumber)value; break;
-                case "MicDistance": MicDistance = (EngrNumber)value; break;
+                case "InputVoltage": InputVoltage = (decimal)value; break;
+                case "MicDistance": MicDistance = (decimal)value; break;
 
                 case "PolarityReverse": PolarityReverse = (bool)value; break;
 
-                case "RefDistanceX": RefDistanceX = (EngrNumber)value; break;
-                case "RefDistanceY": RefDistanceY = (EngrNumber)value; break;
-                case "RefDistanceZ": RefDistanceZ = (EngrNumber)value; break;
+                case "RefDistanceX": RefDistanceX = (decimal)value; break;
+                case "RefDistanceY": RefDistanceY = (decimal)value; break;
+                case "RefDistanceZ": RefDistanceZ = (decimal)value; break;
 
             }
         }

@@ -13,14 +13,15 @@
 
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
         <StackPanel Orientation="Horizontal">
-            <TextBlock Margin="4" Text="Component Name: " VerticalAlignment="Center"/>
-            <TextBox x:Name="txtElementName" Margin="4"   VerticalAlignment="Center"
+            <TextBlock Margin="4" Text="Component Name: " 
+                       VerticalAlignment="Center"/>
+            <TextBox x:Name="txtElementName" Margin="4"   
+                     VerticalAlignment="Center"
                      TextChanged="ElementNameChanged" 
                      GotFocus="ElementNameFocus"/>
         </StackPanel>
         <controls:Expander Header="SCN Parameters" IsExpanded="True" ExpandDirection="Down">
-            <StackPanel Orientation="Vertical" >
-
+            <StackPanel Orientation="Vertical">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition/>
@@ -29,21 +30,27 @@
                         <ColumnDefinition/>
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="Positive Polarity" Grid.Column="0" VerticalAlignment="Center" Margin="4"/>
+                    <TextBlock Text="Positive Polarity" 
+                               Grid.Column="0" 
+                               VerticalAlignment="Center" 
+                               Margin="4"/>
                     <CheckBox x:Name="chkBoxPolarity" 
                               Checked="chkPolarity" Unchecked="unchkPolarity"
                               Grid.Column="1" VerticalAlignment="Center"/>
                 </Grid>
-                <customcontrols:EngrNumberBoxDialog x:Name="boxResistance" 
-                    VariableName="Resistance" Unit="Ohm" Margin="4" HorizontalAlignment="Right"
+                <customcontrols:EngrDecimalBoxDialog x:Name="boxResistance" 
+                    VariableName="Resistance" Unit="Ohm" 
+                    Margin="4" HorizontalAlignment="Right"
                     UnitShort="Ω" ValueManuallyChanged="ChangedResistance"/>
-            
-                <customcontrols:EngrNumberBoxDialog x:Name="boxFs" 
-                    VariableName="Sampling Frequency" Unit="Hertz" Margin="4" HorizontalAlignment="Right"
+
+                <customcontrols:EngrDecimalBoxDialog x:Name="boxFs" 
+                    VariableName="Sampling Frequency" 
+                    Unit="Hertz" Margin="4" HorizontalAlignment="Right"
                     UnitShort="Hz" ValueManuallyChanged="ChangedFs"/>
 
-                <customcontrols:EngrNumberBoxDialog x:Name="boxCapacitance" 
-                    VariableName="Capacitance" Unit="Farad" Margin="4" HorizontalAlignment="Right"
+                <customcontrols:EngrDecimalBoxDialog x:Name="boxCapacitance" 
+                    VariableName="Capacitance" Unit="Farad" 
+                    Margin="4" HorizontalAlignment="Right"
                     UnitShort="F" ValueManuallyChanged="ChangedCapacitance"/>
             </StackPanel>
         </controls:Expander>

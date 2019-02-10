@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.Serializable;
+using Transition.Common;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -60,7 +61,7 @@ namespace Transition.CircuitEditor.OnScreenComponents
             Binding b2 = new Binding()
             {
                 Path = new PropertyPath("TurnsRatio"),
-                Converter = new EngrConverter()
+                Converter = new DecimalEngrConverter()
                     { ShortString = false, AllowNegativeNumber = false },
                 Mode = BindingMode.OneWay,
                 Source = trans,

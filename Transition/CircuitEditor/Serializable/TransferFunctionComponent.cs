@@ -15,13 +15,13 @@ namespace Transition.CircuitEditor.Serializable
 
         public override byte QuantityOfTerminals { get => 4; set => throw new NotImplementedException(); }
 
-        private EngrNumber rIn;
-        public EngrNumber RIn
+        private decimal rIn;
+        public decimal RIn
             { get => rIn;
               set { SetProperty(ref rIn, value); } }
 
-        private EngrNumber rOut;
-        public EngrNumber ROut
+        private decimal rOut;
+        public decimal ROut
             { get => rOut; set { SetProperty(ref rOut, value); } }
 
         private Function tf;
@@ -61,7 +61,7 @@ namespace Transition.CircuitEditor.Serializable
         }
 
 
-        public EngrNumber Ao
+        public decimal Ao
         {
             get => standardTf.Ao; set
             {
@@ -70,7 +70,7 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        public EngrNumber Fp
+        public decimal Fp
         {
             get => standardTf.Fp; set
             {
@@ -79,7 +79,7 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        public EngrNumber Fz
+        public decimal Fz
         {
             get => standardTf.Fz; set
             {
@@ -88,7 +88,7 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        public EngrNumber Qp
+        public decimal Qp
         {
             get => standardTf.Qp; set
             {
@@ -120,13 +120,13 @@ namespace Transition.CircuitEditor.Serializable
 
         public TransferFunctionComponent() : base()
         {
-            rIn = "1T";
-            rOut = "1u";
+            rIn = 1e12m;
+            rOut = 1e-6m;
 
-            Ao = 1;
-            Fp = "1K";
-            Fz = "1K";
-            Qp = 1;
+            Ao = 1m;
+            Fp = 1e3m;
+            Fz = 1e3m;
+            Qp = 1m;
 
             StandardFunction = "LP1";
 
@@ -146,13 +146,13 @@ namespace Transition.CircuitEditor.Serializable
 
             switch (property)
             {
-                case "RIn": RIn = (EngrNumber)value; break;
-                case "ROut": ROut = (EngrNumber)value; break;
+                case "RIn": RIn = (decimal)value; break;
+                case "ROut": ROut = (decimal)value; break;
 
-                case "Ao": Ao = (EngrNumber)value; break;
-                case "Fp": Fp = (EngrNumber)value; break;
-                case "Fz": Fz = (EngrNumber)value; break;
-                case "Qp": Qp = (EngrNumber)value; break;
+                case "Ao": Ao = (decimal)value; break;
+                case "Fp": Fp = (decimal)value; break;
+                case "Fz": Fz = (decimal)value; break;
+                case "Qp": Qp = (decimal)value; break;
 
                 case "Invert": Invert = (bool)value;break;
                 case "Reverse": Reverse = (bool)value;break;

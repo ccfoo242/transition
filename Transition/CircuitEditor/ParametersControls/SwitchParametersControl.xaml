@@ -67,12 +67,12 @@
         </controls:Expander>
         <controls:Expander Header="Electric" IsExpanded="True">
             <StackPanel Orientation="Vertical">
-                
-            <customcontrols:EngrNumberBoxDialog x:Name="boxRClosed" Margin="4" 
+
+                <customcontrols:EngrDecimalBoxDialog x:Name="boxRClosed" Margin="4" 
                     VariableName="Closed Resistance" Unit="Ohm" UnitShort="Ω"   
                     ValueManuallyChanged="RClosedChanged"/>
 
-                <customcontrols:EngrNumberBoxDialog x:Name="boxCOpen" Margin="4"
+                <customcontrols:EngrDecimalBoxDialog x:Name="boxCOpen" Margin="4"
                     VariableName="Open Capacitance" Unit="Farad" UnitShort="F"  
                     ValueManuallyChanged="COpenChanged"/>
 

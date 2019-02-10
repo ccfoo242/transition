@@ -21,10 +21,10 @@
         
         <controls:Expander Header="Electric" IsExpanded="True" ExpandDirection="Down">
             <StackPanel Orientation="Vertical">
-                <customcontrols:EngrNumberBoxDialog x:Name="boxRIn" Margin="4" HorizontalAlignment="Right"
+                <customcontrols:EngrDecimalBoxDialog x:Name="boxRIn" Margin="4" HorizontalAlignment="Right"
                        ValueManuallyChanged="RInChanged" Unit="Ohm" UnitShort="Ω"
                        VariableName="Input Resistance" />
-                <customcontrols:EngrNumberBoxDialog x:Name="boxROut" Margin="4" HorizontalAlignment="Right"
+                <customcontrols:EngrDecimalBoxDialog x:Name="boxROut" Margin="4" HorizontalAlignment="Right"
                        ValueManuallyChanged="ROutChanged" Unit="Ohm" UnitShort="Ω"
                        VariableName="Output Resistance" />
 
@@ -36,10 +36,10 @@
                 <CheckBox x:Name="chkInvert" Checked="chkInvertChecked"
                           Unchecked="chkInvertUnchecked"
                           Content="Inverting input"/>
-                <customcontrols:EngrNumberBoxDialog x:Name="boxDelay" Margin="4" HorizontalAlignment="Right"
+                <customcontrols:EngrDecimalBoxDialog x:Name="boxDelay" Margin="4" HorizontalAlignment="Right"
                                                     ValueManuallyChanged="delayChanged" Unit="Second" UnitShort="Sec"
                                                     VariableName="Delay"/>
-                <customcontrols:EngrNumberBoxDialog x:Name="boxGain" Margin="4" HorizontalAlignment="Right"
+                <customcontrols:EngrDecimalBoxDialog x:Name="boxGain" Margin="4" HorizontalAlignment="Right"
                                                     ValueManuallyChanged="gainChanged" Unit="dB" UnitShort="dB"
                                                     VariableName="Gain"/>
             </StackPanel>

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.Components;
 using Transition.CircuitEditor.OnScreenComponents;
+using Transition.Common;
 using Transition.Functions;
 
 namespace Transition.CircuitEditor.Serializable
@@ -15,8 +16,8 @@ namespace Transition.CircuitEditor.Serializable
         public override string ElementLetter => "P";
         public override string ElementType => "Potentiometer";
 
-        private EngrNumber resistanceValue;
-        public EngrNumber ResistanceValue
+        private decimal resistanceValue;
+        public decimal ResistanceValue
         {
             get { return resistanceValue; }
             set
@@ -140,8 +141,8 @@ namespace Transition.CircuitEditor.Serializable
             {
                 // this one sets the String for the component in the schematic window
                 string returnString;
-                EngrConverter conv = new EngrConverter() { ShortString = false };
-                EngrConverter convShort = new EngrConverter() { ShortString = true };
+                var conv = new DecimalEngrConverter() { ShortString = false };
+                var convShort = new DecimalEngrConverter() { ShortString = true };
 
                 if (AnyPrecisionSelected)
                     returnString = (string)conv.Convert(ResistanceValue, typeof(string), null, "");
@@ -158,14 +159,14 @@ namespace Transition.CircuitEditor.Serializable
 
             switch (property)
             {
-                case "ResistanceValue"     : ResistanceValue = (EngrNumber)value; break;
+                case "ResistanceValue"     : ResistanceValue = (decimal)value; break;
                 case "PositionValue"       : PositionValue = (double)value; break;
                 case "ComponentPrecision"  : ComponentPrecision = (Precision)value; break;
                 case "TapAPositionValue"   : TapAPositionValue = (double)value; break;
                 case "TapBPositionValue"   : TapBPositionValue = (double)value; break;
                 case "TapCPositionValue"   : TapCPositionValue = (double)value; break;
                 case "TaperFunction"       : TaperFunction = (SampledFunction)value; break;
-              /*  case "QuantityOfTerminals" : QuantityOfTerminals = (byte)value; break;*/
+             
             }
         }
     }

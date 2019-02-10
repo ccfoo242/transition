@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.Components;
+using Transition.Common;
 
 namespace Transition.CircuitEditor.Serializable
 {
@@ -12,8 +13,8 @@ namespace Transition.CircuitEditor.Serializable
         public override string ElementLetter => "T";
         public override string ElementType => "Transformer";
 
-        private EngrNumber turnsRatio;
-        public EngrNumber TurnsRatio
+        private decimal turnsRatio;
+        public decimal TurnsRatio
         {
             get { return turnsRatio; }
             set { SetProperty(ref turnsRatio, value);
@@ -30,8 +31,8 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        private EngrNumber lpri;
-        public EngrNumber Lpri
+        private decimal lpri;
+        public decimal Lpri
         {
             get { return lpri; }
             set
@@ -41,8 +42,8 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        private EngrNumber lsec;
-        public EngrNumber Lsec
+        private decimal lsec;
+        public decimal Lsec
         {
             get { return lsec; }
             set
@@ -52,24 +53,23 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        private EngrNumber mutualL;
-        public EngrNumber MutualL { get { return mutualL; }}
+        private decimal mutualL;
+        public decimal MutualL { get { return mutualL; }}
 
-        private EngrNumber lpLeak;
+        private decimal lpLeak;
+        public decimal LpLeak { get { return lpLeak; }}
 
-        public EngrNumber LpLeak { get { return lpLeak; }}
-
-        private EngrNumber lsLeak;
-        public EngrNumber LsLeak { get { return lsLeak; }}
+        private decimal lsLeak;
+        public decimal LsLeak { get { return lsLeak; }}
 
         public override byte QuantityOfTerminals { get => 4; set => throw new NotImplementedException(); }
 
         public Transformer() : base()
         {
          
-            SetProperty(ref turnsRatio, EngrNumber.One, "TurnsRatio");
-            SetProperty(ref lpri, EngrNumber.One, "Lpri");
-            SetProperty(ref lsec, EngrNumber.One, "Lsec");
+            SetProperty(ref turnsRatio, 1m, "TurnsRatio");
+            SetProperty(ref lpri, 1m, "Lpri");
+            SetProperty(ref lsec, 1m, "Lsec");
             SetProperty(ref kCouplingCoef, 0.99, "KCouplingCoef");
             updateM();
 
@@ -79,43 +79,33 @@ namespace Transition.CircuitEditor.Serializable
 
         private void changeTR()
         {
-            double tr = TurnsRatio.ToDouble;
-            double lp = Lpri.ToDouble;
 
-            double ls = tr * tr * lp;
+            decimal ls = TurnsRatio * TurnsRatio * Lpri;
             SetProperty(ref lsec, ls, "Lsec");
             updateM();
         }
 
         private void changeLpri()
         {
-            double lp = Lpri.ToDouble;
-            double tr = TurnsRatio.ToDouble;
-
-            double ls = tr * tr * lp;
+            decimal ls = TurnsRatio * TurnsRatio * Lpri;
             SetProperty(ref lsec, ls, "Lsec");
             updateM();
         }
         
         private void changeLsec()
         {
-            double ls = Lsec.ToDouble;
-            double lp = Lpri.ToDouble;
-
-            double tr = Math.Sqrt(ls / lp);
+            decimal tr = DecimalMath.Sqrt(Lsec / Lpri);
             SetProperty(ref turnsRatio, tr, "TurnsRatio");
             updateM();
         }
 
         private void updateM()
         {
-            double lp = Lpri.ToDouble;
-            double ls = Lsec.ToDouble;
-            double k = (double)KCouplingCoef;
+            double k = KCouplingCoef;
 
-            SetProperty(ref mutualL, new EngrNumber(k * Math.Sqrt(lp * ls)), "MutualL");
-            SetProperty(ref lpLeak, new EngrNumber(lp * (1 - k)), "LpLeak");
-            SetProperty(ref lsLeak, new EngrNumber(ls * (1 - k)), "LsLeak");
+            SetProperty(ref mutualL, (decimal)k * DecimalMath.Sqrt(Lpri * Lsec), "MutualL");
+            SetProperty(ref lpLeak, Lpri * (1 - (decimal)k), "LpLeak");
+            SetProperty(ref lsLeak, Lsec * (1 - (decimal)k), "LsLeak");
         }
 
         public override void SetProperty(string property, object value)
@@ -124,10 +114,10 @@ namespace Transition.CircuitEditor.Serializable
 
             switch (property)
             {
-                case "TurnsRatio": TurnsRatio = (EngrNumber)value; break;
+                case "TurnsRatio": TurnsRatio = (decimal)value; break;
                 case "KCouplingCoef": KCouplingCoef = (double)value; break;
-                case "Lpri": Lpri = (EngrNumber)value; break;
-                case "Lsec": Lsec = (EngrNumber)value; break;
+                case "Lpri": Lpri = (decimal)value; break;
+                case "Lsec": Lsec = (decimal)value; break;
             }
         }
     }

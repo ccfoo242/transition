@@ -14,15 +14,15 @@ namespace Transition.CircuitEditor.Serializable
 
         public override byte QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
 
-        private EngrNumber rIn;
-        public EngrNumber RIn
+        private decimal rIn;
+        public decimal RIn
         {
             get => rIn;
             set { SetProperty(ref rIn, value); }
         }
 
-        private EngrNumber rOut;
-        public EngrNumber ROut
+        private decimal rOut;
+        public decimal ROut
         {
             get => rOut;
             set { SetProperty(ref rOut, value); }
@@ -39,8 +39,8 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        private EngrNumber gain; /* times */
-        public EngrNumber Gain
+        private decimal gain; /* times */
+        public decimal Gain
         {
             get => gain;
             set
@@ -50,8 +50,8 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        private EngrNumber delay; /* seconds */
-        public EngrNumber Delay
+        private decimal delay; /* seconds */
+        public decimal Delay
         {
             get => delay;
             set
@@ -64,8 +64,8 @@ namespace Transition.CircuitEditor.Serializable
 
         public Buffer() : base()
         {
-            rIn = "1T";
-            rOut = "1u";
+            rIn = 1e12m;
+            rOut = 12-6m;
 
             inverterInput = false;
             delay = 0;
@@ -81,12 +81,12 @@ namespace Transition.CircuitEditor.Serializable
 
             switch (property)
             {
-                case "RIn": RIn = (EngrNumber)value; break;
-                case "ROut": ROut = (EngrNumber)value; break;
+                case "RIn": RIn = (decimal)value; break;
+                case "ROut": ROut = (decimal)value; break;
 
                 case "InverterInput": InverterInput = (bool)value; break;
-                case "Gain": Gain = (EngrNumber)value; break;
-                case "Delay": Delay = (EngrNumber)value; break;
+                case "Gain": Gain = (decimal)value; break;
+                case "Delay": Delay = (decimal)value; break;
 
             }
         }

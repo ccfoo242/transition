@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.Components;
 using Transition.CircuitEditor.OnScreenComponents;
+using Transition.Common;
 
 namespace Transition.CircuitEditor.Serializable
 {
@@ -13,8 +14,8 @@ namespace Transition.CircuitEditor.Serializable
         public override string ElementLetter => "D";
         public override string ElementType => "Frequency Dependent Negative Resistor";
 
-        private EngrNumber fdnrValue;
-        public EngrNumber FdnrValue
+        private decimal fdnrValue;
+        public decimal FdnrValue
         {
             get { return fdnrValue; }
             set { SetProperty(ref fdnrValue, value);
@@ -39,7 +40,7 @@ namespace Transition.CircuitEditor.Serializable
 
         public FDNR() : base()
         {
-            FdnrValue = EngrNumber.One;
+            FdnrValue = 1m;
             
             ParametersControl = new FDNRParametersControl(this);
             OnScreenElement = new FDNRScreen(this);
@@ -52,8 +53,8 @@ namespace Transition.CircuitEditor.Serializable
             {
                 // this one sets de String for the component in the schematic window
                 string returnString;
-                EngrConverter conv = new EngrConverter() { ShortString = false };
-                EngrConverter convShort = new EngrConverter() { ShortString = true };
+                var conv = new DecimalEngrConverter() { ShortString = false };
+                var convShort = new DecimalEngrConverter() { ShortString = true };
 
                 if (AnyPrecisionSelected)
                     returnString = (string)conv.Convert(FdnrValue, typeof(string), null, "");
@@ -70,7 +71,7 @@ namespace Transition.CircuitEditor.Serializable
 
             switch (property)
             {
-                case "FdnrValue": FdnrValue = (EngrNumber)value; break;
+                case "FdnrValue": FdnrValue = (decimal)value; break;
                 case "ComponentPrecision": ComponentPrecision = (Precision)value; break;
            
             }

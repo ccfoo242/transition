@@ -16,16 +16,18 @@
         <StackPanel Orientation="Horizontal">
             <TextBlock Margin="4" Text="Component Name: "/>
             <TextBox x:Name="txtElementName" Margin="4" 
-                     GotFocus="ElementNameFocus" TextChanged="ElementNameChanged"/>
+                     GotFocus="ElementNameFocus" 
+                     TextChanged="ElementNameChanged"/>
         </StackPanel>
 
-        <controls:Expander Header="FDNR Value" ExpandDirection="Down"
+        <controls:Expander Header="FDNR Value" 
+                           ExpandDirection="Down"
                            IsExpanded="True">
-            <customcontrols:ComponentValueBox x:Name="componentValueBox"
-                      Unit="Farad²" HorizontalAlignment="Left"
-                      UnitShort="F²" Margin="4" 
-                      ValueChanged="FDNRValueChanged"
-                      PrecisionChanged="FDNRPrecisionChanged"/>
+            <customcontrols:ComponentValueBoxDecimal x:Name="componentValueBox"
+                           Unit="Farad²" HorizontalAlignment="Left"
+                           UnitShort="F²" Margin="4" 
+                           ValueChanged="FDNRValueChanged"
+                           PrecisionChanged="FDNRPrecisionChanged"/> 
         </controls:Expander>
     </StackPanel>
 </UserControl>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MathNet.Numerics.LinearAlgebra;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -41,8 +42,8 @@ namespace Transition.Design
 
         public Color Background { get; set; } = Color.FromArgb(255, 255, 255, 255);
 
-        private EngrNumber minimumFrequency = 10;
-        public EngrNumber MinimumFrequency
+        private decimal minimumFrequency = 10;
+        public decimal MinimumFrequency
         {
             get => minimumFrequency;
             set
@@ -54,8 +55,8 @@ namespace Transition.Design
         }
 
 
-        private EngrNumber maximumFrequency = 40000;
-        public EngrNumber MaximumFrequency
+        private decimal maximumFrequency = 40000;
+        public decimal MaximumFrequency
         {
             get => maximumFrequency;
             set
@@ -70,7 +71,7 @@ namespace Transition.Design
 
         public enum AxisScale { Logarithmic, Linear };
         public AxisScale FrequencyScale { get; set; } = AxisScale.Logarithmic;
-        
+
 
         public double RadiusNear => 15;
 
@@ -87,11 +88,11 @@ namespace Transition.Design
         public bool SnapToGrid { get; set; } = true;
 
         public UserDesign()
-        {            
+        {
             Components.CollectionChanged += Components_CollectionChanged;
             Wires.CollectionChanged += Wires_CollectionChanged;
         }
-        
+
         private void Components_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
@@ -115,7 +116,7 @@ namespace Transition.Design
                     }
                     break;
             }
-           
+
         }
 
         private void Wires_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -141,7 +142,7 @@ namespace Transition.Design
                     break;
             }
         }
-        
+
 
         public void removeElement(SerializableElement element)
         {
@@ -173,19 +174,12 @@ namespace Transition.Design
             var output = new List<SerializableWire>();
 
             foreach (SerializableWire wire in Wires)
-            {
-                if (wire.IsTerminal0Bounded)
-                    if (wire.Bind0.Item1 == el && wire.Bind0.Item2 == terminal)
-                        output.Add(wire);
-                            
-                if (wire.IsTerminal1Bounded)
-                    if (wire.Bind1.Item1 == el && wire.Bind1.Item2 == terminal)
-                        output.Add(wire);
-            }
-
+                if (wire.isThisWireBoundedTo(el, terminal))
+                    output.Add(wire);
+            
             return output;
         }
-        
+
 
         public SerializableWire bindComponentTerminal(SerializableComponent comp1, byte terminal1, SerializableElement el2, byte terminal2)
         {
@@ -202,9 +196,9 @@ namespace Transition.Design
 
             wire.Bind0 = new Tuple<SerializableElement, byte>(comp1, terminal1);
             wire.Bind1 = new Tuple<SerializableElement, byte>(el2, terminal2);
-            
+
             wire.ElementName = "W" + (getMaximumNumberWire() + 1).ToString();
-            
+
             return wire;
         }
 
@@ -212,8 +206,8 @@ namespace Transition.Design
         {
             foreach (SerializableWire wire in Wires)
             {
-                if (wire.isWireBoundedTo(el1, terminal1) &&
-                    wire.isWireBoundedTo(el2, terminal2))
+                if (wire.isThisWireBoundedTo(el1, terminal1) &&
+                    wire.isThisWireBoundedTo(el2, terminal2))
                     return true;
             }
             return false;
@@ -286,7 +280,7 @@ namespace Transition.Design
             foreach (ScreenComponentBase comp in ScreenComponents)
                 foreach (ElementTerminal t in comp.Terminals)
                     output.Add(t);
-            
+
             return output;
         }
 
@@ -309,7 +303,7 @@ namespace Transition.Design
                 output.Add(wire.Terminals[0] as WireTerminal);
                 output.Add(wire.Terminals[1] as WireTerminal);
             }
-            
+
             return output;
         }
 
@@ -354,7 +348,7 @@ namespace Transition.Design
             foreach (ICircuitSelectable element in getAllUnboundedWireTerminals().OfType<ICircuitSelectable>())
                 if (element.isInside(rect))
                     output.Add(element);
-            
+
             return output;
         }
 
@@ -364,16 +358,16 @@ namespace Transition.Design
                nearby components or wires terminals are highlighted,
                but we need the dragged terminal not to be highlighted.
                so the dragging wire terminal is the removed element */
-               
+
             ElementTerminal nearestTerminal = null;
             double nearestDistance = double.MaxValue;
-            
+
             foreach (var el in getAllScreenElements())
                 if (el != removedElement)
                     for (byte i = 0; i < el.QuantityOfTerminals; i++)
                         if ((el.getAbsoluteTerminalPosition(i).getDistance(point) < nearestDistance) &&
                             el.getAbsoluteTerminalPosition(i).getDistance(point) < RadiusNear)
-                        {if (el is WireScreen)
+                        { if (el is WireScreen)
                             { WireScreen ws = (WireScreen)el;
                                 if (!ws.isTerminalBounded(i))
                                 {
@@ -386,9 +380,9 @@ namespace Transition.Design
                                 nearestTerminal = el.Terminals[i];
                                 nearestDistance = el.getAbsoluteTerminalPosition(i).getDistance(point);
                             }
-                            
+
                         }
-                   
+
 
             return nearestTerminal;
         }
@@ -411,7 +405,7 @@ namespace Transition.Design
                                 alreadyAddedTerminals.Add(t1);
                                 alreadyAddedTerminals.Add(t2);
                             }
-                    
+
             return output;
         }
 
@@ -425,29 +419,188 @@ namespace Transition.Design
                 foreach (var t1 in allTerminals)
                     if (t1.ScreenElement != component)
                         if (t1.getAbsoluteTerminalPosition().getDistance(component.getAbsoluteTerminalPosition(i)) < RadiusNear)
-                        {if (!areTwoElementsTerminalsBounded(component.SerializableComponent,i,t1.ScreenElement.Serializable,t1.TerminalNumber))
-                            output.Add(i, t1); }
-                               
+                        { if (!areTwoElementsTerminalsBounded(component.SerializableComponent, i, t1.ScreenElement.Serializable, t1.TerminalNumber))
+                                output.Add(i, t1); }
+
             return output;
         }
-        
+
         public void lowlightAllTerminalsAllElements()
         {
             foreach (ElementTerminal t in getAllTerminals())
                 t.lowlight();
         }
 
-        public List<EngrNumber> getFrequencyPoints()
+        public IList<SerializableWire> GetAllIndependentWires
         {
-            var output = new List<EngrNumber>();
+            get
+            {
+                var output = new List<SerializableWire>();
+                foreach (var wire in Wires)
+                    if (wire.IsIndependent) output.Add(wire);
+
+                return output;
+            }
+        }
+
+        public void Calculate()
+        {
+            var IndependentWires = GetAllIndependentWires;
+            int quantityOfNodes = IndependentWires.Count - 1;
+
+        //  var currentMatrix = CreateMatrix.Dense<ComplexDecimal>(quantityOfNodes, quantityOfNodes);
+        //  var currentVector = CreateVector.Dense<ComplexDecimal>(quantityOfNodes);
+
+          //  var WiresNodes = new Dictionary<SerializableWire, int>();
+
+            var nodes = GetNodes();
+
+            var componentsTerminals = new Dictionary<int, List<Tuple<SerializableComponent, byte>>>();
+            
+            foreach (var kvp in nodes)
+            {
+                componentsTerminals[kvp.Key] = new List<Tuple<SerializableComponent, byte>>();
+
+                foreach (var wire in kvp.Value)
+                    foreach (var tuple in wire.GetBoundedComponents)
+                        if (!componentsTerminals[kvp.Key].Contains(tuple))
+                            componentsTerminals[kvp.Key].Add(tuple);
+                    
+            }
+
+        }
+        
+
+        public Dictionary<int, List<SerializableWire>> GetNodes()
+        {
+            var output = new Dictionary<int, List<SerializableWire>>();
+            int currentNode = 1;
+            int x;
+
+            output.Add(0, GetGroundedWires());
+
+            Func<SerializableWire, Dictionary<int, List<SerializableWire>>, int> wireBelongsTo =
+                (wire, dictOutput) => 
+                {
+                    foreach (var kvp in dictOutput)
+                        foreach (var existingWire in kvp.Value)
+                            if (wire.isThisWireBoundedToOtherWire(existingWire)) return kvp.Key;
+                
+                    return -1;
+                };
+
+            foreach (var wire in GetNonGroundedWires())
+            {
+                x = wireBelongsTo(wire, output);
+                if (x == -1)
+                {
+                    output.Add(currentNode, new List<SerializableWire>());
+                    output[currentNode].Add(wire);
+                    currentNode++;
+                }
+                else
+                    output[x].Add(wire);
+            }
+
+            return output;
+        }
+
+        public List<SerializableWire> GetNonGroundedWires()
+        {
+            var output = new List<SerializableWire>();
+
+            var grounded = GetGroundedWires();
+
+            foreach (var wire in Wires)
+                if (!grounded.Contains(wire))
+                    output.Add(wire);
+
+            return output;
+        }
+
+        public List<SerializableWire> GetGroundedWires()
+        {
+            var output = new List<SerializableWire>();
+            
+            foreach (var wire in Wires)
+                if (wire.IsWireGrounded)
+                    output.Add(wire);
+
+            Func<SerializableWire, List<SerializableWire>, bool> isConnected =
+                (wir, lis) =>
+                {
+                    foreach (var wire in lis)
+                    { if (wir.isThisWireBoundedToOtherWire(wire)) return true; }
+                    return false;
+                };
+
+            bool wireAdded = true;
+
+            while (wireAdded)
+            {
+                wireAdded = false;
+
+                foreach (var wire in Wires)
+                    if (!output.Contains(wire))
+                        if (isConnected(wire, output))
+                        {
+                            output.Add(wire);
+                            wireAdded = true;
+                        }
+            }
+
+            return output;
+        }
+
+        private bool areTwoWiresConnected(SerializableWire w1, SerializableWire w2)
+        {
+            if (w1 == null || w2 == null) throw new NullReferenceException();
+            var groupW1 = WireGroup(w1);
+
+            return groupW1.Contains(w2);
+        }
+
+        private List<SerializableWire> WireGroup(SerializableWire w1)
+        {
+            var ConnectedWires = new List<SerializableWire>();
+           
+            ConnectedWires.Add(w1);
+            bool added = true;
+
+            Func<SerializableWire, List<SerializableWire>, bool> isConnected =
+                (wir, lis) =>
+                {foreach (var wire in lis)
+                    { if (wir.isThisWireBoundedToOtherWire(wire)) return true; }
+                    return false;};
+
+            while (added)
+            {
+                added = false;
+                foreach (var wire in Wires)
+                    if (isConnected(wire, ConnectedWires))
+                    {
+                        added = true;
+                        if (!ConnectedWires.Contains(wire))
+                            ConnectedWires.Add(wire);
+                        break;
+                    }
+            }
+            
+            return ConnectedWires;
+        }
+        
+
+        public List<decimal> getFrequencyPoints()
+        {
+            var output = new List<decimal>();
 
             if (FrequencyScale == AxisScale.Logarithmic)
             {
                 var c = MaximumFrequency / MinimumFrequency;
-                var pitch = EngrNumber.NthRoot(c, NumberOfFrequencyPoints - 1);
+                var pitch = DecimalMath.Power(c, 1 / (NumberOfFrequencyPoints - 1m));
 
                 for (int x = 0; x < NumberOfFrequencyPoints; x++)
-                    output.Add(MinimumFrequency * EngrNumber.Pow(pitch, x));
+                    output.Add(MinimumFrequency * DecimalMath.PowerN(pitch, x));
             }
 
             if (FrequencyScale == AxisScale.Linear)
@@ -459,8 +612,6 @@ namespace Transition.Design
             }
 
             return output;
-
-            
         }
 
      

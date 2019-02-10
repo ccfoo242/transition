@@ -152,6 +152,7 @@ namespace Transition.CircuitEditor.Serializable
         // configure the component parameters
         public UserControl ParametersControl { get; set; }
 
+        public Dictionary<int, int> terminalsToCircuitNodes = new Dictionary<int, int>();
        
         public override void SetProperty(string property, object value)
         {

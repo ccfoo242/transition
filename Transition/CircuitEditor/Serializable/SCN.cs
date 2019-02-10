@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.ParametersControls;
+using Transition.Common;
 
 namespace Transition.CircuitEditor.Serializable
 {
@@ -23,34 +24,36 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-        private EngrNumber r;
-        public EngrNumber R { get => r; set {
+        private decimal r;
+        public decimal R { get => r; set {
                 SetProperty(ref r, value);
                 reCalculateC();
                 OnPropertyChanged("ResistanceString");
                 raiseLayoutChanged();
             } }
 
-        private EngrNumber c;
-        public EngrNumber C { get => c; set {
+        private decimal c;
+        public decimal C { get => c; set {
                 SetProperty(ref c, value);
                 reCalculateFs();
             } }
 
-        private EngrNumber fs;
-        public EngrNumber Fs { get => fs; set {
+        private decimal fs;
+        public decimal Fs { get => fs; set {
                 SetProperty(ref fs, value);
                 reCalculateC();
             } }
 
         public string PolarityString { get => PositivePolarity ? "+SCN" : "-SCN"; }
-        public string ResistanceString { get => R.ToString(); }
+        public string ResistanceString { get { var converter = new DecimalEngrConverter();
+                return (string)converter.Convert(R, null, null, null);
+            } }
 
         public SCN() : base()
         {
-            r = "1K";
-            c = "1n";
-            fs = EngrNumber.One / (r * c);
+            r = 1e3m;
+            c = 1e-9m;
+            fs = 1m / (r * c);
 
             PositivePolarity = true;
 
@@ -60,13 +63,13 @@ namespace Transition.CircuitEditor.Serializable
 
         private void reCalculateC()
         {
-            EngrNumber newC = EngrNumber.One / (R * Fs);
+            decimal newC = 1m / (R * Fs);
             SetProperty(ref c, newC, "C");
         }
 
         private void reCalculateFs()
         {
-            EngrNumber newFs = EngrNumber.One / (R * C);
+            decimal newFs = 1m / (R * C);
             SetProperty(ref fs, newFs, "Fs");
         }
 
@@ -76,9 +79,9 @@ namespace Transition.CircuitEditor.Serializable
 
             switch (property)
             {
-                case "R": R = (EngrNumber)value; break;
-                case "C": C = (EngrNumber)value; break;
-                case "Fs": Fs = (EngrNumber)value; break;
+                case "R": R = (decimal)value; break;
+                case "C": C = (decimal)value; break;
+                case "Fs": Fs = (decimal)value; break;
                 case "PositivePolarity": PositivePolarity = (bool)value; break;
             }
         }
