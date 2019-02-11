@@ -37,8 +37,12 @@ namespace Transition.CircuitEditor
          for example potentiometer and switch */
 
         List<Tuple<byte, byte, ComplexDecimal>> getImpedance(decimal frequency); /* not angular frequency */
-
     }
 
+    public interface IVoltageSource
+    {
+        byte PositiveTerminal { get; }
+        byte NegativeTerminal { get; }
+    }
 
 }

@@ -5,16 +5,20 @@ using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.Components;
 using Transition.CircuitEditor.OnScreenComponents;
+using Transition.Common;
 using Transition.Functions;
 
 namespace Transition.CircuitEditor.Serializable
 {
-    public class VoltageSource : SerializableComponent
+    public class VoltageSource : SerializableComponent, IVoltageSource
     {
         public override string ElementLetter => "V";
         public override string ElementType => "Voltage Source";
 
         public override byte QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
+
+        public byte PositiveTerminal => 0;
+        public byte NegativeTerminal => 1;
 
         private int outputVoltageFunctionType; // 0=constant 1=curve
         public int OutputVoltageFunctionType
@@ -72,6 +76,16 @@ namespace Transition.CircuitEditor.Serializable
             
         }
 
+        public ComplexDecimal getSourceImpedance(decimal frequency)
+        {
+            return ConstantOutputImpedance;
+        }
+
+        public ComplexDecimal getSourceVoltage(decimal frequency)
+        {
+            return ConstantOutputVoltage;
+        }
+
         public override void SetProperty(string property, object value)
         {
             base.SetProperty(property, value);
@@ -97,5 +111,6 @@ namespace Transition.CircuitEditor.Serializable
                     return "Curve";
             }
         }
+
     }
 }

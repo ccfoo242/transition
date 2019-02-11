@@ -30,6 +30,13 @@ namespace Transition.Common
             Data = new ComplexDecimal[QuantityOfRowsAndColumns, QuantityOfRowsAndColumns];
         }
 
+        public void Clear()
+        {
+            for (int x = 0; x < QuantityOfRows; x++)
+                for (int y = 0; y < QuantityOfColumns; y++)
+                    Data[x, y] = 0m;
+        }
+
         public void Multiply(ComplexDecimal value)
         {
             for (int x = 0; x < QuantityOfRows; x++)
@@ -66,6 +73,15 @@ namespace Transition.Common
             return output;
         }
 
+        public void addAtCoordinate(int row, int column, ComplexDecimal quantity)
+        {
+            Data[row, column] += quantity;
+        }
+
+        public void addAtCoordinate1(int row, int column, ComplexDecimal quantity)
+        {
+            addAtCoordinate(row - 1, column - 1, quantity);
+        }
 
         public static Matrix Substract(Matrix m, ComplexDecimal value)
         {

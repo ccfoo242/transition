@@ -447,7 +447,6 @@ namespace Transition.Design
           //  var WiresNodes = new Dictionary<SerializableWire, int>();
 
             var nodes = GetNodes();
-
             var componentsTerminals = new Dictionary<int, List<Tuple<SerializableComponent, byte>>>();
             
             foreach (var kvp in nodes)
@@ -462,38 +461,107 @@ namespace Transition.Design
 
             int QuantityOfNodes = nodes.Count - 1;
 
-            Func<Tuple<SerializableComponent, byte>, List<Tuple<int, ComplexDecimal>>> getImpedancesToNodes;
+            Func<SerializableComponent, byte, int> getComponentTerminalNode =
+                (component, compTerminal) =>
+                {
+                    var tuple = new Tuple<SerializableComponent, byte>(component, compTerminal);
 
+                    foreach (var kvp in componentsTerminals)
+                        foreach (var t in kvp.Value)
+                            if (tuple.Equals(t)) return kvp.Key;
 
+                    return -1;
+                };
+
+            Func<IPassive, byte, decimal, List<Tuple<int, ComplexDecimal>>> getOtherNodesInPassiveComponent =
+                (component, compTerminal, frequency) =>
+                {
+                    var output = new List<Tuple<int, ComplexDecimal>>();
+                    var impedances = component.getImpedance(frequency);
+
+                    byte otherTerminal;
+                    int otherNode;
+
+                    foreach (var impedance in impedances)
+                    {
+                        if ((impedance.Item1 == compTerminal) ||
+                            (impedance.Item2 == compTerminal))
+                        {
+                            otherTerminal = (impedance.Item1 == compTerminal) ? impedance.Item2 : impedance.Item1;
+                            /* some impedances are fixed grounded, cannot be floating, those return 255 as component terminal
+                             that means connected to the node 0, that is always ground */
+                            if (otherTerminal == 255)
+                                otherNode = 0;
+                            else
+                                otherNode = getComponentTerminalNode((SerializableComponent)component, otherTerminal);
+
+                            output.Add(new Tuple<int, ComplexDecimal>(otherNode, impedance.Item3));   
+                        }
+                    }
+
+                    return output;
+                };
+            
+
+            var NodeMatrix = new Common.Matrix(QuantityOfNodes);
+            /* inside this matrix we put admittances 
+             we solve this matrix along with a vector, 
+             as a equation system of currents
+             for getting the voltages at every node
+             admittance is the reciprocal of impedance.
+             both admittance and impedance are complex.
+             */
+
+            var CVMatrix = new Common.Matrix(QuantityOfNodes, 1);
 
             //node 0 is always the ground
-
-            for (int node = 1; node <= QuantityOfNodes; node++)
-            {
-                foreach (var component in componentsTerminals[node])
-                {
-                    if (component.Item1 is IPassive)
-                    {
-                        var passive = (IPassive)component.Item1;
-                    }
-                }
-
-            }
-
-
-
             var freqPoints = getFrequencyPoints();
-            
-            foreach (var FreqPoint in freqPoints)
-            {
+            // foreach (var FreqPoint in freqPoints)
+            //{
+
+            decimal FreqPoint = 1000m;
                 for (int node = 1; node <= QuantityOfNodes; node++)
                 {
+                    foreach (var component in componentsTerminals[node])
+                    {
+                        if (component.Item1 is IPassive)
+                        {
+                            var passive = (IPassive)component.Item1;
+                            /* the impedance is calculated for a certain frequency */
+                            var impedances = getOtherNodesInPassiveComponent(passive, component.Item2, FreqPoint);
 
+                            foreach (var impedance in impedances)
+                            {
+                                NodeMatrix.addAtCoordinate1(node, node, impedance.Item2.Reciprocal);
+                                if (impedance.Item1 != 0) /* impedance is floating */
+                                    NodeMatrix.addAtCoordinate1(node, impedance.Item1, -1 * impedance.Item2.Reciprocal);
+                            }
+                        }
+                        if (component.Item1 is VoltageSource)
+                        {
+                            var source = (VoltageSource)component.Item1;
+                            var sourceAdmittance = source.getSourceImpedance(FreqPoint).Reciprocal;
+
+                            var voltage = source.getSourceVoltage(FreqPoint);
+
+                            bool positiveTerminal = (component.Item2 == 0);
+                            ComplexDecimal voltagePolarity = positiveTerminal ? 1 : -1;
+
+                            byte otherTerminal = positiveTerminal ? source.NegativeTerminal : source.PositiveTerminal;
+                            var otherNode = getComponentTerminalNode(source, otherTerminal);
+
+                            CVMatrix.addAtCoordinate1(node, 0, voltage * sourceAdmittance * voltagePolarity);
+                            NodeMatrix.addAtCoordinate1(node, node, sourceAdmittance);
+                            if (otherNode != 0)
+                                NodeMatrix.addAtCoordinate1(node, otherNode, -1 * sourceAdmittance);
+                            
+                        }
+                    }
                 }
-            }
+            // }
 
-
-
+            var NodeVoltages = NodeMatrix.Solve(CVMatrix);
+            
             /*
             var A = new Common.Matrix(4);
 
@@ -509,9 +577,7 @@ namespace Transition.Design
             B.Data[2, 0] = -19;
             B.Data[3, 0] = -34;
             
-            var X = A.Solve(B);
-            
-             */
+            var X = A.Solve(B);  */
         }
 
 
