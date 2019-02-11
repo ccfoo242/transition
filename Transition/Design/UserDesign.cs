@@ -550,7 +550,7 @@ namespace Transition.Design
                             byte otherTerminal = positiveTerminal ? source.NegativeTerminal : source.PositiveTerminal;
                             var otherNode = getComponentTerminalNode(source, otherTerminal);
 
-                            CVMatrix.addAtCoordinate1(node, 0, voltage * sourceAdmittance * voltagePolarity);
+                            CVMatrix.addAtCoordinate1(node, 1, voltage * sourceAdmittance * voltagePolarity);
                             NodeMatrix.addAtCoordinate1(node, node, sourceAdmittance);
                             if (otherNode != 0)
                                 NodeMatrix.addAtCoordinate1(node, otherNode, -1 * sourceAdmittance);
