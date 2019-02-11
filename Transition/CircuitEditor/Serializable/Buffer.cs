@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.ParametersControls;
+using Transition.Common;
 
 namespace Transition.CircuitEditor.Serializable
 {
-    public class Buffer : SerializableComponent
+    public class Buffer : SerializableComponent, IPassive
     {
         public override string ElementLetter => "B";
         public override string ElementType => "Buffer";
@@ -91,6 +92,12 @@ namespace Transition.CircuitEditor.Serializable
             }
         }
 
-
+        public List<Tuple<byte, byte, ComplexDecimal>> getImpedance(decimal frequency)
+        {
+            /* 255 means the passive load is set to ground */
+            var output = new List<Tuple<byte, byte, ComplexDecimal>>();
+            output.Add(new Tuple<byte, byte, ComplexDecimal>(0, 255, RIn));
+            return output;
+        }
     }
 }

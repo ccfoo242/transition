@@ -18,12 +18,12 @@ namespace Transition.Common
         public decimal Magnitude { get => Modulus(this); }
         public decimal Phase { get => Argument(this); }
 
-        public ComplexDecimal Reciprocal { get => 1 / this; }
-        public ComplexDecimal Conjugate { get => new ComplexDecimal(RealPart, -1 * ImaginaryPart); }
+        public ComplexDecimal Reciprocal { get => One / this; }
+        public ComplexDecimal Conjugate { get => new ComplexDecimal(RealPart, -1m * ImaginaryPart); }
 
         public static readonly ComplexDecimal Zero = new ComplexDecimal(0, 0);
-        public static readonly ComplexDecimal One = new ComplexDecimal(1, 0);
-        public static readonly ComplexDecimal ImaginaryOne = new ComplexDecimal(1, 0);
+        public static readonly ComplexDecimal One = new ComplexDecimal(1m, 0);
+        public static readonly ComplexDecimal ImaginaryOne = new ComplexDecimal(0, 1m);
 
         public ComplexDecimal(decimal real, decimal imag)
         {
@@ -47,7 +47,7 @@ namespace Transition.Common
         public ComplexDecimal(double real)
         {
             RealPart = (decimal)real;
-            ImaginaryPart = 0;
+            ImaginaryPart = 0m;
         }
 
         public ComplexDecimal(int real, int imag)
@@ -67,7 +67,7 @@ namespace Transition.Common
             return new ComplexDecimal(n1.RealPart + n2.RealPart, n1.ImaginaryPart + n2.ImaginaryPart);
         }
 
-        public static ComplexDecimal Subtract(ComplexDecimal n1, ComplexDecimal n2)
+        public static ComplexDecimal Substract(ComplexDecimal n1, ComplexDecimal n2)
         {
             return new ComplexDecimal(n1.RealPart - n2.RealPart, n1.ImaginaryPart - n2.ImaginaryPart);
         }
@@ -140,7 +140,7 @@ namespace Transition.Common
         }
 
         public static ComplexDecimal operator +(ComplexDecimal n1, ComplexDecimal n2) { return Add(n1, n2); }
-        public static ComplexDecimal operator -(ComplexDecimal n1, ComplexDecimal n2) { return Subtract(n1, n2); }
+        public static ComplexDecimal operator -(ComplexDecimal n1, ComplexDecimal n2) { return Substract(n1, n2); }
         public static ComplexDecimal operator *(ComplexDecimal n1, ComplexDecimal n2) { return Product(n1, n2); }
         public static ComplexDecimal operator /(ComplexDecimal n1, ComplexDecimal n2) { return Divide(n1, n2); }
         
@@ -184,8 +184,7 @@ namespace Transition.Common
 
             return new ComplexDecimal(realPart, imagPart);
         }
-
-
+        
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj))
@@ -263,7 +262,7 @@ namespace Transition.Common
         
         public static ComplexDecimal Parse(string input, IFormatProvider formatProvider, string imaginarySymbol)
         {
-            /* this can ONLY parse first real part, second imaginary part 
+            /* this can ONLY parse first real part, and secondly imaginary part 
              the other order is NOT allowed.
              but it is possible to enter only the imaginary part, or only real part. 
              only ONE number each, this method cannot perform a sum 
@@ -277,7 +276,7 @@ namespace Transition.Common
              -5
              .23+.45i
              0.97-0.15i
-             -.78E03-2.02E-03i 
+             -.78000E0003 - 6625.0200678E-0013i 
              */
 
             var numberFormat = NumberFormatInfo.GetInstance(formatProvider);
@@ -341,8 +340,9 @@ namespace Transition.Common
             /* first number has entered,  machine is now
              parsing the decimal part of the
              real portion of the complex number
-             machine now can accept an exponential, or a +-
-             symbol for start to parse the imaginary portion of
+             machine now can accept an exponential symbol E
+            for start parsing the exponent of the real part 
+            , or a +- symbol for start to parse the imaginary portion of
              the complex number */
             states.Add(4, new Dictionary<string, int>()
                 { { numberSymbol, 4 },
@@ -353,11 +353,11 @@ namespace Transition.Common
 
             /* and imaginary unit symbol has entered, 
              * only thing expected here is the end of the string */
-            states.Add(5, new Dictionary<string, int>());
+            states.Add(5, null);
 
             /* and exponential symbol entered, machine is now
              * parsing the exponent of the real portion of the complex,
-               the exponent can have a sign*/
+               the exponent can have a sign */
             states.Add(6, new Dictionary<string, int>()
                 { { positiveSymbol, 7 },
                   { negativeSymbol, 7 },
@@ -450,7 +450,7 @@ namespace Transition.Common
                 (currentState == 5) ||
                 (currentState == 8)))
             /* string finished in a invalid moment */
-            { throw new FormatException(); }
+            { throw new FormatException("Complex number invalid formatted"); }
 
             if ((currentState == 1) ||
                 (currentState == 4) ||
@@ -469,6 +469,16 @@ namespace Transition.Common
         }
 
     }
+
+
+
+
+
+
+
+
+
+
 
 
     public class DecimalEngrConverter : IValueConverter

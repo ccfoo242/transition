@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using Transition.Common;
 using Windows.Foundation;
@@ -32,8 +33,11 @@ namespace Transition.CircuitEditor
 
     public interface IPassive
     {
-        ComplexDecimal getImpedance(decimal frequency); /* not angular frequency */
-       
+        /* some elements can exhibit multiple passive impedances on different terminal pairs
+         for example potentiometer and switch */
+
+        List<Tuple<byte, byte, ComplexDecimal>> getImpedance(decimal frequency); /* not angular frequency */
+
     }
 
 

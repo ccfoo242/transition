@@ -82,5 +82,13 @@ namespace Transition.CircuitEditor.Serializable
             decimal w = 2 * DecimalMath.Pi * frequency;
             return -1 / (w * w * FdnrValue);
         }
+
+        List<Tuple<byte, byte, ComplexDecimal>> IPassive.getImpedance(decimal frequency)
+        {
+            var output = new List<Tuple<byte, byte, ComplexDecimal>>();
+            output.Add(new Tuple<byte, byte, ComplexDecimal>(0, 1, getImpedance(frequency)));
+
+            return output;
+        }
     }
 }

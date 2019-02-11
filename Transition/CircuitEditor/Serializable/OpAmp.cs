@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.ParametersControls;
+using Transition.Common;
 
 namespace Transition.CircuitEditor.Serializable
 {
-    public class OpAmp : SerializableComponent
+    public class OpAmp : SerializableComponent, IPassive
     {
         public override string ElementLetter => "U";
         public override string ElementType => "OpAmp";
@@ -80,6 +81,14 @@ namespace Transition.CircuitEditor.Serializable
                 case "ModelName"     : ModelName = (string)value; break;
                 case "Description"   : Description = (string)value; break;
             }
+        }
+
+        public List<Tuple<byte, byte, ComplexDecimal>> getImpedance(decimal frequency)
+        {
+            var output = new List<Tuple<byte, byte, ComplexDecimal>>();
+            output.Add(new Tuple<byte, byte, ComplexDecimal>(0, 1, RIn));
+
+            return output;
         }
     }
 }

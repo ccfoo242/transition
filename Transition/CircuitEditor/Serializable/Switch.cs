@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.ParametersControls;
+using Transition.Common;
 
 namespace Transition.CircuitEditor.Serializable
 {
-    public class Switch : SerializableComponent
+    public class Switch : SerializableComponent, IPassive
     {
         public override string ElementLetter => "S";
         public override string ElementType => "Switch";
@@ -71,6 +72,23 @@ namespace Transition.CircuitEditor.Serializable
                 case "RClosed": RClosed = (decimal)value; break;
                 case "COpen": COpen = (decimal)value; break;
             }
+        }
+
+        public List<Tuple<byte, byte, ComplexDecimal>> getImpedance(decimal frequency)
+        {
+            var output = new List<Tuple<byte, byte, ComplexDecimal>>();
+
+            var w = 2m * DecimalMath.Pi * frequency;
+            var ZCOpen = 1 / (ComplexDecimal.ImaginaryOne * w * COpen);
+
+            for (byte x = 1; x <= (QuantityOfTerminals - 1); x++)
+            {
+                if (x == State)
+                    output.Add(new Tuple<byte, byte, ComplexDecimal>(0, x, RClosed));
+                else
+                    output.Add(new Tuple<byte, byte, ComplexDecimal>(0, x, ZCOpen));
+            }
+            return output;
         }
     }
 }

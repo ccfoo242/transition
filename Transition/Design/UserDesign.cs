@@ -462,11 +462,28 @@ namespace Transition.Design
 
             int QuantityOfNodes = nodes.Count - 1;
 
+            Func<Tuple<SerializableComponent, byte>, List<Tuple<int, ComplexDecimal>>> getImpedancesToNodes;
+
+
+
             //node 0 is always the ground
+
+            for (int node = 1; node <= QuantityOfNodes; node++)
+            {
+                foreach (var component in componentsTerminals[node])
+                {
+                    if (component.Item1 is IPassive)
+                    {
+                        var passive = (IPassive)component.Item1;
+                    }
+                }
+
+            }
+
+
 
             var freqPoints = getFrequencyPoints();
             
-
             foreach (var FreqPoint in freqPoints)
             {
                 for (int node = 1; node <= QuantityOfNodes; node++)
@@ -475,12 +492,15 @@ namespace Transition.Design
                 }
             }
 
+
+
+            /*
             var A = new Common.Matrix(4);
 
-            A.Data[0, 0] = 6;  A.Data[0, 1] = -2;  A.Data[0, 2] = 2; A.Data[0, 3] = 4;
-            A.Data[1, 0] = 12; A.Data[1, 1] = -8;  A.Data[1, 2] = 6; A.Data[1, 3] = 10;
-            A.Data[2, 0] = 3;  A.Data[2, 1] = -13; A.Data[2, 2] = 9; A.Data[2, 3] = 3;
-            A.Data[3, 0] = -6; A.Data[3, 1] = 4;   A.Data[3, 2] = 1; A.Data[3, 3] = -18;
+            A.Data[0, 0] = +06; A.Data[0, 1] = -02; A.Data[0, 2] = +02; A.Data[0, 3] = +04;
+            A.Data[1, 0] = +12; A.Data[1, 1] = -08; A.Data[1, 2] = +06; A.Data[1, 3] = +10;
+            A.Data[2, 0] = +03; A.Data[2, 1] = -13; A.Data[2, 2] = +09; A.Data[2, 3] = +03;
+            A.Data[3, 0] = -06; A.Data[3, 1] = +04; A.Data[3, 2] = +01; A.Data[3, 3] = -18;
 
             var B = new Common.Matrix(4, 1);
 
@@ -488,9 +508,10 @@ namespace Transition.Design
             B.Data[1, 0] = 26;
             B.Data[2, 0] = -19;
             B.Data[3, 0] = -34;
-
-
+            
             var X = A.Solve(B);
+            
+             */
         }
 
 

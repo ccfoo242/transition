@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.ParametersControls;
+using Transition.Common;
 using Transition.Functions;
 
 namespace Transition.CircuitEditor.Serializable
 {
-    public class TransferFunctionComponent : SerializableComponent
+    public class TransferFunctionComponent : SerializableComponent, IPassive
     {
         public override string ElementLetter => "H";
         public override string ElementType => "Transfer Function";
@@ -160,6 +161,14 @@ namespace Transition.CircuitEditor.Serializable
                 case "FunctionType": FunctionType = (int)value;break;
                 case "StandardFunction": StandardFunction = (string)value;break;
             }
+        }
+
+        public List<Tuple<byte, byte, ComplexDecimal>> getImpedance(decimal frequency)
+        {
+            var output = new List<Tuple<byte, byte, ComplexDecimal>>();
+            output.Add(new Tuple<byte, byte, ComplexDecimal>(0, 1, RIn));
+
+            return output;
         }
     }
 }

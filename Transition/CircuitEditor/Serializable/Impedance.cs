@@ -55,5 +55,13 @@ namespace Transition.CircuitEditor.Serializable
         {
             throw new NotImplementedException();
         }
+
+        List<Tuple<byte, byte, ComplexDecimal>> IPassive.getImpedance(decimal frequency)
+        {
+            var output = new List<Tuple<byte, byte, ComplexDecimal>>();
+            output.Add(new Tuple<byte, byte, ComplexDecimal>(0, 1, getImpedance(frequency)));
+
+            return output;
+        }
     }
 }

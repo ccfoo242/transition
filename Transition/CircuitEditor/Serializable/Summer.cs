@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.ParametersControls;
+using Transition.Common;
 
 namespace Transition.CircuitEditor.Serializable
 {
-    public class Summer : SerializableComponent
+    public class Summer : SerializableComponent, IPassive
     {
         public override string ElementLetter =>"E";
         public override string ElementType => "Summer";
@@ -100,10 +101,18 @@ namespace Transition.CircuitEditor.Serializable
                 case "InAInverterInput": InAInverterInput = (bool)value; break;
                 case "InBInverterInput": InBInverterInput = (bool)value; break;
                 case "InCInverterInput": InCInverterInput = (bool)value; break;
-
             }
         }
 
+        public List<Tuple<byte, byte, ComplexDecimal>> getImpedance(decimal frequency)
+        {
+            /* 255 means the passive load is set to ground */
+           
+            var output = new List<Tuple<byte, byte, ComplexDecimal>>();
+            output.Add(new Tuple<byte, byte, ComplexDecimal>(0, 255, RIn));
+
+            return output;
+        }
     }
 }
 
