@@ -9,7 +9,7 @@ using Transition.Common;
 
 namespace Transition.CircuitEditor.Serializable
 {
-    public class FDNR : SerializableComponent
+    public class FDNR : SerializableComponent, IPassive
     {
         public override string ElementLetter => "D";
         public override string ElementType => "Frequency Dependent Negative Resistor";
@@ -75,6 +75,12 @@ namespace Transition.CircuitEditor.Serializable
                 case "ComponentPrecision": ComponentPrecision = (Precision)value; break;
            
             }
+        }
+
+        public ComplexDecimal getImpedance(decimal frequency)
+        {
+            decimal w = 2 * DecimalMath.Pi * frequency;
+            return -1 / (w * w * FdnrValue);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using MathNet.Numerics.LinearAlgebra;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -445,12 +444,6 @@ namespace Transition.Design
 
         public void Calculate()
         {
-            var IndependentWires = GetAllIndependentWires;
-            int quantityOfNodes = IndependentWires.Count - 1;
-
-        //  var currentMatrix = CreateMatrix.Dense<ComplexDecimal>(quantityOfNodes, quantityOfNodes);
-        //  var currentVector = CreateVector.Dense<ComplexDecimal>(quantityOfNodes);
-
           //  var WiresNodes = new Dictionary<SerializableWire, int>();
 
             var nodes = GetNodes();
@@ -465,11 +458,41 @@ namespace Transition.Design
                     foreach (var tuple in wire.GetBoundedComponents)
                         if (!componentsTerminals[kvp.Key].Contains(tuple))
                             componentsTerminals[kvp.Key].Add(tuple);
-                    
             }
 
+            int QuantityOfNodes = nodes.Count - 1;
+
+            //node 0 is always the ground
+
+            var freqPoints = getFrequencyPoints();
+            
+
+            foreach (var FreqPoint in freqPoints)
+            {
+                for (int node = 1; node <= QuantityOfNodes; node++)
+                {
+
+                }
+            }
+
+            var A = new Common.Matrix(4);
+
+            A.Data[0, 0] = 6;  A.Data[0, 1] = -2;  A.Data[0, 2] = 2; A.Data[0, 3] = 4;
+            A.Data[1, 0] = 12; A.Data[1, 1] = -8;  A.Data[1, 2] = 6; A.Data[1, 3] = 10;
+            A.Data[2, 0] = 3;  A.Data[2, 1] = -13; A.Data[2, 2] = 9; A.Data[2, 3] = 3;
+            A.Data[3, 0] = -6; A.Data[3, 1] = 4;   A.Data[3, 2] = 1; A.Data[3, 3] = -18;
+
+            var B = new Common.Matrix(4, 1);
+
+            B.Data[0, 0] = 16;
+            B.Data[1, 0] = 26;
+            B.Data[2, 0] = -19;
+            B.Data[3, 0] = -34;
+
+
+            var X = A.Solve(B);
         }
-        
+
 
         public Dictionary<int, List<SerializableWire>> GetNodes()
         {

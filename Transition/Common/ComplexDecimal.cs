@@ -258,6 +258,8 @@ namespace Transition.Common
         {
             return Parse(input, CultureInfo.CurrentCulture, imaginaryUnit);
         }
+
+        public Complex ToComplex => new Complex(Convert.ToDouble(RealPart), Convert.ToDouble(ImaginaryPart));
         
         public static ComplexDecimal Parse(string input, IFormatProvider formatProvider, string imaginarySymbol)
         {

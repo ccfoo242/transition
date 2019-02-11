@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Transition.CircuitEditor.ParametersControls;
+using Transition.Common;
 using Transition.Functions;
 
 namespace Transition.CircuitEditor.Serializable
 {
-    public class Transducer : SerializableComponent
+    public class Transducer : SerializableComponent, IPassive
     {
         public override string ElementLetter => "K";
         public override string ElementType => "Transducer";
@@ -141,6 +142,11 @@ namespace Transition.CircuitEditor.Serializable
                 case "RefDistanceZ": RefDistanceZ = (decimal)value; break;
 
             }
+        }
+
+        public ComplexDecimal getImpedance(decimal frequency)
+        {
+            throw new NotImplementedException();
         }
     }
 }
