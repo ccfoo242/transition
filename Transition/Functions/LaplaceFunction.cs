@@ -5,7 +5,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Transition.Functions
+namespace Easycoustics.Transition.Functions
 {
     public class LaplaceFunction : Function
     {

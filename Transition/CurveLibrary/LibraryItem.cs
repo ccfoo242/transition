@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Transition.Functions;
+using Easycoustics.Transition.Functions;
 
-namespace Transition.CurveLibrary
+namespace Easycoustics.Transition.CurveLibrary
 {
     public class LibraryItem : LibraryBase
     {

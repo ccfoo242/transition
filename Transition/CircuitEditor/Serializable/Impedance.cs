@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Transition.CircuitEditor.Components;
-using Transition.CircuitEditor.OnScreenComponents;
-using Transition.CircuitEditor.ParametersControls;
-using Transition.Common;
-using Transition.Functions;
+using Easycoustics.Transition.CircuitEditor.Components;
+using Easycoustics.Transition.CircuitEditor.OnScreenComponents;
+using Easycoustics.Transition.CircuitEditor.ParametersControls;
+using Easycoustics.Transition.Common;
+using Easycoustics.Transition.Functions;
 
-namespace Transition.CircuitEditor.Serializable
+namespace Easycoustics.Transition.CircuitEditor.Serializable
 {
     public class Impedance : SerializableComponent, IPassive
     {

@@ -4,8 +4,8 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Transition.Commands;
-using Transition.CustomControls;
+using Easycoustics.Transition.Commands;
+using Easycoustics.Transition.CustomControls;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Navigation;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
-namespace Transition.CircuitEditor.ParametersControls
+namespace Easycoustics.Transition.CircuitEditor.ParametersControls
 {
     public sealed partial class BufferParametersControl : UserControl
     {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 
-namespace Transition.Functions
+namespace Easycoustics.Transition.Functions
 {
     public abstract class Function
     {

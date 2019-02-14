@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Transition.CircuitEditor;
-using Transition.CircuitEditor.Serializable;
+using Easycoustics.Transition.CircuitEditor;
+using Easycoustics.Transition.CircuitEditor.Serializable;
 
-namespace Transition.Commands
+namespace Easycoustics.Transition.Commands
 {
     public class CommandSetValue : ICircuitCommand
     {

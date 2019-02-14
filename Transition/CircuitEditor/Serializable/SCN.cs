@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Transition.CircuitEditor.ParametersControls;
-using Transition.Common;
+using Easycoustics.Transition.CircuitEditor.ParametersControls;
+using Easycoustics.Transition.Common;
 
-namespace Transition.CircuitEditor.Serializable
+namespace Easycoustics.Transition.CircuitEditor.Serializable
 {
     public class SCN : SerializableComponent
     {

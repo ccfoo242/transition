@@ -4,11 +4,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Transition.CircuitEditor.Components;
-using Transition.Common;
-using static Transition.CustomControls.ComponentValueBox;
+using Easycoustics.Transition.CircuitEditor.Components;
+using Easycoustics.Transition.Common;
+using static Easycoustics.Transition.CustomControls.ComponentValueBox;
 
-namespace Transition.CircuitEditor.Serializable
+namespace Easycoustics.Transition.CircuitEditor.Serializable
 {
     public class Resistor : SerializableComponent, IPassive
     {

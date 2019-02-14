@@ -5,11 +5,11 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Transition.CircuitEditor.OnScreenComponents;
-using Transition.CircuitEditor.Serializable;
-using Transition.Commands;
-using Transition.Common;
-using Transition.Design;
+using Easycoustics.Transition.CircuitEditor.OnScreenComponents;
+using Easycoustics.Transition.CircuitEditor.Serializable;
+using Easycoustics.Transition.Commands;
+using Easycoustics.Transition.Common;
+using Easycoustics.Transition.Design;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -25,11 +25,11 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
-using static Transition.App;
+using static Easycoustics.Transition.App;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
-namespace Transition.CircuitEditor
+namespace Easycoustics.Transition.CircuitEditor
 {
     public sealed partial class CircuitEditor : UserControl
     {

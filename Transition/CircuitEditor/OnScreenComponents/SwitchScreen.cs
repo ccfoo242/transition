@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Transition.CircuitEditor.Serializable;
+using Easycoustics.Transition.CircuitEditor.Serializable;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 
-namespace Transition.CircuitEditor.OnScreenComponents
+namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
 {
     public class SwitchScreen : ScreenComponentBase
     {

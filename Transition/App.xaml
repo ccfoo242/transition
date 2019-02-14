@@ -1,14 +1,14 @@
 ﻿<Application
-    x:Class="Transition.App"
+    x:Class="Easycoustics.Transition.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Transition"
+    xmlns:local="using:Easycoustics.Transition"
     RequestedTheme="Light">
 
     <Application.Resources>
 
-        <local:EngrConverter x:Key="EngrConverterComponentValue" 
-                             AllowNegativeNumber="False"/>
+        <!-- <local:EngrConverter x:Key="EngrConverterComponentValue" 
+                             AllowNegativeNumber="False"/> -->
 
         <DataTemplate x:Key="symbolGround">
             <Canvas Background="Transparent" Width="40" Height="40">
@@ -26,7 +26,6 @@
                           Stroke="Black" 
                           StrokeThickness="4"
                           StrokeLineJoin="Round"/>
-
             </Canvas>
         </DataTemplate>
 

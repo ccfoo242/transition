@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
-namespace Transition.Common
+namespace Easycoustics.Transition.Common
 {
       
         public class BooleanToVisibilityConverter : IValueConverter

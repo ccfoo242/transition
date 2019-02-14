@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Transition.CircuitEditor.OnScreenComponents;
-using Transition.Common;
+using Easycoustics.Transition.CircuitEditor.OnScreenComponents;
+using Easycoustics.Transition.Common;
 using Windows.UI.Xaml.Controls;
 
-namespace Transition.CircuitEditor.Serializable
+namespace Easycoustics.Transition.CircuitEditor.Serializable
 {
     public enum Precision { Arbitrary, p05, p1, p2, p5, p10, p20, p50 }
 

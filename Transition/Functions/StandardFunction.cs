@@ -4,9 +4,9 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using Transition.Common;
+using Easycoustics.Transition.Common;
 
-namespace Transition.Functions
+namespace Easycoustics.Transition.Functions
 {
     public class StandardTransferFunction : Function
     {

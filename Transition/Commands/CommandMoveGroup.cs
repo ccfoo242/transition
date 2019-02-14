@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Transition.CircuitEditor;
-using Transition.Common;
+using Easycoustics.Transition.CircuitEditor;
+using Easycoustics.Transition.Common;
 
-namespace Transition.Commands
+namespace Easycoustics.Transition.Commands
 {
     public class CommandMoveGroup : ICircuitCommand
     {

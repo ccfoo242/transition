@@ -6,10 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
 
-namespace Transition
+namespace Easycoustics.Transition
 {
-
-    [Windows.Foundation.Metadata.CreateFromString(MethodName = "Transition.EngrNumber.Parse")]
+    [Windows.Foundation.Metadata.CreateFromString(MethodName = "Easycoustics.Transition.EngrNumber.Parse")]
     public struct EngrNumber : IComparable, IEquatable<EngrNumber>, IComparable<EngrNumber>
     {
         /* this struct stores numbers in engineering notation */

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Transition.CurveLibrary
+namespace Easycoustics.Transition.CurveLibrary
 {
     public class LibraryFolder : LibraryBase
     {

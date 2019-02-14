@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Transition.CircuitEditor.Serializable;
+using Easycoustics.Transition.CircuitEditor.Serializable;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Transition.CircuitEditor.OnScreenComponents
+namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
 {
     public class GroundScreen : ScreenComponentBase
     {

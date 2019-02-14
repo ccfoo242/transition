@@ -4,8 +4,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Transition.Common;
-using Transition.Design;
+using Easycoustics.Transition.Common;
+using Easycoustics.Transition.Design;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-namespace Transition
+namespace Easycoustics.Transition
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.

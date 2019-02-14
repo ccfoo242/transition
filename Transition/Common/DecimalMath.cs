@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Transition.Common
+namespace Easycoustics.Transition.Common
 {
     /// <summary>
     /// Analogy of Syatem.Math class for decimal types 

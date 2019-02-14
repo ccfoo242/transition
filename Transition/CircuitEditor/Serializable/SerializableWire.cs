@@ -5,10 +5,10 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using Transition.CircuitEditor.OnScreenComponents;
-using Transition.Common;
+using Easycoustics.Transition.CircuitEditor.OnScreenComponents;
+using Easycoustics.Transition.Common;
 
-namespace Transition.CircuitEditor.Serializable
+namespace Easycoustics.Transition.CircuitEditor.Serializable
 {
     public class SerializableWire : SerializableElement
     {

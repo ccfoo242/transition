@@ -17,19 +17,24 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 
-namespace Transition
+namespace Easycoustics.Transition
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
     sealed partial class App : Application
     {
+        private static string SyncFusionLicense => "Njg5MjhAMzEzNjJlMzQyZTMwY0NJOTF3aEdGRDAybDAwdkt6Y2hzUDdlL0JFSjFGTG5uUkd4T0ZxVFRITT0=";
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
         {
+            /* init SyncFusion*/
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(SyncFusionLicense);
+
             this.InitializeComponent();
             this.Suspending += OnSuspending;
         }

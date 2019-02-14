@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Easycoustics.Transition.Functions;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Easycoustics.Transition.CircuitEditor.Serializable;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -17,25 +17,15 @@ using Windows.UI.Xaml.Navigation;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
-namespace Easycoustics.Transition.CircuitEditor.Components
+namespace Easycoustics.Transition.CustomControls
 {
-    public sealed partial class GroundParameters : UserControl
+    public sealed partial class FunctionVisor : UserControl
     {
-        private Ground SerializableGround { get; }
+        public ObservableCollection<Function> Functions { get; }
 
-        public GroundParameters()
+        public FunctionVisor()
         {
             this.InitializeComponent();
         }
-
-        public GroundParameters(Ground g)
-        {
-            this.InitializeComponent();
-
-            SerializableGround = g;
-            DataContext = g;
-        }
-        
-        
     }
 }

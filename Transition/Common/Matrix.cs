@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Transition.Common
+namespace Easycoustics.Transition.Common
 {
     public class Matrix : ICloneable, IEquatable<Matrix>
     {

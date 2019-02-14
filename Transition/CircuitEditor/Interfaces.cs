@@ -2,12 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Transition.Common;
+using Easycoustics.Transition.Common;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Shapes;
 
-namespace Transition.CircuitEditor
+namespace Easycoustics.Transition.CircuitEditor
 {
     public interface ICircuitCommand
     {

@@ -4,8 +4,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Transition.CircuitEditor.Serializable;
-using Transition.Common;
+using Easycoustics.Transition.CircuitEditor.Serializable;
+using Easycoustics.Transition.Common;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 
-namespace Transition.CircuitEditor.OnScreenComponents
+namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
 {
     /* i had to use Grid class because it has a border
      as for Border class, it is sealed...*/

@@ -8,8 +8,9 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
 
-namespace Transition.Common
+namespace Easycoustics.Transition.Common
 {
+    [Windows.Foundation.Metadata.CreateFromString(MethodName = "Easycoustics.Transition.Common.ComplexDecimal.Parse")]
     public struct ComplexDecimal : IEquatable<ComplexDecimal>, IFormattable
     {
         public decimal RealPart { get; }

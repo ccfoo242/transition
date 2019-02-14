@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Transition.Common
+namespace Easycoustics.Transition.Common
 { /// <summary>
   /// Implementation of <see cref="INotifyPropertyChanged"/> to simplify models.
   /// </summary>

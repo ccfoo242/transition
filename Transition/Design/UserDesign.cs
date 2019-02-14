@@ -5,17 +5,17 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Transition.CircuitEditor;
-using Transition.CircuitEditor.OnScreenComponents;
-using Transition.CircuitEditor.Serializable;
-using Transition.Common;
+using Easycoustics.Transition.CircuitEditor;
+using Easycoustics.Transition.CircuitEditor.OnScreenComponents;
+using Easycoustics.Transition.CircuitEditor.Serializable;
+using Easycoustics.Transition.Common;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 
-namespace Transition.Design
+namespace Easycoustics.Transition.Design
 {
     public class UserDesign
     {
@@ -532,9 +532,16 @@ namespace Transition.Design
 
                             foreach (var impedance in impedances)
                             {
-                                NodeMatrix.addAtCoordinate1(node, node, impedance.Item2.Reciprocal);
-                                if (impedance.Item1 != 0) /* impedance is floating */
-                                    NodeMatrix.addAtCoordinate1(node, impedance.Item1, -1 * impedance.Item2.Reciprocal);
+                                if (impedance.Item1 != -1)
+                                {
+                                    NodeMatrix.addAtCoordinate1(node, node, impedance.Item2.Reciprocal);
+                                    if (impedance.Item1 != 0) /* impedance is floating */
+                                        NodeMatrix.addAtCoordinate1(node, impedance.Item1, -1 * impedance.Item2.Reciprocal);
+                                }
+                                else
+                                {
+                                    /* if we reach here, the impedance is disconnected at the other end!! */
+                                }
                             }
                         }
                         if (component.Item1 is VoltageSource)
@@ -550,11 +557,14 @@ namespace Transition.Design
                             byte otherTerminal = positiveTerminal ? source.NegativeTerminal : source.PositiveTerminal;
                             var otherNode = getComponentTerminalNode(source, otherTerminal);
 
-                            CVMatrix.addAtCoordinate1(node, 1, voltage * sourceAdmittance * voltagePolarity);
-                            NodeMatrix.addAtCoordinate1(node, node, sourceAdmittance);
-                            if (otherNode != 0)
-                                NodeMatrix.addAtCoordinate1(node, otherNode, -1 * sourceAdmittance);
-                            
+                            if (otherNode != -1)
+                            {
+                                CVMatrix.addAtCoordinate1(node, 1, voltage * sourceAdmittance * voltagePolarity);
+                                NodeMatrix.addAtCoordinate1(node, node, sourceAdmittance);
+
+                                if (otherNode != 0)
+                                    NodeMatrix.addAtCoordinate1(node, otherNode, -1 * sourceAdmittance);
+                            }
                         }
                     }
                 }
@@ -562,22 +572,6 @@ namespace Transition.Design
 
             var NodeVoltages = NodeMatrix.Solve(CVMatrix);
             
-            /*
-            var A = new Common.Matrix(4);
-
-            A.Data[0, 0] = +06; A.Data[0, 1] = -02; A.Data[0, 2] = +02; A.Data[0, 3] = +04;
-            A.Data[1, 0] = +12; A.Data[1, 1] = -08; A.Data[1, 2] = +06; A.Data[1, 3] = +10;
-            A.Data[2, 0] = +03; A.Data[2, 1] = -13; A.Data[2, 2] = +09; A.Data[2, 3] = +03;
-            A.Data[3, 0] = -06; A.Data[3, 1] = +04; A.Data[3, 2] = +01; A.Data[3, 3] = -18;
-
-            var B = new Common.Matrix(4, 1);
-
-            B.Data[0, 0] = 16;
-            B.Data[1, 0] = 26;
-            B.Data[2, 0] = -19;
-            B.Data[3, 0] = -34;
-            
-            var X = A.Solve(B);  */
         }
 
 
