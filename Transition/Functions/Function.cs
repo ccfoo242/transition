@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Easycoustics.Transition.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -11,18 +12,18 @@ namespace Easycoustics.Transition.Functions
 {
     public abstract class Function
     {
-        public abstract Complex Calculate(EngrNumber point);
+        public abstract ComplexDecimal Calculate(decimal point);
         public Brush StrokeColor;
         public double StrokeThickness;
         public DoubleCollection strokeArray;
 
-        public abstract Dictionary<EngrNumber, Complex> Points { get; } 
+        public abstract Dictionary<decimal, ComplexDecimal> Points { get; } 
         
         public string DependentVariableUnit { get; set; }
         public string IndependentVariableUnit { get; set; }
 
-        public static EngrNumber MinimumFrequency => CircuitEditor.CircuitEditor.StaticCurrentDesign.MinimumFrequency;
-        public static EngrNumber MaximumFrequency => CircuitEditor.CircuitEditor.StaticCurrentDesign.MaximumFrequency;
+        public static decimal MinimumFrequency => CircuitEditor.CircuitEditor.StaticCurrentDesign.MinimumFrequency;
+        public static decimal MaximumFrequency => CircuitEditor.CircuitEditor.StaticCurrentDesign.MaximumFrequency;
 
         public static int NumberOfFrequencyPoints => CircuitEditor.CircuitEditor.StaticCurrentDesign.NumberOfFrequencyPoints;
 
@@ -64,8 +65,8 @@ namespace Easycoustics.Transition.Functions
 
     public class ConstantValueFunction : Function
     {
-        private Complex fixedValue;
-        public Complex FixedValue
+        private ComplexDecimal fixedValue;
+        public ComplexDecimal FixedValue
         {
             get => fixedValue;
             set
@@ -75,9 +76,9 @@ namespace Easycoustics.Transition.Functions
             }
         }
 
-        public override Dictionary<EngrNumber, Complex> Points { get
+        public override Dictionary<decimal, ComplexDecimal> Points { get
             {
-                var output = new Dictionary<EngrNumber, Complex>();
+                var output = new Dictionary<decimal, ComplexDecimal>();
 
                 output.Add(MinimumFrequency, FixedValue);
                 output.Add(MaximumFrequency, FixedValue);
@@ -90,7 +91,7 @@ namespace Easycoustics.Transition.Functions
             FixedValue = fixedValue;
         }
 
-        public override Complex Calculate(EngrNumber point)
+        public override ComplexDecimal Calculate(decimal point)
         {
             return FixedValue;
         }
@@ -104,9 +105,9 @@ namespace Easycoustics.Transition.Functions
 
     public class SampledFunction : Function
     {
-        public Dictionary<EngrNumber, Complex> Data { get; } = new Dictionary<EngrNumber, Complex>();
+        public Dictionary<decimal, ComplexDecimal> Data { get; } = new Dictionary<decimal, ComplexDecimal>();
 
-        public override Dictionary<EngrNumber, Complex> Points => Data;
+        public override Dictionary<decimal, ComplexDecimal> Points => Data;
 
         public InterpolationModes InterpolationMode;
 
@@ -115,7 +116,7 @@ namespace Easycoustics.Transition.Functions
             InterpolationMode = InterpolationModes.Linear;
         }
 
-        public override Complex Calculate(EngrNumber point)
+        public override ComplexDecimal Calculate(decimal point)
         {
             if (pointExistsInDomain(point))
                 return Data[point]; 
@@ -124,7 +125,7 @@ namespace Easycoustics.Transition.Functions
             
         }
 
-        public bool pointExistsInDomain(EngrNumber point)
+        public bool pointExistsInDomain(decimal point)
         {
             foreach (var pData in Data.Keys)
                 if (pData == point) return true;
@@ -132,12 +133,12 @@ namespace Easycoustics.Transition.Functions
             return false;
         }
 
-        public Complex Interpolate(EngrNumber point)
+        public ComplexDecimal Interpolate(decimal point)
         {
             return Interpolate(point, InterpolationMode);
         }
 
-        public Complex Interpolate(EngrNumber point, InterpolationModes interpolationMode)
+        public ComplexDecimal Interpolate(decimal point, InterpolationModes interpolationMode)
         {
             if (interpolationMode == InterpolationModes.NearestNeighbor)
                 return InterpolateNearestNeighbor(point);
@@ -151,49 +152,49 @@ namespace Easycoustics.Transition.Functions
                 return InterpolateCubic(point);
         }
 
-        public EngrNumber GetNextAbscissa(EngrNumber point)
+        public decimal GetNextAbscissa(decimal point)
         {
-            var current = EngrNumber.MaxValue;
+            var current = decimal.MaxValue;
 
             foreach (var p in Data.Keys)
                 if ((p > point) && (p < current))
                     current = p;
 
-            if (current == EngrNumber.MaxValue)
+            if (current == decimal.MaxValue)
                 throw new ArgumentException();
 
             return current;
         }
 
-        public EngrNumber GetPreviuosAbscissa(EngrNumber point)
+        public decimal GetPreviuosAbscissa(decimal point)
         {
-            var current = EngrNumber.MinValue;
+            var current = decimal.MinValue;
 
-            foreach (double p in Data.Keys)
+            foreach (var p in Data.Keys)
                 if ((p < point) && (p > current))
                     current = p;
 
-            if (current == EngrNumber.MinValue)
+            if (current == decimal.MinValue)
                 throw new ArgumentException(); 
 
             return current;
         }
         
-        public bool isThereNextAbscissa(EngrNumber point)
+        public bool isThereNextAbscissa(decimal point)
         {
-            try { EngrNumber x = GetNextAbscissa(point); }
+            try { var x = GetNextAbscissa(point); }
             catch { return false; }
             return true;
         }
 
-        public bool isTherePreviousAbscissa(EngrNumber point)
+        public bool isTherePreviousAbscissa(decimal point)
         {
-            try { EngrNumber x = GetPreviuosAbscissa(point); }
+            try { var x = GetPreviuosAbscissa(point); }
             catch { return false; }
             return true;
         }
 
-        public bool isPointOutsideRange(EngrNumber point)
+        public bool isPointOutsideRange(decimal point)
         {
             if (Data.Count == 0) return true;
             if (!isThereNextAbscissa(point)) return true;
@@ -202,7 +203,7 @@ namespace Easycoustics.Transition.Functions
             return false;
         }
 
-        public Complex getValueOutsideRange(EngrNumber point)
+        public ComplexDecimal getValueOutsideRange(decimal point)
         {
             if (Data.Count == 0) throw new InvalidOperationException();
             
@@ -215,14 +216,14 @@ namespace Easycoustics.Transition.Functions
                 return Data[GetPreviuosAbscissa(point)];
         }
 
-        private Complex InterpolateNearestNeighbor(EngrNumber point)
+        private ComplexDecimal InterpolateNearestNeighbor(decimal point)
         {
             if (Data.Count < 1) throw new InvalidOperationException();
 
             if (isPointOutsideRange(point)) return getValueOutsideRange(point);
 
-            EngrNumber distanceToNext = GetNextAbscissa(point) - point;
-            EngrNumber distanceToPrevious = point - GetPreviuosAbscissa(point);
+            var distanceToNext = GetNextAbscissa(point) - point;
+            var distanceToPrevious = point - GetPreviuosAbscissa(point);
 
             if (distanceToNext < distanceToPrevious)
                 return Data[GetNextAbscissa(point)];
@@ -230,32 +231,32 @@ namespace Easycoustics.Transition.Functions
                 return Data[GetPreviuosAbscissa(point)];
         }
 
-        private Complex InterpolateLinear(EngrNumber point)
+        private ComplexDecimal InterpolateLinear(decimal point)
         {
             if (Data.Count < 2) throw new InvalidOperationException();
 
             if (isPointOutsideRange(point)) return getValueOutsideRange(point);
 
-            EngrNumber x1 = GetPreviuosAbscissa(point);
-            EngrNumber x2 = GetNextAbscissa(point);
-            EngrNumber x = point;
-            Complex y1 = Data[x1];
-            Complex y2 = Data[x2];
+            var x1 = GetPreviuosAbscissa(point);
+            var x2 = GetNextAbscissa(point);
+            var x = point;
+            var y1 = Data[x1];
+            var y2 = Data[x2];
 
             return y1 + ((x - x1) * (y2 - y1) / (x2 - x1));
         }
 
-        private Complex InterpolateQuadratic(EngrNumber point)
+        private ComplexDecimal InterpolateQuadratic(decimal point)
         {
             return 0;
         }
 
-        private Complex InterpolateCubic(EngrNumber point)
+        private ComplexDecimal InterpolateCubic(decimal point)
         {
             return 0;
         }
 
-        public void addSample(EngrNumber abscissa, Complex value)
+        public void addSample(decimal abscissa, ComplexDecimal value)
         {
             if (Data.Keys.Contains(abscissa))
                 Data[abscissa] = value;
@@ -265,7 +266,7 @@ namespace Easycoustics.Transition.Functions
             RaiseFunctionChanged();
         }
 
-        public bool removeSample(EngrNumber abscissa)
+        public bool removeSample(decimal abscissa)
         {
             if (Data.Keys.Contains(abscissa))
             {

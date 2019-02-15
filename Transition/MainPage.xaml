@@ -14,41 +14,41 @@
     <Page.Resources>
        
     </Page.Resources>
-    
-    <Page.TopAppBar>
-        <AppBar IsOpen="True" CanDrag="False" IsEnabled="True" IsSticky="True">
-            <controls:Menu HorizontalAlignment="Left"
-                           Orientation="Horizontal">
-             
-                    <controls:MenuItem Name="FileMenu" controls:Menu.InputGestureText="Alt+F" Header="^File">
-                        <MenuFlyoutSubItem Text="New" Margin="0,8,0,0">
-                            <MenuFlyoutItem controls:Menu.InputGestureText="Ctrl+Shift+N" Text="Project" />
-                            <MenuFlyoutItem controls:Menu.InputGestureText="Ctrl+N" Text="File" />
-                        </MenuFlyoutSubItem>
-                        <MenuFlyoutItem controls:Menu.InputGestureText="Ctrl+O" Text="Open" />
-                    <MenuFlyoutItem controls:Menu.InputGestureText="Ctrl+S" Icon="Save" Text="Save"/>
 
-                    <MenuFlyoutItem controls:Menu.InputGestureText="Ctrl+Shift+S" Icon="SaveLocal" Text="Save as" />
-                        <MenuFlyoutSeparator />
-                    <MenuFlyoutItem Text="Page Setup"/>
-
-                    <MenuFlyoutItem controls:Menu.InputGestureText="Ctrl+P" Text="Print"/>
-                        <MenuFlyoutSeparator />
-                        <MenuFlyoutItem controls:Menu.InputGestureText="Ctrl+Shift+E" Text="Exit" Margin="0,0,0,8" />
-                    </controls:MenuItem>
-
-                    <controls:MenuItem controls:Menu.InputGestureText="Alt+E" Header="^Edit">
-                        <MenuFlyoutItem controls:Menu.InputGestureText="Ctrl+X" CommandParameter="Cut" Text="Cut" Icon="Cut" />
-                        <MenuFlyoutItem controls:Menu.InputGestureText="Ctrl+C" Text="Copy" Icon="Copy" />
-                        <MenuFlyoutItem controls:Menu.InputGestureText="Ctrl+V" Text="Paste" Icon="Paste" />
-                    </controls:MenuItem>
-
-            </controls:Menu>
-        </AppBar>
-    </Page.TopAppBar>
-    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <layout:SfDockingManager x:Name="dockingManager" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <controls:Menu HorizontalAlignment="Left"
+                           Orientation="Horizontal" Grid.Row="0">
+
+            <controls:MenuItem Name="FileMenu" controls:Menu.InputGestureText="Alt+F" Header="^File">
+                <MenuFlyoutSubItem Text="New" Margin="0,8,0,0">
+                    <MenuFlyoutItem controls:Menu.InputGestureText="Ctrl+Shift+N" Text="Project" />
+                    <MenuFlyoutItem controls:Menu.InputGestureText="Ctrl+N" Text="File" />
+                </MenuFlyoutSubItem>
+                <MenuFlyoutItem controls:Menu.InputGestureText="Ctrl+O" Text="Open" />
+                <MenuFlyoutItem controls:Menu.InputGestureText="Ctrl+S" Icon="Save" Text="Save"/>
+
+                <MenuFlyoutItem controls:Menu.InputGestureText="Ctrl+Shift+S" Icon="SaveLocal" Text="Save as" />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem Text="Page Setup"/>
+
+                <MenuFlyoutItem controls:Menu.InputGestureText="Ctrl+P" Text="Print"/>
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem controls:Menu.InputGestureText="Ctrl+Shift+E" Text="Exit" Margin="0,0,0,8" />
+            </controls:MenuItem>
+
+            <controls:MenuItem controls:Menu.InputGestureText="Alt+E" Header="^Edit">
+                <MenuFlyoutItem controls:Menu.InputGestureText="Ctrl+X" CommandParameter="Cut" Text="Cut" Icon="Cut" />
+                <MenuFlyoutItem controls:Menu.InputGestureText="Ctrl+C" Text="Copy" Icon="Copy" />
+                <MenuFlyoutItem controls:Menu.InputGestureText="Ctrl+V" Text="Paste" Icon="Paste" />
+            </controls:MenuItem>
+        </controls:Menu>
+
+        <layout:SfDockingManager x:Name="dockingManager"  Grid.Row="1">
             <ContentControl x:Name="voltageGraph" 
                             layout:SfDockingManager.Header="Voltage Graph"
                             layout:SfDockingManager.DockState="Document"/>
@@ -56,7 +56,7 @@
             <ContentControl x:Name="preferences" 
                             layout:SfDockingManager.Header="Design Preferences"
                             layout:SfDockingManager.DockState="Document"/>
-            
+
             <ContentControl x:Name="circuit" 
                             layout:SfDockingManager.Header="Circuit"
                             layout:SfDockingManager.DockState="Document">
@@ -68,13 +68,6 @@
 
             </ContentControl>
         </layout:SfDockingManager>
-         
-           
-     
+
     </Grid>
-    <Page.BottomAppBar>
-        <AppBar>
-            <AppBarButton Content="putitooo"/>
-        </AppBar>
-    </Page.BottomAppBar>
 </Page>

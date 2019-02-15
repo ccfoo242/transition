@@ -23,6 +23,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Easycoustics.Transition.Common;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -98,9 +99,9 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 LineSmoothness = 0
             };
          
-            foreach (KeyValuePair<EngrNumber, Complex> point in SerializablePotentiometer.TaperFunction.Data)
-                  l.Values.Add(new ObservablePoint(point.Key.ToDouble,
-                       point.Value.Magnitude));
+            foreach (KeyValuePair<decimal, ComplexDecimal> point in SerializablePotentiometer.TaperFunction.Data)
+                  l.Values.Add(new ObservablePoint(Convert.ToDouble(point.Key),
+                       Convert.ToDouble(point.Value.Magnitude)));
 
             seriesCollection.Add(l);
              

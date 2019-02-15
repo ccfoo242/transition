@@ -40,6 +40,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
         }
 
+        public bool OutputVoltageAcross { get; set; }
+        public bool OutputCurrentThrough { get; set; }
+        
         private decimal ls;
         public decimal Ls
         {
@@ -168,6 +171,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
         }
 
+      
         public override void SetProperty(string property, object value)
         {
             base.SetProperty(property, value);

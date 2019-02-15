@@ -12,7 +12,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
     {
         public override string ElementLetter =>"E";
         public override string ElementType => "Summer";
-
+        
         private byte quantityOfTerminals;
         public override byte QuantityOfTerminals
         {

@@ -1,25 +1,22 @@
 ﻿<UserControl
-    x:Class="Easycoustics.Transition.CircuitEditor.Components.GroundParameters"
+    x:Class="Easycoustics.Transition.CircuitEditor.ParametersControls.VoltageOutputNodeParametersControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Easycoustics.Transition.CircuitEditor.Components"
+    xmlns:local="using:Easycoustics.Transition.CircuitEditor.ParametersControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
-    
- 
 
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
         <StackPanel Orientation="Horizontal">
             <TextBlock Margin="4" Text="Component Name: "/>
-            <TextBox x:Name="txtElementName" Margin="4" 
-                     GotFocus="ElementNameFocus" 
+            <TextBox Margin="4" GotFocus="ElementNameFocus" x:Name="txtElementName" 
                      TextChanged="ElementNameChanged"/>
         </StackPanel>
-        <TextBlock FontStyle="Italic" Text="Ground component has no parameters"
+        <TextBlock FontStyle="Italic"
+                   Text="Voltage curve calculated for this electric node is ground referenced."
                    Margin="4"/>
     </StackPanel>
-
 </UserControl>

@@ -14,6 +14,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public override string ElementLetter => "K";
         public override string ElementType => "Transducer";
 
+        public bool OutputVoltageAcross { get; set; }
+        public bool OutputCurrentThrough { get; set; }
+
         private string description;
         public string Description
         {

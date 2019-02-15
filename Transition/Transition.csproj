@@ -7,7 +7,7 @@
     <ProjectGuid>{589E779D-09D9-4AF5-B7BF-A05EC429098A}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transition</RootNamespace>
+    <RootNamespace>Easycoustics.Transition</RootNamespace>
     <AssemblyName>Transition</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
@@ -116,6 +116,7 @@
     <Compile Include="CircuitEditor\OnScreenComponents\TransducerScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\TransferFunctionScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\TransformerScreen.cs" />
+    <Compile Include="CircuitEditor\OnScreenComponents\VoltageOutputNodeScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\VoltageSourceScreen.cs" />
     <Compile Include="CircuitEditor\OnScreenComponents\WireScreen.cs" />
     <Compile Include="CircuitEditor\ParametersControls\BufferParametersControl.xaml.cs">
@@ -163,6 +164,9 @@
     <Compile Include="CircuitEditor\ParametersControls\TransformerParametersControl.xaml.cs">
       <DependentUpon>TransformerParametersControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CircuitEditor\ParametersControls\VoltageOutputNodeParametersControl.xaml.cs">
+      <DependentUpon>VoltageOutputNodeParametersControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CircuitEditor\ParametersControls\VoltageSourceParametersControl.xaml.cs">
       <DependentUpon>VoltageSourceParametersControl.xaml</DependentUpon>
     </Compile>
@@ -183,6 +187,7 @@
     <Compile Include="CircuitEditor\Serializable\Transducer.cs" />
     <Compile Include="CircuitEditor\Serializable\TransferFunctionComponent.cs" />
     <Compile Include="CircuitEditor\Serializable\Transformer.cs" />
+    <Compile Include="CircuitEditor\Serializable\VoltageOutputNode.cs" />
     <Compile Include="CircuitEditor\Serializable\VoltageSource.cs" />
     <Compile Include="CircuitEditor\Serializable\SerializableWire.cs" />
     <Compile Include="Commands\CommandAddComponent.cs" />
@@ -338,6 +343,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CircuitEditor\ParametersControls\TransformerParametersControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CircuitEditor\ParametersControls\VoltageOutputNodeParametersControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

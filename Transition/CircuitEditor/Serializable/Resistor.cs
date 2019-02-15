@@ -15,6 +15,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public override string ElementLetter => "R";
         public override string ElementType => "Resistor";
 
+        public bool OutputVoltageAcross { get; set; }
+        public bool OutputCurrentThrough { get; set; }
+
         private decimal resistorValue;
         public decimal ResistorValue
         {

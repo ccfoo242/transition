@@ -21,6 +21,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Easycoustics.Transition.Common;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -172,8 +173,8 @@ namespace Easycoustics.Transition.CustomControls
 
                         foreach (var pair in function.Points)
                         {
-                            sMag.Values.Add(new ObservablePoint(pair.Key.ToDouble, pair.Value.Magnitude));
-                            sPhase.Values.Add(new ObservablePoint(pair.Key.ToDouble, pair.Value.Phase * 180 / Math.PI));
+                            sMag.Values.Add(new ObservablePoint(Convert.ToDouble(pair.Key), Convert.ToDouble(pair.Value.Magnitude)));
+                            sPhase.Values.Add(new ObservablePoint(Convert.ToDouble(pair.Key), Convert.ToDouble(pair.Value.Phase * 180 / DecimalMath.Pi)));
                         }
                         
                     }
@@ -229,10 +230,10 @@ namespace Easycoustics.Transition.CustomControls
 
         private void FunctionChanged(Function func)
         {
-            foreach (KeyValuePair<EngrNumber, Complex> point in func.Points)
+            foreach (KeyValuePair<decimal, ComplexDecimal> point in func.Points)
             {
-                alterOrAddPoint(point.Key.ToDouble, point.Value.Magnitude, seriesMag[func]);
-                alterOrAddPoint(point.Key.ToDouble, point.Value.Phase * 180 / Math.PI, seriesPhase[func]);
+                alterOrAddPoint(Convert.ToDouble(point.Key), Convert.ToDouble(point.Value.Magnitude), seriesMag[func]);
+                alterOrAddPoint(Convert.ToDouble(point.Key), Convert.ToDouble(point.Value.Phase * 180 / DecimalMath.Pi), seriesPhase[func]);
             }
 
             bool exists;
@@ -242,7 +243,7 @@ namespace Easycoustics.Transition.CustomControls
                 exists = false;
                 foreach (var kvp in func.Points)
                 {
-                    if (kvp.Key.ToDouble == point.X)
+                    if (Convert.ToDouble(kvp.Key) == point.X)
                         exists = true;
                 }
                 if (!exists)

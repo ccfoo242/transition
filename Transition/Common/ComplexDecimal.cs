@@ -63,6 +63,16 @@ namespace Easycoustics.Transition.Common
             ImaginaryPart = 0m;
         }
 
+        public static ComplexDecimal GetReciprocal(ComplexDecimal input)
+        {
+            return One / input;
+        }
+
+        public static ComplexDecimal Negate(ComplexDecimal input)
+        {
+            return -1 * input;
+        }
+
         public static ComplexDecimal Add(ComplexDecimal n1, ComplexDecimal n2)
         {
             return new ComplexDecimal(n1.RealPart + n2.RealPart, n1.ImaginaryPart + n2.ImaginaryPart);

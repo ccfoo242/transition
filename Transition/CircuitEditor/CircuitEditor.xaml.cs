@@ -716,6 +716,7 @@ namespace Easycoustics.Transition.CircuitEditor
                 case "summer":           return new Summer();
                 case "buffer":           return new Serializable.Buffer();
                 case "transducer":       return new Transducer();
+                case "voltagenode":      return new VoltageOutputNode();
             }
 
             throw new NotSupportedException();

@@ -83,8 +83,6 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
 
                 leftV = 90;
                 topV = 40;
-
-
             }
             else if (ActualRotation == 90)
             {

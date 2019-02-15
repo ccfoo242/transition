@@ -29,6 +29,13 @@
             </Canvas>
         </DataTemplate>
 
+        <DataTemplate x:Key="symbolVoltageNode">
+            <Canvas Background="Transparent" Width="40" Height="40">
+                <Rectangle Width="10" Height="10" Fill="Black"
+                           Canvas.Left="15" Canvas.Top="15" />
+            </Canvas>
+        </DataTemplate>
+        
         <DataTemplate x:Key="symbolResistor">
             <Canvas Background="Transparent" Width="80" Height="40">
                 <Polyline Points="00,20 12,20 16,10 24,30 32,10 40,30 48,10 56,30 64,10 68,20 80,20"

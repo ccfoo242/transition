@@ -14,6 +14,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public override string ElementLetter => "D";
         public override string ElementType => "Frequency Dependent Negative Resistor";
 
+        public bool OutputVoltageAcross { get; set; }
+        public bool OutputCurrentThrough { get; set; }
+
         private decimal fdnrValue;
         public decimal FdnrValue
         {

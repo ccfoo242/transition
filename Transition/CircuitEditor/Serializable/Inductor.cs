@@ -14,6 +14,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public override string ElementLetter => "L";
         public override string ElementType => "Inductor";
 
+        public bool OutputVoltageAcross { get; set; }
+        public bool OutputCurrentThrough { get; set; }
+
         private decimal inductorValue;
         public decimal InductorValue
         {

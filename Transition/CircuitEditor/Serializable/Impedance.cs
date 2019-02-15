@@ -16,6 +16,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public override string ElementLetter => "Z";
         public override string ElementType => "Impedance";
 
+        public bool OutputVoltageAcross { get; set; }
+        public bool OutputCurrentThrough { get; set; }
+
         public override byte QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
 
         private string description;

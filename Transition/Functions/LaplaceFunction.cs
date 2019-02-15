@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Easycoustics.Transition.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -11,15 +12,15 @@ namespace Easycoustics.Transition.Functions
     {
         public LaplaceExpression Expression { get; set; }
 
-        public override Dictionary<EngrNumber, Complex> Points => throw new NotImplementedException();
+        public override Dictionary<decimal, ComplexDecimal> Points => throw new NotImplementedException();
 
-        public override Complex Calculate(EngrNumber f)
+        public override ComplexDecimal Calculate(decimal f)
         {
             /* s = jw */
-            return Expression.Evaluate(2 * Math.PI * f * Complex.ImaginaryOne);
+            return Expression.Evaluate(2 * DecimalMath.Pi * f * ComplexDecimal.ImaginaryOne);
         }
 
-        public Complex Calculate(Complex point)
+        public ComplexDecimal Calculate(ComplexDecimal point)
         {
             return Expression.Evaluate(point);
         }
@@ -28,14 +29,14 @@ namespace Easycoustics.Transition.Functions
 
     public abstract class LaplaceExpression
     {
-        public abstract Complex Evaluate(Complex point);
+        public abstract ComplexDecimal Evaluate(ComplexDecimal point);
     }
 
     public class LaplaceConstant : LaplaceExpression
     {
-        public Complex ConstantValue;
+        public ComplexDecimal ConstantValue;
 
-        public override Complex Evaluate(Complex point)
+        public override ComplexDecimal Evaluate(ComplexDecimal point)
         {
             return ConstantValue;
         }
@@ -43,7 +44,7 @@ namespace Easycoustics.Transition.Functions
 
     public class LaplaceLiteral : LaplaceExpression
     {
-        public override Complex Evaluate(Complex point)
+        public override ComplexDecimal Evaluate(ComplexDecimal point)
         {
             return point;
         }
@@ -53,9 +54,9 @@ namespace Easycoustics.Transition.Functions
     {
         public List<LaplaceExpression> Expressions { get; } = new List<LaplaceExpression>();
 
-        public override Complex Evaluate(Complex point)
+        public override ComplexDecimal Evaluate(ComplexDecimal point)
         {
-            Complex output = 1;
+            ComplexDecimal output = 1;
             foreach (var exp in Expressions)
                 output *= exp.Evaluate(point);
 
@@ -102,9 +103,9 @@ namespace Easycoustics.Transition.Functions
             Expressions.Add(exp4);
         }
 
-        public override Complex Evaluate(Complex point)
+        public override ComplexDecimal Evaluate(ComplexDecimal point)
         {
-            Complex output = 0;
+            ComplexDecimal output = 0;
             foreach (var exp in Expressions)
                 output += exp.Evaluate(point);
 
@@ -117,9 +118,9 @@ namespace Easycoustics.Transition.Functions
         public LaplaceExpression ebase;
         public LaplaceExpression exp;
 
-        public override Complex Evaluate(Complex point)
+        public override ComplexDecimal Evaluate(ComplexDecimal point)
         {
-            return Complex.Pow(ebase.Evaluate(point), exp.Evaluate(point));
+            return ComplexDecimal.Pow(ebase.Evaluate(point), exp.Evaluate(point));
         }
     }
 
@@ -128,7 +129,7 @@ namespace Easycoustics.Transition.Functions
         public LaplaceExpression num;
         public LaplaceExpression denom;
 
-        public override Complex Evaluate(Complex point)
+        public override ComplexDecimal Evaluate(ComplexDecimal point)
         {
             return num.Evaluate(point) / denom.Evaluate(point);
         }
