@@ -37,5 +37,18 @@
                         Tapped="btnLibraryTap" Margin="4"/>
             </StackPanel>
         </controls:Expander>
+
+        <controls:Expander Header="Data" IsExpanded="True" ExpandDirection="Down">
+            <StackPanel Orientation="Vertical">
+                <CheckBox Content="Output Voltage across curve" x:Name="chkVoltageAcross"
+                          Checked="checkedVoltageAcross"
+                          Unchecked="uncheckedVoltageAcross" />
+                <CheckBox Content="Output Current through curve" x:Name="chkCurrentThrough"
+                          Checked="checkedCurrentThrough"
+                          Unchecked="uncheckedCurrentThrough" />
+
+            </StackPanel>
+        </controls:Expander>
+
     </StackPanel>
 </UserControl>

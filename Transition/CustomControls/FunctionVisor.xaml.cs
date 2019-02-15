@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -26,6 +27,17 @@ namespace Easycoustics.Transition.CustomControls
         public FunctionVisor()
         {
             this.InitializeComponent();
+            Functions.CollectionChanged += colFunctionsChanged;
+        }
+
+        private void colFunctionsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add: break;
+                case NotifyCollectionChangedAction.Remove: break;
+                case NotifyCollectionChangedAction.Reset: break;
+            }
         }
     }
 }

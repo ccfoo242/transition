@@ -5,11 +5,18 @@
     xmlns:local="using:Easycoustics.Transition.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uwp="using:LiveCharts.Uwp"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid>
-
+    <Grid HorizontalAlignment="Stretch" 
+          VerticalAlignment="Stretch">
+        <uwp:CartesianChart HorizontalAlignment="Stretch"        
+                            VerticalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch" 
+                            VerticalContentAlignment="Stretch">
+            
+        </uwp:CartesianChart>
     </Grid>
 </UserControl>

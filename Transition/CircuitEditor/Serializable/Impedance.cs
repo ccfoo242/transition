@@ -16,8 +16,20 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public override string ElementLetter => "Z";
         public override string ElementType => "Impedance";
 
-        public bool OutputVoltageAcross { get; set; }
-        public bool OutputCurrentThrough { get; set; }
+        private bool outputVoltageAcross;
+        private bool outputCurrentThrough;
+
+        public bool OutputVoltageAcross
+        {
+            get => outputVoltageAcross;
+            set { SetProperty(ref outputVoltageAcross, value); raiseLayoutChanged(); }
+        }
+
+        public bool OutputCurrentThrough
+        {
+            get => outputCurrentThrough;
+            set { SetProperty(ref outputCurrentThrough, value); raiseLayoutChanged(); }
+        }
 
         public override byte QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
 
@@ -51,6 +63,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             {
                 case "Description": Description = (string)value; break;
                 case "FunctionImpedance": FunctionImpedance = (Function)value; break;
+                case "OutputVoltageAcross": OutputVoltageAcross = (bool)value; break;
+                case "OutputCurrentThrough": OutputCurrentThrough = (bool)value; break;
             }
         }
 

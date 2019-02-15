@@ -31,6 +31,20 @@
        
         </controls:Expander>
 
+        <controls:Expander Header="Data" IsExpanded="True" ExpandDirection="Down">
+            <StackPanel Orientation="Vertical">
+                <CheckBox Content="Output Voltage across curve" x:Name="chkVoltageAcross"
+                          Checked="checkedVoltageAcross"
+                          Unchecked="uncheckedVoltageAcross" />
+                <CheckBox Content="Output Current through curve" x:Name="chkCurrentThrough"
+                          Checked="checkedCurrentThrough"
+                          Unchecked="uncheckedCurrentThrough" />
+                <CheckBox Content="Output Power curve" x:Name="chkResistorPower"
+                          Checked="checkedPower"
+                          Unchecked="uncheckedPower"/>
+            </StackPanel>
+        </controls:Expander>
+        
         <controls:Expander Header="Resistor Model" 
                            ExpandDirection="Down"
                            IsExpanded="True">
@@ -71,9 +85,9 @@
                 <StackPanel Orientation="Vertical" x:Name="pnlParasitic"
                             Grid.Row="1" HorizontalAlignment="Stretch">
                     <TextBlock Text="Equivalent Resistor Model"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Center"
-                                       Margin="4"/>
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               Margin="4"/>
                     <Viewbox MaxHeight="80" MaxWidth="160" HorizontalAlignment="Center">
                         <ContentControl ContentTemplate="{StaticResource resistorParasiticModelCircuit}"/>
                     </Viewbox>

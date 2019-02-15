@@ -14,18 +14,17 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public override string ElementLetter => "K";
         public override string ElementType => "Transducer";
 
-        public bool OutputVoltageAcross { get; set; }
-        public bool OutputCurrentThrough { get; set; }
+        private bool outputVoltageAcross;
+        private bool outputCurrentThrough;
+
+        public bool OutputVoltageAcross { get => outputVoltageAcross; set { SetProperty(ref outputVoltageAcross, value); raiseLayoutChanged(); } }
+        public bool OutputCurrentThrough { get => outputCurrentThrough; set { SetProperty(ref outputCurrentThrough, value); raiseLayoutChanged(); } }
 
         private string description;
         public string Description
         {
             get => description;
-            set
-            {
-                SetProperty(ref description, value);
-                raiseLayoutChanged();
-            }
+            set { SetProperty(ref description, value); raiseLayoutChanged(); }
         }
 
         private byte quantityOfTerminals;
@@ -144,6 +143,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 case "RefDistanceY": RefDistanceY = (decimal)value; break;
                 case "RefDistanceZ": RefDistanceZ = (decimal)value; break;
 
+                case "OutputVoltageAcross": OutputVoltageAcross = (bool)value; break;
+                case "OutputCurrentThrough": OutputCurrentThrough = (bool)value; break;
             }
         }
 

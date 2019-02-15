@@ -113,5 +113,60 @@ namespace Easycoustics.Transition.CircuitEditor.ParametersControls
         {
 
         }
+
+
+        private void checkedVoltageAcross(object sender, RoutedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableImpedance,
+                Property = "OutputVoltageAcross",
+                OldValue = SerializableImpedance.OutputVoltageAcross,
+                NewValue = true
+            };
+
+            executeCommand(command);
+
+        }
+
+        private void uncheckedVoltageAcross(object sender, RoutedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableImpedance,
+                Property = "OutputVoltageAcross",
+                OldValue = SerializableImpedance.OutputVoltageAcross,
+                NewValue = false
+            };
+
+            executeCommand(command);
+        }
+
+        private void checkedCurrentThrough(object sender, RoutedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableImpedance,
+                Property = "OutputCurrentThrough",
+                OldValue = SerializableImpedance.OutputVoltageAcross,
+                NewValue = true
+            };
+
+            executeCommand(command);
+
+        }
+
+        private void uncheckedCurrentThrough(object sender, RoutedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableImpedance,
+                Property = "OutputCurrentThrough",
+                OldValue = SerializableImpedance.OutputVoltageAcross,
+                NewValue = false
+            };
+
+            executeCommand(command);
+        }
     }
 }

@@ -10,12 +10,17 @@
     d:DesignWidth="400">
 
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
-        <StackPanel Orientation="Horizontal">
+        <StackPanel Orientation="Horizontal" Margin="4">
             <TextBlock Margin="4" Text="Component Name: "/>
             <TextBox Margin="4" GotFocus="ElementNameFocus" x:Name="txtElementName" 
                      TextChanged="ElementNameChanged"/>
         </StackPanel>
-        <TextBlock FontStyle="Italic"
+        <StackPanel Orientation="Horizontal" Margin="4">
+            <TextBlock Margin="4" Text="Description: "/>
+            <TextBox Margin="4" GotFocus="DescriptionFocus" x:Name="txtDescription" 
+                     TextChanged="DescriptionChanged" HorizontalAlignment="Stretch"/>
+        </StackPanel>
+        <TextBlock FontStyle="Italic" 
                    Text="Voltage curve calculated for this electric node is ground referenced."
                    Margin="4"/>
     </StackPanel>

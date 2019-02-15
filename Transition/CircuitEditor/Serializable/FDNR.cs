@@ -14,8 +14,20 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public override string ElementLetter => "D";
         public override string ElementType => "Frequency Dependent Negative Resistor";
 
-        public bool OutputVoltageAcross { get; set; }
-        public bool OutputCurrentThrough { get; set; }
+        private bool outputVoltageAcross;
+        private bool outputCurrentThrough;
+
+        public bool OutputVoltageAcross
+        {
+            get => outputVoltageAcross;
+            set { SetProperty(ref outputVoltageAcross, value); raiseLayoutChanged(); }
+        }
+
+        public bool OutputCurrentThrough
+        {
+            get => outputCurrentThrough;
+            set { SetProperty(ref outputCurrentThrough, value); raiseLayoutChanged(); }
+        }
 
         private decimal fdnrValue;
         public decimal FdnrValue
@@ -76,12 +88,18 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             {
                 case "FdnrValue": FdnrValue = (decimal)value; break;
                 case "ComponentPrecision": ComponentPrecision = (Precision)value; break;
-           
+
+                case "OutputVoltageAcross": OutputVoltageAcross = (bool)value; break;
+                case "OutputCurrentThrough": OutputCurrentThrough = (bool)value; break;
+
             }
         }
 
         public ComplexDecimal getImpedance(decimal frequency)
         {
+            /* w is angular frequency
+             w= 2 * Pi * F 
+             */
             decimal w = 2 * DecimalMath.Pi * frequency;
             return -1 / (w * w * FdnrValue);
         }

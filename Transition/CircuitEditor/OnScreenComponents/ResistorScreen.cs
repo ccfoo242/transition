@@ -16,12 +16,13 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
     {
         public TextBlock txtComponentName;
         public TextBlock txtResistanceValue;
+        public TextBlock txtPositiveSign;
 
         public override double SchematicWidth => 120;
         public override double SchematicHeight => 80;
 
         public ContentControl SymbolResistor { get; }
-
+        
         public override int[,] TerminalPositions
         {
             get => new int[,] { { 20, 40 }, { 100, 40 } };
@@ -69,7 +70,19 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
             txtResistanceValue.SetBinding(TextBlock.TextProperty, b2);
             txtResistanceValue.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
             Children.Add(txtResistanceValue);
-            
+
+            txtPositiveSign = new TextBlock()
+            {
+                FontWeight = FontWeights.ExtraBold,
+                Text = "+"
+            };
+
+            ComponentCanvas.Children.Add(txtPositiveSign);
+            Canvas.SetTop(txtPositiveSign, 19);
+            Canvas.SetLeft(txtPositiveSign, 19);
+
+            txtPositiveSign.Visibility = Visibility.Collapsed;
+
             postConstruct();
 
         }
@@ -101,7 +114,10 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
             ((TranslateTransform)txtResistanceValue.RenderTransform).X = leftRV;
             ((TranslateTransform)txtResistanceValue.RenderTransform).Y = topRV;
 
+            bool showPositiveSign = ((Resistor)SerializableComponent).OutputVoltageAcross ||
+                                    ((Resistor)SerializableComponent).OutputCurrentThrough;
 
+            txtPositiveSign.Visibility = showPositiveSign ? Visibility.Visible : Visibility.Collapsed;
         }
 
     }

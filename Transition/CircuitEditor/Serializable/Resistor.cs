@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Easycoustics.Transition.CircuitEditor.Components;
 using Easycoustics.Transition.Common;
+using Easycoustics.Transition.Functions;
 using static Easycoustics.Transition.CustomControls.ComponentValueBox;
 
 namespace Easycoustics.Transition.CircuitEditor.Serializable
@@ -15,13 +16,33 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public override string ElementLetter => "R";
         public override string ElementType => "Resistor";
 
-        public bool OutputVoltageAcross { get; set; }
-        public bool OutputCurrentThrough { get; set; }
+        private bool outputVoltageAcross;
+        private bool outputCurrentThrough;
+        private bool outputResistorPower;
+
+        public SampledFunction resultVoltageCurve { get; set; } = new SampledFunction();
+        public SampledFunction resultCurrentCurve { get; set; } = new SampledFunction();
+        public SampledFunction resultPowerCurve { get; set; } = new SampledFunction();
+
+        public bool OutputVoltageAcross
+        {
+            get => outputVoltageAcross;
+            set { SetProperty(ref outputVoltageAcross, value); raiseLayoutChanged(); }
+        }
+
+        public bool OutputCurrentThrough
+        {
+            get => outputCurrentThrough;
+            set { SetProperty(ref outputCurrentThrough, value); raiseLayoutChanged(); }
+        }
+
+        public bool OutputResistorPower { get => outputResistorPower;
+            set { SetProperty(ref outputResistorPower, value); } }
 
         private decimal resistorValue;
         public decimal ResistorValue
         {
-            get { return resistorValue; }
+            get => resistorValue; 
             set { SetProperty(ref resistorValue, value, "ResistorValue");
                   calculateFoQ();
                   OnPropertyChanged("ValueString");
@@ -32,21 +53,21 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         private int resistorModel;  //0=ideal 1=parasitic 2=exponential
         public int ResistorModel
         {
-            get { return resistorModel; }
+            get => resistorModel; 
             set { SetProperty(ref resistorModel, value /*, "ResistorModel" */); }
         }
 
         private Precision componentPrecision;
         public Precision ComponentPrecision
         {
-            get { return componentPrecision; }
+            get => componentPrecision; 
             set { SetProperty(ref componentPrecision, value /*, "ComponentPrecision" */); }
         }
 
         private decimal ls;
         public decimal Ls
         {
-            get { return ls; }
+            get => ls; 
             set { SetProperty(ref ls, value,"Ls");
                   calculateFoQ(); }
         }
@@ -54,7 +75,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         private decimal cp;
         public decimal Cp
         {
-            get { return cp; }
+            get => cp; 
             set { SetProperty(ref cp, value, "Cp");
                   calculateFoQ(); }
         }
@@ -62,14 +83,14 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         private decimal ew;
         public decimal Ew
         {
-            get { return ew; }
+            get => ew; 
             set { SetProperty(ref ew, value, "Ew"); }
         }
 
         private decimal fo;
         public decimal Fo
         {
-            get { return fo;}
+            get => fo;
             set { SetProperty(ref fo, value, "Fo");
                   calculateLsCp(); }
         }
@@ -77,7 +98,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         private decimal q;
         public decimal Q
         {
-            get { return q; }
+            get => q; 
             set { SetProperty(ref q, value, "Q");
                   calculateLsCp(); }
         }
@@ -161,6 +182,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 case "Fo":                  Fo = (decimal)value; break;
                 case "Q":                   Q = (decimal)value; break;
                 case "Ew":                  Ew = (decimal)value; break;
+                case "OutputVoltageAcross": OutputVoltageAcross = (bool)value;break;
+                case "OutputCurrentThrough": OutputCurrentThrough = (bool)value; break;
+                case "OutputResistorPower": OutputResistorPower = (bool)value; break;
             }
         }
 

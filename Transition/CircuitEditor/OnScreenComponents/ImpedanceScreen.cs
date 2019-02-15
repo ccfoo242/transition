@@ -24,6 +24,8 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
 
         public TextBlock txtComponentName;
         public TextBlock txtDescription;
+        public TextBlock txtPositiveSign;
+
         private ContentControl symbolImpedance;
 
         public ImpedanceScreen(Impedance imp) : base(imp)
@@ -61,6 +63,20 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
             txtDescription.SizeChanged += delegate { setPositionTextBoxes(this.SerializableComponent); };
             Children.Add(txtDescription);
 
+
+            txtPositiveSign = new TextBlock()
+            {
+                FontWeight = FontWeights.ExtraBold,
+                Text = "+",
+                Visibility = Visibility.Collapsed
+            };
+
+            ComponentCanvas.Children.Add(txtPositiveSign);
+            Canvas.SetTop(txtPositiveSign, 19);
+            Canvas.SetLeft(txtPositiveSign, 19);
+
+
+
             postConstruct();
 
         }
@@ -90,6 +106,11 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
 
             ((TranslateTransform)txtDescription.RenderTransform).X = leftDesc;
             ((TranslateTransform)txtDescription.RenderTransform).Y = topDesc;
+
+            bool showPositiveSign = ((Impedance)SerializableComponent).OutputVoltageAcross ||
+                                    ((Impedance)SerializableComponent).OutputCurrentThrough;
+
+            txtPositiveSign.Visibility = showPositiveSign ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }

@@ -224,8 +224,86 @@ namespace Easycoustics.Transition.CircuitEditor.Components
         private void executeCommand(ICircuitCommand command)
         {
             CircuitEditor.currentInstance.executeCommand(command);
-            
         }
-        
+
+        private void checkedVoltageAcross(object sender, RoutedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableResistor,
+                Property = "OutputVoltageAcross",
+                OldValue = SerializableResistor.OutputVoltageAcross,
+                NewValue = true
+            };
+
+            executeCommand(command);
+
+        }
+
+        private void uncheckedVoltageAcross(object sender, RoutedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableResistor,
+                Property = "OutputVoltageAcross",
+                OldValue = SerializableResistor.OutputVoltageAcross,
+                NewValue = false
+            };
+
+            executeCommand(command);
+        }
+
+        private void checkedCurrentThrough(object sender, RoutedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableResistor,
+                Property = "OutputCurrentThrough",
+                OldValue = SerializableResistor.OutputVoltageAcross,
+                NewValue = true
+            };
+
+            executeCommand(command);
+
+        }
+
+        private void uncheckedCurrentThrough(object sender, RoutedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableResistor,
+                Property = "OutputCurrentThrough",
+                OldValue = SerializableResistor.OutputVoltageAcross,
+                NewValue = false
+            };
+
+            executeCommand(command);
+        }
+
+        private void checkedPower(object sender, RoutedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableResistor,
+                Property = "OutputResistorPower",
+                OldValue = SerializableResistor.OutputVoltageAcross,
+                NewValue = true
+            };
+
+            executeCommand(command);
+        }
+
+        private void uncheckedPower(object sender, RoutedEventArgs e)
+        {
+            var command = new CommandSetValue()
+            {
+                Component = SerializableResistor,
+                Property = "OutputResistorPower",
+                OldValue = SerializableResistor.OutputVoltageAcross,
+                NewValue = false
+            };
+
+            executeCommand(command);
+        }
     }
 }

@@ -22,12 +22,13 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
             get => new int[,] { { 20, 20 } };
         }
 
-        public override double SchematicWidth => 40;
-        public override double SchematicHeight => 40;
+        public override double SchematicWidth => 80;
+        public override double SchematicHeight => 80;
 
         private VoltageOutputNode Node;
 
         public TextBlock txtComponentName;
+        public TextBlock txtDescription;
 
         public override void setPositionTextBoxes(SerializableElement element)
         {
@@ -53,6 +54,26 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
             ((TranslateTransform)txtComponentName.RenderTransform).Y = 0;
 
             Children.Add(txtComponentName);
+
+
+
+            txtDescription = new TextBlock() { FontWeight = FontWeights.ExtraBold };
+            Binding b2 = new Binding()
+            {
+                Path = new PropertyPath("Description"),
+                Mode = BindingMode.OneWay,
+                Source = Node
+            };
+            txtDescription.SetBinding(TextBlock.TextProperty, b2);
+            txtDescription.RenderTransform = new TranslateTransform() { };
+            txtDescription.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
+
+            ((TranslateTransform)txtDescription.RenderTransform).X = 20;
+            ((TranslateTransform)txtDescription.RenderTransform).Y = 20;
+
+            Children.Add(txtDescription);
+
+
 
             var rect = new Rectangle()
             {

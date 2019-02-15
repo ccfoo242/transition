@@ -23,6 +23,7 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
 
         public TextBlock txtComponentName;
         public TextBlock txtFdnrValue;
+        public TextBlock txtPositiveSign;
 
         public ContentControl SymbolFdnr { get; }
      
@@ -62,6 +63,19 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
             txtFdnrValue.SizeChanged += delegate { setPositionTextBoxes(this.SerializableComponent); };
             Children.Add(txtFdnrValue);
 
+            txtPositiveSign = new TextBlock()
+            {
+                FontWeight = FontWeights.ExtraBold,
+                Text = "+",
+                Visibility = Visibility.Collapsed
+            };
+
+            ComponentCanvas.Children.Add(txtPositiveSign);
+            Canvas.SetTop(txtPositiveSign, 19);
+            Canvas.SetLeft(txtPositiveSign, 19);
+
+            
+
             postConstruct();
         }
 
@@ -90,6 +104,11 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
 
             ((TranslateTransform)txtFdnrValue.RenderTransform).X = leftRV;
             ((TranslateTransform)txtFdnrValue.RenderTransform).Y = topRV;
+
+            bool showPositiveSign = ((FDNR)SerializableComponent).OutputVoltageAcross ||
+                                    ((FDNR)SerializableComponent).OutputCurrentThrough;
+
+            txtPositiveSign.Visibility = showPositiveSign ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }

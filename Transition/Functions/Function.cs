@@ -231,24 +231,70 @@ namespace Easycoustics.Transition.Functions
                 return Data[GetPreviuosAbscissa(point)];
         }
 
-        private ComplexDecimal InterpolateLinear(decimal point)
+        private ComplexDecimal InterpolateLinear(decimal x)
         {
             if (Data.Count < 2) throw new InvalidOperationException();
 
-            if (isPointOutsideRange(point)) return getValueOutsideRange(point);
+            if (isPointOutsideRange(x)) return getValueOutsideRange(x);
 
-            var x1 = GetPreviuosAbscissa(point);
-            var x2 = GetNextAbscissa(point);
-            var x = point;
+            var x1 = GetPreviuosAbscissa(x);
+            var x2 = GetNextAbscissa(x);
+           
             var y1 = Data[x1];
             var y2 = Data[x2];
 
             return y1 + ((x - x1) * (y2 - y1) / (x2 - x1));
         }
 
-        private ComplexDecimal InterpolateQuadratic(decimal point)
+        private int getPointIndex(decimal point)
         {
-            return 0;
+            int output = 0;
+
+            var sortedKeys = Data.Keys.ToList();
+            sortedKeys.Sort();
+
+            foreach (var k in sortedKeys)
+                if (k == point) return output; else output++;
+
+            return -1;
+        }
+
+        private ComplexDecimal InterpolateQuadratic(decimal x)
+        {
+            if (Data.Count < 3) throw new InvalidOperationException();
+
+            if (isPointOutsideRange(x)) return getValueOutsideRange(x);
+
+            var t0 = GetPreviuosAbscissa(x);
+            var t1 = GetNextAbscissa(x);
+            var y0 = Data[t0];
+           
+            var index0 = getPointIndex(t0);
+            var index1 = getPointIndex(t1);
+
+            var sortedKeys = Data.Keys.ToList();
+            sortedKeys.Sort();
+
+            var quantityOfPoints = sortedKeys.Count;
+
+            ComplexDecimal z0 = 0;
+            ComplexDecimal z1 = 0;
+
+            int currentIndex = 0;
+
+            while (currentIndex <= index0)
+            {
+                z0 = z1;
+                z1 = (-1 * z0) + 2 * ((Data[sortedKeys[currentIndex + 1]] - Data[sortedKeys[currentIndex]]) / (sortedKeys[currentIndex + 1] - sortedKeys[currentIndex]));
+                currentIndex++;
+            }
+
+            ComplexDecimal output = ((z1 - z0) / (2 * (t1 - t0)));
+            output *= (x - t0) * (x - t0);
+            output += z0 * (x - t0);
+            output += y0;
+
+            return output;
         }
 
         private ComplexDecimal InterpolateCubic(decimal point)

@@ -16,6 +16,7 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
     {
         public TextBlock txtComponentName;
         public TextBlock txtCapacitorValue;
+        public TextBlock txtPositiveSign;
 
         public override double SchematicWidth => 120;
         public override double SchematicHeight => 80;
@@ -68,7 +69,21 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
             txtCapacitorValue.SetBinding(TextBlock.TextProperty, b2);
             txtCapacitorValue.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
             Children.Add(txtCapacitorValue);
+
+
+            txtPositiveSign = new TextBlock()
+            {
+                FontWeight = FontWeights.ExtraBold,
+                Text = "+",
+                Visibility = Visibility.Collapsed
+            };
+
+            ComponentCanvas.Children.Add(txtPositiveSign);
+            Canvas.SetTop(txtPositiveSign, 19);
+            Canvas.SetLeft(txtPositiveSign, 19);
             
+
+
             postConstruct();
         }
 
@@ -98,6 +113,11 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
 
             ((TranslateTransform)txtCapacitorValue.RenderTransform).X = leftRV;
             ((TranslateTransform)txtCapacitorValue.RenderTransform).Y = topRV;
+
+            bool showPositiveSign = ((Capacitor)SerializableComponent).OutputVoltageAcross ||
+                                    ((Capacitor)SerializableComponent).OutputCurrentThrough;
+
+            txtPositiveSign.Visibility = showPositiveSign ? Visibility.Visible : Visibility.Collapsed;
         }
 
     }

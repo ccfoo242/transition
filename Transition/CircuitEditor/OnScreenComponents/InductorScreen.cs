@@ -24,6 +24,8 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
 
         public TextBlock txtComponentName;
         public TextBlock txtInductorValue;
+        public TextBlock txtPositiveSign;
+
 
         public InductorScreen(Inductor inductor) : base(inductor)
         {
@@ -60,6 +62,19 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
             txtInductorValue.SizeChanged += delegate { setPositionTextBoxes(this.SerializableComponent); };
             Children.Add(txtInductorValue);
 
+
+            txtPositiveSign = new TextBlock()
+            {
+                FontWeight = FontWeights.ExtraBold,
+                Text = "+",
+                Visibility = Visibility.Collapsed
+            };
+
+            ComponentCanvas.Children.Add(txtPositiveSign);
+            Canvas.SetTop(txtPositiveSign, 19);
+            Canvas.SetLeft(txtPositiveSign, 19);
+
+
             postConstruct();
         }
 
@@ -89,7 +104,11 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
 
             ((TranslateTransform)txtInductorValue.RenderTransform).X = leftRV;
             ((TranslateTransform)txtInductorValue.RenderTransform).Y = topRV;
-            
+
+            bool showPositiveSign = ((Inductor)SerializableComponent).OutputVoltageAcross ||
+                                    ((Inductor)SerializableComponent).OutputCurrentThrough;
+
+            txtPositiveSign.Visibility = showPositiveSign ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }

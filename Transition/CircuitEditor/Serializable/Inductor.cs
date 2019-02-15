@@ -14,82 +14,75 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public override string ElementLetter => "L";
         public override string ElementType => "Inductor";
 
-        public bool OutputVoltageAcross { get; set; }
-        public bool OutputCurrentThrough { get; set; }
+        private bool outputVoltageAcross;
+        private bool outputCurrentThrough;
+
+        public bool OutputVoltageAcross
+        {
+            get => outputVoltageAcross;
+            set { SetProperty(ref outputVoltageAcross, value); raiseLayoutChanged(); }
+        }
+
+        public bool OutputCurrentThrough
+        {
+            get => outputCurrentThrough;
+            set { SetProperty(ref outputCurrentThrough, value); raiseLayoutChanged(); }
+        }
 
         private decimal inductorValue;
         public decimal InductorValue
         {
-            get { return inductorValue; }
-            set { SetProperty(ref inductorValue, value);
-                  calculateFoQ();
-                  OnPropertyChanged("ValueString");
-            }
+            get => inductorValue; 
+            set { SetProperty(ref inductorValue, value); calculateFoQ(); OnPropertyChanged("ValueString"); }
         }
 
         private int inductorModel;
         public int InductorModel
         {
-            get { return inductorModel; }
+            get => inductorModel; 
             set { SetProperty(ref inductorModel, value); }
         }
 
         private Precision componentPrecision;
         public Precision ComponentPrecision
         {
-            get { return componentPrecision; }
+            get => componentPrecision; 
             set { SetProperty(ref componentPrecision, value); }
         }
 
         private decimal rs;
         public decimal Rs
         {
-            get { return rs; }
-            set
-            {
-                SetProperty(ref rs, value);
-                calculateFoQ();
-            }
+            get => rs; 
+            set { SetProperty(ref rs, value); calculateFoQ(); }
         }
 
         private decimal cp;
         public decimal Cp
         {
-            get { return cp; }
-            set
-            {
-                SetProperty(ref cp, value);
-                calculateFoQ();
-            }
+            get => cp; 
+            set { SetProperty(ref cp, value); calculateFoQ(); }
         }
 
         private decimal ew;
         public decimal Ew
         {
-            get { return ew; }
+            get => ew; 
             set { SetProperty(ref ew, value); }
         }
 
         private decimal fo;
         public decimal Fo
         {
-            get { return fo; }
-            set
-            {
-                SetProperty(ref fo, value);
-                calculateRsCp();
-            }
+            get => fo; 
+            set { SetProperty(ref fo, value); calculateRsCp(); }
         }
 
         private decimal q;
         public decimal Q
         {
-            get { return q; }
-            set
-            {
-                SetProperty(ref q, value);
-                calculateRsCp();
-            }
+            get => q; 
+            set { SetProperty(ref q, value); calculateRsCp(); }
         }
 
         public bool AnyPrecisionSelected { get { return (ComponentPrecision == Precision.Arbitrary); } }
@@ -127,7 +120,6 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
         private void calculateRsCp()
         {
-
             decimal dWo = 2m * DecimalMath.Pi * Fo;
 
             decimal dRs = (dWo * inductorValue) / Q;
@@ -135,7 +127,6 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
             SetProperty(ref rs, dRs, "Rs");
             SetProperty(ref cp, dCp, "Cp");
-
         }
 
 
@@ -171,6 +162,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 case "Fo": Fo = (decimal)value; break;
                 case "Q": Q = (decimal)value; break;
                 case "Ew": Ew = (decimal)value; break;
+                case "OutputVoltageAcross": OutputVoltageAcross = (bool)value; break;
+                case "OutputCurrentThrough": OutputCurrentThrough = (bool)value; break;
             }
         }
 
