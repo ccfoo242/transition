@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
+using static Easycoustics.Transition.Design.UserDesign;
 
 namespace Easycoustics.Transition.Functions
 {
@@ -25,7 +26,7 @@ namespace Easycoustics.Transition.Functions
         public static decimal MinimumFrequency => CircuitEditor.CircuitEditor.StaticCurrentDesign.MinimumFrequency;
         public static decimal MaximumFrequency => CircuitEditor.CircuitEditor.StaticCurrentDesign.MaximumFrequency;
 
-        public static int NumberOfFrequencyPoints => CircuitEditor.CircuitEditor.StaticCurrentDesign.NumberOfFrequencyPoints;
+        public static int NumberOfFrequencyPoints => CircuitEditor.CircuitEditor.StaticCurrentDesign.QuantityOfFrequencyPoints;
 
         public static string[] PhysicalQuantities = new string[] {
             "Acceleration",
@@ -108,12 +109,44 @@ namespace Easycoustics.Transition.Functions
         public Dictionary<decimal, ComplexDecimal> Data { get; } = new Dictionary<decimal, ComplexDecimal>();
 
         public override Dictionary<decimal, ComplexDecimal> Points => Data;
-
         public InterpolationModes InterpolationMode;
+
+        public decimal GetMinimumDomain
+        {
+            get
+            {
+                var output = decimal.MaxValue;
+                if (Data.Count == 0) throw new InvalidOperationException("Data array is empty");
+
+                foreach (var kvp in Data)
+                    if (kvp.Key < output) output = kvp.Key;
+
+                return output;
+            }
+        }
+
+        public decimal GetMaximumDomain
+        {
+            get
+            {
+                var output = decimal.MinValue;
+                if (Data.Count == 0) throw new InvalidOperationException("Data array is empty");
+
+                foreach (var kvp in Data)
+                    if (kvp.Key > output) output = kvp.Key;
+
+                return output;
+            }
+        }
 
         public SampledFunction()
         {
             InterpolationMode = InterpolationModes.Linear;
+        }
+
+        public void Clear()
+        {
+            Data.Clear();
         }
 
         public override ComplexDecimal Calculate(decimal point)
@@ -302,7 +335,7 @@ namespace Easycoustics.Transition.Functions
             return 0;
         }
 
-        public void addSample(decimal abscissa, ComplexDecimal value)
+        public void addOrChangeSample(decimal abscissa, ComplexDecimal value)
         {
             if (Data.Keys.Contains(abscissa))
                 Data[abscissa] = value;
@@ -323,6 +356,39 @@ namespace Easycoustics.Transition.Functions
             else
                 return false;
         }
+
+        
+
+        public bool isCompatible(decimal minimumDomain, decimal maximumDomain, int quantityOfPoints, AxisScale scale)
+        {
+            if (Data.Count == 0) return false;
+
+            if (GetMinimumDomain != minimumDomain) return false;
+            if (GetMaximumDomain != maximumDomain) return false;
+
+            if (Data.Count != quantityOfPoints) return false;
+
+            var domainPoints = getFrequencyPoints(scale, maximumDomain, minimumDomain, quantityOfPoints);
+
+            foreach (var point in domainPoints)
+                if (!Data.Keys.Contains(point)) return false;
+
+            return true;
+
+        }
+
+        public bool isCompatible(SampledFunction func2)
+        {
+            /* if the two curves have the same domain points, we say they are compatible */
+
+            if (Data.Count != func2.Data.Count) return false;
+
+            foreach (var kvp in Data)
+                if (!func2.Data.ContainsKey(kvp.Key)) return false;
+
+            return true;
+        }
+
     }
 
     public enum InterpolationModes { NearestNeighbor, Linear, Quadratic, Cubic };

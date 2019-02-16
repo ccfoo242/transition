@@ -9,7 +9,7 @@ using Easycoustics.Transition.Functions;
 
 namespace Easycoustics.Transition.CircuitEditor.Serializable
 {
-    public class Transducer : SerializableComponent, IPassive
+    public class Transducer : SerializableComponent, IPassive, IVoltageCurrentOutput
     {
         public override string ElementLetter => "K";
         public override string ElementType => "Transducer";
@@ -19,6 +19,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
         public bool OutputVoltageAcross { get => outputVoltageAcross; set { SetProperty(ref outputVoltageAcross, value); raiseLayoutChanged(); } }
         public bool OutputCurrentThrough { get => outputCurrentThrough; set { SetProperty(ref outputCurrentThrough, value); raiseLayoutChanged(); } }
+        
+        public SampledFunction resultVoltageCurve { get; set; } = new SampledFunction();
+        public SampledFunction resultCurrentCurve { get; set; } = new SampledFunction();
 
         private string description;
         public string Description

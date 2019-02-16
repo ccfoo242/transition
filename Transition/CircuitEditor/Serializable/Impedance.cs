@@ -11,7 +11,7 @@ using Easycoustics.Transition.Functions;
 
 namespace Easycoustics.Transition.CircuitEditor.Serializable
 {
-    public class Impedance : SerializableComponent, IPassive
+    public class Impedance : SerializableComponent, IPassive, IVoltageCurrentOutput
     {
         public override string ElementLetter => "Z";
         public override string ElementType => "Impedance";
@@ -45,6 +45,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public Function FunctionImpedance { get => functionImpedance;
             set { SetProperty(ref functionImpedance, value); }
         }
+
+        public SampledFunction resultVoltageCurve { get; set; } = new SampledFunction();
+        public SampledFunction resultCurrentCurve { get; set; } = new SampledFunction();
 
         public Impedance() : base()
         {

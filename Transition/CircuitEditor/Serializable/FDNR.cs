@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using Easycoustics.Transition.CircuitEditor.Components;
 using Easycoustics.Transition.CircuitEditor.OnScreenComponents;
 using Easycoustics.Transition.Common;
+using Easycoustics.Transition.Functions;
 
 namespace Easycoustics.Transition.CircuitEditor.Serializable
 {
-    public class FDNR : SerializableComponent, IPassive
+    public class FDNR : SerializableComponent, IPassive, IVoltageCurrentOutput
     {
         public override string ElementLetter => "D";
         public override string ElementType => "Frequency Dependent Negative Resistor";
@@ -79,6 +80,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 return returnString + "F²";
             }
         }
+
+        public SampledFunction resultVoltageCurve { get; set; } = new SampledFunction();
+        public SampledFunction resultCurrentCurve { get; set; } = new SampledFunction();
 
         public override void SetProperty(string property, object value)
         {

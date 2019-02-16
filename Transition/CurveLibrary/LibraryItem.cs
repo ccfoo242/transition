@@ -9,7 +9,7 @@ namespace Easycoustics.Transition.CurveLibrary
 {
     public class LibraryItem : LibraryBase
     {
-        public Function curve;
+        public Function Curve { get; set; }
 
     }
 }

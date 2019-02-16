@@ -11,7 +11,7 @@ using static Easycoustics.Transition.CustomControls.ComponentValueBox;
 
 namespace Easycoustics.Transition.CircuitEditor.Serializable
 {
-    public class Resistor : SerializableComponent, IPassive
+    public class Resistor : SerializableComponent, IPassive, IVoltageCurrentOutput
     {
         public override string ElementLetter => "R";
         public override string ElementType => "Resistor";

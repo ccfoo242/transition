@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Easycoustics.Transition.Common;
+using Easycoustics.Transition.Functions;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Shapes;
@@ -38,6 +39,17 @@ namespace Easycoustics.Transition.CircuitEditor
 
         List<Tuple<byte, byte, ComplexDecimal>> getImpedance(decimal frequency); /* not angular frequency */
        
+    }
+
+    public interface IVoltageCurrentOutput
+    {
+        SampledFunction resultVoltageCurve { get; set; } 
+        SampledFunction resultCurrentCurve { get; set; }
+
+        bool OutputVoltageAcross { get; set; }
+        bool OutputCurrentThrough { get; set; }
+
+        ComplexDecimal getImpedance(decimal frequency);
     }
 
     public interface IVoltageSource

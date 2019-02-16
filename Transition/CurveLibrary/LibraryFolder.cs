@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Easycoustics.Transition.Functions;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -27,5 +28,21 @@ namespace Easycoustics.Transition.CurveLibrary
                 case NotifyCollectionChangedAction.Reset: break;
             }
         }
+
+        public void AddIfNotAdded(Function func)
+        {
+            if (IsAdded(func)) return;
+            
+            Items.Add(new LibraryItem() { Curve = func });
+        }
+
+        private bool IsAdded(Function func)
+        {
+            foreach (var item in Items.OfType<LibraryItem>())
+                if (func == item.Curve) return true;
+
+            return false;
+        }
+
     }
 }

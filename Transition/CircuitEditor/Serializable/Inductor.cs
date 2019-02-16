@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using Easycoustics.Transition.CircuitEditor.Components;
 using Easycoustics.Transition.CircuitEditor.OnScreenComponents;
 using Easycoustics.Transition.Common;
+using Easycoustics.Transition.Functions;
 
 namespace Easycoustics.Transition.CircuitEditor.Serializable
 {
-    public class Inductor : SerializableComponent, IPassive
+    public class Inductor : SerializableComponent, IPassive, IVoltageCurrentOutput
     {
         public override string ElementLetter => "L";
         public override string ElementType => "Inductor";
@@ -28,6 +29,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             get => outputCurrentThrough;
             set { SetProperty(ref outputCurrentThrough, value); raiseLayoutChanged(); }
         }
+
+        public SampledFunction resultVoltageCurve { get; set; } = new SampledFunction();
+        public SampledFunction resultCurrentCurve { get; set; } = new SampledFunction();
 
         private decimal inductorValue;
         public decimal InductorValue

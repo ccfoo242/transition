@@ -66,7 +66,7 @@ namespace Easycoustics.Transition.Design
             }
         }
 
-        public int NumberOfFrequencyPoints { get; set; } = 400;
+        public int QuantityOfFrequencyPoints { get; set; } = 400;
 
         public enum AxisScale { Logarithmic, Linear };
         public AxisScale FrequencyScale { get; set; } = AxisScale.Logarithmic;
@@ -86,6 +86,7 @@ namespace Easycoustics.Transition.Design
         };
 
         public bool SnapToGrid { get; set; } = true;
+
 
         public UserDesign()
         {
@@ -412,7 +413,6 @@ namespace Easycoustics.Transition.Design
         public Dictionary<byte, ElementTerminal> getListPairedComponentTerminals(ScreenComponentBase component)
         {
             var output = new Dictionary<byte, ElementTerminal>();
-
             var allTerminals = getAllUnboundedWireAndComponentTerminals();
 
             for (byte i = 0; i < component.QuantityOfTerminals; i++)
@@ -515,12 +515,41 @@ namespace Easycoustics.Transition.Design
 
             var CVMatrix = new Common.Matrix(QuantityOfNodes, 1);
 
+            Common.Matrix nodeVoltages;
             //node 0 is always the ground
-            var freqPoints = getFrequencyPoints();
-            // foreach (var FreqPoint in freqPoints)
-            //{
 
-            decimal FreqPoint = 1000m;
+            var outputVoltageNodes = Components.OfType<VoltageOutputNode>();
+            var outputVoltageCurrentComponents = Components.OfType<IVoltageCurrentOutput>();
+
+            foreach (var outputNode in outputVoltageNodes)
+            {
+                if (!outputNode.ResultVoltageCurve.isCompatible(MinimumFrequency, MaximumFrequency, QuantityOfFrequencyPoints, FrequencyScale))
+                    outputNode.ResultVoltageCurve.Clear();
+                SystemCurves.AddIfNotAdded(outputNode.ResultVoltageCurve);
+            }
+
+            foreach (var outputVoltageComponent in outputVoltageCurrentComponents)
+            {
+                if (outputVoltageComponent.OutputVoltageAcross)
+                {
+                    if (!outputVoltageComponent.resultVoltageCurve.isCompatible(MinimumFrequency, MaximumFrequency, QuantityOfFrequencyPoints, FrequencyScale))
+                        outputVoltageComponent.resultVoltageCurve.Clear();
+                    SystemCurves.AddIfNotAdded(outputVoltageComponent.resultVoltageCurve);
+                }
+
+                if (outputVoltageComponent.OutputCurrentThrough)
+                {
+                    if (!outputVoltageComponent.resultCurrentCurve.isCompatible(MinimumFrequency, MaximumFrequency, QuantityOfFrequencyPoints, FrequencyScale))
+                        outputVoltageComponent.resultCurrentCurve.Clear();
+                    SystemCurves.AddIfNotAdded(outputVoltageComponent.resultCurrentCurve);
+                }
+            }
+
+
+            var freqPoints = getFrequencyPoints();
+            foreach (var FreqPoint in freqPoints)
+            {
+                NodeMatrix.Clear();
                 for (int node = 1; node <= QuantityOfNodes; node++)
                 {
                     foreach (var component in componentsTerminals[node])
@@ -545,6 +574,7 @@ namespace Easycoustics.Transition.Design
                                 }
                             }
                         }
+
                         if (component.Item1 is VoltageSource)
                         {
                             var source = (VoltageSource)component.Item1;
@@ -569,9 +599,35 @@ namespace Easycoustics.Transition.Design
                         }
                     }
                 }
-            // }
 
-            var NodeVoltages = NodeMatrix.Solve(CVMatrix);
+                nodeVoltages = NodeMatrix.Solve(CVMatrix);
+
+                foreach (var nodeV in outputVoltageNodes)
+                {
+                    int nodeNumber = getComponentTerminalNode(nodeV, 0);
+                    nodeV.ResultVoltageCurve.addOrChangeSample(FreqPoint, nodeVoltages.Data[nodeNumber - 1, 0]);
+                }
+
+                foreach (var comp in outputVoltageCurrentComponents)
+                {
+                    int nodeNumberPositive = getComponentTerminalNode((SerializableComponent)comp, 0);
+                    int nodeNumberNegative = getComponentTerminalNode((SerializableComponent)comp, 1);
+
+                    var voltPositive = (nodeNumberPositive != 0) ? nodeVoltages.Data[nodeNumberPositive - 1, 0] : 0;
+                    var voltNegative = (nodeNumberNegative != 0) ? nodeVoltages.Data[nodeNumberNegative - 1, 0] : 0;
+
+                    var totalVoltage = voltPositive - voltNegative;
+
+                    if (comp.OutputVoltageAcross) comp.resultVoltageCurve.addOrChangeSample(FreqPoint, totalVoltage);
+                    if (comp.OutputCurrentThrough)
+                    {
+                        var current = totalVoltage / comp.getImpedance(FreqPoint);
+                        comp.resultCurrentCurve.addOrChangeSample(FreqPoint, current);
+                    }
+                }
+
+            }
+
             
         }
 
@@ -697,28 +753,32 @@ namespace Easycoustics.Transition.Design
 
         public List<decimal> getFrequencyPoints()
         {
+            return getFrequencyPoints(FrequencyScale, MaximumFrequency, MinimumFrequency, QuantityOfFrequencyPoints);
+        }
+
+        public static List<decimal> getFrequencyPoints(AxisScale scale, decimal maximumFreq, decimal minimumFreq, int quantityOfPoints)
+        {
             var output = new List<decimal>();
 
-            if (FrequencyScale == AxisScale.Logarithmic)
+            if (scale == AxisScale.Logarithmic)
             {
-                var c = MaximumFrequency / MinimumFrequency;
-                var pitch = DecimalMath.Power(c, 1 / (NumberOfFrequencyPoints - 1m));
+                var c = maximumFreq / minimumFreq;
+                var pitch = DecimalMath.Power(c, 1 / (quantityOfPoints - 1m));
 
-                for (int x = 0; x < NumberOfFrequencyPoints; x++)
-                    output.Add(MinimumFrequency * DecimalMath.PowerN(pitch, x));
+                for (int x = 0; x < quantityOfPoints; x++)
+                    output.Add(minimumFreq * DecimalMath.PowerN(pitch, x));
             }
 
-            if (FrequencyScale == AxisScale.Linear)
+            if (scale == AxisScale.Linear)
             {
-                var pitch = (MaximumFrequency - MinimumFrequency) / (NumberOfFrequencyPoints - 1);
+                var pitch = (maximumFreq - minimumFreq) / (quantityOfPoints - 1);
 
-                for (int x = 0; x < NumberOfFrequencyPoints; x++)
-                    output.Add(MinimumFrequency + x * pitch);
+                for (int x = 0; x < quantityOfPoints; x++)
+                    output.Add(minimumFreq + x * pitch);
             }
 
             return output;
         }
-
      
     }
 
