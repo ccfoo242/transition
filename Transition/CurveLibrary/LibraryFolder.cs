@@ -11,12 +11,15 @@ namespace Easycoustics.Transition.CurveLibrary
 {
     public class LibraryFolder : LibraryBase
     {
-        public ObservableCollection<LibraryBase> Items { get; set; } = new ObservableCollection<LibraryBase>();
+        public override ObservableCollection<LibraryBase> Children { get; } = new ObservableCollection<LibraryBase>();
+        public override string Title { get => FolderName; }
+
+        public string FolderName { get; set; }
 
         public LibraryFolder(string name)
         {
-            this.Name = name;
-            Items.CollectionChanged += Items_CollectionChanged;
+            FolderName = name;
+            Children.CollectionChanged += Items_CollectionChanged;
         }
 
         private void Items_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -33,12 +36,12 @@ namespace Easycoustics.Transition.CurveLibrary
         {
             if (IsAdded(func)) return;
             
-            Items.Add(new LibraryItem() { Curve = func });
+            Children.Add(new LibraryItem() { Curve = func });
         }
 
         private bool IsAdded(Function func)
         {
-            foreach (var item in Items.OfType<LibraryItem>())
+            foreach (var item in Children.OfType<LibraryItem>())
                 if (func == item.Curve) return true;
 
             return false;

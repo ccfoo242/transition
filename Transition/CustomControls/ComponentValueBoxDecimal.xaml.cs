@@ -357,7 +357,7 @@ namespace Easycoustics.Transition.CustomControls
                 FontStyle = Windows.UI.Text.FontStyle.Italic
             });
 
-            ContentDialog dialog = new ContentDialog()
+            var dialog = new ContentDialog()
             {
                 Title = "Enter new Component Value (" + unit + ")",
                 Content = stk2,

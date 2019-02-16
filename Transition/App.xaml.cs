@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Easycoustics.Transition.Design;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -25,7 +26,7 @@ namespace Easycoustics.Transition
     sealed partial class App : Application
     {
         private static string SyncFusionLicense => "Njg5MjhAMzEzNjJlMzQyZTMwY0NJOTF3aEdGRDAybDAwdkt6Y2hzUDdlL0JFSjFGTG5uUkd4T0ZxVFRITT0=";
-
+        
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -46,8 +47,6 @@ namespace Easycoustics.Transition
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            EngrNumber a = new EngrNumber(1, "p");
-
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,

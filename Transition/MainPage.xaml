@@ -51,7 +51,12 @@
         <layout:SfDockingManager x:Name="dockingManager"  Grid.Row="1">
             <ContentControl x:Name="voltageGraph" 
                             layout:SfDockingManager.Header="Voltage Graph"
-                            layout:SfDockingManager.DockState="Document"/>
+                            layout:SfDockingManager.DockState="Document"
+                        
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch">
+                <local2:FrequencyCurveVisor/>
+            </ContentControl>
 
             <ContentControl x:Name="preferences" 
                             layout:SfDockingManager.Header="Design Preferences"

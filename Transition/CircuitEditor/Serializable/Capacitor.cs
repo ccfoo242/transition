@@ -185,6 +185,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 case "OutputVoltageAcross": OutputVoltageAcross = (bool)value;break;
                 case "OutputCurrentThrough": OutputCurrentThrough = (bool)value;break;
             }
+
+            resultVoltageCurve.Title = "Voltage Across Capacitor " + ElementName;
+            resultCurrentCurve.Title = "Current Through Capacitor " + ElementName;
         }
 
         public ComplexDecimal getImpedance(decimal frequency)

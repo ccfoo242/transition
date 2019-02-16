@@ -34,7 +34,7 @@ namespace Easycoustics.Transition
             //    CircuitEditor.CircuitEditor ce = new CircuitEditor.CircuitEditor();
             
             circuitEditor.loadDesign(newDesign);
-            
+
         }
         
     }

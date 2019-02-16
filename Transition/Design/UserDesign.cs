@@ -29,6 +29,8 @@ namespace Easycoustics.Transition.Design
          * the design, to add components, wires, move and link them.
          * That means there is a strong coupling between UserDesign and CircuitEditor */
 
+        public static UserDesign CurrentDesign { get; set; }
+
         public ObservableCollection<SerializableComponent> Components { get; } = new ObservableCollection<SerializableComponent>();
         public ObservableCollection<SerializableWire> Wires { get; } = new ObservableCollection<SerializableWire>();
 
@@ -72,6 +74,7 @@ namespace Easycoustics.Transition.Design
         public AxisScale FrequencyScale { get; set; } = AxisScale.Logarithmic;
 
         public CurveLibrary.LibraryFolder SystemCurves = new CurveLibrary.LibraryFolder("Design Result Curves");
+        public CurveLibrary.LibraryFolder UserCurves = new CurveLibrary.LibraryFolder("User Curves");
 
         public double RadiusNear => 15;
 
@@ -90,6 +93,8 @@ namespace Easycoustics.Transition.Design
 
         public UserDesign()
         {
+            CurrentDesign = this;
+
             Components.CollectionChanged += Components_CollectionChanged;
             Wires.CollectionChanged += Wires_CollectionChanged;
         }
@@ -368,8 +373,10 @@ namespace Easycoustics.Transition.Design
                     for (byte i = 0; i < el.QuantityOfTerminals; i++)
                         if ((el.getAbsoluteTerminalPosition(i).getDistance(point) < nearestDistance) &&
                             el.getAbsoluteTerminalPosition(i).getDistance(point) < RadiusNear)
-                        { if (el is WireScreen)
-                            { WireScreen ws = (WireScreen)el;
+                        {
+                            if (el is WireScreen)
+                            {
+                                WireScreen ws = (WireScreen)el;
                                 if (!ws.isTerminalBounded(i))
                                 {
                                     nearestTerminal = el.Terminals[i];
@@ -381,10 +388,8 @@ namespace Easycoustics.Transition.Design
                                 nearestTerminal = el.Terminals[i];
                                 nearestDistance = el.getAbsoluteTerminalPosition(i).getDistance(point);
                             }
-
                         }
-
-
+            
             return nearestTerminal;
         }
 

@@ -13,10 +13,12 @@ namespace Easycoustics.Transition.Functions
 {
     public abstract class Function
     {
+        public string Title { get; set; }
+
         public abstract ComplexDecimal Calculate(decimal point);
-        public Brush StrokeColor;
-        public double StrokeThickness;
-        public DoubleCollection strokeArray;
+        public Brush StrokeColor { get; set; }
+        public double StrokeThickness { get; set; }
+        public DoubleCollection StrokeArray { get; set; }
 
         public abstract Dictionary<decimal, ComplexDecimal> Points { get; } 
         
@@ -63,6 +65,10 @@ namespace Easycoustics.Transition.Functions
         protected void RaiseFunctionChanged() => FunctionChanged?.Invoke(this);
         
     }
+
+
+
+
 
     public class ConstantValueFunction : Function
     {

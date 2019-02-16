@@ -97,6 +97,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 case "OutputCurrentThrough": OutputCurrentThrough = (bool)value; break;
 
             }
+
+            resultVoltageCurve.Title = "Voltage Across FDNR " + ElementName;
+            resultCurrentCurve.Title = "Current Through FDNR " + ElementName;
         }
 
         public ComplexDecimal getImpedance(decimal frequency)

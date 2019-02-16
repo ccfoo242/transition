@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace Easycoustics.Transition.CurveLibrary
 {
     public abstract class LibraryBase
     {
-        public string Name { get; set; }
+        public abstract string Title { get; }
+        public abstract ObservableCollection<LibraryBase> Children { get; }
     }
 }
