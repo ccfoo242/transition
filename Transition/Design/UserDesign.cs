@@ -550,6 +550,7 @@ namespace Easycoustics.Transition.Design
             foreach (var FreqPoint in freqPoints)
             {
                 NodeMatrix.Clear();
+                CVMatrix.Clear();
                 for (int node = 1; node <= QuantityOfNodes; node++)
                 {
                     foreach (var component in componentsTerminals[node])
