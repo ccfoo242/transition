@@ -36,6 +36,8 @@ namespace Easycoustics.Transition.CustomControls
         private Axis AxisX;
         private Axis AxisY;
 
+        private Dictionary<Function, LineSeries> dictFL = new Dictionary<Function, LineSeries>();
+
         private SeriesCollection lvcSeriesCollection;
 
         public FrequencyCurveVisor()
@@ -49,31 +51,33 @@ namespace Easycoustics.Transition.CustomControls
 
             lvcControl.Series = lvcSeriesCollection;
 
-            lvcControl.AxisX.Add(new Axis()
+            AxisX = new Axis()
             {
                 Title = "Frequency (Hz)",
-                MinValue = 10,
-                MaxValue = 40000,
+                MinValue = 1,
+                MaxValue = 5,
                 Separator = new Separator()
                 {
-                    Step = 25,
+                    Step = 1,
                     Stroke = new SolidColorBrush(Colors.Gray),
                     StrokeThickness = .5
                 }
-            });
+            };
+            lvcControl.AxisX.Add(AxisX);
 
-            lvcControl.AxisY.Add(new Axis()
+            AxisY = new Axis()
             {
                 Title = "dB",
-                MinValue = -60,
-                MaxValue = 60,
+                MinValue = -80,
+                MaxValue = 10,
                 Separator = new Separator()
                 {
-                    Step = 25,
+                    Step = 10,
                     Stroke = new SolidColorBrush(Colors.Gray),
                     StrokeThickness = .5
                 }
-            });
+            };
+            lvcControl.AxisY.Add(AxisY);
 
           
         }
@@ -92,11 +96,14 @@ namespace Easycoustics.Transition.CustomControls
                         l = new LineSeries()
                         {
                             Values = new ChartValues<ObservablePoint>(),
-                            PointGeometrySize = 5,
                             StrokeThickness = 2,
                             Stroke = new SolidColorBrush(Colors.Black),
-                            LineSmoothness = 0
+                            LineSmoothness = 0,
+                            PointGeometry = null,
+                            PointGeometrySize = 0
                         };
+
+                        dictFL.Add(func, l);
 
                         func.FunctionChanged += functionChanged;
                         double mag;
@@ -110,14 +117,62 @@ namespace Easycoustics.Transition.CustomControls
                     }
                  
                     break;
-                case NotifyCollectionChangedAction.Remove: break;
-                case NotifyCollectionChangedAction.Reset: break;
+
+                case NotifyCollectionChangedAction.Remove:
+                    foreach (var function in e.OldItems)
+                    {
+                        var func = (Function)function;
+                        lvcSeriesCollection.Remove(dictFL[func]);
+                        dictFL.Remove(func);
+                        func.FunctionChanged -= functionChanged;
+                    }
+                    break;
+                    
+                case NotifyCollectionChangedAction.Reset:
+                    lvcSeriesCollection.Clear();
+                    foreach (var function in dictFL.Keys)
+                        function.FunctionChanged -= functionChanged;
+                    
+                    dictFL.Clear();
+                    break;
             }
         }
 
-        private void functionChanged(Function obj)
+        private void functionChanged(Function obj, FunctionChangedEventArgs args)
         {
-           
+            var series = dictFL[obj];
+
+            Func<decimal, ObservablePoint> GetObsPoint = (X) => {
+                var x = Convert.ToDouble(X);
+                foreach (var obs in series.Values.OfType<ObservablePoint>())
+                    if (obs.X == x) return obs;
+
+                return null;
+                    };
+            switch (args.Action)
+            {
+                case FunctionChangedEventArgs.FunctionChangeAction.PointAdded:
+                    double mag = 20 * Math.Log10(Convert.ToDouble(args.Y.Magnitude));
+                    series.Values.Add(new ObservablePoint(Convert.ToDouble(args.X), mag));
+                    break;
+
+                case FunctionChangedEventArgs.FunctionChangeAction.PointChanged:
+                    var obsPoint = GetObsPoint(args.X);
+                    if (obsPoint != null)
+                        obsPoint.Y = 20 * Math.Log10(Convert.ToDouble(args.Y.Magnitude));
+                  
+                    break;
+
+                case FunctionChangedEventArgs.FunctionChangeAction.PointRemoved:
+                    var obsPoint2 = GetObsPoint(args.X);
+                    if (obsPoint2 != null)
+                        series.Values.Remove(obsPoint2);
+                    break;
+
+                case FunctionChangedEventArgs.FunctionChangeAction.Reset:
+                    series.Values.Clear();
+                    break;
+            }
         }
 
         private async void curvesTap(object sender, TappedRoutedEventArgs e)

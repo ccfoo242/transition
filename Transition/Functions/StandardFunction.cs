@@ -12,22 +12,22 @@ namespace Easycoustics.Transition.Functions
     {
 
         private decimal _ao;
-        public decimal Ao { get => _ao; set { _ao = value; RecalculatePoints(); RaiseFunctionChanged(); } }
+        public decimal Ao { get => _ao; set { _ao = value; RecalculatePoints(); RaiseFunctionChanged(new FunctionChangedEventArgs()); } }
 
         private decimal _fp;
-        public decimal Fp { get => _fp; set { _fp = value; RecalculatePoints(); RaiseFunctionChanged(); } }
+        public decimal Fp { get => _fp; set { _fp = value; RecalculatePoints(); RaiseFunctionChanged(new FunctionChangedEventArgs()); } }
 
         private decimal _fz;
-        public decimal Fz { get => _fz; set { _fz = value; RecalculatePoints(); RaiseFunctionChanged(); } }
+        public decimal Fz { get => _fz; set { _fz = value; RecalculatePoints(); RaiseFunctionChanged(new FunctionChangedEventArgs()); } }
 
         private decimal _qp;
-        public decimal Qp { get => _qp; set { _qp = value; RecalculatePoints(); RaiseFunctionChanged(); } }
+        public decimal Qp { get => _qp; set { _qp = value; RecalculatePoints(); RaiseFunctionChanged(new FunctionChangedEventArgs()); } }
 
         private bool _invert;
-        public bool Invert { get => _invert; set { _invert = value; RecalculatePoints(); RaiseFunctionChanged(); } }
+        public bool Invert { get => _invert; set { _invert = value; RecalculatePoints(); RaiseFunctionChanged(new FunctionChangedEventArgs()); } }
 
         private bool _reverse;
-        public bool Reverse { get => _reverse; set { _reverse = value; RecalculatePoints(); RaiseFunctionChanged(); } }
+        public bool Reverse { get => _reverse; set { _reverse = value; RecalculatePoints(); RaiseFunctionChanged(new FunctionChangedEventArgs()); } }
 
         public decimal wp { get => 2 * DecimalMath.Pi * Fp; }
         public decimal wz { get => 2 * DecimalMath.Pi * Fz; }
@@ -42,7 +42,7 @@ namespace Easycoustics.Transition.Functions
             {
                 currentFunction = value;
                 RecalculatePoints();
-                RaiseFunctionChanged();
+                RaiseFunctionChanged(new FunctionChangedEventArgs() { Action=FunctionChangedEventArgs.FunctionChangeAction.Reset });
             }
         }
         private Dictionary<decimal, ComplexDecimal> points = new Dictionary<decimal, ComplexDecimal>();

@@ -22,8 +22,8 @@ namespace Easycoustics.Transition.Functions
 
         public abstract Dictionary<decimal, ComplexDecimal> Points { get; } 
         
-        public string DependentVariableUnit { get; set; }
-        public string IndependentVariableUnit { get; set; }
+        public string FunctionUnit { get; set; }
+        public string VariableUnit { get; set; }
 
         public static decimal MinimumFrequency => CircuitEditor.CircuitEditor.StaticCurrentDesign.MinimumFrequency;
         public static decimal MaximumFrequency => CircuitEditor.CircuitEditor.StaticCurrentDesign.MaximumFrequency;
@@ -60,14 +60,20 @@ namespace Easycoustics.Transition.Functions
             "Volume Velocity",
         };
 
-        public event Action<Function> FunctionChanged;
-
-        protected void RaiseFunctionChanged() => FunctionChanged?.Invoke(this);
+        public event Action<Function, FunctionChangedEventArgs> FunctionChanged;
         
+        protected void RaiseFunctionChanged(FunctionChangedEventArgs args) => FunctionChanged?.Invoke(this, args);
     }
 
 
+    public class FunctionChangedEventArgs : EventArgs
+    {
+        public FunctionChangeAction Action;
+        public decimal X;
+        public ComplexDecimal Y;
 
+        public enum FunctionChangeAction { PointChanged, PointAdded, PointRemoved, Reset }
+    }
 
 
     public class ConstantValueFunction : Function
@@ -79,11 +85,13 @@ namespace Easycoustics.Transition.Functions
             set
             {
                 fixedValue = value;
-                RaiseFunctionChanged();
+                RaiseFunctionChanged(new FunctionChangedEventArgs() { Action = FunctionChangedEventArgs.FunctionChangeAction.Reset });
             }
         }
 
-        public override Dictionary<decimal, ComplexDecimal> Points { get
+        public override Dictionary<decimal, ComplexDecimal> Points
+        {
+            get
             {
                 var output = new Dictionary<decimal, ComplexDecimal>();
 
@@ -91,7 +99,8 @@ namespace Easycoustics.Transition.Functions
                 output.Add(MaximumFrequency, FixedValue);
 
                 return output;
-            } }
+            }
+        }
         
         public ConstantValueFunction(Complex fixedValue)
         {
@@ -343,12 +352,30 @@ namespace Easycoustics.Transition.Functions
 
         public void addOrChangeSample(decimal abscissa, ComplexDecimal value)
         {
-            if (Data.Keys.Contains(abscissa))
-                Data[abscissa] = value;
-            else
-                Data.Add(abscissa, value);
+            FunctionChangedEventArgs args;
 
-            RaiseFunctionChanged();
+            if (Data.Keys.Contains(abscissa))
+            {
+                Data[abscissa] = value;
+                args = new FunctionChangedEventArgs()
+                {
+                    Action = FunctionChangedEventArgs.FunctionChangeAction.PointChanged,
+                    X = abscissa,
+                    Y = value
+                };
+            }
+            else
+            {
+                Data.Add(abscissa, value);
+                args = new FunctionChangedEventArgs()
+                {
+                    Action = FunctionChangedEventArgs.FunctionChangeAction.PointAdded,
+                    X = abscissa,
+                    Y = value
+                };
+            }
+
+            RaiseFunctionChanged(args);
         }
 
         public bool removeSample(decimal abscissa)
@@ -356,7 +383,11 @@ namespace Easycoustics.Transition.Functions
             if (Data.Keys.Contains(abscissa))
             {
                 Data.Remove(abscissa);
-                RaiseFunctionChanged();
+                RaiseFunctionChanged(new FunctionChangedEventArgs()
+                {
+                    Action = FunctionChangedEventArgs.FunctionChangeAction.PointRemoved,
+                    X = abscissa
+                });
                 return true;
             }
             else
@@ -370,7 +401,7 @@ namespace Easycoustics.Transition.Functions
             if (Data.Count == 0) return false;
 
             if (GetMinimumDomain != minimumDomain) return false;
-            if (GetMaximumDomain != maximumDomain) return false;
+           // if (GetMaximumDomain != maximumDomain) return false;
 
             if (Data.Count != quantityOfPoints) return false;
 

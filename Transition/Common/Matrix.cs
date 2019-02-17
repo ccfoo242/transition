@@ -175,9 +175,10 @@ namespace Easycoustics.Transition.Common
             if (!IsSquare) throw new InvalidOperationException("Matrix non square");
             
             /* A * X = B 
-             where A is this matrix
-             B is provided as parameter, it is the vector of the right side of the equality or equation
-             X is the vector with values of the unknown X variables */
+               where A is this matrix
+               B is provided as parameter, it is the vector of the right side of the equality or equation
+               X is the vector with values of the unknown X variables 
+            */
 
             if (bVector.QuantityOfColumns != 1) throw new InvalidOperationException("B Matrix must have one column");
             if (bVector.QuantityOfRows != QuantityOfRows) throw new InvalidOperationException("B vector do not have equal number of rows as coefficient Matrix");
@@ -211,18 +212,19 @@ namespace Easycoustics.Transition.Common
             }
 
             /* 
-             * Ax = B
-             * A = LU
+              Ax = B
+              A = LU
               LUx = B
               then
               Lz = B
               Ux = z
               
-             now we get with Z and X vectors 
-             with 2nd phase of Gauss Jordan
-             */
+              now we get with Z and X vectors 
+              with 2nd phase of Gauss Jordan
+            */
              
             /* getting the Z vector */
+
             Z.Data[0, 0] = bVector.Data[0, 0];
 
             for (int i = 1; i <= (n - 1); i++)
@@ -244,8 +246,8 @@ namespace Easycoustics.Transition.Common
             }
 
             /* and thank you Ward Cheney and David Kincaid
-             * for your wonderful book of numeric methods
-             sixth edition !*/
+             * for your wonderful book of Numeric Methods
+             Sixth Edition !*/
 
             return X;
         }

@@ -228,7 +228,7 @@ namespace Easycoustics.Transition.CustomControls
             }
         }
 
-        private void FunctionChanged(Function func)
+        private void FunctionChanged(Function func, FunctionChangedEventArgs args)
         {
             foreach (KeyValuePair<decimal, ComplexDecimal> point in func.Points)
             {
