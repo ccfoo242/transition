@@ -63,6 +63,11 @@ namespace Easycoustics.Transition.Functions
         public event Action<Function, FunctionChangedEventArgs> FunctionChanged;
         
         protected void RaiseFunctionChanged(FunctionChangedEventArgs args) => FunctionChanged?.Invoke(this, args);
+
+        public void SubmitChange()
+        {
+            RaiseFunctionChanged(new FunctionChangedEventArgs() { Action = FunctionChangedEventArgs.FunctionChangeAction.Reset });
+        }
     }
 
 
@@ -111,7 +116,10 @@ namespace Easycoustics.Transition.Functions
         {
             return FixedValue;
         }
-        
+
+       
+
+
     }
 
 
@@ -375,7 +383,7 @@ namespace Easycoustics.Transition.Functions
                 };
             }
 
-            RaiseFunctionChanged(args);
+           // RaiseFunctionChanged(args);
         }
 
         public bool removeSample(decimal abscissa)
@@ -383,19 +391,18 @@ namespace Easycoustics.Transition.Functions
             if (Data.Keys.Contains(abscissa))
             {
                 Data.Remove(abscissa);
-                RaiseFunctionChanged(new FunctionChangedEventArgs()
+              /*  RaiseFunctionChanged(new FunctionChangedEventArgs()
                 {
                     Action = FunctionChangedEventArgs.FunctionChangeAction.PointRemoved,
                     X = abscissa
-                });
+                });*/
                 return true;
             }
             else
                 return false;
         }
 
-        
-
+       
         public bool isCompatible(decimal minimumDomain, decimal maximumDomain, int quantityOfPoints, AxisScale scale)
         {
             if (Data.Count == 0) return false;

@@ -37,6 +37,10 @@ namespace Easycoustics.Transition.Design
         public ObservableCollection<ScreenComponentBase> ScreenComponents { get; } = new ObservableCollection<ScreenComponentBase>();
         public ObservableCollection<WireScreen> ScreenWires { get; } = new ObservableCollection<WireScreen>();
 
+        private readonly List<ElectricNode> ElectricNodes = new List<ElectricNode>();
+        private ElectricNode GetGroundNode { get { return ElectricNodes.Where(node => node.groundNode).ToArray()[0]; } }
+
+
         public delegate void ElementDelegate(UserDesign sender, SerializableElement element);
         public event ElementDelegate ElementAdded;
         public event ElementDelegate ElementRemoved;
@@ -447,73 +451,51 @@ namespace Easycoustics.Transition.Design
                 return output;
             }
         }
-
-        public void Calculate()
+        
+        public async Task<Tuple<bool,string>> Calculate()
         {
-          //  var WiresNodes = new Dictionary<SerializableWire, int>();
+          
+            CalculateNodes();
 
-            var nodes = GetNodes();
-            var componentsTerminals = new Dictionary<int, List<Tuple<SerializableComponent, byte>>>();
-            
-            foreach (var kvp in nodes)
-            {
-                componentsTerminals[kvp.Key] = new List<Tuple<SerializableComponent, byte>>();
+            var NodesToWork = ElectricNodes.Where(node => !node.hasNoComponentsConnected && !node.isIsolatedFromOtherNodes && !node.groundNode).ToList();
 
-                foreach (var wire in kvp.Value)
-                    foreach (var tuple in wire.GetBoundedComponents)
-                        if (!componentsTerminals[kvp.Key].Contains(tuple))
-                            componentsTerminals[kvp.Key].Add(tuple);
-            }
-
-            int QuantityOfNodes = nodes.Count - 1;
-
-            Func<SerializableComponent, byte, int> getComponentTerminalNode =
-                (component, compTerminal) =>
-                {
-                    var tuple = new Tuple<SerializableComponent, byte>(component, compTerminal);
-
-                    foreach (var kvp in componentsTerminals)
-                        foreach (var t in kvp.Value)
-                            if (tuple.Equals(t)) return kvp.Key;
-
-                    return -1;
-                };
-
-            Func<IPassive, byte, decimal, List<Tuple<int, ComplexDecimal>>> getOtherNodesInPassiveComponent =
+            Func<IPassive, byte, decimal, List<Tuple<ElectricNode, ComplexDecimal>>> getOtherNodesInPassiveComponent =
                 (component, compTerminal, frequency) =>
                 {
-                    var output = new List<Tuple<int, ComplexDecimal>>();
+                    var output = new List<Tuple<ElectricNode, ComplexDecimal>>();
                     var impedances = component.getImpedance(frequency);
 
                     byte otherTerminal;
-                    int otherNode;
+                    ElectricNode otherNode;
 
                     foreach (var impedance in impedances)
                     {
-                        if ((impedance.Item1 == compTerminal) ||
-                            (impedance.Item2 == compTerminal))
+                        if ((impedance.Item1 == compTerminal) || (impedance.Item2 == compTerminal))
                         {
                             otherTerminal = (impedance.Item1 == compTerminal) ? impedance.Item2 : impedance.Item1;
                             /* some impedances are fixed grounded, cannot be floating, those return 255 as component terminal
                              that means connected to the node 0, that is always ground */
                             if (otherTerminal == 255)
-                                otherNode = 0;
+                                otherNode = GetGroundNode;
                             else
-                                otherNode = getComponentTerminalNode((SerializableComponent)component, otherTerminal);
+                                otherNode = GetComponentTerminalNode((SerializableComponent)component, otherTerminal);
 
-                            output.Add(new Tuple<int, ComplexDecimal>(otherNode, impedance.Item3));   
+                            if (otherNode != null)
+                                output.Add(new Tuple<ElectricNode, ComplexDecimal>(otherNode, impedance.Item3));
                         }
                     }
 
                     return output;
                 };
-            
 
+            if (NodesToWork.Count == 0) return new Tuple<bool, string>(false, "Circuit has no nodes");
+
+            int QuantityOfNodes = NodesToWork.Count;
+
+            
             var NodeMatrix = new Common.Matrix(QuantityOfNodes);
-            /* inside this matrix we put admittances 
-             we solve this matrix along with a vector, 
-             as a equation system of currents
-             for getting the voltages at every node
+            /* inside this matrix we put admittances  we solve this matrix along with a vector, 
+             as a equation system of currents for getting the voltages at every node
              admittance is the reciprocal of impedance.
              both admittance and impedance are complex.
              */
@@ -526,10 +508,11 @@ namespace Easycoustics.Transition.Design
             var outputVoltageNodes = Components.OfType<VoltageOutputNode>();
             var outputVoltageCurrentComponents = Components.OfType<IVoltageCurrentOutput>();
 
+            SystemCurves.Clear();
+
             foreach (var outputNode in outputVoltageNodes)
             {
-                if (!outputNode.ResultVoltageCurve.isCompatible(MinimumFrequency, MaximumFrequency, QuantityOfFrequencyPoints, FrequencyScale))
-                    outputNode.ResultVoltageCurve.Clear();
+                outputNode.ResultVoltageCurve.Clear();
                 SystemCurves.AddIfNotAdded(outputNode.ResultVoltageCurve);
             }
 
@@ -537,15 +520,13 @@ namespace Easycoustics.Transition.Design
             {
                 if (outputVoltageComponent.OutputVoltageAcross)
                 {
-                    if (!outputVoltageComponent.resultVoltageCurve.isCompatible(MinimumFrequency, MaximumFrequency, QuantityOfFrequencyPoints, FrequencyScale))
-                        outputVoltageComponent.resultVoltageCurve.Clear();
+                    outputVoltageComponent.resultVoltageCurve.Clear();
                     SystemCurves.AddIfNotAdded(outputVoltageComponent.resultVoltageCurve);
                 }
 
                 if (outputVoltageComponent.OutputCurrentThrough)
                 {
-                    if (!outputVoltageComponent.resultCurrentCurve.isCompatible(MinimumFrequency, MaximumFrequency, QuantityOfFrequencyPoints, FrequencyScale))
-                        outputVoltageComponent.resultCurrentCurve.Clear();
+                    outputVoltageComponent.resultCurrentCurve.Clear();
                     SystemCurves.AddIfNotAdded(outputVoltageComponent.resultCurrentCurve);
                 }
             }
@@ -556,9 +537,9 @@ namespace Easycoustics.Transition.Design
             {
                 NodeMatrix.Clear();
                 CVMatrix.Clear();
-                for (int node = 1; node <= QuantityOfNodes; node++)
+                for (int nodeNumber = 0; nodeNumber < QuantityOfNodes; nodeNumber++)
                 {
-                    foreach (var component in componentsTerminals[node])
+                    foreach (var component in NodesToWork[nodeNumber].ConnectedComponentTerminals)
                     {
                         if (component.Item1 is IPassive)
                         {
@@ -568,16 +549,11 @@ namespace Easycoustics.Transition.Design
 
                             foreach (var impedance in impedances)
                             {
-                                if (impedance.Item1 != -1)
-                                {
-                                    NodeMatrix.addAtCoordinate1(node, node, impedance.Item2.Reciprocal);
-                                    if (impedance.Item1 != 0) /* impedance is floating */
-                                        NodeMatrix.addAtCoordinate1(node, impedance.Item1, -1 * impedance.Item2.Reciprocal);
-                                }
-                                else
-                                {
-                                    /* if we reach here, the impedance is disconnected at the other end!! */
-                                }
+                                NodeMatrix.addAtCoordinate(nodeNumber, nodeNumber, impedance.Item2.Reciprocal);
+                                
+
+                                if (impedance.Item1 != GetGroundNode) /* impedance is floating */
+                                     NodeMatrix.addAtCoordinate(nodeNumber, NodesToWork.IndexOf(impedance.Item1), -1 * impedance.Item2.Reciprocal);
                             }
                         }
 
@@ -592,112 +568,160 @@ namespace Easycoustics.Transition.Design
                             ComplexDecimal voltagePolarity = positiveTerminal ? 1 : -1;
 
                             byte otherTerminal = positiveTerminal ? source.NegativeTerminal : source.PositiveTerminal;
-                            var otherNode = getComponentTerminalNode(source, otherTerminal);
+                            var otherNode = GetComponentTerminalNode(source, otherTerminal);
 
-                            if (otherNode != -1)
+                            if (otherNode != null)
                             {
-                                CVMatrix.addAtCoordinate1(node, 1, voltage * sourceAdmittance * voltagePolarity);
-                                NodeMatrix.addAtCoordinate1(node, node, sourceAdmittance);
+                                CVMatrix.addAtCoordinate(nodeNumber, 0, voltage * sourceAdmittance * voltagePolarity);
+                                NodeMatrix.addAtCoordinate(nodeNumber, nodeNumber, sourceAdmittance);
 
-                                if (otherNode != 0)
-                                    NodeMatrix.addAtCoordinate1(node, otherNode, -1 * sourceAdmittance);
+                                if (otherNode != GetGroundNode)
+                                    NodeMatrix.addAtCoordinate(nodeNumber, NodesToWork.IndexOf(otherNode), -1 * sourceAdmittance);
                             }
                         }
                     }
                 }
 
-                nodeVoltages = NodeMatrix.Solve(CVMatrix);
+                try
+                {
+                    nodeVoltages = NodeMatrix.Solve(CVMatrix);
+                }
+                catch (Exception e)
+                {
+                    return new Tuple<bool, string>(false, "Voltage Matrix solving failed: " + Environment.NewLine + e.ToString());
+                }
 
                 foreach (var nodeV in outputVoltageNodes)
                 {
-                    int nodeNumber = getComponentTerminalNode(nodeV, 0);
-                    nodeV.ResultVoltageCurve.addOrChangeSample(FreqPoint, nodeVoltages.Data[nodeNumber - 1, 0]);
+                    var node = GetComponentTerminalNode(nodeV, 0);
+
+                    if (node != null)
+                        nodeV.ResultVoltageCurve.addOrChangeSample(FreqPoint, nodeVoltages.Data[NodesToWork.IndexOf(node), 0]);
                 }
 
                 foreach (var comp in outputVoltageCurrentComponents)
                 {
-                    int nodeNumberPositive = getComponentTerminalNode((SerializableComponent)comp, 0);
-                    int nodeNumberNegative = getComponentTerminalNode((SerializableComponent)comp, 1);
+                    var nodePositive = GetComponentTerminalNode((SerializableComponent)comp, 0);
+                    var nodeNegative = GetComponentTerminalNode((SerializableComponent)comp, 1);
 
-                    var voltPositive = (nodeNumberPositive != 0) ? nodeVoltages.Data[nodeNumberPositive - 1, 0] : 0;
-                    var voltNegative = (nodeNumberNegative != 0) ? nodeVoltages.Data[nodeNumberNegative - 1, 0] : 0;
-
-                    var totalVoltage = voltPositive - voltNegative;
-
-                    if (comp.OutputVoltageAcross) comp.resultVoltageCurve.addOrChangeSample(FreqPoint, totalVoltage);
-                    if (comp.OutputCurrentThrough)
+                    if (nodePositive != null && nodeNegative != null)
                     {
-                        var current = totalVoltage / comp.getImpedance(FreqPoint);
-                        comp.resultCurrentCurve.addOrChangeSample(FreqPoint, current);
+                        var nodePositiveNumber = NodesToWork.IndexOf(nodePositive);
+                        var nodeNegativeNumber = NodesToWork.IndexOf(nodeNegative);
+
+                        var voltPositive = (nodePositive != GetGroundNode) ? nodeVoltages.Data[nodePositiveNumber, 0] : 0;
+                        var voltNegative = (nodeNegative != GetGroundNode) ? nodeVoltages.Data[nodeNegativeNumber, 0] : 0;
+
+                        var totalVoltage = voltPositive - voltNegative;
+
+                        if (comp.OutputVoltageAcross) comp.resultVoltageCurve.addOrChangeSample(FreqPoint, totalVoltage);
+                        if (comp.OutputCurrentThrough)
+                        {
+                            var current = totalVoltage / comp.getImpedance(FreqPoint);
+                            comp.resultCurrentCurve.addOrChangeSample(FreqPoint, current);
+                        }
                     }
                 }
-
             }
 
-            
+            return new Tuple<bool, string>(true, "");
         }
 
 
-        public Dictionary<int, List<SerializableWire>> GetNodes()
+        public void CalculateNodes()
         {
-            var output = new Dictionary<int, List<SerializableWire>>();
-            int currentNode = 1;
-            int x;
+            //var output = new List<ElectricNode>();
+            ElectricNodes.Clear();
 
-            output.Add(0, GetGroundedWires());
+            var GroundNode = new ElectricNode() { groundNode = true };
+            GroundNode.NodeWires.AddRange(GetGroundedWires());
 
-            Func<SerializableWire, Dictionary<int, List<SerializableWire>>, int> wireBelongsTo =
-                (wire, dictOutput) => 
+            ElectricNodes.Add(GroundNode);
+
+            Func<SerializableWire, ElectricNode> wireBelongsTo =
+                (wire) => 
                 {
-                    foreach (var kvp in dictOutput)
-                        foreach (var existingWire in kvp.Value)
-                            if (wire.isThisWireBoundedToOtherWire(existingWire)) return kvp.Key;
+                    foreach (var node in ElectricNodes)
+                        foreach (var existingWire in node.NodeWires)
+                            if (wire.isThisWireBoundedToOtherWire(existingWire)) return node;
                 
-                    return -1;
+                    return null;
                 };
+
+            ElectricNode x;
 
             foreach (var wire in GetNonGroundedWires())
             {
-                x = wireBelongsTo(wire, output);
-                if (x == -1)
+                x = wireBelongsTo(wire);
+
+                if (x == null)
                 {
-                    output.Add(currentNode, new List<SerializableWire>());
-                    output[currentNode].Add(wire);
-                    currentNode++;
+                    x = new ElectricNode();
+                    ElectricNodes.Add(x);
                 }
-                else
-                    output[x].Add(wire);
+                    
+                x.NodeWires.Add(wire);
+            }
+
+            foreach (var node in ElectricNodes)
+                foreach (var wire in node.NodeWires)
+                    foreach (var tuple in wire.GetBoundedComponents)
+                        if (!node.ConnectedComponentTerminals.Contains(tuple))
+                            node.ConnectedComponentTerminals.Add(tuple);
+
+            foreach (var node in ElectricNodes)
+            {
+                if (node.ConnectedComponentTerminals.Count == 0) node.hasNoComponentsConnected = true;
+                if (GetOtherNodesConnectedToThisNode(node).Count == 0) node.isIsolatedFromOtherNodes = true;
+            }
+            
+
+        }
+
+        private ElectricNode GetComponentTerminalNode(SerializableComponent comp, byte terminal)
+        {
+            return ElectricNodes.Find(node => node.HasComponentTerminal(comp, terminal));
+        }
+
+        private List<ElectricNode> GetOtherNodesConnectedToThisNode(ElectricNode node)
+        {
+            var output = new List<ElectricNode>();
+            List<Tuple<SerializableComponent, byte>> otherTerminals;
+            ElectricNode node2;
+
+            foreach (var component in node.ConnectedComponentTerminals)
+            {
+                otherTerminals = component.Item1.GetOtherTerminals(component.Item2);
+                foreach (var other in otherTerminals)
+                {
+                    node2 = GetComponentTerminalNode(other.Item1, other.Item2);
+                    if (node2 != null)
+                        if (!output.Contains(node2) && node2 != node) output.Add(node2);
+                }
             }
 
             return output;
+
         }
 
         public List<SerializableWire> GetNonGroundedWires()
         {
-            var output = new List<SerializableWire>();
-
             var grounded = GetGroundedWires();
-
-            foreach (var wire in Wires)
-                if (!grounded.Contains(wire))
-                    output.Add(wire);
-
-            return output;
+            
+            return Wires.Where(wire => !grounded.Contains(wire)).ToList(); 
         }
 
         public List<SerializableWire> GetGroundedWires()
         {
-            var output = new List<SerializableWire>();
-            
-            foreach (var wire in Wires)
-                if (wire.IsWireGrounded)
-                    output.Add(wire);
+            var output = Wires.Where((wire) => wire.IsWireGrounded).ToList();
 
-            Func<SerializableWire, List<SerializableWire>, bool> isConnected =
-                (wir, lis) =>
+            Func<SerializableWire, bool> isConnected =
+                (wir) =>
                 {
-                    foreach (var wire in lis)
-                    { if (wir.isThisWireBoundedToOtherWire(wire)) return true; }
+                    foreach (var wire in output)
+                        if (wir.isThisWireBoundedToOtherWire(wire))
+                            return true; 
+
                     return false;
                 };
 
@@ -709,7 +733,7 @@ namespace Easycoustics.Transition.Design
 
                 foreach (var wire in Wires)
                     if (!output.Contains(wire))
-                        if (isConnected(wire, output))
+                        if (isConnected(wire))
                         {
                             output.Add(wire);
                             wireAdded = true;
@@ -734,17 +758,20 @@ namespace Easycoustics.Transition.Design
             ConnectedWires.Add(w1);
             bool added = true;
 
-            Func<SerializableWire, List<SerializableWire>, bool> isConnected =
-                (wir, lis) =>
-                {foreach (var wire in lis)
-                    { if (wir.isThisWireBoundedToOtherWire(wire)) return true; }
-                    return false;};
+            Func<SerializableWire, bool> isConnected =
+                (wir) =>
+                {
+                    foreach (var wire in ConnectedWires)
+                        if (wir.isThisWireBoundedToOtherWire(wire))
+                            return true; 
+                    return false;
+                };
 
             while (added)
             {
                 added = false;
                 foreach (var wire in Wires)
-                    if (isConnected(wire, ConnectedWires))
+                    if (isConnected(wire))
                     {
                         added = true;
                         if (!ConnectedWires.Contains(wire))
@@ -786,6 +813,27 @@ namespace Easycoustics.Transition.Design
             return output;
         }
      
+
+
     }
 
+
+    public class ElectricNode
+    {
+        public int NodeNumber;
+        public List<Tuple<SerializableComponent, byte>> ConnectedComponentTerminals = new List<Tuple<SerializableComponent, byte>>();
+        public List<SerializableWire> NodeWires = new List<SerializableWire>();
+        public bool isIsolatedFromOtherNodes;
+        public bool hasNoComponentsConnected;
+        public bool groundNode;
+
+        public bool IsEssential { get => ConnectedComponentTerminals.Count > 2; }
+
+        public bool HasComponentTerminal(SerializableComponent comp, byte terminal)
+        {
+            var tuple = new Tuple<SerializableComponent, byte>(comp, terminal);
+
+            return ConnectedComponentTerminals.Contains(tuple);
+        }
+    }
 }

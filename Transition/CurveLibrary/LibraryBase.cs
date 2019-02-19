@@ -11,5 +11,7 @@ namespace Easycoustics.Transition.CurveLibrary
     {
         public abstract string Title { get; }
         public abstract ObservableCollection<LibraryBase> Children { get; }
+
+        public abstract void submitCurvesChange();
     }
 }

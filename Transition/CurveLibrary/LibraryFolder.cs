@@ -47,5 +47,15 @@ namespace Easycoustics.Transition.CurveLibrary
             return false;
         }
 
+        public override void submitCurvesChange()
+        {
+            foreach (var item in Children)
+                item.submitCurvesChange();
+        }
+
+        public void Clear()
+        {
+            Children.Clear();
+        }
     }
 }

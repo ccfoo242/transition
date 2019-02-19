@@ -27,7 +27,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
       * Also is to be said, SerializableElements are the instances stored in the
       * Component collection, of the UserDesign class.
       * On the other hand. There are two classes that have the responsability to show the component
-      * data on screen, 1)Screen and 2)ParametersControl, these two classes query
+      * data on screen, 1) Screen and 2) ParametersControl, these two classes query
       * the data stored in SerializableElement directly.
       * Screen class shows the component data in the electric circuit canvas
       * ParametersControl allows to user to input data, and stores the data
@@ -154,6 +154,16 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
         public Dictionary<int, int> terminalsToCircuitNodes = new Dictionary<int, int>();
        
+        public List<Tuple<SerializableComponent, byte>> GetOtherTerminals(byte terminal)
+        {
+            var output = new List<Tuple<SerializableComponent, byte>>();
+
+            for (byte x = 0; x < QuantityOfTerminals; x++)
+                if (x != terminal) output.Add(new Tuple<SerializableComponent, byte>(this, x));
+            
+            return output;
+        }
+
         public override void SetProperty(string property, object value)
         {
             base.SetProperty(property, value);

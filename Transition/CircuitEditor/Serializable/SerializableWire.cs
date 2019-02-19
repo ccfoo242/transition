@@ -68,7 +68,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         {
             get
             {
-                if (Bind0 != null) return Bind0.Item1 is SerializableWire;
+                if (IsTerminal0Bounded) return Bind0.Item1 is SerializableWire;
                 else return false;
             }
         }
@@ -77,7 +77,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         {
             get
             {
-                if (Bind1 != null) return Bind1.Item1 is SerializableWire;
+                if (IsTerminal1Bounded) return Bind1.Item1 is SerializableWire;
                 else return false;
             }
         }

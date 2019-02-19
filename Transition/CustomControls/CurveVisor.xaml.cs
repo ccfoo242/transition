@@ -141,7 +141,7 @@ namespace Easycoustics.Transition.CustomControls
         private void functionChanged(Function obj, FunctionChangedEventArgs args)
         {
             var series = dictFL[obj];
-
+            
             Func<decimal, ObservablePoint> GetObsPoint = (X) => {
                 var x = Convert.ToDouble(X);
                 foreach (var obs in series.Values.OfType<ObservablePoint>())
@@ -170,7 +170,26 @@ namespace Easycoustics.Transition.CustomControls
                     break;
 
                 case FunctionChangedEventArgs.FunctionChangeAction.Reset:
-                    series.Values.Clear();
+                    var ObsToDelete = new List<ObservablePoint>();
+                    ObsToDelete.AddRange(series.Values.OfType<ObservablePoint>());
+                    ObservablePoint obsPoint3;
+                    double mag2;
+
+                    foreach (var point in obj.Points)
+                    {
+                        obsPoint3 = GetObsPoint(point.Key);
+                        mag2 = 20 * Math.Log10(Convert.ToDouble(point.Value.Magnitude));
+
+                        if (obsPoint3 == null)
+                        { series.Values.Add(new ObservablePoint(Convert.ToDouble(point.Key), mag2)); }
+                        else
+                        {
+                            obsPoint3.Y = mag2;
+                            ObsToDelete.Remove(obsPoint3);
+                        }
+                    }
+                    foreach (var obsDel in ObsToDelete)
+                        series.Values.Remove(obsDel);
                     break;
             }
         }
@@ -205,6 +224,7 @@ namespace Easycoustics.Transition.CustomControls
 
             }
             
+
         }
 
         private void graphParamTap(object sender, TappedRoutedEventArgs e)

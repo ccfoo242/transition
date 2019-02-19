@@ -5,11 +5,13 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Easycoustics.Transition.CircuitEditor.OnScreenComponents;
 using Easycoustics.Transition.CircuitEditor.Serializable;
 using Easycoustics.Transition.Commands;
 using Easycoustics.Transition.Common;
 using Easycoustics.Transition.Design;
+using Easycoustics.Transition.Functions;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -188,7 +190,6 @@ namespace Easycoustics.Transition.CircuitEditor
                     disableComponentEdit();
                     break;
             }
-            
         }
         
 
@@ -747,6 +748,7 @@ namespace Easycoustics.Transition.CircuitEditor
         {
             RedoStack.Clear();
             command.execute();
+            TapCalculate(null, null); 
             UndoStack.Push(command);
         }
 
@@ -756,6 +758,7 @@ namespace Easycoustics.Transition.CircuitEditor
 
             ICircuitCommand command = UndoStack.Pop();
             command.unExecute();
+            TapCalculate(null, null); 
             RedoStack.Push(command);
         }
 
@@ -765,6 +768,7 @@ namespace Easycoustics.Transition.CircuitEditor
             
             ICircuitCommand command = RedoStack.Pop();
             command.execute();
+            TapCalculate(null, null); 
             UndoStack.Push(command);
         }
 
@@ -808,9 +812,12 @@ namespace Easycoustics.Transition.CircuitEditor
             }
         }
 
-        private void TapCalculate(object sender, TappedRoutedEventArgs e)
+        private async void TapCalculate(object sender, TappedRoutedEventArgs e)
         {
-            CurrentDesign.Calculate();
+            var result = await CurrentDesign.Calculate();
+
+            if (result.Item1)
+                CurrentDesign.SystemCurves.submitCurvesChange();
         }
     }
 }

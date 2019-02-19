@@ -19,7 +19,7 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
     {
         public override int[,] TerminalPositions
         {
-            get => new int[,] { { 20, 20 } };
+            get => new int[,] { { 40, 40 } };
         }
 
         public override double SchematicWidth => 80;
