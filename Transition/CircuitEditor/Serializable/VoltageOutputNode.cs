@@ -16,7 +16,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
         public override byte QuantityOfTerminals { get => 1; set => throw new NotImplementedException(); }
 
-        public SampledFunction ResultVoltageCurve { get; set; } = new SampledFunction();
+        public SampledFunction ResultVoltageCurve { get; set; } = new SampledFunction()
+            { FunctionQuantity = "Voltage", FunctionUnit = "Volt" };
 
         private string description;
         public string Description { get => description; set { SetProperty(ref description, value); raiseLayoutChanged(); } }
@@ -31,6 +32,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
         public override void SetProperty(string property, object value)
         {
+            ResultVoltageCurve.Title = "Voltage at " + ElementName;
             base.SetProperty(property, value);
 
             switch (property)

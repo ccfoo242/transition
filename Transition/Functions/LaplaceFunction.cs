@@ -11,8 +11,8 @@ namespace Easycoustics.Transition.Functions
     public class LaplaceFunction : Function
     {
         public LaplaceExpression Expression { get; set; }
-
-        public override Dictionary<decimal, ComplexDecimal> Points => throw new NotImplementedException();
+        
+        public override SampledFunction RenderToSampledFunction => throw new NotImplementedException();
 
         public override ComplexDecimal Calculate(decimal f)
         {
@@ -23,6 +23,11 @@ namespace Easycoustics.Transition.Functions
         public ComplexDecimal Calculate(ComplexDecimal point)
         {
             return Expression.Evaluate(point);
+        }
+
+        public override void SubmitAllSamplesChanged()
+        {
+            throw new NotImplementedException();
         }
     }
 

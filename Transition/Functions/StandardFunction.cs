@@ -5,6 +5,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Easycoustics.Transition.Common;
+using Easycoustics.Transition.Design;
 
 namespace Easycoustics.Transition.Functions
 {
@@ -12,28 +13,28 @@ namespace Easycoustics.Transition.Functions
     {
 
         private decimal _ao;
-        public decimal Ao { get => _ao; set { _ao = value; RecalculatePoints(); RaiseFunctionChanged(new FunctionChangedEventArgs()); } }
+        public decimal Ao { get => _ao; set { _ao = value; RaiseFunctionChanged(new FunctionChangedEventArgs()); } }
 
         private decimal _fp;
-        public decimal Fp { get => _fp; set { _fp = value; RecalculatePoints(); RaiseFunctionChanged(new FunctionChangedEventArgs()); } }
+        public decimal Fp { get => _fp; set { _fp = value; RaiseFunctionChanged(new FunctionChangedEventArgs()); } }
 
         private decimal _fz;
-        public decimal Fz { get => _fz; set { _fz = value; RecalculatePoints(); RaiseFunctionChanged(new FunctionChangedEventArgs()); } }
+        public decimal Fz { get => _fz; set { _fz = value; RaiseFunctionChanged(new FunctionChangedEventArgs()); } }
 
         private decimal _qp;
-        public decimal Qp { get => _qp; set { _qp = value; RecalculatePoints(); RaiseFunctionChanged(new FunctionChangedEventArgs()); } }
+        public decimal Qp { get => _qp; set { _qp = value; RaiseFunctionChanged(new FunctionChangedEventArgs()); } }
 
         private bool _invert;
-        public bool Invert { get => _invert; set { _invert = value; RecalculatePoints(); RaiseFunctionChanged(new FunctionChangedEventArgs()); } }
+        public bool Invert { get => _invert; set { _invert = value; RaiseFunctionChanged(new FunctionChangedEventArgs()); } }
 
         private bool _reverse;
-        public bool Reverse { get => _reverse; set { _reverse = value; RecalculatePoints(); RaiseFunctionChanged(new FunctionChangedEventArgs()); } }
+        public bool Reverse { get => _reverse; set { _reverse = value; RaiseFunctionChanged(new FunctionChangedEventArgs()); } }
 
         public decimal wp { get => 2 * DecimalMath.Pi * Fp; }
         public decimal wz { get => 2 * DecimalMath.Pi * Fz; }
 
         
-        private List<decimal> FrequencyPoints => CircuitEditor.CircuitEditor.StaticCurrentDesign.getFrequencyPoints();
+        private List<decimal> FrequencyPoints => UserDesign.CurrentDesign.getFrequencyPoints();
 
         private string currentFunction;
         public string CurrentFunction
@@ -41,12 +42,11 @@ namespace Easycoustics.Transition.Functions
             get => currentFunction; set
             {
                 currentFunction = value;
-                RecalculatePoints();
-                RaiseFunctionChanged(new FunctionChangedEventArgs() { Action=FunctionChangedEventArgs.FunctionChangeAction.Reset });
+                RaiseFunctionChanged(new FunctionChangedEventArgs()
+                { Action=FunctionChangedEventArgs.FunctionChangeAction.Reset });
             }
         }
-        private Dictionary<decimal, ComplexDecimal> points = new Dictionary<decimal, ComplexDecimal>();
-
+       
         public StandardTransferFunction()
         {
             _ao = 1;
@@ -57,24 +57,26 @@ namespace Easycoustics.Transition.Functions
             _reverse = false;
             currentFunction = "LP1";
         }
-
-        private void RecalculatePoints()
+        
+        public override SampledFunction RenderToSampledFunction
         {
-            points = new Dictionary<decimal, ComplexDecimal>();
+            get
+            {
+                var output = new SampledFunction(this);
+                foreach (var freq in FrequencyPoints)
+                    output.addOrChangeSample(freq, Calculate(freq));
 
-            foreach (var freq in FrequencyPoints)
-                points.Add(freq, Calculate(freq));
+                return output;
+            }
         }
-
-        public override Dictionary<decimal, ComplexDecimal> Points => points;
 
         public override ComplexDecimal Calculate(decimal f)
         {
             /* s = jw */
-            return Calculate(ComplexDecimal.ImaginaryOne * f * 2 * DecimalMath.Pi);
+            return CalculateFromS(ComplexDecimal.ImaginaryOne * f * 2 * DecimalMath.Pi);
         }
 
-        public ComplexDecimal Calculate(ComplexDecimal s)
+        public ComplexDecimal CalculateFromS(ComplexDecimal s)
         {
             /* here s is equal to jw */
 
@@ -160,8 +162,11 @@ namespace Easycoustics.Transition.Functions
 
             return output;
         }
-        
 
+        public override void SubmitAllSamplesChanged()
+        {
+            throw new NotImplementedException();
+        }
     }
     
 }

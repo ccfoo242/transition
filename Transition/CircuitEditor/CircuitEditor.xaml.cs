@@ -812,12 +812,19 @@ namespace Easycoustics.Transition.CircuitEditor
             }
         }
 
-        private async void TapCalculate(object sender, TappedRoutedEventArgs e)
+        private void TapCalculate(object sender, TappedRoutedEventArgs e)
+        {
+            var result = Calculate();
+            
+            if (result.Result.Item1)
+                CurrentDesign.SystemCurves.submitCurvesChange();
+        }
+
+        private async Task<Tuple<bool,string>> Calculate()
         {
             var result = await CurrentDesign.Calculate();
-
-            if (result.Item1)
-                CurrentDesign.SystemCurves.submitCurvesChange();
+            
+            return result;
         }
     }
 }

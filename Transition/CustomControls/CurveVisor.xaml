@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uwp="using:LiveCharts.Uwp"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:charts="using:Syncfusion.UI.Xaml.Charts"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
@@ -23,14 +24,25 @@
             <Button Content="Graph Parameters..." IsTapEnabled="True" Tapped="graphParamTap" Margin="4"/>
         </StackPanel>
 
-        <uwp:CartesianChart x:Name="lvcControl"
+        <!-- <uwp:CartesianChart x:Name="lvcControl"
                             HorizontalAlignment="Stretch"        
                             VerticalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch" 
                             VerticalContentAlignment="Stretch"
-                            Grid.Row="1">
+                            Grid.Row="1"  Zoom="Xy"   >
             
-        </uwp:CartesianChart>
+        </uwp:CartesianChart> -->
+
+        <charts:SfChart HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                        Grid.Row="1" x:Name="sfChart">
+            <charts:SfChart.PrimaryAxis>
+                <charts:LogarithmicAxis x:Name="FreqAxis"
+                                        Header="Frequency" 
+                                        Minimum="10" Maximum="40000"/>
+            </charts:SfChart.PrimaryAxis>
+
+        </charts:SfChart>
         
     </Grid>
 </UserControl>

@@ -74,7 +74,7 @@ namespace Easycoustics.Transition.Design
 
         public int QuantityOfFrequencyPoints { get; set; } = 400;
 
-        public enum AxisScale { Logarithmic, Linear };
+      
         public AxisScale FrequencyScale { get; set; } = AxisScale.Logarithmic;
 
         public CurveLibrary.LibraryFolder SystemCurves = new CurveLibrary.LibraryFolder("Design Result Curves");

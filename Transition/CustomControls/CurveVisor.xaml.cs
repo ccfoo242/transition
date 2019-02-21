@@ -1,9 +1,7 @@
-﻿using Easycoustics.Transition.Design;
+﻿using Easycoustics.Transition.Common;
+using Easycoustics.Transition.Design;
 using Easycoustics.Transition.Functions;
-using LiveCharts;
-using LiveCharts.Configurations;
-using LiveCharts.Defaults;
-using LiveCharts.Uwp;
+using Syncfusion.UI.Xaml.Charts;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -29,174 +27,152 @@ namespace Easycoustics.Transition.CustomControls
     public sealed partial class FrequencyCurveVisor : UserControl
     {
         public ObservableCollection<Function> Curves { get; } = new ObservableCollection<Function>();
-        
-        public double MinFreq { get => AxisX.MinValue; set { AxisX.MinValue = value; } }
-        public double MaxFreq { get => AxisY.MaxValue; set { AxisY.MaxValue = value; } } 
 
-        private Axis AxisX;
-        private Axis AxisY;
+        public Dictionary<Function, LineSeries> FuncSeriesMag { get; } = new Dictionary<Function, LineSeries>();
+        public Dictionary<Function, LineSeries> FuncSeriesPh { get; } = new Dictionary<Function, LineSeries>();
+        // public Dictionary<Function, SampledFunction> FuncSampl { get; } = new Dictionary<Function, SampledFunction>();
 
-        private Dictionary<Function, LineSeries> dictFL = new Dictionary<Function, LineSeries>();
+        private AxisScale magScale;
+        public AxisScale MagScale { get => magScale; set { magScale = value; scaleMagnitudeChanged(); } }
 
-        private SeriesCollection lvcSeriesCollection;
+        private decimal dBReference;
+        public decimal DBReference { get => dBReference; set { dBReference = value; scaleMagnitudeChanged(); } }
+
+        NumericalAxis magLinearAxis = new NumericalAxis() { Header = "Magnitude" };
+        LogarithmicAxis magLogAxis = new LogarithmicAxis() { Header = "Magnitude" };
+
+        NumericalAxis phaseAxis = new NumericalAxis()
+        {
+            Header = "Phase",
+            Minimum = -180,
+            Maximum = 180
+        };
+
+        RangeAxisBase currentMagAxis { get {
+                switch (MagScale)
+                {
+                    case AxisScale.Linear: return magLinearAxis;
+                    case AxisScale.Logarithmic: return magLogAxis;
+                    case AxisScale.dB: return magLinearAxis;
+                    default: return magLinearAxis;
+                }
+            } }
 
         public FrequencyCurveVisor()
         {
             this.InitializeComponent();
+
+            dBReference = 1;
+            magScale = AxisScale.dB;
+            
             Curves.CollectionChanged += colFunctionsChanged;
-
-            lvcSeriesCollection = new LiveCharts.SeriesCollection(Mappers.Xy<ObservablePoint>()
-                .X(point => Math.Log10(point.X))
-                .Y(point => point.Y));
-
-            lvcControl.Series = lvcSeriesCollection;
-
-            AxisX = new Axis()
-            {
-                Title = "Frequency (Hz)",
-                MinValue = 1,
-                MaxValue = 5,
-                Separator = new Separator()
-                {
-                    Step = 1,
-                    Stroke = new SolidColorBrush(Colors.Gray),
-                    StrokeThickness = .5
-                }
-            };
-            lvcControl.AxisX.Add(AxisX);
-
-            AxisY = new Axis()
-            {
-                Title = "dB",
-                MinValue = -80,
-                MaxValue = 10,
-                Separator = new Separator()
-                {
-                    Step = 10,
-                    Stroke = new SolidColorBrush(Colors.Gray),
-                    StrokeThickness = .5
-                }
-            };
-            lvcControl.AxisY.Add(AxisY);
-
-          
+           
         }
 
         private void colFunctionsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            LineSeries lMag;
+            LineSeries lPhase;
+
+            Function func;
+        
+
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-
-                    LineSeries l;
                     foreach (var function in e.NewItems)
                     {
-                        var func = (Function)function;
+                        func = ((Function)function);
+                        var funcSampled = ((Function)function).RenderToSampledFunction;
+                    
+                        func.FunctionChanged += functionChanged;
 
-                        l = new LineSeries()
-                        {
-                            Values = new ChartValues<ObservablePoint>(),
-                            StrokeThickness = 2,
-                            Stroke = new SolidColorBrush(Colors.Black),
-                            LineSmoothness = 0,
-                            PointGeometry = null,
-                            PointGeometrySize = 0
+                        lMag = new LineSeries()
+                        {                            
+                            XBindingPath = "Key",
+                            XAxis = FreqAxis,
+                            YAxis = currentMagAxis,
+                            StrokeThickness = func.StrokeThickness,
+                            Stroke = func.StrokeColor
                         };
 
-                        dictFL.Add(func, l);
+                        lMag.ItemsSource = (MagScale == AxisScale.dB) ? funcSampled.DataIndB(DBReference) : funcSampled.Data;
+                        lMag.YBindingPath = (MagScale == AxisScale.dB) ? "Value.RealPart" : "Value.Magnitude";
 
-                        func.FunctionChanged += functionChanged;
-                        double mag;
+                        FuncSeriesMag.Add(func, lMag);
 
-                        foreach (var point in func.Points)
+
+                        lPhase = new LineSeries()
                         {
-                            mag = 20 * Math.Log10(Convert.ToDouble(point.Value.Magnitude));
-                            l.Values.Add(new ObservablePoint(Convert.ToDouble(point.Key), mag));
-                        }
-                        lvcSeriesCollection.Add(l);
+                            ItemsSource = funcSampled.Data,
+                            XBindingPath = "Key",
+                            YBindingPath = "Value.PhaseDeg",
+                            XAxis = FreqAxis,
+                            YAxis = phaseAxis,
+                            StrokeThickness = func.StrokeThickness,
+                            Stroke = func.StrokeColor
+                        };
+                        
+                        FuncSeriesPh.Add(func, lPhase);
+
+                        sfChart.Series.Add(lMag);
+                        sfChart.Series.Add(lPhase);
+
                     }
-                 
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
                     foreach (var function in e.OldItems)
                     {
-                        var func = (Function)function;
-                        lvcSeriesCollection.Remove(dictFL[func]);
-                        dictFL.Remove(func);
+                        func = (Function)function;
+                       // var funcSampled = FuncSampl[func];
+                        
+                        sfChart.Series.Remove(FuncSeriesMag[func]);
+                        sfChart.Series.Remove(FuncSeriesPh[func]);
+
+                        FuncSeriesMag.Remove(func);
+                        FuncSeriesPh.Remove(func);
+
                         func.FunctionChanged -= functionChanged;
                     }
                     break;
-                    
+
                 case NotifyCollectionChangedAction.Reset:
-                    lvcSeriesCollection.Clear();
-                    foreach (var function in dictFL.Keys)
-                        function.FunctionChanged -= functionChanged;
+                    sfChart.Series.Clear();
+                    FuncSeriesMag.Clear();
+                    FuncSeriesPh.Clear();
+                    foreach (var function in e.OldItems)
+                        ((Function)function).FunctionChanged -= functionChanged;
                     
-                    dictFL.Clear();
+
                     break;
+
             }
         }
 
         private void functionChanged(Function obj, FunctionChangedEventArgs args)
         {
-            var series = dictFL[obj];
-            
-            Func<decimal, ObservablePoint> GetObsPoint = (X) => {
-                var x = Convert.ToDouble(X);
-                foreach (var obs in series.Values.OfType<ObservablePoint>())
-                    if (obs.X == x) return obs;
+            var serie = FuncSeriesMag[obj];
+            SampledFunction func = obj.RenderToSampledFunction;
 
-                return null;
-                    };
-            switch (args.Action)
+            serie.ItemsSource = (MagScale == AxisScale.dB) ? func.DataIndB(DBReference) : func.Data;
+
+        }
+
+        private void scaleMagnitudeChanged()
+        {
+            foreach (var kvp in FuncSeriesMag)
             {
-                case FunctionChangedEventArgs.FunctionChangeAction.PointAdded:
-                    double mag = 20 * Math.Log10(Convert.ToDouble(args.Y.Magnitude));
-                    series.Values.Add(new ObservablePoint(Convert.ToDouble(args.X), mag));
-                    break;
+                kvp.Value.YAxis = currentMagAxis;
+                kvp.Value.ItemsSource = (MagScale == AxisScale.dB) ? kvp.Key.RenderToSampledFunction.DataIndB(DBReference) : kvp.Key.RenderToSampledFunction.Data;
 
-                case FunctionChangedEventArgs.FunctionChangeAction.PointChanged:
-                    var obsPoint = GetObsPoint(args.X);
-                    if (obsPoint != null)
-                        obsPoint.Y = 20 * Math.Log10(Convert.ToDouble(args.Y.Magnitude));
-                  
-                    break;
-
-                case FunctionChangedEventArgs.FunctionChangeAction.PointRemoved:
-                    var obsPoint2 = GetObsPoint(args.X);
-                    if (obsPoint2 != null)
-                        series.Values.Remove(obsPoint2);
-                    break;
-
-                case FunctionChangedEventArgs.FunctionChangeAction.Reset:
-                    var ObsToDelete = new List<ObservablePoint>();
-                    ObsToDelete.AddRange(series.Values.OfType<ObservablePoint>());
-                    ObservablePoint obsPoint3;
-                    double mag2;
-
-                    foreach (var point in obj.Points)
-                    {
-                        obsPoint3 = GetObsPoint(point.Key);
-                        mag2 = 20 * Math.Log10(Convert.ToDouble(point.Value.Magnitude));
-
-                        if (obsPoint3 == null)
-                        { series.Values.Add(new ObservablePoint(Convert.ToDouble(point.Key), mag2)); }
-                        else
-                        {
-                            obsPoint3.Y = mag2;
-                            ObsToDelete.Remove(obsPoint3);
-                        }
-                    }
-                    foreach (var obsDel in ObsToDelete)
-                        series.Values.Remove(obsDel);
-                    break;
             }
         }
 
+
         private async void curvesTap(object sender, TappedRoutedEventArgs e)
         {
-            var curveSelector = new CurveSelection();
+            var curveSelector = new CurveSelection(Curves.ToList());
 
             var dialog = new ContentDialog()
             {

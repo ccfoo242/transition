@@ -171,7 +171,7 @@ namespace Easycoustics.Transition.CustomControls
                         sc.Add(sMag);
                         sc.Add(sPhase);
 
-                        foreach (var pair in function.Points)
+                        foreach (var pair in function.RenderToSampledFunction.Data)
                         {
                             sMag.Values.Add(new ObservablePoint(Convert.ToDouble(pair.Key), Convert.ToDouble(pair.Value.Magnitude)));
                             sPhase.Values.Add(new ObservablePoint(Convert.ToDouble(pair.Key), Convert.ToDouble(pair.Value.Phase * 180 / DecimalMath.Pi)));
@@ -230,7 +230,7 @@ namespace Easycoustics.Transition.CustomControls
 
         private void FunctionChanged(Function func, FunctionChangedEventArgs args)
         {
-            foreach (KeyValuePair<decimal, ComplexDecimal> point in func.Points)
+            foreach (KeyValuePair<decimal, ComplexDecimal> point in func.RenderToSampledFunction.Data)
             {
                 alterOrAddPoint(Convert.ToDouble(point.Key), Convert.ToDouble(point.Value.Magnitude), seriesMag[func]);
                 alterOrAddPoint(Convert.ToDouble(point.Key), Convert.ToDouble(point.Value.Phase * 180 / DecimalMath.Pi), seriesPhase[func]);
@@ -241,7 +241,7 @@ namespace Easycoustics.Transition.CustomControls
             foreach (ObservablePoint point in seriesMag[func].Values.OfType<ObservablePoint>())
             {
                 exists = false;
-                foreach (var kvp in func.Points)
+                foreach (var kvp in func.RenderToSampledFunction.Data)
                 {
                     if (Convert.ToDouble(kvp.Key) == point.X)
                         exists = true;

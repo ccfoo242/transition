@@ -18,6 +18,7 @@ namespace Easycoustics.Transition.Common
 
         public decimal Magnitude { get => Modulus(this); }
         public decimal Phase { get => Argument(this); }
+        public decimal PhaseDeg { get => (Argument(this) * 180 ) / DecimalMath.Pi ; }
 
         public ComplexDecimal Reciprocal { get => One / this; }
         public ComplexDecimal Conjugate { get => new ComplexDecimal(RealPart, -1m * ImaginaryPart); }
@@ -38,6 +39,13 @@ namespace Easycoustics.Transition.Common
             ImaginaryPart = 0m;
         }
 
+        public decimal TodB(decimal reference)
+            { return TodB(this, reference); }
+
+        public static decimal TodB(ComplexDecimal number, decimal reference)
+        {
+            return 20 * DecimalMath.Log10(number.Magnitude / reference);
+        }
 
         public ComplexDecimal(double real, double imag)
         {

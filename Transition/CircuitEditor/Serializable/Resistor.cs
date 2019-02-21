@@ -20,9 +20,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         private bool outputCurrentThrough;
         private bool outputResistorPower;
 
-        public SampledFunction resultVoltageCurve { get; set; } = new SampledFunction();
-        public SampledFunction resultCurrentCurve { get; set; } = new SampledFunction();
-        public SampledFunction resultPowerCurve { get; set; } = new SampledFunction();
+        public SampledFunction resultVoltageCurve { get; set; } = new SampledFunction() { FunctionQuantity="Voltage", FunctionUnit="Volt" };
+        public SampledFunction resultCurrentCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Current", FunctionUnit = "Amper" };
+        public SampledFunction resultPowerCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Power", FunctionUnit = "Watt" };
 
         public bool OutputVoltageAcross
         {

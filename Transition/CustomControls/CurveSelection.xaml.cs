@@ -33,6 +33,50 @@ namespace Easycoustics.Transition.CustomControls
             treeUserCurves.ItemsSource = userCurveLibrary.Children;
         }
 
+        public CurveSelection(List<Function> AlreadySelected)
+        {
+            this.InitializeComponent();
+
+
+            var systemCurveLibrary = UserDesign.CurrentDesign.SystemCurves;
+            var userCurveLibrary = UserDesign.CurrentDesign.UserCurves;
+
+
+            treeSystemCurves.ItemsSource = systemCurveLibrary.Children;
+            treeUserCurves.ItemsSource = userCurveLibrary.Children;
+
+            var items1 = new List<LibraryItem>();
+            var items2 = new List<LibraryItem>();
+
+            foreach (var func in AlreadySelected)
+            {
+                if (systemCurveLibrary.GetItem(func) != null)
+                    items1.Add(systemCurveLibrary.GetItem(func));
+
+                if (userCurveLibrary.GetItem(func) != null)
+                    items2.Add(userCurveLibrary.GetItem(func));
+            }
+
+            List<TreeViewNode> l;
+            foreach (var item in items1)
+            {
+                l = treeSystemCurves.RootNodes.Cast<TreeViewNode>().Where(n => n.Content == item).ToList();
+                if (l.Count > 0) treeSystemCurves.SelectedNodes.Add(l.First());
+            }
+
+
+        }
+
+        public TreeViewNode getNode(List<TreeViewNode> nodes, LibraryItem item)
+        {
+            foreach (TreeViewNode node in nodes)
+            {
+                if (node.Content == item) return node;
+                return getNode(node.Children.ToList(), item);
+            }
+            return null;
+        }
+
         public List<Function> selectedCurves()
         {
             var output = new List<Function>();

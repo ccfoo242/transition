@@ -15,9 +15,14 @@ namespace Easycoustics.Transition.CurveLibrary
         public override string Title => (Curve !=null) ? Curve.Title : "";
         public override ObservableCollection<LibraryBase> Children => null;
 
+        public override LibraryItem GetItem(Function func)
+        {
+            return (Curve == func) ? this : null; 
+        }
+
         public override void submitCurvesChange()
         {
-            Curve.SubmitChange();
+            Curve.SubmitAllSamplesChanged();
         }
     }
 }

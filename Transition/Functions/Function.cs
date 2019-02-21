@@ -1,10 +1,12 @@
 ﻿using Easycoustics.Transition.Common;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 using static Easycoustics.Transition.Design.UserDesign;
@@ -16,19 +18,39 @@ namespace Easycoustics.Transition.Functions
         public string Title { get; set; }
 
         public abstract ComplexDecimal Calculate(decimal point);
+        public abstract SampledFunction RenderToSampledFunction { get; }
+        public abstract void SubmitAllSamplesChanged();
+
         public Brush StrokeColor { get; set; }
         public double StrokeThickness { get; set; }
         public DoubleCollection StrokeArray { get; set; }
 
-        public abstract Dictionary<decimal, ComplexDecimal> Points { get; } 
-        
-        public string FunctionUnit { get; set; }
-        public string VariableUnit { get; set; }
+         
+        public string FunctionUnit { get; set; } /* Volt, Pascal, Amper, Ohm, etc */
+        public string VariableUnit { get; set; } /* Hz, KHz., etc */
+        public string FunctionQuantity { get; set; } /* Voltage, Current, Impedance, Pressure, Sec, etc.*/
+        public string VariableQuantity { get; set; } /* Frequency, time, etc */
 
-        public static decimal MinimumFrequency => CircuitEditor.CircuitEditor.StaticCurrentDesign.MinimumFrequency;
-        public static decimal MaximumFrequency => CircuitEditor.CircuitEditor.StaticCurrentDesign.MaximumFrequency;
+        public static decimal MinimumFrequency => CurrentDesign.MinimumFrequency;
+        public static decimal MaximumFrequency => CurrentDesign.MaximumFrequency;
 
         public static int NumberOfFrequencyPoints => CircuitEditor.CircuitEditor.StaticCurrentDesign.QuantityOfFrequencyPoints;
+
+        public static string[] PhysicalUnits = new string[] {
+            "Amper",
+            "Kg",
+            "Hz",
+            "Joule",
+            "Meter",
+            "Newton",
+            "Ohm",
+            "Pascal",
+            "Sec",
+            "Tesla",
+            "Volt",
+            "Watt",
+            ""
+            };
 
         public static string[] PhysicalQuantities = new string[] {
             "Acceleration",
@@ -64,10 +86,12 @@ namespace Easycoustics.Transition.Functions
         
         protected void RaiseFunctionChanged(FunctionChangedEventArgs args) => FunctionChanged?.Invoke(this, args);
 
-        public void SubmitChange()
+        public Function()
         {
-            RaiseFunctionChanged(new FunctionChangedEventArgs() { Action = FunctionChangedEventArgs.FunctionChangeAction.Reset });
+            VariableUnit = "Hz";
+            VariableQuantity = "Frequency";
         }
+        
     }
 
 
@@ -90,24 +114,26 @@ namespace Easycoustics.Transition.Functions
             set
             {
                 fixedValue = value;
-                RaiseFunctionChanged(new FunctionChangedEventArgs() { Action = FunctionChangedEventArgs.FunctionChangeAction.Reset });
+                RaiseFunctionChanged(new FunctionChangedEventArgs()
+                    { Action = FunctionChangedEventArgs.FunctionChangeAction.Reset });
             }
         }
+        
 
-        public override Dictionary<decimal, ComplexDecimal> Points
+        public override SampledFunction RenderToSampledFunction
         {
             get
             {
-                var output = new Dictionary<decimal, ComplexDecimal>();
+                var output = new SampledFunction(this);
 
-                output.Add(MinimumFrequency, FixedValue);
-                output.Add(MaximumFrequency, FixedValue);
+                output.addOrChangeSample(MinimumFrequency, FixedValue);
+                output.addOrChangeSample(MinimumFrequency, fixedValue);
 
                 return output;
             }
         }
-        
-        public ConstantValueFunction(Complex fixedValue)
+
+        public ConstantValueFunction(Complex fixedValue) : base()
         {
             FixedValue = fixedValue;
         }
@@ -117,9 +143,10 @@ namespace Easycoustics.Transition.Functions
             return FixedValue;
         }
 
-       
-
-
+        public override void SubmitAllSamplesChanged()
+        {
+            throw new NotImplementedException();
+        }
     }
 
 
@@ -127,49 +154,56 @@ namespace Easycoustics.Transition.Functions
 
 
 
-    public class SampledFunction : Function
+    public class SampledFunction : Function, INotifyPropertyChanged, ICloneable
     {
         public Dictionary<decimal, ComplexDecimal> Data { get; } = new Dictionary<decimal, ComplexDecimal>();
 
-        public override Dictionary<decimal, ComplexDecimal> Points => Data;
-        public InterpolationModes InterpolationMode;
+        
+        public InterpolationModes InterpolationMode = InterpolationModes.Linear;
 
-        public decimal GetMinimumDomain
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public decimal GetMinimumDomain => Data.Keys.Min();
+        public decimal GetMaximumDomain => Data.Keys.Max();
+
+        public decimal dBReference;
+
+        public override SampledFunction RenderToSampledFunction => this;
+
+        public SampledFunction() : base()
         {
-            get
-            {
-                var output = decimal.MaxValue;
-                if (Data.Count == 0) throw new InvalidOperationException("Data array is empty");
+            var rnd = new Random();
+            StrokeColor = new SolidColorBrush(Color.FromArgb(255, (byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255)));
+            StrokeThickness = 2;
 
-                foreach (var kvp in Data)
-                    if (kvp.Key < output) output = kvp.Key;
-
-                return output;
-            }
         }
 
-        public decimal GetMaximumDomain
+        public SampledFunction(Function other)
         {
-            get
-            {
-                var output = decimal.MinValue;
-                if (Data.Count == 0) throw new InvalidOperationException("Data array is empty");
-
-                foreach (var kvp in Data)
-                    if (kvp.Key > output) output = kvp.Key;
-
-                return output;
-            }
-        }
-
-        public SampledFunction()
-        {
-            InterpolationMode = InterpolationModes.Linear;
+            FunctionQuantity = other.FunctionQuantity;
+            FunctionUnit = other.FunctionUnit;
+            VariableQuantity = other.VariableQuantity;
+            VariableUnit = other.VariableUnit;
+            StrokeArray = other.StrokeArray;
+            StrokeThickness = other.StrokeThickness;
+            StrokeColor = other.StrokeColor;
+            Title = other.Title;
         }
 
         public void Clear()
         {
             Data.Clear();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Data"));
+        }
+
+        public Dictionary<decimal, ComplexDecimal> DataIndB(decimal reference)
+        {
+            var output = new Dictionary<decimal, ComplexDecimal>();
+            foreach (var kvp in Data)
+                output.Add(kvp.Key, kvp.Value.TodB(reference));
+
+            return output;
+            
         }
 
         public override ComplexDecimal Calculate(decimal point)
@@ -433,8 +467,28 @@ namespace Easycoustics.Transition.Functions
             return true;
         }
 
+        public override void SubmitAllSamplesChanged()
+        {
+            RaiseFunctionChanged(new FunctionChangedEventArgs()
+            { Action = FunctionChangedEventArgs.FunctionChangeAction.Reset });
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Data"));
+        }
+
+        public object Clone()
+        {
+            var output = new SampledFunction(this);
+
+            foreach (var kvp in Data)
+                output.Data.Add(kvp.Key, kvp.Value);
+
+            output.dBReference = this.dBReference;
+
+            return output;
+        }
     }
 
     public enum InterpolationModes { NearestNeighbor, Linear, Quadratic, Cubic };
+ 
 
 }
+ 

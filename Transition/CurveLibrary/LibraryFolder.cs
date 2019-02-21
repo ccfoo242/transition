@@ -16,6 +16,7 @@ namespace Easycoustics.Transition.CurveLibrary
 
         public string FolderName { get; set; }
 
+        
         public LibraryFolder(string name)
         {
             FolderName = name;
@@ -56,6 +57,17 @@ namespace Easycoustics.Transition.CurveLibrary
         public void Clear()
         {
             Children.Clear();
+        }
+
+        public override LibraryItem GetItem(Function func)
+        {
+            foreach (LibraryBase item in Children)
+                if (item.GetItem(func) != null)
+                    return item.GetItem(func);
+
+
+
+            return null;
         }
     }
 }

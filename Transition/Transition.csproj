@@ -206,8 +206,10 @@
     <Compile Include="Commands\CommandUnBindWire.cs" />
     <Compile Include="Common\BindableBase.cs" />
     <Compile Include="Common\BoolVisibilityConverter.cs" />
+    <Compile Include="Common\ComplexdBConverter.cs" />
     <Compile Include="Common\ComplexDecimal.cs" />
     <Compile Include="Common\DecimalMath.cs" />
+    <Compile Include="Common\Enums.cs" />
     <Compile Include="Common\Matrix.cs" />
     <Compile Include="Common\ObservableStack.cs" />
     <Compile Include="Common\Point2D.cs" />
