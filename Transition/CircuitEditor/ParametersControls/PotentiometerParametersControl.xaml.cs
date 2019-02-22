@@ -1,7 +1,4 @@
-﻿using LiveCharts;
-using LiveCharts.Defaults;
-using LiveCharts.Uwp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -33,7 +30,7 @@ namespace Easycoustics.Transition.CircuitEditor.Components
     { 
         private Potentiometer SerializablePotentiometer { get; }
 
-        private SeriesCollection seriesCollection;
+        //private SeriesCollection seriesCollection;
 
         private string oldElementName;
 
@@ -51,7 +48,7 @@ namespace Easycoustics.Transition.CircuitEditor.Components
             pot.PropertyChanged += handleChangeOfControls;
             handleChangeOfControls(null, null);
 
-            seriesCollection = new SeriesCollection();
+          /*  seriesCollection = new SeriesCollection();
             lvcTaperCurve.Series = seriesCollection;
 
             lvcTaperCurve.AxisX.Add(new Axis()
@@ -79,7 +76,7 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                     StrokeThickness = .5
                 }
             });
-            
+            */
             pot.TaperChanged += Pot_TaperChanged;
 
             Pot_TaperChanged();
@@ -87,7 +84,7 @@ namespace Easycoustics.Transition.CircuitEditor.Components
         }
 
         private void Pot_TaperChanged()
-        {
+        {/*
             seriesCollection.Clear();
 
             LineSeries l = new LineSeries()
@@ -104,6 +101,7 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                        Convert.ToDouble(point.Value.Magnitude)));
 
             seriesCollection.Add(l);
+            */
              
         }
 

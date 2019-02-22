@@ -1,0 +1,30 @@
+﻿<UserControl
+    x:Class="Easycoustics.Transition.CustomControls.CurveVisorRad"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Easycoustics.Transition.CustomControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:chart="using:Telerik.UI.Xaml.Controls.Chart"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Center">
+            <Button Content="Curves..." IsTapEnabled="True" Tapped="curvesTap" Margin="4"/>
+            <Button Content="Graph Parameters..." IsTapEnabled="True" Tapped="graphParamTap" Margin="4"/>
+        </StackPanel>
+        
+        <chart:RadCartesianChart Grid.Row="1" x:Name="radChart">
+            <chart:RadCartesianChart.HorizontalAxis>
+                <chart:LogarithmicAxis Minimum="10" Maximum="40000" Title="Frequency"/>
+            </chart:RadCartesianChart.HorizontalAxis>
+        </chart:RadCartesianChart>
+    </Grid>
+</UserControl>

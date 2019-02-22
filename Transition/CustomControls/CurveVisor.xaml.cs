@@ -38,14 +38,31 @@ namespace Easycoustics.Transition.CustomControls
         private decimal dBReference;
         public decimal DBReference { get => dBReference; set { dBReference = value; scaleMagnitudeChanged(); } }
 
-        NumericalAxis magLinearAxis = new NumericalAxis() { Header = "Magnitude" };
-        LogarithmicAxis magLogAxis = new LogarithmicAxis() { Header = "Magnitude" };
+        NumericalAxis magLinearAxis = new NumericalAxis()
+        {
+            Header = "Magnitude",
+            SmallTickLineSize = 2,
+            TickLineSize = 6,
+            SmallTicksPerInterval = 4,
+            Interval = 5
+        };
+
+        LogarithmicAxis magLogAxis = new LogarithmicAxis()
+        {
+            Header = "Magnitude",
+            SmallTickLineSize = 2,
+            TickLineSize = 6,
+            SmallTicksPerInterval = 4,
+            Interval = 5
+        };
 
         NumericalAxis phaseAxis = new NumericalAxis()
         {
             Header = "Phase",
             Minimum = -180,
-            Maximum = 180
+            Maximum = 180,
+            TickLineSize = 0,
+            OpposedPosition = true
         };
 
         RangeAxisBase currentMagAxis { get {
@@ -84,29 +101,32 @@ namespace Easycoustics.Transition.CustomControls
                     {
                         func = ((Function)function);
                         var funcSampled = ((Function)function).RenderToSampledFunction;
-                    
+                        var dataMagdB = funcSampled.DataMagdB(DBReference);
+                        var dataMag = funcSampled.DataMagLin();
+                        var dataPh = funcSampled.DataPhaseDeg();
+
                         func.FunctionChanged += functionChanged;
 
                         lMag = new LineSeries()
                         {                            
                             XBindingPath = "Key",
+                            YBindingPath = "Value",
                             XAxis = FreqAxis,
                             YAxis = currentMagAxis,
                             StrokeThickness = func.StrokeThickness,
                             Stroke = func.StrokeColor
                         };
 
-                        lMag.ItemsSource = (MagScale == AxisScale.dB) ? funcSampled.DataIndB(DBReference) : funcSampled.Data;
-                        lMag.YBindingPath = (MagScale == AxisScale.dB) ? "Value.RealPart" : "Value.Magnitude";
+                        lMag.ItemsSource = (MagScale == AxisScale.dB) ? dataMagdB : dataMag;
 
                         FuncSeriesMag.Add(func, lMag);
 
 
                         lPhase = new LineSeries()
                         {
-                            ItemsSource = funcSampled.Data,
+                            ItemsSource = dataPh,
                             XBindingPath = "Key",
-                            YBindingPath = "Value.PhaseDeg",
+                            YBindingPath = "Value",
                             XAxis = FreqAxis,
                             YAxis = phaseAxis,
                             StrokeThickness = func.StrokeThickness,
@@ -115,8 +135,8 @@ namespace Easycoustics.Transition.CustomControls
                         
                         FuncSeriesPh.Add(func, lPhase);
 
-                        sfChart.Series.Add(lMag);
-                        sfChart.Series.Add(lPhase);
+                       sfChart.Series.Add(lMag);
+                       sfChart.Series.Add(lPhase);
 
                     }
                     break;
@@ -152,11 +172,16 @@ namespace Easycoustics.Transition.CustomControls
 
         private void functionChanged(Function obj, FunctionChangedEventArgs args)
         {
-            var serie = FuncSeriesMag[obj];
+            var serieMag = FuncSeriesMag[obj];
+            var seriePh = FuncSeriesPh[obj];
             SampledFunction func = obj.RenderToSampledFunction;
 
-            serie.ItemsSource = (MagScale == AxisScale.dB) ? func.DataIndB(DBReference) : func.Data;
+            var dataMagdB = func.DataMagdB(DBReference);
+            var dataMag = func.DataMagLin();
+            var dataPh = func.DataPhaseDeg();
 
+            serieMag.ItemsSource = (MagScale == AxisScale.dB) ? dataMagdB : dataMag;
+            seriePh.ItemsSource = dataPh;
         }
 
         private void scaleMagnitudeChanged()
@@ -164,7 +189,8 @@ namespace Easycoustics.Transition.CustomControls
             foreach (var kvp in FuncSeriesMag)
             {
                 kvp.Value.YAxis = currentMagAxis;
-                kvp.Value.ItemsSource = (MagScale == AxisScale.dB) ? kvp.Key.RenderToSampledFunction.DataIndB(DBReference) : kvp.Key.RenderToSampledFunction.Data;
+                kvp.Value.ItemsSource = (MagScale == AxisScale.dB) ? 
+                    kvp.Key.RenderToSampledFunction.DataMagdB(DBReference) : kvp.Key.RenderToSampledFunction.DataMagLin();
 
             }
         }

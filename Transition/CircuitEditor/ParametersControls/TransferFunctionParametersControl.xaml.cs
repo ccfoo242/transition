@@ -39,7 +39,7 @@ namespace Easycoustics.Transition.CircuitEditor.ParametersControls
 
             tf.PropertyChanged += handleChangeOfControls;
 
-            crvCurveControl.functions.Add(tf.standardTf);
+            //crvCurveControl.functions.Add(tf.standardTf);
             handleChangeOfControls(null, null);
         }
 

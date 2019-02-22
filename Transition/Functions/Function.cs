@@ -151,8 +151,8 @@ namespace Easycoustics.Transition.Functions
 
 
 
-
-
+    
+    
 
     public class SampledFunction : Function, INotifyPropertyChanged, ICloneable
     {
@@ -170,6 +170,7 @@ namespace Easycoustics.Transition.Functions
 
         public override SampledFunction RenderToSampledFunction => this;
 
+      
         public SampledFunction() : base()
         {
             var rnd = new Random();
@@ -196,15 +197,33 @@ namespace Easycoustics.Transition.Functions
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Data"));
         }
 
-        public Dictionary<decimal, ComplexDecimal> DataIndB(decimal reference)
+        public Dictionary<double, double> DataMagdB(decimal reference)
         {
-            var output = new Dictionary<decimal, ComplexDecimal>();
+            var output = new Dictionary<double, double>();
             foreach (var kvp in Data)
-                output.Add(kvp.Key, kvp.Value.TodB(reference));
+                output.Add(Convert.ToDouble(kvp.Key), Convert.ToDouble(kvp.Value.TodB(reference)));
 
             return output;
-            
         }
+
+        public Dictionary<double, double> DataMagLin()
+        {
+            var output = new Dictionary<double, double>();
+            foreach (var kvp in Data)
+                output.Add(Convert.ToDouble(kvp.Key), Convert.ToDouble(kvp.Value.Magnitude));
+
+            return output;
+        }
+
+        public Dictionary<double, double> DataPhaseDeg()
+        {
+            var output = new Dictionary<double, double>();
+            foreach (var kvp in Data)
+                output.Add(Convert.ToDouble(kvp.Key), Convert.ToDouble(kvp.Value.PhaseDeg));
+
+            return output;
+        }
+
 
         public override ComplexDecimal Calculate(decimal point)
         {

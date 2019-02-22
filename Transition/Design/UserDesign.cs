@@ -72,7 +72,7 @@ namespace Easycoustics.Transition.Design
             }
         }
 
-        public int QuantityOfFrequencyPoints { get; set; } = 400;
+        public int QuantityOfFrequencyPoints { get; set; } = 300;
 
       
         public AxisScale FrequencyScale { get; set; } = AxisScale.Logarithmic;

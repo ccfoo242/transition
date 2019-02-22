@@ -134,10 +134,10 @@
         <controls:Expander Header="Taper Function" IsExpanded="True"
                            ExpandDirection="Down" HorizontalContentAlignment="Stretch">
             <StackPanel Orientation="Vertical">
-                <charts:CartesianChart x:Name="lvcTaperCurve"
+                <!--<charts:CartesianChart x:Name="lvcTaperCurve"
                                        Height="300" Margin="20"/>
                 <Button x:Name="btnLibrary" Content="Library..." Margin="4"
-                        Tapped="btnLibraryTap" IsTapEnabled="True"/>
+                        Tapped="btnLibraryTap" IsTapEnabled="True"/> -->
             </StackPanel>
         </controls:Expander>
         

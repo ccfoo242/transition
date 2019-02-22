@@ -35,11 +35,20 @@
 
         <charts:SfChart HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
-                        Grid.Row="1" x:Name="sfChart">
-            <charts:SfChart.PrimaryAxis>
+                        Grid.Row="1" x:Name="sfChart" >
+            <charts:SfChart.Behaviors>
+                <charts:ChartZoomPanBehavior/>
+                <charts:ChartTrackBallBehavior LabelDisplayMode="NearestPoint"/>
+            </charts:SfChart.Behaviors>
+        <charts:SfChart.PrimaryAxis>
                 <charts:LogarithmicAxis x:Name="FreqAxis"
                                         Header="Frequency" 
-                                        Minimum="10" Maximum="40000"/>
+                                        Minimum="10" Maximum="40000"
+                                        TickLineSize="6"
+                                        SmallTickLineSize="2"
+                                        TickLinesPosition="Inside"
+                                        SmallTickLinesPosition="Inside"
+                                        SmallTicksPerInterval="8"/>
             </charts:SfChart.PrimaryAxis>
 
         </charts:SfChart>
