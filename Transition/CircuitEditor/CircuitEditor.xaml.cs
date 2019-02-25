@@ -81,10 +81,7 @@ namespace Easycoustics.Transition.CircuitEditor
 
             UndoStack.StackChanged += HandleUndoStack;
             RedoStack.StackChanged += HandleRedoStack;
-
-           // lstStackUndo.ItemsSource = UndoStack;
-           // lstStackRedo.ItemsSource = RedoStack;
-
+            
         }
 
         private void HandleUndoStack(object sender, NotifyCollectionChangedEventArgs e)
@@ -825,6 +822,12 @@ namespace Easycoustics.Transition.CircuitEditor
             var result = await CurrentDesign.Calculate();
             
             return result;
+        }
+
+        private void tapModify(object sender, TappedRoutedEventArgs e)
+        {
+            CustomControls.CurveVisorRad.staticCurveVisor.modify(null, null);
+
         }
     }
 }

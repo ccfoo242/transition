@@ -138,7 +138,7 @@ namespace Easycoustics.Transition.CircuitEditor.Components
             oldElementName = txtElementName.Text;
         }
         
-        private void ConstantVoltageChanged(object sender, CustomControls.ValueChangedEventArgs args)
+        private void ConstantVoltageChanged(object sender, Common.ValueChangedEventArgs args)
         {
             var command = new CommandSetValue()
             {
@@ -151,7 +151,7 @@ namespace Easycoustics.Transition.CircuitEditor.Components
             executeCommand(command);
         }
 
-        private void ConstantImpedanceChanged(object sender, CustomControls.ValueChangedEventArgs args)
+        private void ConstantImpedanceChanged(object sender, Common.ValueChangedEventArgs args)
         {
             var command = new CommandSetValue()
             {

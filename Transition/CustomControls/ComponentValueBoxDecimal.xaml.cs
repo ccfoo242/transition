@@ -493,4 +493,37 @@ namespace Easycoustics.Transition.CustomControls
 
     }
 
+
+    public class PrecisionIntConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            //precision to int
+            var prec = (Precision)value;
+            return (int)prec;
+
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            //int to precision
+            var prec = (int)value;
+
+            switch (prec)
+            {
+                case 0: return Precision.Arbitrary;
+                case 1: return Precision.p05;
+                case 2: return Precision.p1;
+                case 3: return Precision.p2;
+                case 4: return Precision.p5;
+                case 5: return Precision.p10;
+                case 6: return Precision.p20;
+                case 7: return Precision.p50;
+
+            }
+
+            return Precision.Arbitrary;
+
+        }
+    }
 }

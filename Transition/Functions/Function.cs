@@ -1,6 +1,8 @@
 ﻿using Easycoustics.Transition.Common;
+using Easycoustics.Transition.Design;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
@@ -151,22 +153,24 @@ namespace Easycoustics.Transition.Functions
 
 
 
-    
-    
+
+
+
 
     public class SampledFunction : Function, INotifyPropertyChanged, ICloneable
     {
-        public Dictionary<decimal, ComplexDecimal> Data { get; } = new Dictionary<decimal, ComplexDecimal>();
-
+       // public Dictionary<decimal, ComplexDecimal> Data { get; } = new Dictionary<decimal, ComplexDecimal>();
+        public ObservableCollection<Tuple<decimal, ComplexDecimal>> Data { get; } = new ObservableCollection<Tuple<decimal, ComplexDecimal>>();
         
         public InterpolationModes InterpolationMode = InterpolationModes.Linear;
-
+        public AxisScale VariableScale { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public decimal GetMinimumDomain => Data.Keys.Min();
-        public decimal GetMaximumDomain => Data.Keys.Max();
+        /* (Data collection must be ordered by domain/frequency/Item1, asc) */
+        public decimal GetMinimumDomain => Data.First().Item1;
+        public decimal GetMaximumDomain => Data.Last().Item1;
 
-        public decimal dBReference;
+        //public decimal dBReference;
 
         public override SampledFunction RenderToSampledFunction => this;
 
@@ -193,53 +197,30 @@ namespace Easycoustics.Transition.Functions
 
         public void Clear()
         {
+            //Data.Clear();
             Data.Clear();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Data"));
         }
 
-        public Dictionary<double, double> DataMagdB(decimal reference)
-        {
-            var output = new Dictionary<double, double>();
-            foreach (var kvp in Data)
-                output.Add(Convert.ToDouble(kvp.Key), Convert.ToDouble(kvp.Value.TodB(reference)));
-
-            return output;
-        }
-
-        public Dictionary<double, double> DataMagLin()
-        {
-            var output = new Dictionary<double, double>();
-            foreach (var kvp in Data)
-                output.Add(Convert.ToDouble(kvp.Key), Convert.ToDouble(kvp.Value.Magnitude));
-
-            return output;
-        }
-
-        public Dictionary<double, double> DataPhaseDeg()
-        {
-            var output = new Dictionary<double, double>();
-            foreach (var kvp in Data)
-                output.Add(Convert.ToDouble(kvp.Key), Convert.ToDouble(kvp.Value.PhaseDeg));
-
-            return output;
-        }
-
-
         public override ComplexDecimal Calculate(decimal point)
         {
             if (pointExistsInDomain(point))
-                return Data[point]; 
+                return getPointValue(point); 
             else
                 return Interpolate(point);
             
+
         }
 
         public bool pointExistsInDomain(decimal point)
-        {
+        {/*
             foreach (var pData in Data.Keys)
                 if (pData == point) return true;
 
-            return false;
+            return false;*/
+            var output = Data.Where(data => data.Item1 == point).ToList();
+
+            return (output.Count != 0);
         }
 
         public ComplexDecimal Interpolate(decimal point)
@@ -261,34 +242,55 @@ namespace Easycoustics.Transition.Functions
                 return InterpolateCubic(point);
         }
 
-        public decimal GetNextAbscissa(decimal point)
+        public Tuple<decimal,ComplexDecimal> GetNextAbscissa(decimal point)
         {
+       
             var current = decimal.MaxValue;
+            Tuple<decimal, ComplexDecimal> output = new Tuple<decimal, ComplexDecimal>(0, 0);
 
-            foreach (var p in Data.Keys)
-                if ((p > point) && (p < current))
-                    current = p;
+
+            foreach (var p in Data)
+                if ((p.Item1 > point) && (p.Item1 < current))
+                {
+                    current = p.Item1;
+                    output = p;
+                }
 
             if (current == decimal.MaxValue)
                 throw new ArgumentException();
 
-            return current;
+            return output;
         }
 
-        public decimal GetPreviuosAbscissa(decimal point)
+        public Tuple<decimal, ComplexDecimal> GetPreviuosAbscissa(decimal point)
         {
             var current = decimal.MinValue;
+            Tuple<decimal, ComplexDecimal> output = new Tuple<decimal, ComplexDecimal>(0, 0);
 
-            foreach (var p in Data.Keys)
-                if ((p < point) && (p > current))
-                    current = p;
+
+            foreach (var p in Data)
+                if ((p.Item1 < point) && (p.Item1 > current))
+                {
+                    current = p.Item1;
+                    output = p;
+                }
+
 
             if (current == decimal.MinValue)
                 throw new ArgumentException(); 
 
-            return current;
+            return output;
         }
-        
+
+        public Tuple<decimal, ComplexDecimal> getTuple(decimal abs)
+        {
+            var output = Data.Where(tup => tup.Item1 == abs).ToList();
+
+            if (output.Count != 0) return output[0];
+            else
+                throw new InvalidOperationException();
+        }
+
         public bool isThereNextAbscissa(decimal point)
         {
             try { var x = GetNextAbscissa(point); }
@@ -318,11 +320,17 @@ namespace Easycoustics.Transition.Functions
             
             bool ThereIsNextAbscissa = isThereNextAbscissa(point);
             bool ThereIsPreviousAbscissa = isTherePreviousAbscissa(point);
-
+            
             if (!ThereIsPreviousAbscissa)
+                return GetNextAbscissa(point).Item2;
+            else
+                return GetPreviuosAbscissa(point).Item2;
+                
+            /*
                 return Data[GetNextAbscissa(point)];
             else
-                return Data[GetPreviuosAbscissa(point)];
+                return Data[GetPreviuosAbscissa(point)];*/
+
         }
 
         private ComplexDecimal InterpolateNearestNeighbor(decimal point)
@@ -330,7 +338,7 @@ namespace Easycoustics.Transition.Functions
             if (Data.Count < 1) throw new InvalidOperationException();
 
             if (isPointOutsideRange(point)) return getValueOutsideRange(point);
-
+            /*
             var distanceToNext = GetNextAbscissa(point) - point;
             var distanceToPrevious = point - GetPreviuosAbscissa(point);
 
@@ -338,6 +346,15 @@ namespace Easycoustics.Transition.Functions
                 return Data[GetNextAbscissa(point)];
             else
                 return Data[GetPreviuosAbscissa(point)];
+                */
+
+            var distanceToNext = GetNextAbscissa(point).Item1 - point;
+            var distanceToPrevious = point - GetPreviuosAbscissa(point).Item1;
+
+            if (distanceToNext < distanceToPrevious)
+                return GetNextAbscissa(point).Item2;
+            else
+                return GetPreviuosAbscissa(point).Item2;
         }
 
         private ComplexDecimal InterpolateLinear(decimal x)
@@ -346,11 +363,11 @@ namespace Easycoustics.Transition.Functions
 
             if (isPointOutsideRange(x)) return getValueOutsideRange(x);
 
-            var x1 = GetPreviuosAbscissa(x);
-            var x2 = GetNextAbscissa(x);
+            var x1 = GetPreviuosAbscissa(x).Item1;
+            var x2 = GetNextAbscissa(x).Item1;
            
-            var y1 = Data[x1];
-            var y2 = Data[x2];
+            var y1 = GetPreviuosAbscissa(x).Item2;
+            var y2 = GetNextAbscissa(x).Item2;
 
             return y1 + ((x - x1) * (y2 - y1) / (x2 - x1));
         }
@@ -359,13 +376,38 @@ namespace Easycoustics.Transition.Functions
         {
             int output = 0;
 
-            var sortedKeys = Data.Keys.ToList();
-            sortedKeys.Sort();
+            var sortedKeys = getSortedKeys();
 
             foreach (var k in sortedKeys)
                 if (k == point) return output; else output++;
 
             return -1;
+        }
+
+        private ComplexDecimal getPointValue(decimal point)
+        {
+            var output = Data.Where(tup => tup.Item1 == point).ToList();
+
+            if (output.Count != 0) return output[0].Item2;
+
+            throw new InvalidOperationException();
+        }
+
+        private ComplexDecimal getPointIndex(int index)
+        {
+            return Data[index].Item2;
+        }
+
+        private List<decimal> getSortedKeys()
+        {
+            var sortedKeys = new List<decimal>();
+
+            foreach (var tup in Data)
+                sortedKeys.Add(tup.Item1);
+
+            sortedKeys.Sort();
+
+            return sortedKeys;
         }
 
         private ComplexDecimal InterpolateQuadratic(decimal x)
@@ -374,15 +416,14 @@ namespace Easycoustics.Transition.Functions
 
             if (isPointOutsideRange(x)) return getValueOutsideRange(x);
 
-            var t0 = GetPreviuosAbscissa(x);
-            var t1 = GetNextAbscissa(x);
-            var y0 = Data[t0];
+            var t0 = GetPreviuosAbscissa(x).Item1;
+            var t1 = GetNextAbscissa(x).Item1;
+            var y0 = GetPreviuosAbscissa(x).Item2; 
            
             var index0 = getPointIndex(t0);
             var index1 = getPointIndex(t1);
 
-            var sortedKeys = Data.Keys.ToList();
-            sortedKeys.Sort();
+            var sortedKeys = getSortedKeys();
 
             var quantityOfPoints = sortedKeys.Count;
 
@@ -394,7 +435,7 @@ namespace Easycoustics.Transition.Functions
             while (currentIndex <= index0)
             {
                 z0 = z1;
-                z1 = (-1 * z0) + 2 * ((Data[sortedKeys[currentIndex + 1]] - Data[sortedKeys[currentIndex]]) / (sortedKeys[currentIndex + 1] - sortedKeys[currentIndex]));
+                z1 = (-1 * z0) + 2 * ((Data[currentIndex + 1].Item2 - Data[currentIndex].Item2) / (Data[currentIndex + 1].Item1 - Data[currentIndex].Item1));
                 currentIndex++;
             }
 
@@ -415,9 +456,11 @@ namespace Easycoustics.Transition.Functions
         {
             FunctionChangedEventArgs args;
 
-            if (Data.Keys.Contains(abscissa))
+            if (pointExistsInDomain(abscissa))
             {
-                Data[abscissa] = value;
+                int index = getPointIndex(abscissa);
+
+                Data[index] = new Tuple<decimal, ComplexDecimal>(abscissa,value);
                 args = new FunctionChangedEventArgs()
                 {
                     Action = FunctionChangedEventArgs.FunctionChangeAction.PointChanged,
@@ -427,7 +470,7 @@ namespace Easycoustics.Transition.Functions
             }
             else
             {
-                Data.Add(abscissa, value);
+                Data.Add(new Tuple<decimal, ComplexDecimal>(abscissa, value));
                 args = new FunctionChangedEventArgs()
                 {
                     Action = FunctionChangedEventArgs.FunctionChangeAction.PointAdded,
@@ -435,15 +478,15 @@ namespace Easycoustics.Transition.Functions
                     Y = value
                 };
             }
-
-           // RaiseFunctionChanged(args);
+            
+            RaiseFunctionChanged(args);
         }
 
         public bool removeSample(decimal abscissa)
         {
-            if (Data.Keys.Contains(abscissa))
+            if (pointExistsInDomain(abscissa))
             {
-                Data.Remove(abscissa);
+                Data.Remove(getTuple(abscissa));
               /*  RaiseFunctionChanged(new FunctionChangedEventArgs()
                 {
                     Action = FunctionChangedEventArgs.FunctionChangeAction.PointRemoved,
@@ -464,26 +507,38 @@ namespace Easycoustics.Transition.Functions
            // if (GetMaximumDomain != maximumDomain) return false;
 
             if (Data.Count != quantityOfPoints) return false;
-
-            var domainPoints = getFrequencyPoints(scale, maximumDomain, minimumDomain, quantityOfPoints);
-
-            foreach (var point in domainPoints)
-                if (!Data.Keys.Contains(point)) return false;
+            if (VariableScale != scale) return false;
 
             return true;
-
         }
+
+
 
         public bool isCompatible(SampledFunction func2)
         {
             /* if the two curves have the same domain points, we say they are compatible */
 
             if (Data.Count != func2.Data.Count) return false;
-
-            foreach (var kvp in Data)
-                if (!func2.Data.ContainsKey(kvp.Key)) return false;
+            if (GetMinimumDomain != func2.GetMinimumDomain) return false;
+            if (VariableScale != func2.VariableScale) return false;
 
             return true;
+        }
+
+
+        public void AdaptFunctionTo(decimal minimumDomain, decimal maximumDomain, int quantityOfPoints, AxisScale scale)
+        {
+            var ObjectivePoints = UserDesign.getFrequencyPoints(scale, maximumDomain, minimumDomain, quantityOfPoints);
+
+            var toDelete = new List<Tuple<decimal,ComplexDecimal>>();
+
+            foreach (var obs in Data)
+                if (!ObjectivePoints.Contains(obs.Item1))
+                    toDelete.Add(obs);
+
+            foreach (var del in toDelete)
+                Data.Remove(del);
+
         }
 
         public override void SubmitAllSamplesChanged()
@@ -497,10 +552,12 @@ namespace Easycoustics.Transition.Functions
         {
             var output = new SampledFunction(this);
 
-            foreach (var kvp in Data)
-                output.Data.Add(kvp.Key, kvp.Value);
+            output.VariableScale = VariableScale;
+            output.InterpolationMode = InterpolationMode;
 
-            output.dBReference = this.dBReference;
+            foreach (var tup in Data)
+                output.Data.Add(tup);
+            
 
             return output;
         }

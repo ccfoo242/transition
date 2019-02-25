@@ -6,10 +6,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:chart="using:Telerik.UI.Xaml.Controls.Chart"
+    xmlns:uwp="using:LiveCharts.Uwp"
+    xmlns:charts="using:Syncfusion.UI.Xaml.Charts"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
 
+    
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -19,12 +22,23 @@
         <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Center">
             <Button Content="Curves..." IsTapEnabled="True" Tapped="curvesTap" Margin="4"/>
             <Button Content="Graph Parameters..." IsTapEnabled="True" Tapped="graphParamTap" Margin="4"/>
+            <Button Content="modify" IsTapEnabled="True" Tapped="modify" Margin="4"/>
+            
         </StackPanel>
-        
-        <chart:RadCartesianChart Grid.Row="1" x:Name="radChart">
-            <chart:RadCartesianChart.HorizontalAxis>
-                <chart:LogarithmicAxis Minimum="10" Maximum="40000" Title="Frequency"/>
-            </chart:RadCartesianChart.HorizontalAxis>
-        </chart:RadCartesianChart>
+         <charts:SfChart x:Name="sfchart" Grid.Row="1">
+            <charts:SfChart.PrimaryAxis>
+                <charts:LogarithmicAxis Header="Freq" x:Name="freqAxis"/>
+            </charts:SfChart.PrimaryAxis>
+            <charts:SfChart.Behaviors>
+                <charts:ChartZoomPanBehavior EnableMouseWheelZooming="True" />
+                <charts:ChartCrossHairBehavior />
+            </charts:SfChart.Behaviors>
+        </charts:SfChart> 
+
+        <!-- <Viewbox Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Border BorderBrush="Black" BorderThickness="1">
+                <local:CurveVisor/>
+            </Border>
+        </Viewbox> -->
     </Grid>
 </UserControl>

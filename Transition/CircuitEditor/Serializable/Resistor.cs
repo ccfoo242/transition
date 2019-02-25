@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Easycoustics.Transition.CircuitEditor.Components;
 using Easycoustics.Transition.Common;
 using Easycoustics.Transition.Functions;
-using static Easycoustics.Transition.CustomControls.ComponentValueBox;
 
 namespace Easycoustics.Transition.CircuitEditor.Serializable
 {

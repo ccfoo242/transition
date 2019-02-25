@@ -20,7 +20,7 @@
         <controls:Expander Header="Coupling" ExpandDirection="Down"
                            IsExpanded="True">
             <StackPanel Orientation="Vertical">
-                <customcontrols:EngrNumberBoxDialog  x:Name="boxTR"
+                <customcontrols:EngrDecimalBoxDialog  x:Name="boxTR"
                          HorizontalAlignment="Right" 
                          VariableName="Turns Ratio" Margin="4"
                          ValueManuallyChanged="TurnsRatioChange"/>
@@ -41,9 +41,9 @@
         <controls:Expander Header="Inductance" ExpandDirection="Down"
                            IsExpanded="True">
             <StackPanel Orientation="Vertical">
-                <customcontrols:EngrNumberBoxDialog x:Name="BoxLpri" ValueManuallyChanged="LPriChange"
+                <customcontrols:EngrDecimalBoxDialog x:Name="BoxLpri" ValueManuallyChanged="LPriChange"
                          HorizontalAlignment="Right" VariableName="Primary Inductance (H)" Margin="4"/>
-                <customcontrols:EngrNumberBoxDialog x:Name="BoxLsec" ValueManuallyChanged="LSecChange"
+                <customcontrols:EngrDecimalBoxDialog x:Name="BoxLsec" ValueManuallyChanged="LSecChange"
                          HorizontalAlignment="Right" VariableName="Secondary Inductance (H)" Margin="4"/>
                 <NavigationViewItemSeparator/>
                 <Grid>
@@ -58,17 +58,17 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Text="Mutual Inductance (H)" Grid.Row="0" Grid.Column="0" Margin="4" HorizontalAlignment="Right"/>
-                    <customcontrols:EngrNumberBox x:Name="BoxMutualL"
+                    <customcontrols:EngrDecimalBox x:Name="BoxMutualL"
                         Value="{Binding MutualL, Mode=OneWay}" Margin="4" 
                             Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left"  IsEnabled="False"/>
 
                     <TextBlock Text="Lp Leakeage (H)" Grid.Row="1" Grid.Column="0"  Margin="4" HorizontalAlignment="Right"/>
-                    <customcontrols:EngrNumberBox x:Name="BoxLpLeak"
+                    <customcontrols:EngrDecimalBox x:Name="BoxLpLeak"
                         Value="{Binding LpLeak, Mode=OneWay}" Margin="4" 
                             IsEnabled="False"  Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left"/>
 
                     <TextBlock Text="Ls Leakeage (H)" Grid.Row="2" Grid.Column="0" Margin="4"  HorizontalAlignment="Right"/>
-                    <customcontrols:EngrNumberBox x:Name="BoxLsLeak"
+                    <customcontrols:EngrDecimalBox x:Name="BoxLsLeak"
                         Value="{Binding LsLeak, Mode=OneWay}" Margin="4" 
                             IsEnabled="False"  Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left"/>
                 </Grid>

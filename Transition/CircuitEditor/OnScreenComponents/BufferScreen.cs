@@ -195,9 +195,9 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
             {
                 //number to string
                 if (value == null) return "";
-                EngrNumber engrNumber = (EngrNumber)value;
+                var decNumber = (decimal)value;
 
-                return "T: " + engrNumber.ToString();
+                return "T: " + decNumber.ToString();
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -212,7 +212,7 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
             {
                 //number to string
                 if (value == null) return "";
-                EngrNumber engrNumber = (EngrNumber)value;
+                var engrNumber = (decimal)value;
 
                 return "A: " + engrNumber.ToString();
             }

@@ -32,13 +32,15 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
         public override void SetProperty(string property, object value)
         {
-            ResultVoltageCurve.Title = "Voltage at " + ElementName;
             base.SetProperty(property, value);
-
+           
             switch (property)
             {
                 case "Description": Description = (string)value; break;
             }
+
+            ResultVoltageCurve.Title = "Voltage at " + ElementName;
+
         }
     }
 }

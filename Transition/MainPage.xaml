@@ -55,7 +55,7 @@
                         
                             HorizontalContentAlignment="Stretch"
                             VerticalContentAlignment="Stretch">
-                <local2:FrequencyCurveVisor/>
+                <local2:CurveVisorRad/>
             </ContentControl>
 
             <ContentControl x:Name="preferences" 

@@ -195,7 +195,7 @@ namespace Easycoustics.Transition.CircuitEditor.ParametersControls
             executeCommand(command);
         }
 
-        private void RClosedChanged(object sender, CustomControls.ValueChangedEventArgs args)
+        private void RClosedChanged(object sender, Common.ValueChangedEventArgs args)
         {
             var command = new CommandSetValue()
             {
@@ -208,7 +208,7 @@ namespace Easycoustics.Transition.CircuitEditor.ParametersControls
             executeCommand(command);
         }
 
-        private void COpenChanged(object sender, CustomControls.ValueChangedEventArgs args)
+        private void COpenChanged(object sender, Common.ValueChangedEventArgs args)
         {
             var command = new CommandSetValue()
             {

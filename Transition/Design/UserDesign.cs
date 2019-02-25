@@ -512,22 +512,30 @@ namespace Easycoustics.Transition.Design
 
             foreach (var outputNode in outputVoltageNodes)
             {
-                outputNode.ResultVoltageCurve.Clear();
+              //  outputNode.ResultVoltageCurve.Clear();
                 SystemCurves.AddIfNotAdded(outputNode.ResultVoltageCurve);
+                outputNode.ResultVoltageCurve.AdaptFunctionTo(MinimumFrequency, MaximumFrequency,
+                    QuantityOfFrequencyPoints, FrequencyScale);
             }
 
             foreach (var outputVoltageComponent in outputVoltageCurrentComponents)
             {
                 if (outputVoltageComponent.OutputVoltageAcross)
                 {
-                    outputVoltageComponent.resultVoltageCurve.Clear();
+                   // outputVoltageComponent.resultVoltageCurve.Clear();
                     SystemCurves.AddIfNotAdded(outputVoltageComponent.resultVoltageCurve);
+
+                    outputVoltageComponent.resultVoltageCurve.AdaptFunctionTo(MinimumFrequency, MaximumFrequency,
+                    QuantityOfFrequencyPoints, FrequencyScale);
                 }
 
                 if (outputVoltageComponent.OutputCurrentThrough)
                 {
-                    outputVoltageComponent.resultCurrentCurve.Clear();
+                   // outputVoltageComponent.resultCurrentCurve.Clear();
                     SystemCurves.AddIfNotAdded(outputVoltageComponent.resultCurrentCurve);
+
+                    outputVoltageComponent.resultCurrentCurve.AdaptFunctionTo(MinimumFrequency, MaximumFrequency,
+                    QuantityOfFrequencyPoints, FrequencyScale);
                 }
             }
 
@@ -614,7 +622,8 @@ namespace Easycoustics.Transition.Design
 
                         var totalVoltage = voltPositive - voltNegative;
 
-                        if (comp.OutputVoltageAcross) comp.resultVoltageCurve.addOrChangeSample(FreqPoint, totalVoltage);
+                        if (comp.OutputVoltageAcross)
+                            comp.resultVoltageCurve.addOrChangeSample(FreqPoint, totalVoltage);
                         if (comp.OutputCurrentThrough)
                         {
                             var current = totalVoltage / comp.getImpedance(FreqPoint);

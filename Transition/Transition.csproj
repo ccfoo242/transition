@@ -208,46 +208,38 @@
     <Compile Include="Common\BoolVisibilityConverter.cs" />
     <Compile Include="Common\ComplexdBConverter.cs" />
     <Compile Include="Common\ComplexDecimal.cs" />
+    <Compile Include="Common\DecimalEngrConverter.cs" />
     <Compile Include="Common\DecimalMath.cs" />
     <Compile Include="Common\Enums.cs" />
+    <Compile Include="Common\EventArgs.cs" />
+    <Compile Include="Common\GraphParameters.cs" />
     <Compile Include="Common\Matrix.cs" />
     <Compile Include="Common\ObservableStack.cs" />
     <Compile Include="Common\Point2D.cs" />
     <Compile Include="CurveLibrary\LibraryBase.cs" />
     <Compile Include="CurveLibrary\LibraryFolder.cs" />
     <Compile Include="CurveLibrary\LibraryItem.cs" />
-    <Compile Include="CustomControls\ComponentValueBox.xaml.cs">
-      <DependentUpon>ComponentValueBox.xaml</DependentUpon>
-    </Compile>
     <Compile Include="CustomControls\ComponentValueBoxDecimal.xaml.cs">
       <DependentUpon>ComponentValueBoxDecimal.xaml</DependentUpon>
     </Compile>
     <Compile Include="CustomControls\CurveSelection.xaml.cs">
       <DependentUpon>CurveSelection.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomControls\CurveVisor.cs" />
     <Compile Include="CustomControls\CurveVisorRad.xaml.cs">
       <DependentUpon>CurveVisorRad.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomControls\CustomControl1.cs" />
     <Compile Include="CustomControls\EngrDecimalBox.xaml.cs">
       <DependentUpon>EngrDecimalBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="CustomControls\EngrDecimalBoxDialog.xaml.cs">
       <DependentUpon>EngrDecimalBoxDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CustomControls\EngrNumberBox.xaml.cs">
-      <DependentUpon>EngrNumberBox.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="CustomControls\EngrNumberBoxDialog.xaml.cs">
-      <DependentUpon>EngrNumberBoxDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="CustomControls\CurveVisor.xaml.cs">
-      <DependentUpon>CurveVisor.xaml</DependentUpon>
-    </Compile>
     <Compile Include="CustomControls\TaperCurveControl.xaml.cs">
       <DependentUpon>TaperCurveControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Design\UserDesign.cs" />
-    <Compile Include="Common\EngrNumber.cs" />
     <Compile Include="Functions\Function.cs" />
     <Compile Include="Functions\LaplaceFunction.cs" />
     <Compile Include="Functions\StandardFunction.cs" />
@@ -359,10 +351,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CustomControls\ComponentValueBox.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="CustomControls\ComponentValueBoxDecimal.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -380,18 +368,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CustomControls\EngrDecimalBoxDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="CustomControls\EngrNumberBox.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="CustomControls\EngrNumberBoxDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="CustomControls\CurveVisor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -415,6 +391,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
@@ -424,7 +404,7 @@
       <Version>4.0.0</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.SfChart.UWP">
-      <Version>16.4.0.53</Version>
+      <Version>16.4.0.54</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.SfDockingManager.UWP">
       <Version>16.4.0.53</Version>

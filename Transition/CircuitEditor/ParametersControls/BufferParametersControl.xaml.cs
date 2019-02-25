@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Easycoustics.Transition.Commands;
+using Easycoustics.Transition.Common;
 using Easycoustics.Transition.CustomControls;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
