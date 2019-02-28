@@ -36,9 +36,9 @@ namespace Easycoustics.Transition.CustomControls
         private double CanvasWidth => 1800;
         private double CanvasHeight => 1000;
 
-        private double CurvesCanvasMarginTop = 40;
-        private double CurvesCanvasMarginLeft = 40;
-        private double CurvesCanvasMarginRight = 40;
+        private double CurvesCanvasMarginTop = 50;
+        private double CurvesCanvasMarginLeft = 50;
+        private double CurvesCanvasMarginRight = 50;
         private double CurvesCanvasMarginBottom = 100;
 
         private Viewbox ViewBoxCurves = new Viewbox();
@@ -69,52 +69,12 @@ namespace Easycoustics.Transition.CustomControls
             BorderCurves.Child = ViewBoxCurves;
 
             Children.Add(BorderCurves);
-            Button btnCurves = new Button() { IsTapEnabled=true, Content="Curves..." };
-            btnCurves.Tapped += btnCurvesTapped;
-
-            Children.Add(btnCurves);
-
-            SetLeft(btnCurves, 40);
-            SetTop(btnCurves, 0);
+          
 
             ReDraw();
 
         }
-
-        private async void btnCurvesTapped(object sender, TappedRoutedEventArgs e)
-        {
-            var curveSelector = new CurveSelection(Curves.ToList());
-
-            var dialog = new ContentDialog()
-            {
-                Title = "Select curves you want to display",
-                Content = curveSelector,
-                PrimaryButtonText = "OK",
-                CloseButtonText = "Cancel",
-            };
-
-            var result = await dialog.ShowAsync();
-
-            if (result == ContentDialogResult.Primary)
-            {
-                foreach (var curve in curveSelector.selectedCurves())
-                    if (!Curves.Contains(curve)) Curves.Add(curve);
-
-                var toDelete = new List<Function>();
-
-                foreach (var curve in Curves)
-                    if (!curveSelector.selectedCurves().Contains(curve))
-                        toDelete.Add(curve);
-
-                foreach (var curve in toDelete)
-                    Curves.Remove(curve);
-
-            }
-            
-        }
         
-
-
         private void CurveCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             

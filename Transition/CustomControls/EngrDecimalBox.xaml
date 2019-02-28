@@ -15,7 +15,7 @@
         <local1:DecimalEngrConverter x:Key="engrConverterAllowNegative" AllowNegativeNumber="True"/>
         <local1:BooleanToVisibilityConverter x:Key="boolToVisible"/>
     </UserControl.Resources>
-    <Grid>
+    <Grid><!--
         <TextBox Style="{StaticResource EngrNumberBoxStyle}" 
                  x:Name="txtBox"  Visibility="{x:Bind AllowNegativeNumber, Converter={StaticResource boolToVisible}}"
                  IsSpellCheckEnabled="False"
@@ -29,5 +29,11 @@
                  IsTextPredictionEnabled="False" Width="100"
                  AllowDrop="False"  InputScope="AlphanumericFullWidth"
                  Text="{x:Bind Value, Mode=TwoWay, Converter={StaticResource engrConverter}}"/>
+        -->
+        <TextBox Style="{StaticResource EngrNumberBoxStyle}"
+                 x:Name="txtBox"
+                 IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" Width="100"
+                 AllowDrop="False" InputScope="AlphanumericFullWidth"
+                 LostFocus="txtLostFocus" TextChanged="textChanged"/>
     </Grid>
 </UserControl>

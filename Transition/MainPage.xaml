@@ -55,15 +55,15 @@
                         
                             HorizontalContentAlignment="Stretch"
                             VerticalContentAlignment="Stretch">
-              <!--  <local2:CurveVisorSF/> -->
-                <local2:CurveVisor/>
+             
+                <local2:WindowCurveVisor/>
             </ContentControl>
 
             <ContentControl x:Name="preferences" 
                             layout:SfDockingManager.Header="Voltage Graph Rad"
                             layout:SfDockingManager.DockState="Document" HorizontalContentAlignment="Stretch"
                              VerticalContentAlignment="Stretch">
-                <!-- <local2:CurveVisorRad/> -->
+               
             </ContentControl>
 
             <ContentControl x:Name="circuit" 

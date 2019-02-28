@@ -213,7 +213,7 @@ namespace Easycoustics.Transition.Common
             if (didParse)
                 return result * DecimalMath.PowerN(10m, exponent);
             else
-                throw new ArgumentException();
+                throw new ArgumentException("Could not parse number");
 
         }
     }
