@@ -64,7 +64,7 @@ namespace Easycoustics.Transition.Functions
             {
                 var output = new SampledFunction(this);
                 foreach (var freq in FrequencyPoints)
-                    output.addOrChangeSample(freq, Calculate(freq));
+                    output.addSample(freq, Calculate(freq));
 
                 return output;
             }

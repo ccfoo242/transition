@@ -50,17 +50,21 @@
 
         <layout:SfDockingManager x:Name="dockingManager"  Grid.Row="1">
             <ContentControl x:Name="voltageGraph" 
-                            layout:SfDockingManager.Header="Voltage Graph"
+                            layout:SfDockingManager.Header="Voltage Graph SF"
                             layout:SfDockingManager.DockState="Document"
                         
                             HorizontalContentAlignment="Stretch"
                             VerticalContentAlignment="Stretch">
-                <local2:CurveVisorRad/>
+              <!--  <local2:CurveVisorSF/> -->
+                <local2:CurveVisor/>
             </ContentControl>
 
             <ContentControl x:Name="preferences" 
-                            layout:SfDockingManager.Header="Design Preferences"
-                            layout:SfDockingManager.DockState="Document"/>
+                            layout:SfDockingManager.Header="Voltage Graph Rad"
+                            layout:SfDockingManager.DockState="Document" HorizontalContentAlignment="Stretch"
+                             VerticalContentAlignment="Stretch">
+                <!-- <local2:CurveVisorRad/> -->
+            </ContentControl>
 
             <ContentControl x:Name="circuit" 
                             layout:SfDockingManager.Header="Circuit"

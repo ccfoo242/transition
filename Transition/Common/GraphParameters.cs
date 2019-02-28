@@ -23,13 +23,26 @@ namespace Easycoustics.Transition.Common
         private decimal maximumHorizontal;
         public decimal MaximumHorizontal { get => maximumHorizontal; set { SetProperty(ref maximumHorizontal, value); } }
 
-        private decimal minimumVertical;
-        public decimal MinimumVertical { get => minimumVertical; set { SetProperty(ref minimumVertical, value); } }
+        private decimal minimumMag;
+        public decimal MinimumMag { get => minimumMag; set { SetProperty(ref minimumMag, value); } }
 
-        private decimal maximumVertical;
-        public decimal MaximumVertical { get => maximumVertical; set { SetProperty(ref maximumVertical, value); } }
+        private decimal maximumMag;
+        public decimal MaximumMag { get => maximumMag; set { SetProperty(ref maximumMag, value); } }
 
+        private decimal minimumPhase;
+        public decimal MinimumPhase { get => minimumPhase; set { SetProperty(ref minimumPhase, value); } }
 
+        private decimal maximumPhase;
+        public decimal MaximumPhase { get => maximumPhase; set { SetProperty(ref maximumPhase, value); } }
+
+        private decimal maximumdB;
+        public decimal MaximumdB { get => maximumdB; set { SetProperty(ref maximumdB, value); } }
+
+        private double borderThickness;
+        public double BorderThickness { get => borderThickness; set { SetProperty(ref borderThickness, value); } }
+
+        private Color borderColor;
+        public Color BorderColor { get => borderColor; set { SetProperty(ref borderColor, value); } }
 
         private double majorDivStrokeThickness;
         public double MajorDivStrokeThickness { get => majorDivStrokeThickness; set { SetProperty(ref majorDivStrokeThickness, value); } }
@@ -44,9 +57,11 @@ namespace Easycoustics.Transition.Common
         private Color majorDivColor;
         public Color MajorDivColor { get => majorDivColor; set { majorDivColor = value; SetProperty(ref majorDivColor, value); } }
 
-        private Color backgroundColor;
-        public Color BackgroundColor { get => backgroundColor; set { backgroundColor = value; SetProperty(ref backgroundColor, value); } }
+        private Color gridColor;
+        public Color GridColor { get => gridColor; set { gridColor = value; SetProperty(ref gridColor, value); } }
 
+        private Color frameColor;
+        public Color FrameColor { get => frameColor; set { frameColor = value; SetProperty(ref frameColor, value); } }
 
         private int quantityOfMinorDivsHorizontal;
         public int QuantityOfMinorDivsHorizontal { get => quantityOfMinorDivsHorizontal; set { SetProperty(ref quantityOfMinorDivsHorizontal, value); } }
@@ -60,18 +75,23 @@ namespace Easycoustics.Transition.Common
         private int quantityOfMajorDivsVertical;
         public int QuantityOfMajorDivsVertical { get => quantityOfMajorDivsVertical; set { SetProperty(ref quantityOfMajorDivsVertical, value); } }
 
+        private int quantityOfdBDivs;
+        public int QuantityOfdBDivs { get => quantityOfdBDivs; set { SetProperty(ref quantityOfdBDivs, value); } }
+
         private int dBperDiv;
         public int DBPerDiv { get => dBperDiv; set { SetProperty(ref dBperDiv, value); } }
 
-        private int horizontalPrefix;
+        private int horizontalPrefix; /* -3 for m, -6 for u, etc*/
         public int HorizontalPrefix { get => horizontalPrefix; set { SetProperty(ref horizontalPrefix, value); } }
 
         private int verticalPrefix;
         public int VerticalPrefix { get => verticalPrefix; set { SetProperty(ref verticalPrefix, value); } }
 
-        private decimal dBZeroRef;
-        public decimal DBZeroRef { get => dBZeroRef; set { SetProperty(ref dBZeroRef, value); } }
+        private dBReference dBZeroRef; 
+        public dBReference DBZeroRef { get => dBZeroRef; set { SetProperty(ref dBZeroRef, value); } }
 
+        private double labelFontSize;
+        public double LabelFontSize { get => labelFontSize; set { SetProperty(ref labelFontSize, value); } }
 
         public GraphParameters()
         {
@@ -85,23 +105,34 @@ namespace Easycoustics.Transition.Common
             quantityOfMajorDivsVertical = 12;
 
             minorDivStrokeThickness = 1;
-            majorDivStrokeThickness = 2;
+            majorDivStrokeThickness = 1;
             
             dBperDiv = 5;
-            DBZeroRef = 1;
+            dBZeroRef = dBReference.dBV;
+
+            maximumdB = 10;
+            quantityOfdBDivs = 12;
 
             horizontalPrefix = 0;
             verticalPrefix = 0;
 
-            majorDivColor = Colors.Gray;
-            minorDivColor = Colors.LightGray;
-            backgroundColor = Colors.White;
+            majorDivColor = Color.FromArgb(255, 140, 140, 140);
+            minorDivColor = Color.FromArgb(255, 235, 235, 235);
+
+            gridColor = Colors.White;
+            frameColor = Color.FromArgb(255, 230, 230, 230);
 
             minimumHorizontal = 10;
             maximumHorizontal = 40000;
 
-            minimumVertical = 0;
-            maximumVertical = 100;
+            minimumMag = 0;
+            maximumMag = 100;
+
+            maximumPhase = 180;
+            minimumPhase = -180;
+
+            borderColor = Colors.Black;
+            borderThickness = 1;
 
             PropertyChanged += checkValues;
 
@@ -110,28 +141,35 @@ namespace Easycoustics.Transition.Common
         private void checkValues(object sender, PropertyChangedEventArgs e)
         {
             if (MinimumHorizontal > MaximumHorizontal) throw new ArgumentException("Minimum Horizontal is greater than Maximum");
-            if (MinimumVertical > MaximumVertical) throw new ArgumentException("Minimum Vertical is greater than Maximum");
+            if (MinimumMag > MaximumMag) throw new ArgumentException("Minimum Vertical is greater than Maximum");
             if (MinimumHorizontal == MaximumHorizontal) throw new ArgumentException("Minimum Horizontal is equal than Maximum");
-            if (MinimumVertical == MaximumVertical) throw new ArgumentException("Minimum Vertical is equal than Maximum");
+            if (MinimumMag == MaximumMag) throw new ArgumentException("Minimum Vertical is equal than Maximum");
         }
 
         public object Clone()
         {
             var output = new GraphParameters()
             {
-                BackgroundColor = this.BackgroundColor,
+                BorderColor = this.BorderColor,
+                BorderThickness = this.BorderThickness,
+                FrameColor = this.FrameColor,
+                GridColor = this.GridColor,
                 DBPerDiv = this.DBPerDiv,
                 DBZeroRef = this.DBZeroRef,
                 HorizontalPrefix = this.HorizontalPrefix,
                 HorizontalScale = this.HorizontalScale,
                 MajorDivColor = this.MajorDivColor,
                 MajorDivStrokeThickness = this.MajorDivStrokeThickness,
+                MaximumdB = this.MaximumdB,
                 MaximumHorizontal = this.MaximumHorizontal,
-                MaximumVertical = this.MaximumVertical,
+                MaximumMag = this.MaximumMag,
+                MaximumPhase = this.MaximumPhase,
                 MinimumHorizontal = this.MinimumHorizontal,
-                MinimumVertical = this.MinimumVertical,
+                MinimumMag = this.MinimumMag,
+                MinimumPhase = this.MinimumPhase,
                 MinorDivColor = this.MinorDivColor,
                 MinorDivStrokeThickness =  this.MinorDivStrokeThickness,
+                QuantityOfdBDivs = this.QuantityOfdBDivs,
                 QuantityOfMajorDivsHorizontal = this.QuantityOfMajorDivsHorizontal,
                 QuantityOfMajorDivsVertical = this.QuantityOfMajorDivsVertical,
                 QuantityOfMinorDivsHorizontal = this.QuantityOfMinorDivsHorizontal,

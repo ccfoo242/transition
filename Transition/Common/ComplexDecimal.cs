@@ -27,6 +27,8 @@ namespace Easycoustics.Transition.Common
         public double TodBm { get => TodBRef(774.6E-3); }
         public double TodBSPL { get => TodBRef(20E-6); }
         public double TodBPa { get => TodBRef(1); }
+
+        public double MagnitudeDouble { get => Convert.ToDouble(Magnitude); }
         public double PhaseDegDouble { get => Convert.ToDouble(PhaseDeg); }
 
         public static readonly ComplexDecimal Zero = new ComplexDecimal(0, 0);
@@ -116,7 +118,7 @@ namespace Easycoustics.Transition.Common
         
         public static decimal Modulus(ComplexDecimal number)
         {
-            return DecimalMath.Sqrt(DecimalMath.PowerN(number.RealPart, 2) + DecimalMath.PowerN(number.ImaginaryPart, 2));
+            return DecimalMath.Sqrt((number.RealPart * number.RealPart) + (number.ImaginaryPart * number.ImaginaryPart));
         }
 
         public static decimal Argument(ComplexDecimal number)

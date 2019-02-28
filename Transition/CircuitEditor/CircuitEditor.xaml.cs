@@ -811,23 +811,19 @@ namespace Easycoustics.Transition.CircuitEditor
 
         private void TapCalculate(object sender, TappedRoutedEventArgs e)
         {
-            var result = Calculate();
+             Calculate();
             
-            if (result.Result.Item1)
-                CurrentDesign.SystemCurves.submitCurvesChange();
         }
 
-        private async Task<Tuple<bool,string>> Calculate()
+        private async void Calculate()
         {
             var result = await CurrentDesign.Calculate();
+
+            if (result.Item1)
+                CurrentDesign.SystemCurves.submitCurvesChange();
             
-            return result;
         }
 
-        private void tapModify(object sender, TappedRoutedEventArgs e)
-        {
-            CustomControls.CurveVisorRad.staticCurveVisor.modify(null, null);
-
-        }
+       
     }
 }

@@ -72,7 +72,7 @@ namespace Easycoustics.Transition.Design
             }
         }
 
-        public int QuantityOfFrequencyPoints { get; set; } = 300;
+        public int QuantityOfFrequencyPoints { get; set; } = 400;
 
       
         public AxisScale FrequencyScale { get; set; } = AxisScale.Logarithmic;
@@ -512,46 +512,80 @@ namespace Easycoustics.Transition.Design
 
             foreach (var outputNode in outputVoltageNodes)
             {
-              //  outputNode.ResultVoltageCurve.Clear();
+                outputNode.ResultVoltageCurve.Clear();
                 SystemCurves.AddIfNotAdded(outputNode.ResultVoltageCurve);
-                outputNode.ResultVoltageCurve.AdaptFunctionTo(MinimumFrequency, MaximumFrequency,
-                    QuantityOfFrequencyPoints, FrequencyScale);
+             /*   outputNode.ResultVoltageCurve.AdaptFunctionTo(MinimumFrequency, MaximumFrequency,
+                    QuantityOfFrequencyPoints, FrequencyScale);*/
             }
 
-            foreach (var outputVoltageComponent in outputVoltageCurrentComponents)
+            var OutputVoltagesComponents = new List<IVoltageCurrentOutput>();
+            var OutputCurrentsComponents = new List<IVoltageCurrentOutput>();
+            var OutputResistorsPower = new List<Resistor>();
+
+            foreach (var outputVoltCurrComponent in outputVoltageCurrentComponents)
             {
-                if (outputVoltageComponent.OutputVoltageAcross)
+                if (outputVoltCurrComponent.OutputVoltageAcross)
                 {
-                   // outputVoltageComponent.resultVoltageCurve.Clear();
-                    SystemCurves.AddIfNotAdded(outputVoltageComponent.resultVoltageCurve);
+                    outputVoltCurrComponent.resultVoltageCurve.Clear();
+                    SystemCurves.AddIfNotAdded(outputVoltCurrComponent.resultVoltageCurve);
 
-                    outputVoltageComponent.resultVoltageCurve.AdaptFunctionTo(MinimumFrequency, MaximumFrequency,
-                    QuantityOfFrequencyPoints, FrequencyScale);
+                    //outputVoltCurrComponent.resultVoltageCurve.AdaptFunctionTo(MinimumFrequency, MaximumFrequency,
+                    //QuantityOfFrequencyPoints, FrequencyScale);
+
+                    OutputVoltagesComponents.Add(outputVoltCurrComponent);
                 }
 
-                if (outputVoltageComponent.OutputCurrentThrough)
+                if (outputVoltCurrComponent.OutputCurrentThrough)
                 {
-                   // outputVoltageComponent.resultCurrentCurve.Clear();
-                    SystemCurves.AddIfNotAdded(outputVoltageComponent.resultCurrentCurve);
+                    outputVoltCurrComponent.resultCurrentCurve.Clear();
+                    SystemCurves.AddIfNotAdded(outputVoltCurrComponent.resultCurrentCurve);
 
-                    outputVoltageComponent.resultCurrentCurve.AdaptFunctionTo(MinimumFrequency, MaximumFrequency,
-                    QuantityOfFrequencyPoints, FrequencyScale);
+                    //outputVoltCurrComponent.resultCurrentCurve.AdaptFunctionTo(MinimumFrequency, MaximumFrequency,
+                    //QuantityOfFrequencyPoints, FrequencyScale);
+
+                    OutputCurrentsComponents.Add(outputVoltCurrComponent);
                 }
             }
 
+            foreach (var resistor in Components.OfType<Resistor>())
+            {
+
+                SystemCurves.AddIfNotAdded(resistor.resultPowerCurve);
+            //    resistor.resultPowerCurve.AdaptFunctionTo(MinimumFrequency, MaximumFrequency, QuantityOfFrequencyPoints, FrequencyScale);
+                OutputResistorsPower.Add(resistor);
+            }
+
+
+            ElectricNode nodePositive;
+            ElectricNode nodeNegative;
+            ElectricNode node2;
+            int nodePositiveNumber;
+            int nodeNegativeNumber;
+            ComplexDecimal voltPositive;
+            ComplexDecimal voltNegative;
+            ComplexDecimal totalVoltage;
+            IPassive passive;
+            ComplexDecimal sourceAdmittance;
+            ComplexDecimal voltage;
+            ComplexDecimal voltagePolarity;
+            bool positiveTerminal;
+
+            
 
             var freqPoints = getFrequencyPoints();
             foreach (var FreqPoint in freqPoints)
             {
+                /* whole circuit is solved for each frequency point */
                 NodeMatrix.Clear();
                 CVMatrix.Clear();
+                /* here we populate the node matrix */
                 for (int nodeNumber = 0; nodeNumber < QuantityOfNodes; nodeNumber++)
                 {
                     foreach (var component in NodesToWork[nodeNumber].ConnectedComponentTerminals)
                     {
                         if (component.Item1 is IPassive)
                         {
-                            var passive = (IPassive)component.Item1;
+                            passive = (IPassive)component.Item1;
                             /* the impedance is calculated for a certain frequency */
                             var impedances = getOtherNodesInPassiveComponent(passive, component.Item2, FreqPoint);
 
@@ -559,7 +593,6 @@ namespace Easycoustics.Transition.Design
                             {
                                 NodeMatrix.addAtCoordinate(nodeNumber, nodeNumber, impedance.Item2.Reciprocal);
                                 
-
                                 if (impedance.Item1 != GetGroundNode) /* impedance is floating */
                                      NodeMatrix.addAtCoordinate(nodeNumber, NodesToWork.IndexOf(impedance.Item1), -1 * impedance.Item2.Reciprocal);
                             }
@@ -568,12 +601,12 @@ namespace Easycoustics.Transition.Design
                         if (component.Item1 is VoltageSource)
                         {
                             var source = (VoltageSource)component.Item1;
-                            var sourceAdmittance = source.getSourceImpedance(FreqPoint).Reciprocal;
+                            sourceAdmittance = source.getSourceImpedance(FreqPoint).Reciprocal;
 
-                            var voltage = source.getSourceVoltage(FreqPoint);
+                            voltage = source.getSourceVoltage(FreqPoint);
 
-                            bool positiveTerminal = (component.Item2 == 0);
-                            ComplexDecimal voltagePolarity = positiveTerminal ? 1 : -1;
+                            positiveTerminal = (component.Item2 == 0);
+                            voltagePolarity = positiveTerminal ? 1 : -1;
 
                             byte otherTerminal = positiveTerminal ? source.NegativeTerminal : source.PositiveTerminal;
                             var otherNode = GetComponentTerminalNode(source, otherTerminal);
@@ -601,39 +634,55 @@ namespace Easycoustics.Transition.Design
 
                 foreach (var nodeV in outputVoltageNodes)
                 {
-                    var node = GetComponentTerminalNode(nodeV, 0);
+                    node2 = GetComponentTerminalNode(nodeV, 0);
 
-                    if (node != null)
-                        nodeV.ResultVoltageCurve.addOrChangeSample(FreqPoint, nodeVoltages.Data[NodesToWork.IndexOf(node), 0]);
+                    if (node2 != null)
+                        nodeV.ResultVoltageCurve.addSample(FreqPoint, nodeVoltages.Data[NodesToWork.IndexOf(node2), 0]);
                 }
 
-                foreach (var comp in outputVoltageCurrentComponents)
+
+                foreach (var comp in OutputVoltagesComponents)
                 {
-                    var nodePositive = GetComponentTerminalNode((SerializableComponent)comp, 0);
-                    var nodeNegative = GetComponentTerminalNode((SerializableComponent)comp, 1);
+                    nodePositive = GetComponentTerminalNode((SerializableComponent)comp, 0);
+                    nodeNegative = GetComponentTerminalNode((SerializableComponent)comp, 1);
 
                     if (nodePositive != null && nodeNegative != null)
                     {
-                        var nodePositiveNumber = NodesToWork.IndexOf(nodePositive);
-                        var nodeNegativeNumber = NodesToWork.IndexOf(nodeNegative);
+                        nodePositiveNumber = NodesToWork.IndexOf(nodePositive);
+                        nodeNegativeNumber = NodesToWork.IndexOf(nodeNegative);
 
-                        var voltPositive = (nodePositive != GetGroundNode) ? nodeVoltages.Data[nodePositiveNumber, 0] : 0;
-                        var voltNegative = (nodeNegative != GetGroundNode) ? nodeVoltages.Data[nodeNegativeNumber, 0] : 0;
+                        voltPositive = (nodePositive != GetGroundNode) ? nodeVoltages.Data[nodePositiveNumber, 0] : 0;
+                        voltNegative = (nodeNegative != GetGroundNode) ? nodeVoltages.Data[nodeNegativeNumber, 0] : 0;
 
-                        var totalVoltage = voltPositive - voltNegative;
+                        totalVoltage = voltPositive - voltNegative;
+                        
+                        comp.resultVoltageCurve.addSample(FreqPoint, totalVoltage);
+                      
+                    }
+                }
 
-                        if (comp.OutputVoltageAcross)
-                            comp.resultVoltageCurve.addOrChangeSample(FreqPoint, totalVoltage);
-                        if (comp.OutputCurrentThrough)
-                        {
-                            var current = totalVoltage / comp.getImpedance(FreqPoint);
-                            comp.resultCurrentCurve.addOrChangeSample(FreqPoint, current);
-                        }
+                foreach (var comp in OutputCurrentsComponents)
+                {
+                     nodePositive = GetComponentTerminalNode((SerializableComponent)comp, 0);
+                     nodeNegative = GetComponentTerminalNode((SerializableComponent)comp, 1);
+
+                    if (nodePositive != null && nodeNegative != null)
+                    {
+                        nodePositiveNumber = NodesToWork.IndexOf(nodePositive);
+                        nodeNegativeNumber = NodesToWork.IndexOf(nodeNegative);
+
+                        voltPositive = (nodePositive != GetGroundNode) ? nodeVoltages.Data[nodePositiveNumber, 0] : 0;
+                        voltNegative = (nodeNegative != GetGroundNode) ? nodeVoltages.Data[nodeNegativeNumber, 0] : 0;
+
+                        totalVoltage = voltPositive - voltNegative;
+                        
+                        var current = totalVoltage / comp.getImpedance(FreqPoint);
+                        comp.resultCurrentCurve.addSample(FreqPoint, current);
                     }
                 }
             }
 
-            return new Tuple<bool, string>(true, "");
+            return new Tuple<bool, string>(true, "Circuit solved OK");
         }
 
 

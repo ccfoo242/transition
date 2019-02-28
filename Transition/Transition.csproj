@@ -226,9 +226,6 @@
       <DependentUpon>CurveSelection.xaml</DependentUpon>
     </Compile>
     <Compile Include="CustomControls\CurveVisor.cs" />
-    <Compile Include="CustomControls\CurveVisorRad.xaml.cs">
-      <DependentUpon>CurveVisorRad.xaml</DependentUpon>
-    </Compile>
     <Compile Include="CustomControls\CustomControl1.cs" />
     <Compile Include="CustomControls\EngrDecimalBox.xaml.cs">
       <DependentUpon>EngrDecimalBox.xaml</DependentUpon>
@@ -356,10 +353,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CustomControls\CurveSelection.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="CustomControls\CurveVisorRad.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

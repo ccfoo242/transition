@@ -128,8 +128,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             PositionValue = 50;
 
             TaperFunction = new SampledFunction();
-            TaperFunction.addOrChangeSample(0, 0);
-            TaperFunction.addOrChangeSample(100, 100);
+            TaperFunction.addSample(0, 0);
+            TaperFunction.addSample(100, 100);
             
             OnScreenElement = new PotentiometerScreen(this);
             ParametersControl = new PotentiometerParametersControl(this);

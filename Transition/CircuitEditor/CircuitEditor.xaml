@@ -30,7 +30,7 @@
                       Grid.Row="1">
             <StackPanel Orientation="Vertical">
                 <Button Content="Perform your matter" Tapped="TapCalculate"/>
-                <Button Content="modify chart" Tapped="tapModify"/>
+             
                 <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
                         Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
                         x:Name="brdGround" Tag="ground" Height="50" Width="50">
