@@ -10,30 +10,11 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
     
-    <UserControl.Resources>
-        <local1:DecimalEngrConverter x:Key="engrConverter" AllowNegativeNumber="False"/>
-        <local1:DecimalEngrConverter x:Key="engrConverterAllowNegative" AllowNegativeNumber="True"/>
-        <local1:BooleanToVisibilityConverter x:Key="boolToVisible"/>
-    </UserControl.Resources>
-    <Grid><!--
-        <TextBox Style="{StaticResource EngrNumberBoxStyle}" 
-                 x:Name="txtBox"  Visibility="{x:Bind AllowNegativeNumber, Converter={StaticResource boolToVisible}}"
-                 IsSpellCheckEnabled="False"
-                 IsTextPredictionEnabled="False" Width="100"
-                 AllowDrop="False"  InputScope="AlphanumericFullWidth"
-                 Text="{x:Bind Value, Mode=TwoWay, Converter={StaticResource engrConverterAllowNegative}}"/>
-
-        <TextBox Style="{StaticResource EngrNumberBoxStyle}" 
-                 x:Name="txtBox2"  Visibility="{x:Bind AllowNegativeNumber, Converter={StaticResource boolToVisible}, ConverterParameter=Reverse}"
-                 IsSpellCheckEnabled="False"
-                 IsTextPredictionEnabled="False" Width="100"
-                 AllowDrop="False"  InputScope="AlphanumericFullWidth"
-                 Text="{x:Bind Value, Mode=TwoWay, Converter={StaticResource engrConverter}}"/>
-        -->
+    <StackPanel Orientation="Horizontal">
         <TextBox Style="{StaticResource EngrNumberBoxStyle}"
-                 x:Name="txtBox"
+                 x:Name="txtBox" Header="{x:Bind Header}"
                  IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" Width="100"
                  AllowDrop="False" InputScope="AlphanumericFullWidth"
                  LostFocus="txtLostFocus" TextChanged="textChanged"/>
-    </Grid>
+    </StackPanel>
 </UserControl>

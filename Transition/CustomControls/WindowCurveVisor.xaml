@@ -14,9 +14,10 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <StackPanel HorizontalAlignment="Center" Grid.Row="0">
+        <StackPanel HorizontalAlignment="Center" Grid.Row="0" Orientation="Horizontal">
             <Button Content="CurveLibrary..." x:Name="btnCurveLibrary"
                     IsTapEnabled="True" Tapped="CurveLibraryClick"/>
+            <Button Content="Scale Parameters..." IsTapEnabled="True" Tapped="ScaleParametersClick"/>
         </StackPanel>
         <local:CurveVisor Grid.Row="1" x:Name="Visor"/>
     </Grid>

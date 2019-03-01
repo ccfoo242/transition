@@ -6,32 +6,214 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    mc:Ignorable="d"
-    d:DesignHeight="300"
-    d:DesignWidth="400">
+    mc:Ignorable="d" >
 
     <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <controls:WrapPanel HorizontalAlignment="Center">
+        <StackPanel Orientation="Vertical">
 
-            <controls:Expander Header="Vertical Axis - Magnitude">
-                <controls:AdaptiveGridView DesiredWidth="400">
-                    <local:GroupBox>
+            <controls:Expander Header="Vertical Axis - Magnitude" IsExpanded="True" ExpandDirection="Down" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
+                <controls:WrapPanel Orientation="Horizontal">
+                    
+                    <local:GroupBox Header="Axis Scale">
                         <local:GroupBox.CustomContent>
-                            <StackPanel Orientation="Vertical">
-
+                            <StackPanel Orientation="Vertical" Margin="4">
+                                <RadioButton Content="Linear"      Tag="linear" x:Name="rdbVertMagAxisLinear" GroupName="rdbVertMagAxis"/>
+                                <RadioButton Content="Logarithmic" Tag="log"    x:Name="rdbVertMagAxisLog"    GroupName="rdbVertMagAxis"/>
+                                <RadioButton Content="dB"          Tag="db"     x:Name="rdbVertMagAxisdB"     GroupName="rdbVertMagAxis"/>
                             </StackPanel>
                         </local:GroupBox.CustomContent>
-                        
                     </local:GroupBox>
-                </controls:AdaptiveGridView>
-            </controls:Expander>
-            <controls:Expander Header="Vertical Axis - Phase">
-                
-            </controls:Expander>
-            <controls:Expander Header="Horizontal Axis - Frequency">
-                
+
+                    <local:GroupBox Header="Range">
+                        <local:GroupBox.CustomContent>
+                            <StackPanel Orientation="Vertical" Margin="4">
+                                <local:EngrDecimalBox Header="Maximum" x:Name="dcmBoxVertMagMaximum"/>
+                                <local:EngrDecimalBox Header="Minimum" x:Name="dcmBoxVertMagMinimum"/>
+                            </StackPanel>
+                        </local:GroupBox.CustomContent>
+                    </local:GroupBox>
+
+                    <local:GroupBox Header="Divisions">
+                        <local:GroupBox.CustomContent>
+                            <StackPanel Orientation="Vertical" Margin="4">
+                                <local:EngrDecimalBox Header="Major" x:Name="dcmBoxVertMagMajorDivs"/>
+                                <local:EngrDecimalBox Header="Minor" x:Name="dcmBoxVertMagMinorDivs"/>
+                            </StackPanel>
+                        </local:GroupBox.CustomContent>
+                    </local:GroupBox>
+
+                    <local:GroupBox Header="Polarity">
+                        <local:GroupBox.CustomContent>
+                            <StackPanel Orientation="Vertical" Margin="4">
+                                <RadioButton Content="Bipolar"  Tag="bipolar"  x:Name="rdbPolarityVertMagAxisBipolar"  GroupName="rdbVertMagPolarity"/>
+                                <RadioButton Content="Positive" Tag="positive" x:Name="rdbPolarityVertMagAxisPositive" GroupName="rdbVertMagPolarity"/>
+                                <RadioButton Content="Negative" Tag="negative" x:Name="rdbPolarityVertMagAxisNegative" GroupName="rdbVertMagPolarity"/>
+                            </StackPanel>
+                        </local:GroupBox.CustomContent>
+                    </local:GroupBox>
+
+                    <local:GroupBox Header="dB">
+                        <local:GroupBox.CustomContent>
+                            <StackPanel Orientation="Vertical" Margin="4">
+                                <ComboBox x:Name="cmbdBPerDivVertMag" Header="dB per Division">
+                                    <ComboBox.Items>
+                                        <ComboBoxItem Content="50.000" Tag="50.000"/>
+                                        <ComboBoxItem Content="30.000" Tag="30.000"/>
+                                        <ComboBoxItem Content="20.000" Tag="20.000"/>
+                                        <ComboBoxItem Content="10.000" Tag="10.000"/>
+                                        <ComboBoxItem Content="5.000"  Tag="5.000"/>
+                                        <ComboBoxItem Content="3.000"  Tag="3.000"/>
+                                        <ComboBoxItem Content="2.000"  Tag="2.000"/>
+                                        <ComboBoxItem Content="1.000"  Tag="1.000"/>
+                                        <ComboBoxItem Content="0.500"  Tag="0.500"/>
+                                        <ComboBoxItem Content="0.300"  Tag="0.300"/>
+                                        <ComboBoxItem Content="0.200"  Tag="0.200"/>
+                                        <ComboBoxItem Content="0.100"  Tag="0.100"/>
+                                        <ComboBoxItem Content="0.050"  Tag="0.050"/>
+                                        <ComboBoxItem Content="0.030"  Tag="0.030"/>
+                                        <ComboBoxItem Content="0.020"  Tag="0.020"/>
+                                        <ComboBoxItem Content="0.010"  Tag="0.010"/>
+                                        <ComboBoxItem Content="0.005"  Tag="0.005"/>
+                                        <ComboBoxItem Content="0.003"  Tag="0.003"/>
+                                        <ComboBoxItem Content="0.002"  Tag="0.002"/>
+                                        <ComboBoxItem Content="0.001"  Tag="0.001"/>
+                                    </ComboBox.Items>
+                                </ComboBox>
+                                <ComboBox x:Name="cmbdBZeroRefVertMag" Header="Zero Ref">
+                                    <ComboBox.Items>
+                                        <ComboBoxItem Content="1.0" Tag="1.0"/>
+                                        <ComboBoxItem Content="774.6m" Tag="774.6m"/>
+                                    </ComboBox.Items>
+                                </ComboBox>
+                            </StackPanel>
+                        </local:GroupBox.CustomContent>
+                    </local:GroupBox>
+                    
+                    <local:GroupBox Header="Units" >
+                        <local:GroupBox.CustomContent>
+                            <ComboBox x:Name="cmbPrefixVertMag" Header="Prefix">
+                                <ComboBox.Items>
+                                    <ComboBoxItem Content="Y" Tag="Y"/>
+                                    <ComboBoxItem Content="Z" Tag="Z"/>
+                                    <ComboBoxItem Content="E" Tag="E"/>
+                                    <ComboBoxItem Content="P" Tag="P"/>
+                                    <ComboBoxItem Content="T" Tag="T"/>
+                                    <ComboBoxItem Content="G" Tag="G"/>
+                                    <ComboBoxItem Content="M" Tag="M"/>
+                                    <ComboBoxItem Content="K" Tag="K"/>
+                                    <ComboBoxItem Content=""  Tag="" />
+                                    <ComboBoxItem Content="m" Tag="m"/>
+                                    <ComboBoxItem Content="u" Tag="u"/>
+                                    <ComboBoxItem Content="n" Tag="n"/>
+                                    <ComboBoxItem Content="p" Tag="p"/>
+                                    <ComboBoxItem Content="f" Tag="f"/>
+                                    <ComboBoxItem Content="a" Tag="a"/>
+                                    <ComboBoxItem Content="z" Tag="z"/>
+                                    <ComboBoxItem Content="y" Tag="y"/>
+                                </ComboBox.Items>
+                            </ComboBox>
+                        </local:GroupBox.CustomContent>
+                    </local:GroupBox>
+                </controls:WrapPanel>
             </controls:Expander>
             
-        </controls:WrapPanel>
+            
+
+            <controls:Expander Header="Vertical Axis - Phase" IsExpanded="True" ExpandDirection="Down" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
+                <controls:WrapPanel Orientation="Horizontal">
+                    <local:GroupBox Header="Range">
+                        <local:GroupBox.CustomContent>
+                            <StackPanel Orientation="Vertical" Margin="4">
+                                <local:EngrDecimalBox Header="Maximum" x:Name="dcmBoxVertPhaseMaximum"/>
+                                <local:EngrDecimalBox Header="Minimum" x:Name="dcmBoxVertPhaseMinimum"/>
+                            </StackPanel>
+                        </local:GroupBox.CustomContent>
+                    </local:GroupBox>
+                    
+                    <local:GroupBox Header="Polarity">
+                        <local:GroupBox.CustomContent>
+                            <StackPanel Orientation="Vertical" Margin="4">
+                                <RadioButton Content="Bipolar"  Tag="bipolar"  x:Name="rdbPolarityVertPhaseAxisBipolar"  GroupName="rdbVertPhasePolarity"/>
+                                <RadioButton Content="Positive" Tag="positive" x:Name="rdbPolarityVertPhaseAxisPositive" GroupName="rdbVertPhasePolarity"/>
+                                <RadioButton Content="Negative" Tag="negative" x:Name="rdbPolarityVertPhaseAxisNegative" GroupName="rdbVertPhasePolarity"/>
+                            </StackPanel>
+                        </local:GroupBox.CustomContent>
+                    </local:GroupBox>
+
+                    <local:GroupBox Header="Units">
+                        <local:GroupBox.CustomContent>
+                            <StackPanel Orientation="Vertical" Margin="4">
+                                <RadioButton Content="Degrees" Tag="deg" x:Name="rdbUnitVertPhaseDeg" GroupName="rdbUnitVertPhase"/>
+                                <RadioButton Content="Radians" Tag="rad" x:Name="rdbUnitVertPhaseRad" GroupName="rdbUnitVertPhase"/>
+                            </StackPanel>
+                        </local:GroupBox.CustomContent>
+                    </local:GroupBox>
+
+                </controls:WrapPanel>
+            </controls:Expander>
+            
+            
+            
+            <controls:Expander Header="Horizontal Axis - Frequency" IsExpanded="True" ExpandDirection="Down">
+                <controls:WrapPanel>
+                    
+                    <local:GroupBox Header="Axis Scale">
+                        <local:GroupBox.CustomContent>
+                            <StackPanel Orientation="Vertical" Margin="4">
+                                <RadioButton Content="Linear"      Tag="linear" x:Name="rdbHorizAxisLinear" GroupName="rdbHorizAxis"/>
+                                <RadioButton Content="Logarithmic" Tag="log"    x:Name="rdbHorizAxisLog"    GroupName="rdbHorizAxis"/>
+                                <RadioButton Content="dB"          Tag="db"     x:Name="rdbHorizAxisdB"     GroupName="rdbHorizAxis"/>
+                            </StackPanel>
+                        </local:GroupBox.CustomContent>
+                    </local:GroupBox>
+
+                    <local:GroupBox Header="Range">
+                        <local:GroupBox.CustomContent>
+                            <StackPanel Orientation="Vertical" Margin="4">
+                                <local:EngrDecimalBox Header="Maximum" x:Name="dcmBoxHorizMaximum"/>
+                                <local:EngrDecimalBox Header="Minimum" x:Name="dcmBoxHorizMinimum"/>
+                            </StackPanel>
+                        </local:GroupBox.CustomContent>
+                    </local:GroupBox>
+
+                    <local:GroupBox Header="Divisions">
+                        <local:GroupBox.CustomContent>
+                            <StackPanel Orientation="Vertical" Margin="4">
+                                <local:EngrDecimalBox Header="Major" x:Name="dcmBoxHorizMajorDivs"/>
+                                <local:EngrDecimalBox Header="Minor" x:Name="dcmBoxHorizMinorDivs"/>
+                            </StackPanel>
+                        </local:GroupBox.CustomContent>
+                    </local:GroupBox>
+
+                    <local:GroupBox Header="Units" >
+                        <local:GroupBox.CustomContent>
+                            <ComboBox x:Name="cmbPrefixHoriz" Header="Prefix">
+                                <ComboBox.Items>
+                                    <ComboBoxItem Content="Y" Tag="Y"/>
+                                    <ComboBoxItem Content="Z" Tag="Z"/>
+                                    <ComboBoxItem Content="E" Tag="E"/>
+                                    <ComboBoxItem Content="P" Tag="P"/>
+                                    <ComboBoxItem Content="T" Tag="T"/>
+                                    <ComboBoxItem Content="G" Tag="G"/>
+                                    <ComboBoxItem Content="M" Tag="M"/>
+                                    <ComboBoxItem Content="K" Tag="K"/>
+                                    <ComboBoxItem Content=""  Tag="" />
+                                    <ComboBoxItem Content="m" Tag="m"/>
+                                    <ComboBoxItem Content="u" Tag="u"/>
+                                    <ComboBoxItem Content="n" Tag="n"/>
+                                    <ComboBoxItem Content="p" Tag="p"/>
+                                    <ComboBoxItem Content="f" Tag="f"/>
+                                    <ComboBoxItem Content="a" Tag="a"/>
+                                    <ComboBoxItem Content="z" Tag="z"/>
+                                    <ComboBoxItem Content="y" Tag="y"/>
+                                </ComboBox.Items>
+                            </ComboBox>
+                        </local:GroupBox.CustomContent>
+                    </local:GroupBox>
+                    
+                </controls:WrapPanel>
+            </controls:Expander>
+            
+        </StackPanel>
     </ScrollViewer>
 </UserControl>

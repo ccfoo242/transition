@@ -58,5 +58,10 @@ namespace Easycoustics.Transition.CustomControls
 
             }
         }
+
+        private void ScaleParametersClick(object sender, TappedRoutedEventArgs e)
+        {
+            this.Content = new GraphSettings();
+        }
     }
 }

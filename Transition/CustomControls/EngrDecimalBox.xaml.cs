@@ -50,6 +50,27 @@ namespace Easycoustics.Transition.CustomControls
 
         }
 
+
+
+        public string Header
+        {
+            get { return (string)GetValue(HeaderProperty); }
+            set { SetValue(HeaderProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Header.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty HeaderProperty =
+            DependencyProperty.Register("Header", typeof(string), typeof(EngrDecimalBox), new PropertyMetadata(""));
+
+
+
+
+
+
+
+
+
+
         public bool AllowNegativeNumber { get; set; }
         private bool txtChanged = false;
 

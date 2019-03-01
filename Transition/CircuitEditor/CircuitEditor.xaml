@@ -30,7 +30,6 @@
         <ScrollViewer VerticalScrollBarVisibility="Visible" VerticalScrollMode="Enabled" Grid.Column="0"
                       Grid.Row="1">
             <StackPanel Orientation="Vertical">
-                <Button Content="Perform your matter" Tapped="TapCalculate"/>
                
                 <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
                         Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
