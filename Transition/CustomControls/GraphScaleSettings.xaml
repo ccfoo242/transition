@@ -10,20 +10,29 @@
 
     <UserControl.Resources>
         <local:EnumBooleanConverter x:Key="enumBoolConverter"/>
+        <local:ComboDbPerDivConverter x:Key="cmbdBPerDivConverter"/>
+        <local:CombodBZeroRefConverter x:Key="cmbdBZeroRefConverter"/>
+        <local:ComboUnitPrefixConverter x:Key="cmbUnitPrefixConverter"/>
     </UserControl.Resources>
     
-    <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <StackPanel Orientation="Vertical">
-
-            <controls:Expander Header="Vertical Axis - Magnitude" IsExpanded="True" ExpandDirection="Down" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
+    <ScrollViewer>
+        <StackPanel Orientation="Vertical" MaxWidth="1000">
+          
+            <controls:Expander Header="Vertical Axis - Magnitude" IsExpanded="True" ExpandDirection="Down" >
                 <controls:WrapPanel Orientation="Horizontal">
                     
-                    <local:GroupBox Header="Axis Scale">
+                    <local:GroupBox Header="Axis Scale" x:Name="grpBoxVerticalAxisScale">
                         <local:GroupBox.CustomContent>
                             <StackPanel Orientation="Vertical" Margin="4">
-                                <RadioButton Content="Linear"      x:Name="rdbVertMagAxisLinear" GroupName="rdbVertMagAxis" IsChecked="{Binding Path=VerticalScale, Converter={StaticResource enumBoolConverter}, ConverterParameter=Logarithmic}"/>
-                                <RadioButton Content="Logarithmic" x:Name="rdbVertMagAxisLog"    GroupName="rdbVertMagAxis" IsChecked="{Binding Path=VerticalScale, Converter={StaticResource enumBoolConverter}, ConverterParameter=Linear}"/>
-                                <RadioButton Content="dB"          x:Name="rdbVertMagAxisdB"     GroupName="rdbVertMagAxis" IsChecked="{Binding Path=VerticalScale, Converter={StaticResource enumBoolConverter}, ConverterParameter=dB}"/>
+                                
+                                <RadioButton Content="Linear"      x:Name="rdbVertMagAxisLinear" GroupName="rdbVertMagAxis" 
+                                             IsChecked="{Binding Path=VerticalScale, Converter={StaticResource enumBoolConverter}, ConverterParameter=Linear, Mode=TwoWay}"/>
+                                
+                                <RadioButton Content="Logarithmic" x:Name="rdbVertMagAxisLog"    GroupName="rdbVertMagAxis" 
+                                             IsChecked="{Binding Path=VerticalScale, Converter={StaticResource enumBoolConverter}, ConverterParameter=Logarithmic, Mode=TwoWay}"/>
+                                
+                                <RadioButton Content="dB"          x:Name="rdbVertMagAxisdB"     GroupName="rdbVertMagAxis" 
+                                             IsChecked="{Binding Path=VerticalScale, Converter={StaticResource enumBoolConverter}, ConverterParameter=dB, Mode=TwoWay}"/>
                             </StackPanel>
                         </local:GroupBox.CustomContent>
                     </local:GroupBox>
@@ -31,8 +40,26 @@
                     <local:GroupBox Header="Range">
                         <local:GroupBox.CustomContent>
                             <StackPanel Orientation="Vertical" Margin="4">
-                                <local:EngrDecimalBox Header="Maximum" x:Name="dcmBoxVertMagMaximum" Value="{Binding MaximumMag}"/>
-                                <local:EngrDecimalBox Header="Minimum" x:Name="dcmBoxVertMagMinimum" Value="{Binding MinimumMag}"/>
+                                <local:EngrDecimalBox Header="Maximum" x:Name="dcmBoxVertMagMaximum" 
+                                                      Value="{Binding MaximumMag, Mode=TwoWay}"
+                                                      AllowNegativeNumber="False"/>
+                                
+                                <local:EngrDecimalBox Header="Maximum" x:Name="dcmBoxVertMagZeroMaximum" 
+                                                      IsEnabled="False"
+                                                      Visibility="Collapsed"/>
+                                
+                                <local:EngrDecimalBox Header="Minimum" x:Name="dcmBoxVertMagMinimum" 
+                                                      Value="{Binding MinimumMag, Mode=TwoWay}"/>
+                                
+                                <local:EngrDecimalBox Header="Minimum" x:Name="dcmBoxVertMagMaximumNegated" 
+                                                      Value="{Binding NegatedMaximumMag, Mode=OneWay}"
+                                                      IsEnabled="False" Visibility="Collapsed"/>
+                                
+                                <local:EngrDecimalBox Header="Minimum" x:Name="dcmBoxVertMagZeroMinimum" 
+                                                      IsEnabled="False" 
+                                                      Visibility="Collapsed"/>
+                                <!-- default vale is zero -->
+
                             </StackPanel>
                         </local:GroupBox.CustomContent>
                     </local:GroupBox>
@@ -40,80 +67,97 @@
                     <local:GroupBox Header="Divisions">
                         <local:GroupBox.CustomContent>
                             <StackPanel Orientation="Vertical" Margin="4">
-                                <local:EngrDecimalBox Header="Major" x:Name="dcmBoxVertMagMajorDivs" Value="{Binding QuantityOfMajorDivsVertical}"/>
-                                <local:EngrDecimalBox Header="Minor" x:Name="dcmBoxVertMagMinorDivs" Value="{Binding QuantityOfMinorDivsVertical}"/>
+                                <local:IntegerBox Header="Major" x:Name="txtBoxVertMagMajorDivs" 
+                                                  MinimumNumberAllowed="1" MaximumNumberAllowed="100"
+                                                  Value="{Binding QuantityOfMajorDivsVertical, Mode=TwoWay}"/>
+                                
+                                <local:IntegerBox Header="Minor" x:Name="txtBoxVertMagMinorDivs" 
+                                                  MinimumNumberAllowed="1" MaximumNumberAllowed="20"
+                                                  Value="{Binding QuantityOfMinorDivsVertical, Mode=TwoWay}"/>
+
                             </StackPanel>
                         </local:GroupBox.CustomContent>
                     </local:GroupBox>
 
-                    <local:GroupBox Header="Polarity">
+                    <local:GroupBox Header="Linear scale Polarity" x:Name="grpBoxVerticalLinearScalePolarity">
                         <local:GroupBox.CustomContent>
                             <StackPanel Orientation="Vertical" Margin="4">
-                                <RadioButton Content="Bipolar"  Tag="bipolar"  x:Name="rdbPolarityVertMagAxisBipolar"  GroupName="rdbVertMagPolarity"/>
-                                <RadioButton Content="Positive" Tag="positive" x:Name="rdbPolarityVertMagAxisPositive" GroupName="rdbVertMagPolarity"/>
-                                <RadioButton Content="Negative" Tag="negative" x:Name="rdbPolarityVertMagAxisNegative" GroupName="rdbVertMagPolarity"/>
+                                
+                                <RadioButton Content="Bipolar" x:Name="rdbPolarityVertMagAxisBipolar"  GroupName="rdbVertMagPolarity" 
+                                             IsChecked="{Binding Path=MagnitudePolarity, Converter={StaticResource enumBoolConverter}, ConverterParameter=Bipolar,  Mode=TwoWay}"/>
+                                
+                                <RadioButton Content="Positive" x:Name="rdbPolarityVertMagAxisPositive" GroupName="rdbVertMagPolarity" 
+                                             IsChecked="{Binding Path=MagnitudePolarity, Converter={StaticResource enumBoolConverter}, ConverterParameter=Positive, Mode=TwoWay}"/>
+                               
+                                <RadioButton Content="Negative" x:Name="rdbPolarityVertMagAxisNegative" GroupName="rdbVertMagPolarity" 
+                                             IsChecked="{Binding Path=MagnitudePolarity, Converter={StaticResource enumBoolConverter}, ConverterParameter=Negative, Mode=TwoWay}"/>
+                           
                             </StackPanel>
                         </local:GroupBox.CustomContent>
                     </local:GroupBox>
 
-                    <local:GroupBox Header="dB">
+                    <local:GroupBox Header="dB" x:Name="grpBoxVerticaldB">
                         <local:GroupBox.CustomContent>
                             <StackPanel Orientation="Vertical" Margin="4">
-                                <ComboBox x:Name="cmbdBPerDivVertMag" Header="dB per Division">
+                                        <ComboBox x:Name="cmbdBPerDivVertMag" Header="dB per Division" 
+                                                  SelectedIndex="{Binding Path=DBPerDiv, Mode=TwoWay, 
+                                            Converter={StaticResource cmbdBPerDivConverter}}">
                                     <ComboBox.Items>
-                                        <ComboBoxItem Content="50.000" Tag="50.000"/>
-                                        <ComboBoxItem Content="30.000" Tag="30.000"/>
-                                        <ComboBoxItem Content="20.000" Tag="20.000"/>
-                                        <ComboBoxItem Content="10.000" Tag="10.000"/>
-                                        <ComboBoxItem Content="5.000"  Tag="5.000"/>
-                                        <ComboBoxItem Content="3.000"  Tag="3.000"/>
-                                        <ComboBoxItem Content="2.000"  Tag="2.000"/>
-                                        <ComboBoxItem Content="1.000"  Tag="1.000"/>
-                                        <ComboBoxItem Content="0.500"  Tag="0.500"/>
-                                        <ComboBoxItem Content="0.300"  Tag="0.300"/>
-                                        <ComboBoxItem Content="0.200"  Tag="0.200"/>
-                                        <ComboBoxItem Content="0.100"  Tag="0.100"/>
-                                        <ComboBoxItem Content="0.050"  Tag="0.050"/>
-                                        <ComboBoxItem Content="0.030"  Tag="0.030"/>
-                                        <ComboBoxItem Content="0.020"  Tag="0.020"/>
-                                        <ComboBoxItem Content="0.010"  Tag="0.010"/>
-                                        <ComboBoxItem Content="0.005"  Tag="0.005"/>
-                                        <ComboBoxItem Content="0.003"  Tag="0.003"/>
-                                        <ComboBoxItem Content="0.002"  Tag="0.002"/>
-                                        <ComboBoxItem Content="0.001"  Tag="0.001"/>
+                                        <ComboBoxItem Content="50.000"/>
+                                        <ComboBoxItem Content="30.000"/>
+                                        <ComboBoxItem Content="20.000"/>
+                                        <ComboBoxItem Content="10.000"/>
+                                        <ComboBoxItem Content="5.000"/>
+                                        <ComboBoxItem Content="3.000"/>
+                                        <ComboBoxItem Content="2.000"/>
+                                        <ComboBoxItem Content="1.000"/>
+                                        <ComboBoxItem Content="0.500"/>
+                                        <ComboBoxItem Content="0.300"/>
+                                        <ComboBoxItem Content="0.200"/>
+                                        <ComboBoxItem Content="0.100"/>
+                                        <ComboBoxItem Content="0.050"/>
+                                        <ComboBoxItem Content="0.030"/>
+                                        <ComboBoxItem Content="0.020"/>
+                                        <ComboBoxItem Content="0.010"/>
+                                        <ComboBoxItem Content="0.005"/>
+                                        <ComboBoxItem Content="0.003"/>
+                                        <ComboBoxItem Content="0.002"/>
+                                        <ComboBoxItem Content="0.001"/>
                                     </ComboBox.Items>
                                 </ComboBox>
-                                <ComboBox x:Name="cmbdBZeroRefVertMag" Header="Zero Ref">
-                                    <ComboBox.Items>
-                                        <ComboBoxItem Content="1.0" Tag="1.0"/>
-                                        <ComboBoxItem Content="774.6m" Tag="774.6m"/>
-                                    </ComboBox.Items>
+                                <ComboBox x:Name="cmbdBZeroRefVertMag" Header="Zero Ref"
+                                          SelectedIndex="{Binding Path=DBZeroRef, Mode=TwoWay,
+                                            Converter={StaticResource cmbdBZeroRefConverter}}">
+                                    <ComboBoxItem x:Name="cmbItemRef1" Content="1"/>
+                                    <ComboBoxItem x:Name="cmbItemRef077" Content="0.775"/>
+                                    <ComboBoxItem x:Name="cmbItemRef20u" Content="20u"/>
                                 </ComboBox>
                             </StackPanel>
                         </local:GroupBox.CustomContent>
                     </local:GroupBox>
                     
-                    <local:GroupBox Header="Units" >
+                    <local:GroupBox Header="Units" x:Name="cmbVerticalMagUnits">
                         <local:GroupBox.CustomContent>
-                            <ComboBox x:Name="cmbPrefixVertMag" Header="Prefix">
+                            <ComboBox x:Name="cmbPrefixVertMag" Header="Prefix"
+                                      SelectedIndex="{Binding Path=VerticalPrefix, Mode=TwoWay, Converter={StaticResource cmbUnitPrefixConverter}}">
                                 <ComboBox.Items>
-                                    <ComboBoxItem Content="Y" Tag="Y"/>
-                                    <ComboBoxItem Content="Z" Tag="Z"/>
-                                    <ComboBoxItem Content="E" Tag="E"/>
-                                    <ComboBoxItem Content="P" Tag="P"/>
-                                    <ComboBoxItem Content="T" Tag="T"/>
-                                    <ComboBoxItem Content="G" Tag="G"/>
-                                    <ComboBoxItem Content="M" Tag="M"/>
-                                    <ComboBoxItem Content="K" Tag="K"/>
-                                    <ComboBoxItem Content=""  Tag="" />
-                                    <ComboBoxItem Content="m" Tag="m"/>
-                                    <ComboBoxItem Content="u" Tag="u"/>
-                                    <ComboBoxItem Content="n" Tag="n"/>
-                                    <ComboBoxItem Content="p" Tag="p"/>
-                                    <ComboBoxItem Content="f" Tag="f"/>
-                                    <ComboBoxItem Content="a" Tag="a"/>
-                                    <ComboBoxItem Content="z" Tag="z"/>
-                                    <ComboBoxItem Content="y" Tag="y"/>
+                                    <ComboBoxItem Content="Y" Tag="24"/>
+                                    <ComboBoxItem Content="Z" Tag="21"/>
+                                    <ComboBoxItem Content="E" Tag="18"/>
+                                    <ComboBoxItem Content="P" Tag="15"/>
+                                    <ComboBoxItem Content="T" Tag="12"/>
+                                    <ComboBoxItem Content="G" Tag="9"/>
+                                    <ComboBoxItem Content="M" Tag="6"/>
+                                    <ComboBoxItem Content="K" Tag="3"/>
+                                    <ComboBoxItem Content=""  Tag="0"/>
+                                    <ComboBoxItem Content="m" Tag="-3"/>
+                                    <ComboBoxItem Content="u" Tag="-6"/>
+                                    <ComboBoxItem Content="n" Tag="-9"/>
+                                    <ComboBoxItem Content="p" Tag="-12"/>
+                                    <ComboBoxItem Content="f" Tag="-15"/>
+                                    <ComboBoxItem Content="a" Tag="-18"/>
+                                    <ComboBoxItem Content="z" Tag="-21"/>
+                                    <ComboBoxItem Content="y" Tag="-24"/>
                                 </ComboBox.Items>
                             </ComboBox>
                         </local:GroupBox.CustomContent>
@@ -123,13 +167,30 @@
             
             
 
-            <controls:Expander Header="Vertical Axis - Phase" IsExpanded="True" ExpandDirection="Down" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
+            <controls:Expander Header="Vertical Axis - Phase" IsExpanded="True" ExpandDirection="Down">
                 <controls:WrapPanel Orientation="Horizontal">
                     <local:GroupBox Header="Range">
                         <local:GroupBox.CustomContent>
                             <StackPanel Orientation="Vertical" Margin="4">
-                                <local:EngrDecimalBox Header="Maximum" x:Name="dcmBoxVertPhaseMaximum"/>
-                                <local:EngrDecimalBox Header="Minimum" x:Name="dcmBoxVertPhaseMinimum"/>
+                                <local:EngrDecimalBox Header="Maximum" x:Name="dcmBoxVertPhaseMaximum"
+                                                      Value="{Binding MaximumPhase, Mode=TwoWay}"
+                                                      AllowPositiveNumber="True" AllowNegativeNumber="False"/>
+
+                                <local:EngrDecimalBox Header="Maximum" x:Name="dcmBoxVertPhaseMaximumZero"
+                                                      IsEnabled="False" Visibility="Collapsed"/>
+
+                                <local:EngrDecimalBox Header="Minimum" x:Name="dcmBoxVertPhaseMaximumNegated"
+                                                      Value="{Binding NegatedMaximumPhase, Mode=OneWay}" IsEnabled="False"
+                                                      Visibility="Visible"/>
+
+                                <local:EngrDecimalBox Header="Minimum" x:Name="dcmBoxVertPhaseMinimumZero"
+                                                      IsEnabled="False" Visibility="Visible"/>
+
+                                <local:EngrDecimalBox Header="Minimum" x:Name="dcmBoxVertPhaseMinimum"
+                                                      Value="{Binding MinimumPhase, Mode=TwoWay}"
+                                                      AllowNegativeNumber="True" AllowPositiveNumber="False"
+                                                      Visibility="Collapsed"/>
+                                
                             </StackPanel>
                         </local:GroupBox.CustomContent>
                     </local:GroupBox>
@@ -137,9 +198,19 @@
                     <local:GroupBox Header="Polarity">
                         <local:GroupBox.CustomContent>
                             <StackPanel Orientation="Vertical" Margin="4">
-                                <RadioButton Content="Bipolar"  Tag="bipolar"  x:Name="rdbPolarityVertPhaseAxisBipolar"  GroupName="rdbVertPhasePolarity"/>
-                                <RadioButton Content="Positive" Tag="positive" x:Name="rdbPolarityVertPhaseAxisPositive" GroupName="rdbVertPhasePolarity"/>
-                                <RadioButton Content="Negative" Tag="negative" x:Name="rdbPolarityVertPhaseAxisNegative" GroupName="rdbVertPhasePolarity"/>
+                                
+                                <RadioButton Content="Bipolar"  Tag="bipolar"  x:Name="rdbPolarityVertPhaseAxisBipolar"  
+                                             GroupName="rdbVertPhasePolarity"
+                                             IsChecked="{Binding Path=PhasePolarity, Converter={StaticResource enumBoolConverter}, ConverterParameter=Bipolar, Mode=TwoWay}"/>
+                                
+                                <RadioButton Content="Positive" Tag="positive" x:Name="rdbPolarityVertPhaseAxisPositive" 
+                                             GroupName="rdbVertPhasePolarity"
+                                             IsChecked="{Binding Path=PhasePolarity, Converter={StaticResource enumBoolConverter}, ConverterParameter=Positive, Mode=TwoWay}"/>
+                                
+                                <RadioButton Content="Negative" Tag="negative" x:Name="rdbPolarityVertPhaseAxisNegative" 
+                                             GroupName="rdbVertPhasePolarity"
+                                             IsChecked="{Binding Path=PhasePolarity, Converter={StaticResource enumBoolConverter}, ConverterParameter=Negative, Mode=TwoWay}"/>
+                                
                             </StackPanel>
                         </local:GroupBox.CustomContent>
                     </local:GroupBox>
@@ -158,7 +229,7 @@
             
             
             
-            <controls:Expander Header="Horizontal Axis - Frequency" IsExpanded="True" ExpandDirection="Down">
+            <controls:Expander Header="Horizontal Axis - Frequency" IsExpanded="True" ExpandDirection="Down" >
                 <controls:WrapPanel>
                     
                     <local:GroupBox Header="Axis Scale">
@@ -193,23 +264,23 @@
                         <local:GroupBox.CustomContent>
                             <ComboBox x:Name="cmbPrefixHoriz" Header="Prefix">
                                 <ComboBox.Items>
-                                    <ComboBoxItem Content="Y" Tag="Y"/>
-                                    <ComboBoxItem Content="Z" Tag="Z"/>
-                                    <ComboBoxItem Content="E" Tag="E"/>
-                                    <ComboBoxItem Content="P" Tag="P"/>
-                                    <ComboBoxItem Content="T" Tag="T"/>
-                                    <ComboBoxItem Content="G" Tag="G"/>
-                                    <ComboBoxItem Content="M" Tag="M"/>
-                                    <ComboBoxItem Content="K" Tag="K"/>
-                                    <ComboBoxItem Content=""  Tag="" />
-                                    <ComboBoxItem Content="m" Tag="m"/>
-                                    <ComboBoxItem Content="u" Tag="u"/>
-                                    <ComboBoxItem Content="n" Tag="n"/>
-                                    <ComboBoxItem Content="p" Tag="p"/>
-                                    <ComboBoxItem Content="f" Tag="f"/>
-                                    <ComboBoxItem Content="a" Tag="a"/>
-                                    <ComboBoxItem Content="z" Tag="z"/>
-                                    <ComboBoxItem Content="y" Tag="y"/>
+                                    <ComboBoxItem Content="Y" Tag="24"/>
+                                    <ComboBoxItem Content="Z" Tag="21"/>
+                                    <ComboBoxItem Content="E" Tag="18"/>
+                                    <ComboBoxItem Content="P" Tag="15"/>
+                                    <ComboBoxItem Content="T" Tag="12"/>
+                                    <ComboBoxItem Content="G" Tag="9"/>
+                                    <ComboBoxItem Content="M" Tag="6"/>
+                                    <ComboBoxItem Content="K" Tag="3"/>
+                                    <ComboBoxItem Content=""  Tag="0"/>
+                                    <ComboBoxItem Content="m" Tag="-3"/>
+                                    <ComboBoxItem Content="u" Tag="-6"/>
+                                    <ComboBoxItem Content="n" Tag="-9"/>
+                                    <ComboBoxItem Content="p" Tag="-12"/>
+                                    <ComboBoxItem Content="f" Tag="-15"/>
+                                    <ComboBoxItem Content="a" Tag="-18"/>
+                                    <ComboBoxItem Content="z" Tag="-21"/>
+                                    <ComboBoxItem Content="y" Tag="-24"/>
                                 </ComboBox.Items>
                             </ComboBox>
                         </local:GroupBox.CustomContent>
@@ -217,7 +288,10 @@
                     
                 </controls:WrapPanel>
             </controls:Expander>
-            
+            <StackPanel Orientation="Horizontal" Margin="4" HorizontalAlignment="Center">
+                <Button Content="OK" Margin="4" IsTapEnabled="True" Tapped="tapOK"/>
+                <Button Content="Cancel" Margin="4" IsTapEnabled="True" Tapped="tapCancel"/>
+            </StackPanel>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

@@ -11,15 +11,16 @@
 
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="grdCurveDisplay">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <StackPanel HorizontalAlignment="Center" Grid.Row="0" Orientation="Horizontal">
-            <Button Content="CurveLibrary..." x:Name="btnCurveLibrary"
+       
+        <local:CurveVisor Grid.Row="0" x:Name="Visor"/>
+        <StackPanel HorizontalAlignment="Center" Grid.Row="1" Orientation="Horizontal">
+            <Button Content="CurveLibrary..." x:Name="btnCurveLibrary" Margin="4"
                     IsTapEnabled="True" Tapped="CurveLibraryClick"/>
-            <Button Content="Scale Parameters..." IsTapEnabled="True" Tapped="ScaleParametersClick"/>
+            <Button Content="Scale Parameters..." IsTapEnabled="True" Margin="4" Tapped="ScaleParametersClick"/>
         </StackPanel>
-        <local:CurveVisor Grid.Row="1" x:Name="Visor"/>
     </Grid>
    
 </UserControl>

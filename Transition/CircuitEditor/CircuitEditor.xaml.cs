@@ -36,9 +36,9 @@ namespace Easycoustics.Transition.CircuitEditor
     public sealed partial class CircuitEditor : UserControl
     {
         public static CircuitEditor currentInstance;
-        public static UserDesign StaticCurrentDesign => currentInstance.CurrentDesign;
+        public static UserDesign CurrentDesign => UserDesign.CurrentDesign;
         
-        public UserDesign CurrentDesign { get; set; }
+      //  public UserDesign CurrentDesign { get; set; }
 
         public ObservableCollection<ICircuitSelectable> selectedElements = new ObservableCollection<ICircuitSelectable>();
         public List<Line> gridLines;
@@ -118,7 +118,7 @@ namespace Easycoustics.Transition.CircuitEditor
 
         public void loadDesign(UserDesign design)
         {
-            CurrentDesign = design;
+           // CurrentDesign = design;
 
             design.CanvasCircuit.PointerPressed += cnvPointerPressed;
             design.CanvasCircuit.PointerMoved += cnvPointerMoved;

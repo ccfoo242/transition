@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Easycoustics.Transition.CircuitEditor;
 using Easycoustics.Transition.CircuitEditor.Serializable;
+using Easycoustics.Transition.Design;
 
 namespace Easycoustics.Transition.Commands
 {
@@ -17,12 +18,12 @@ namespace Easycoustics.Transition.Commands
 
         public void execute()
         {
-            CircuitEditor.CircuitEditor.currentInstance.CurrentDesign.Components.Add(Component);
+            UserDesign.CurrentDesign.Components.Add(Component);
         }
 
         public void unExecute()
         {
-            CircuitEditor.CircuitEditor.currentInstance.CurrentDesign.Components.Remove(Component);
+            UserDesign.CurrentDesign.Components.Remove(Component);
         }
 
         

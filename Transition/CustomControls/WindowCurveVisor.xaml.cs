@@ -1,4 +1,5 @@
-﻿using Easycoustics.Transition.Functions;
+﻿using Easycoustics.Transition.Common;
+using Easycoustics.Transition.Functions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,10 +23,18 @@ namespace Easycoustics.Transition.CustomControls
     public sealed partial class WindowCurveVisor : UserControl
     {
         private ObservableCollection<Function> Curves => Visor.Curves;
+        public ScaleParameters ScaleParams => Visor.scaleParams;
+
+        public string PhysicalQuantity { get; set; }
 
         public WindowCurveVisor()
         {
             this.InitializeComponent();
+        }
+
+        public WindowCurveVisor(string physicalQuantity)
+        {
+            PhysicalQuantity = physicalQuantity;
         }
 
         private async void CurveLibraryClick(object sender, TappedRoutedEventArgs e)
@@ -45,7 +54,10 @@ namespace Easycoustics.Transition.CustomControls
             if (result == ContentDialogResult.Primary)
             {
                 foreach (var curve in curveSelector.selectedCurves())
-                    if (!Curves.Contains(curve)) Curves.Add(curve);
+                {
+                    if (curve.FunctionQuantity == PhysicalQuantity)
+                        if (!Curves.Contains(curve)) Curves.Add(curve);
+                }
 
                 var toDelete = new List<Function>();
 
@@ -55,13 +67,13 @@ namespace Easycoustics.Transition.CustomControls
 
                 foreach (var curve in toDelete)
                     Curves.Remove(curve);
-
             }
         }
 
         private void ScaleParametersClick(object sender, TappedRoutedEventArgs e)
         {
-            this.Content = new GraphScaleSettings();
+            this.Content = new GraphScaleSettings(this, (ScaleParameters)Visor.scaleParams.Clone(), PhysicalQuantity);
+
         }
     }
 }

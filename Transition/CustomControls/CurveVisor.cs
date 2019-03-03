@@ -521,7 +521,7 @@ namespace Easycoustics.Transition.CustomControls
                     case dBReference.dBm: Ymag = Y.TodBm; break;
                     default: Ymag = 0; break;
                 }
-                double mindB = Convert.ToDouble(scaleParams.MaximumdB) - (scaleParams.DBPerDiv * scaleParams.QuantityOfdBDivs);
+                double mindB = Convert.ToDouble(scaleParams.MaximumdB) - Convert.ToDouble(scaleParams.DBPerDiv * scaleParams.QuantityOfdBDivs);
                 double maxdB = Convert.ToDouble(scaleParams.MaximumdB);
                 return CanvasHeight - (CanvasHeight * (Ymag - mindB) / (maxdB - mindB));
             }

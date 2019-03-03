@@ -18,20 +18,17 @@ namespace Easycoustics.Transition.Commands
 
         public void execute()
         {
-            CircuitEditor.CircuitEditor.currentInstance.CurrentDesign.Components.Remove(Component);
+            UserDesign.CurrentDesign.Components.Remove(Component);
         }
         
         public void unExecute()
         {
-            CircuitEditor.CircuitEditor.currentInstance.CurrentDesign.Components.Add(Component);
+            UserDesign.CurrentDesign.Components.Add(Component);
 
             foreach (SerializableWire wire in BindedWires)
-                CircuitEditor.CircuitEditor.currentInstance.CurrentDesign.Wires.Add(wire);
+                UserDesign.CurrentDesign.Wires.Add(wire);
 
-           /* for (byte i = 0; i < Component.QuantityOfTerminals; i++)
-                foreach (Tuple<SerializableWire,byte> wt in Bindings[i])
-                    wt.Wire.bind(Component, i, wt.Terminal);
-            */
+           
         }
 
         public CommandRemoveComponent(SerializableComponent comp)
@@ -39,7 +36,7 @@ namespace Easycoustics.Transition.Commands
             Component = comp;
 
             for (byte i = 0; i < comp.QuantityOfTerminals; i++)
-                BindedWires.AddRange(CircuitEditor.CircuitEditor.currentInstance.CurrentDesign.getBoundedWires(comp, i));
+                BindedWires.AddRange(UserDesign.CurrentDesign.getBoundedWires(comp, i));
                  
         }
 

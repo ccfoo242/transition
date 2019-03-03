@@ -20,44 +20,37 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Easycoustics.Transition.CustomControls
 {
-    public sealed partial class EngrDecimalBox : UserControl, INotifyPropertyChanged
+    public sealed partial class IntegerBox : UserControl, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public event ValueChangedEventDelegate ValueManuallyChanged;
 
         public delegate void ValueChangedEventDelegate(object obj, ValueChangedEventArgs args);
 
-        public static DecimalEngrConverter Converter { get; } = new DecimalEngrConverter();
-        
-
-
-
-        public decimal Value
+        public int Value
         {
-            get { return (decimal)GetValue(ValueProperty); }
-            set
-            {
-                decimal oldValue = value;
-                SetValue(ValueProperty, value);
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Value"));
-              
-            }
+            get { return (int)GetValue(ValueProperty); }
+            set { SetValue(ValueProperty, value); }
         }
 
+        // Using a DependencyProperty as the backing store for Value.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ValueProperty =
-            DependencyProperty.Register("Value",
-                typeof(decimal), typeof(EngrDecimalBox), new PropertyMetadata(1m, PropertyChangedCallback));
+            DependencyProperty.Register("Value", typeof(int), typeof(IntegerBox), new PropertyMetadata(1, PropertyChangedCallback));
+
+
 
         public static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (e.NewValue != e.OldValue)
             {
-                string newString = (string)Converter.Convert((decimal)e.NewValue, null, null, CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
-                (d as EngrDecimalBox).txtBox.Text = newString;
-                (d as EngrDecimalBox).txtChanged = false;
+                string newString = ((int)e.NewValue).ToString();
+                (d as IntegerBox).txtBox.Text = newString;
+                (d as IntegerBox).txtChanged = false;
             }
 
         }
+
+
 
 
 
@@ -69,48 +62,35 @@ namespace Easycoustics.Transition.CustomControls
 
         // Using a DependencyProperty as the backing store for Header.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty HeaderProperty =
-            DependencyProperty.Register("Header", typeof(string), typeof(EngrDecimalBox), new PropertyMetadata(""));
+            DependencyProperty.Register("Header", typeof(string), typeof(IntegerBox), new PropertyMetadata(""));
 
-        
-
-
-        public bool AllowNegativeNumber { get; set; } = false;
-        public bool AllowPositiveNumber { get; set; } = true;
-        public decimal MaximumNumberAllowed { get; set; } = decimal.MaxValue;
-        public decimal MinimumNumberAllowed { get; set; } = decimal.MinValue;
+        public bool AllowNegativeNumber { get; set; }
         private bool txtChanged = false;
 
-        public EngrDecimalBox()
+        public int MaximumNumberAllowed { get; set; } = int.MaxValue;
+        public int MinimumNumberAllowed { get; set; } = int.MinValue;
+
+        public IntegerBox()
         {
             this.InitializeComponent();
         }
-        
+
+
+
         private void txtLostFocus(object sender, RoutedEventArgs e)
         {
             if (!txtChanged) return;
 
             string txt = txtBox.Text;
-            bool didConvert = true;
-            decimal ConvertedValue = 0m;
-            try
-            {
-                ConvertedValue = (decimal)Converter.ConvertBack(txt, null, null, CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
-            }
-            catch { didConvert = false; }
+            int ConvertedValue;
 
+            bool didConvert = Int32.TryParse(txt, out ConvertedValue);
+             
             if (didConvert)
             {
                 if (!AllowNegativeNumber && (ConvertedValue < 0)) ConvertedValue *= -1;
-                if (!AllowPositiveNumber && (ConvertedValue > 0)) ConvertedValue *= -1;
-
-                if (!AllowNegativeNumber && !AllowPositiveNumber)
-                    throw new InvalidOperationException("Both Negative and Positive numbers are disallowed");
-
                 if (ConvertedValue > MaximumNumberAllowed) ConvertedValue = MaximumNumberAllowed;
                 if (ConvertedValue < MinimumNumberAllowed) ConvertedValue = MinimumNumberAllowed;
-
-                if (MinimumNumberAllowed >= MaximumNumberAllowed)
-                    throw new InvalidOperationException("Minimum allowed number is greather or equal than maximum allowed");
 
                 decimal oldValue = Value;
                 Value = ConvertedValue;
@@ -121,15 +101,22 @@ namespace Easycoustics.Transition.CustomControls
                     PropertyName = "Value"
                 });
             }
-            
-            txtBox.Text = (string)Converter.Convert(Value, null, null, CultureInfo.CurrentCulture.TwoLetterISOLanguageName); ;
-            
-            
+            else
+            {
+                string newString = Value.ToString();
+                txtBox.Text = newString;
+            }
         }
 
         private void textChanged(object sender, TextChangedEventArgs e)
         {
             txtChanged = true;
         }
+
+
+
+
+
+
     }
 }

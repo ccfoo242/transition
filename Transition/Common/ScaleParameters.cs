@@ -24,37 +24,67 @@ namespace Easycoustics.Transition.Common
         public decimal MaximumHorizontal { get => maximumHorizontal; set { SetProperty(ref maximumHorizontal, value); } }
 
         private decimal minimumMag;
-        public decimal MinimumMag { get => minimumMag; set { SetProperty(ref minimumMag, value); } }
+        public decimal MinimumMag { get => minimumMag; set {
+                decimal newValue = value;
+                if (value > MaximumMag) newValue = MaximumMag / 2;
+                SetProperty(ref minimumMag, newValue); } }
 
         private decimal maximumMag;
-        public decimal MaximumMag { get => maximumMag; set { SetProperty(ref maximumMag, value); } }
+        public decimal MaximumMag { get => maximumMag; set {
+                decimal newValue = value;
+                if (value < MinimumMag) newValue = MinimumMag * 2;
+                SetProperty(ref maximumMag, newValue);
+                OnPropertyChanged("NegatedMaximumMag");
+            } }
+
+        public decimal NegatedMaximumMag { get => maximumMag * -1; }
 
         private decimal minimumPhase;
         public decimal MinimumPhase { get => minimumPhase; set { SetProperty(ref minimumPhase, value); } }
 
         private decimal maximumPhase;
-        public decimal MaximumPhase { get => maximumPhase; set { SetProperty(ref maximumPhase, value); } }
+        public decimal MaximumPhase { get => maximumPhase; set { SetProperty(ref maximumPhase, value);
+                OnPropertyChanged("NegatedMaximumPhase");
+            } }
+
+        public decimal NegatedMaximumPhase { get => maximumPhase * 1; }
 
         private decimal maximumdB;
         public decimal MaximumdB { get => maximumdB; set { SetProperty(ref maximumdB, value); } }
 
         private int quantityOfMinorDivsHorizontal;
-        public int QuantityOfMinorDivsHorizontal { get => quantityOfMinorDivsHorizontal; set { SetProperty(ref quantityOfMinorDivsHorizontal, value); } }
+        public int QuantityOfMinorDivsHorizontal
+        {
+            get => quantityOfMinorDivsHorizontal;
+            set { SetProperty(ref quantityOfMinorDivsHorizontal, value); }
+        }
 
         private int quantityOfMajorDivsHorizontal;
-        public int QuantityOfMajorDivsHorizontal { get => quantityOfMajorDivsHorizontal; set { SetProperty(ref quantityOfMajorDivsHorizontal, value); } }
+        public int QuantityOfMajorDivsHorizontal
+        {
+            get => quantityOfMajorDivsHorizontal;
+            set { SetProperty(ref quantityOfMajorDivsHorizontal, value); }
+        }
 
         private int quantityOfMinorDivsVertical;
-        public int QuantityOfMinorDivsVertical { get => quantityOfMinorDivsVertical; set { SetProperty(ref quantityOfMinorDivsVertical, value); } }
+        public int QuantityOfMinorDivsVertical
+        {
+            get => quantityOfMinorDivsVertical;
+            set { SetProperty(ref quantityOfMinorDivsVertical, value); }
+        }
 
         private int quantityOfMajorDivsVertical;
-        public int QuantityOfMajorDivsVertical { get => quantityOfMajorDivsVertical; set { SetProperty(ref quantityOfMajorDivsVertical, value); } }
+        public int QuantityOfMajorDivsVertical
+        {
+            get => quantityOfMajorDivsVertical;
+            set { SetProperty(ref quantityOfMajorDivsVertical, value); }
+        }
 
         private int quantityOfdBDivs;
         public int QuantityOfdBDivs { get => quantityOfdBDivs; set { SetProperty(ref quantityOfdBDivs, value); } }
 
-        private int dBperDiv;
-        public int DBPerDiv { get => dBperDiv; set { SetProperty(ref dBperDiv, value); } }
+        private decimal dBperDiv;
+        public decimal DBPerDiv { get => dBperDiv; set { SetProperty(ref dBperDiv, value); } }
 
         private int horizontalPrefix; /* -3 for m, -6 for u, etc*/
         public int HorizontalPrefix { get => horizontalPrefix; set { SetProperty(ref horizontalPrefix, value); } }
@@ -70,7 +100,10 @@ namespace Easycoustics.Transition.Common
 
         private Polarity phasePolarity;
         public Polarity PhasePolarity { get => phasePolarity; set { SetProperty(ref phasePolarity, value); } }
-        
+
+        private PhaseUnit phaseUnit;
+        public PhaseUnit PhaseUnit { get => phaseUnit; set { SetProperty(ref phaseUnit, value); } }
+
         public ScaleParameters()
         {
             horizontalScale = AxisScale.Logarithmic;
@@ -94,12 +127,13 @@ namespace Easycoustics.Transition.Common
             minimumHorizontal = 10;
             maximumHorizontal = 40000;
 
-            minimumMag = 0;
+            minimumMag = 1;
             maximumMag = 100;
 
             maximumPhase = 180;
             minimumPhase = -180;
 
+            PhaseUnit = PhaseUnit.Degrees;
 
             PropertyChanged += checkValues;
 
@@ -130,6 +164,7 @@ namespace Easycoustics.Transition.Common
                 MinimumMag = this.MinimumMag,
                 MinimumPhase = this.MinimumPhase,
                 PhasePolarity = this.PhasePolarity,
+                PhaseUnit = this.PhaseUnit,
                 QuantityOfdBDivs = this.QuantityOfdBDivs,
                 QuantityOfMajorDivsHorizontal = this.QuantityOfMajorDivsHorizontal,
                 QuantityOfMajorDivsVertical = this.QuantityOfMajorDivsVertical,

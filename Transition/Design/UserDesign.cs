@@ -71,7 +71,7 @@ namespace Easycoustics.Transition.Design
 
         public UserDesign()
         {
-            CurrentDesign = this;
+           
 
             Components.CollectionChanged += Components_CollectionChanged;
             Wires.CollectionChanged += Wires_CollectionChanged;

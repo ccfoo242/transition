@@ -10,4 +10,5 @@ namespace Easycoustics.Transition.Common
     public enum dBReference { dBV, dBm, dBSPL };
     public enum Polarity { Bipolar, Positive, Negative };
     public enum InterpolationModes { NearestNeighbor, Linear, Quadratic, Cubic };
+    public enum PhaseUnit { Degrees, Radians };
 }

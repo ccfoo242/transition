@@ -213,6 +213,9 @@
     <Compile Include="Common\Enums.cs" />
     <Compile Include="Common\EventArgs.cs" />
     <Compile Include="Common\FontParameters.cs" />
+    <Compile Include="CustomControls\IntegerBox.xaml.cs">
+      <DependentUpon>IntegerBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Design\GraphParameters.cs" />
     <Compile Include="Common\ScaleParameters.cs" />
     <Compile Include="Common\Matrix.cs" />
@@ -382,6 +385,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CustomControls\GroupBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomControls\IntegerBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -10,11 +10,10 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
     
-    <StackPanel Orientation="Horizontal">
         <TextBox Style="{StaticResource EngrNumberBoxStyle}"
                  x:Name="txtBox" Header="{x:Bind Header}"
                  IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" Width="100"
                  AllowDrop="False" InputScope="AlphanumericFullWidth"
                  LostFocus="txtLostFocus" TextChanged="textChanged"/>
-    </StackPanel>
+   
 </UserControl>

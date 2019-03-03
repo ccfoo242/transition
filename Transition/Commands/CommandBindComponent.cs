@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Easycoustics.Transition.CircuitEditor;
 using Easycoustics.Transition.CircuitEditor.OnScreenComponents;
 using Easycoustics.Transition.CircuitEditor.Serializable;
+using Easycoustics.Transition.Design;
 
 namespace Easycoustics.Transition.Commands
 {
@@ -21,14 +22,14 @@ namespace Easycoustics.Transition.Commands
         public void execute()
         {
             foreach (SerializableWire wire in wiresForComponents)
-                CircuitEditor.CircuitEditor.currentInstance.CurrentDesign.Wires.Add(wire);
+                UserDesign.CurrentDesign.Wires.Add(wire);
           
         }
 
         public void unExecute()
         {
             foreach (SerializableWire wire in wiresForComponents)
-                CircuitEditor.CircuitEditor.currentInstance.CurrentDesign.Wires.Remove(wire);
+                UserDesign.CurrentDesign.Wires.Remove(wire);
           
         }
 
@@ -41,7 +42,7 @@ namespace Easycoustics.Transition.Commands
 
             foreach (KeyValuePair<byte, ElementTerminal> bind in binds)
             { 
-                wire = CircuitEditor.CircuitEditor.currentInstance.CurrentDesign.bindComponentTerminal(comp, bind.Key, bind.Value.ScreenElement.Serializable, bind.Value.TerminalNumber);
+                wire = UserDesign.CurrentDesign.bindComponentTerminal(comp, bind.Key, bind.Value.ScreenElement.Serializable, bind.Value.TerminalNumber);
                 if (wire != null) wiresForComponents.Add(wire);
             }
         }

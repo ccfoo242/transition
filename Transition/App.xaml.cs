@@ -36,6 +36,8 @@ namespace Easycoustics.Transition
             /* init SyncFusion*/
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(SyncFusionLicense);
 
+            UserDesign.CurrentDesign = new UserDesign();
+           
             this.InitializeComponent();
             this.Suspending += OnSuspending;
         }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Easycoustics.Transition.CircuitEditor;
 using Easycoustics.Transition.CircuitEditor.Serializable;
+using Easycoustics.Transition.Design;
 
 namespace Easycoustics.Transition.Commands
 {
@@ -17,12 +18,12 @@ namespace Easycoustics.Transition.Commands
 
         public void execute()
         {
-            CircuitEditor.CircuitEditor.currentInstance.CurrentDesign.Wires.Remove(Wire);
+            UserDesign.CurrentDesign.Wires.Remove(Wire);
         }
 
         public void unExecute()
         {
-            CircuitEditor.CircuitEditor.currentInstance.CurrentDesign.Wires.Add(Wire);
+            UserDesign.CurrentDesign.Wires.Add(Wire);
         }
     }
 }
