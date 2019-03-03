@@ -15,37 +15,41 @@ using static Easycoustics.Transition.Design.UserDesign;
 
 namespace Easycoustics.Transition.Functions
 {
-    public abstract class Function
+    public abstract class Function : BindableBase, ICloneable
     {
-        public string Title { get; set; }
+        private string title;
+        public string Title { get => Title; set { SetProperty(ref title, value); } }
 
         public abstract ComplexDecimal Calculate(decimal point);
-        public abstract SampledFunction RenderToSampledFunction { get; }
-        public abstract void SubmitAllSamplesChanged();
 
-        public Color StrokeColor { get; set; }
-        public double StrokeThickness { get; set; }
-        public DoubleCollection StrokeArray { get; set; }
+        private Color strokeColor;
+        public Color StrokeColor { get => strokeColor; set { SetProperty(ref strokeColor, value); } }
+
+        private double strokeThickness;
+        public double StrokeThickness { get => strokeThickness; set { SetProperty(ref strokeThickness, value); } }
+
+        private DoubleCollection strokeArray;
+        public DoubleCollection StrokeArray { get => strokeArray; set { SetProperty(ref strokeArray, value); } }
 
         public Color StrokeColorLighter { get {
                 Color output;
-                output.A = 255;
+                output.A = StrokeColor.A;
                 output.R = Convert.ToByte(255 - ((255 - StrokeColor.R) / 2));
                 output.G = Convert.ToByte(255 - ((255 - StrokeColor.G) / 2));
                 output.G = Convert.ToByte(255 - ((255 - StrokeColor.B) / 2));
-                return output;
-            }
-        }
-         
-        public string FunctionUnit { get; set; } /* Volt, Pascal, Amper, Ohm, etc */
-        public string VariableUnit { get; set; } /* Hz, KHz., etc */
-        public string FunctionQuantity { get; set; } /* Voltage, Current, Impedance, Pressure, Sec, etc.*/
-        public string VariableQuantity { get; set; } /* Frequency, time, etc */
+                return output; } }
 
-        public static decimal MinimumFrequency => CurrentDesign.MinimumFrequency;
-        public static decimal MaximumFrequency => CurrentDesign.MaximumFrequency;
+        private string functionUnit;
+        public string FunctionUnit { get => functionUnit; set { SetProperty(ref functionUnit, value); } } /* Volt, Pascal, Amper, Ohm, etc */
 
-        public static int NumberOfFrequencyPoints => CircuitEditor.CircuitEditor.StaticCurrentDesign.QuantityOfFrequencyPoints;
+        private string variableUnit;
+        public string VariableUnit { get => variableUnit; set { SetProperty(ref variableUnit, value); } } /* Hz, KHz., etc */
+
+        private string functionQuantity;
+        public string FunctionQuantity { get => functionQuantity; set { SetProperty(ref functionQuantity, value); } } /* Voltage, Current, Impedance, Pressure, Sec, etc.*/
+
+        private string variableQuantity;
+        public string VariableQuantity { get => variableQuantity; set { SetProperty(ref variableQuantity, value); } } /* Frequency, time, etc */
 
         public static string[] PhysicalUnits = new string[] {
             "Amper",
@@ -95,14 +99,22 @@ namespace Easycoustics.Transition.Functions
 
         public event Action<Function, FunctionChangedEventArgs> FunctionChanged;
         
-        protected void RaiseFunctionChanged(FunctionChangedEventArgs args) => FunctionChanged?.Invoke(this, args);
+        public void RaiseFunctionChanged(FunctionChangedEventArgs args) => FunctionChanged?.Invoke(this, args);
 
+        public abstract object Clone();
+
+        
         public Function()
         {
-            VariableUnit = "Hz";
-            VariableQuantity = "Frequency";
+            var rnd = new Random();
+
+            variableUnit = "Hz";
+            variableQuantity = "Frequency";
+            StrokeColor = Color.FromArgb(255, (byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255));
+            StrokeThickness = 5;
+
         }
-        
+
     }
 
 
@@ -131,20 +143,7 @@ namespace Easycoustics.Transition.Functions
         }
         
 
-        public override SampledFunction RenderToSampledFunction
-        {
-            get
-            {
-                var output = new SampledFunction(this);
-
-                output.addSample(MinimumFrequency, FixedValue);
-                output.addSample(MinimumFrequency, fixedValue);
-
-                return output;
-            }
-        }
-
-        public ConstantValueFunction(Complex fixedValue) : base()
+        public ConstantValueFunction(ComplexDecimal fixedValue) : base()
         {
             FixedValue = fixedValue;
         }
@@ -153,10 +152,23 @@ namespace Easycoustics.Transition.Functions
         {
             return FixedValue;
         }
+        
 
-        public override void SubmitAllSamplesChanged()
+        public override object Clone()
         {
-            throw new NotImplementedException();
+            var output = new ConstantValueFunction(fixedValue)
+            {
+                FunctionQuantity = this.FunctionQuantity,
+                FunctionUnit = this.FunctionUnit,
+                StrokeArray = this.StrokeArray,
+                StrokeThickness = this.StrokeThickness,
+                StrokeColor = this.StrokeColor,
+                Title = this.Title,
+                VariableQuantity = this.VariableQuantity,
+                VariableUnit = this.VariableUnit
+            };
+
+            return output;
         }
     }
 
@@ -164,10 +176,15 @@ namespace Easycoustics.Transition.Functions
 
 
 
-    public struct DataPoint
+    public struct DataPoint : ICloneable
     {
         public decimal X { get; set; }
         public ComplexDecimal Y { get; set; }
+
+        public object Clone()
+        {
+            return new DataPoint() { X = X, Y = Y };
+        }
     }
 
 
@@ -177,24 +194,18 @@ namespace Easycoustics.Transition.Functions
        public List<DataPoint> Data { get; } = new List<DataPoint>();
         
         public InterpolationModes InterpolationMode = InterpolationModes.Linear;
-        public AxisScale VariableScale { get; set; }
-        public event PropertyChangedEventHandler PropertyChanged;
-
+       // public AxisScale VariableScale { get; set; }
+       
         /* (Data collection must be ordered by domain/frequency/Item1, asc) */
         public decimal GetMinimumDomain => Data.First().X;
         public decimal GetMaximumDomain => Data.Last().X;
 
-        //public decimal dBReference;
+        public decimal getMaximumMagnitude => Data.Max(point => point.Y.Magnitude);
+        public decimal getMinimumMagnitude => Data.Min(point => point.Y.Magnitude);
 
-        public override SampledFunction RenderToSampledFunction => this;
-
-      
         public SampledFunction() : base()
         {
-            var rnd = new Random();
-            StrokeColor = Color.FromArgb(255, (byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255));
-            StrokeThickness = 5;
-
+          
         }
 
         public SampledFunction(Function other)
@@ -211,9 +222,7 @@ namespace Easycoustics.Transition.Functions
 
         public void Clear()
         {
-          
             Data.Clear();
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Data"));
         }
 
         public override ComplexDecimal Calculate(decimal point)
@@ -455,7 +464,7 @@ namespace Easycoustics.Transition.Functions
             return false;
         }
 
-       
+       /*
         public bool isCompatible(decimal minimumDomain, decimal maximumDomain, int quantityOfPoints, AxisScale scale)
         {
             if (Data.Count == 0) return false;
@@ -474,16 +483,16 @@ namespace Easycoustics.Transition.Functions
         public bool isCompatible(SampledFunction func2)
         {
             /* if the two curves have the same domain points, we say they are compatible */
-
+            /*
             if (Data.Count != func2.Data.Count) return false;
             if (GetMinimumDomain != func2.GetMinimumDomain) return false;
             if (VariableScale != func2.VariableScale) return false;
 
             return true;
-        }
+        }*/
 
-
-        public void AdaptFunctionTo(decimal minimumDomain, decimal maximumDomain, int quantityOfPoints, AxisScale scale)
+        /*
+        public void AdaptFunctionTo(decimal minimumDomain, decimal maximumDomain, uint quantityOfPoints, AxisScale scale)
         {
             var ObjectivePoints = UserDesign.getFrequencyPoints(scale, maximumDomain, minimumDomain, quantityOfPoints);
 
@@ -496,30 +505,44 @@ namespace Easycoustics.Transition.Functions
             foreach (var del in toDelete)
                 Data.Remove(del);
 
-        }
-
-        public override void SubmitAllSamplesChanged()
-        {
-            RaiseFunctionChanged(new FunctionChangedEventArgs() { Action = FunctionChangedEventArgs.FunctionChangeAction.Reset });
-         //   PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Data"));
-        }
-
-        public object Clone()
+        }*/
+        
+        public override object Clone()
         {
             var output = new SampledFunction(this);
-
-            output.VariableScale = VariableScale;
+            
             output.InterpolationMode = InterpolationMode;
 
-            foreach (var tup in Data)
-                output.Data.Add(tup);
+            foreach (var sample in Data)
+                output.Data.Add((DataPoint)sample.Clone());
             
-
             return output;
         }
+
+        public static SampledFunction RenderFunction(Function function, decimal minimum, decimal maximum, uint quantityOfPoints, AxisScale scale)
+        {
+            var points = UserDesign.getFrequencyPoints(scale, maximum, minimum, quantityOfPoints);
+
+            var output = new SampledFunction(function);
+
+            foreach (var point in points)
+                output.Data.Add(new DataPoint() { X = point, Y = function.Calculate(point) });
+
+            return output;
+
+        }
+
+        public static SampledFunction RenderFunction(Function function)
+        {
+            return RenderFunction(function, CurrentDesign.AnalysisParameters.AnalysisMinimumFrequency,
+                                            CurrentDesign.AnalysisParameters.AnalysisMaximumFrequency,
+                                            CurrentDesign.AnalysisParameters.AnalysisQuantityOfFrequencyPoints,
+                                            CurrentDesign.AnalysisParameters.AnalysisFrequencyScale);
+        }
+
     }
 
-    public enum InterpolationModes { NearestNeighbor, Linear, Quadratic, Cubic };
+   
  
 
 }

@@ -58,18 +58,6 @@ namespace Easycoustics.Transition.Functions
             currentFunction = "LP1";
         }
         
-        public override SampledFunction RenderToSampledFunction
-        {
-            get
-            {
-                var output = new SampledFunction(this);
-                foreach (var freq in FrequencyPoints)
-                    output.addSample(freq, Calculate(freq));
-
-                return output;
-            }
-        }
-
         public override ComplexDecimal Calculate(decimal f)
         {
             /* s = jw */
@@ -163,7 +151,7 @@ namespace Easycoustics.Transition.Functions
             return output;
         }
 
-        public override void SubmitAllSamplesChanged()
+        public override object Clone()
         {
             throw new NotImplementedException();
         }

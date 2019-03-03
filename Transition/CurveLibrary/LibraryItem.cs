@@ -22,7 +22,7 @@ namespace Easycoustics.Transition.CurveLibrary
 
         public override void submitCurvesChange()
         {
-            Curve.SubmitAllSamplesChanged();
+            Curve.RaiseFunctionChanged(new FunctionChangedEventArgs() {Action=FunctionChangedEventArgs.FunctionChangeAction.Reset });
         }
     }
 }

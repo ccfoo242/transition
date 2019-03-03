@@ -212,7 +212,9 @@
     <Compile Include="Common\DecimalMath.cs" />
     <Compile Include="Common\Enums.cs" />
     <Compile Include="Common\EventArgs.cs" />
-    <Compile Include="Common\GraphParameters.cs" />
+    <Compile Include="Common\FontParameters.cs" />
+    <Compile Include="Design\GraphParameters.cs" />
+    <Compile Include="Common\ScaleParameters.cs" />
     <Compile Include="Common\Matrix.cs" />
     <Compile Include="Common\ObservableStack.cs" />
     <Compile Include="Common\Point2D.cs" />
@@ -233,8 +235,8 @@
     <Compile Include="CustomControls\EngrDecimalBoxDialog.xaml.cs">
       <DependentUpon>EngrDecimalBoxDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CustomControls\GraphSettings.xaml.cs">
-      <DependentUpon>GraphSettings.xaml</DependentUpon>
+    <Compile Include="CustomControls\GraphScaleSettings.xaml.cs">
+      <DependentUpon>GraphScaleSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="CustomControls\GroupBox.xaml.cs">
       <DependentUpon>GroupBox.xaml</DependentUpon>
@@ -245,6 +247,8 @@
     <Compile Include="CustomControls\WindowCurveVisor.xaml.cs">
       <DependentUpon>WindowCurveVisor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Design\AnalysisParameters.cs" />
+    <Compile Include="Design\SchematicParameters.cs" />
     <Compile Include="Design\UserDesign.cs" />
     <Compile Include="Functions\Function.cs" />
     <Compile Include="Functions\LaplaceFunction.cs" />
@@ -373,7 +377,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CustomControls\GraphSettings.xaml">
+    <Page Include="CustomControls\GraphScaleSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

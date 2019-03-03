@@ -23,6 +23,10 @@ namespace Easycoustics.Transition.CustomControls
     public sealed partial class EngrDecimalBox : UserControl, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+        public event ValueChangedEventDelegate ValueManuallyChanged;
+
+        public delegate void ValueChangedEventDelegate(object obj, ValueChangedEventArgs args);
+
         public static DecimalEngrConverter Converter { get; } = new DecimalEngrConverter();
 
         public decimal Value
@@ -30,8 +34,10 @@ namespace Easycoustics.Transition.CustomControls
             get { return (decimal)GetValue(ValueProperty); }
             set
             {
+                decimal oldValue = value;
                 SetValue(ValueProperty, value);
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Value"));
+              
             }
         }
 
@@ -95,7 +101,14 @@ namespace Easycoustics.Transition.CustomControls
             if (didConvert)
             {
                 if (!AllowNegativeNumber && (ConvertedValue < 0)) ConvertedValue = 0;
+                decimal oldValue = Value;
                 Value = ConvertedValue;
+                ValueManuallyChanged?.Invoke(this, new ValueChangedEventArgs()
+                {
+                    oldValue = oldValue,
+                    newValue = ConvertedValue,
+                    PropertyName = "Value"
+                });
             }
             else
             {

@@ -8,7 +8,7 @@ using Windows.UI;
 
 namespace Easycoustics.Transition.Common
 {
-    public class GraphParameters : BindableBase, ICloneable
+    public class ScaleParameters : BindableBase, ICloneable
     {
         private AxisScale horizontalScale;
         public AxisScale HorizontalScale { get => horizontalScale; set { SetProperty(ref horizontalScale, value); } }
@@ -38,31 +38,6 @@ namespace Easycoustics.Transition.Common
         private decimal maximumdB;
         public decimal MaximumdB { get => maximumdB; set { SetProperty(ref maximumdB, value); } }
 
-        private double borderThickness;
-        public double BorderThickness { get => borderThickness; set { SetProperty(ref borderThickness, value); } }
-
-        private Color borderColor;
-        public Color BorderColor { get => borderColor; set { SetProperty(ref borderColor, value); } }
-
-        private double majorDivStrokeThickness;
-        public double MajorDivStrokeThickness { get => majorDivStrokeThickness; set { SetProperty(ref majorDivStrokeThickness, value); } }
-
-        private double minorDivStrokeThickness;
-        public double MinorDivStrokeThickness { get => minorDivStrokeThickness; set { SetProperty(ref minorDivStrokeThickness, value); } }
-
-
-        private Color minorDivColor;
-        public Color MinorDivColor { get => minorDivColor; set { minorDivColor = value; SetProperty(ref minorDivColor, value); } }
-
-        private Color majorDivColor;
-        public Color MajorDivColor { get => majorDivColor; set { majorDivColor = value; SetProperty(ref majorDivColor, value); } }
-
-        private Color gridColor;
-        public Color GridColor { get => gridColor; set { gridColor = value; SetProperty(ref gridColor, value); } }
-
-        private Color frameColor;
-        public Color FrameColor { get => frameColor; set { frameColor = value; SetProperty(ref frameColor, value); } }
-
         private int quantityOfMinorDivsHorizontal;
         public int QuantityOfMinorDivsHorizontal { get => quantityOfMinorDivsHorizontal; set { SetProperty(ref quantityOfMinorDivsHorizontal, value); } }
 
@@ -90,10 +65,13 @@ namespace Easycoustics.Transition.Common
         private dBReference dBZeroRef; 
         public dBReference DBZeroRef { get => dBZeroRef; set { SetProperty(ref dBZeroRef, value); } }
 
-        private double labelFontSize;
-        public double LabelFontSize { get => labelFontSize; set { SetProperty(ref labelFontSize, value); } }
+        private Polarity magnitudePolarity;
+        public Polarity MagnitudePolarity { get => magnitudePolarity; set { SetProperty(ref magnitudePolarity, value); } }
 
-        public GraphParameters()
+        private Polarity phasePolarity;
+        public Polarity PhasePolarity { get => phasePolarity; set { SetProperty(ref phasePolarity, value); } }
+        
+        public ScaleParameters()
         {
             horizontalScale = AxisScale.Logarithmic;
             verticalScale = AxisScale.dB;
@@ -103,9 +81,6 @@ namespace Easycoustics.Transition.Common
 
             quantityOfMinorDivsVertical = 5;
             quantityOfMajorDivsVertical = 12;
-
-            minorDivStrokeThickness = 1;
-            majorDivStrokeThickness = 1;
             
             dBperDiv = 5;
             dBZeroRef = dBReference.dBV;
@@ -115,13 +90,7 @@ namespace Easycoustics.Transition.Common
 
             horizontalPrefix = 0;
             verticalPrefix = 0;
-
-            majorDivColor = Color.FromArgb(255, 140, 140, 140);
-            minorDivColor = Color.FromArgb(255, 235, 235, 235);
-
-            gridColor = Colors.White;
-            frameColor = Color.FromArgb(255, 230, 230, 230);
-
+            
             minimumHorizontal = 10;
             maximumHorizontal = 40000;
 
@@ -131,8 +100,6 @@ namespace Easycoustics.Transition.Common
             maximumPhase = 180;
             minimumPhase = -180;
 
-            borderColor = Colors.Black;
-            borderThickness = 1;
 
             PropertyChanged += checkValues;
 
@@ -148,18 +115,13 @@ namespace Easycoustics.Transition.Common
 
         public object Clone()
         {
-            var output = new GraphParameters()
+            var output = new ScaleParameters()
             {
-                BorderColor = this.BorderColor,
-                BorderThickness = this.BorderThickness,
-                FrameColor = this.FrameColor,
-                GridColor = this.GridColor,
                 DBPerDiv = this.DBPerDiv,
                 DBZeroRef = this.DBZeroRef,
                 HorizontalPrefix = this.HorizontalPrefix,
                 HorizontalScale = this.HorizontalScale,
-                MajorDivColor = this.MajorDivColor,
-                MajorDivStrokeThickness = this.MajorDivStrokeThickness,
+                MagnitudePolarity = this.MagnitudePolarity,
                 MaximumdB = this.MaximumdB,
                 MaximumHorizontal = this.MaximumHorizontal,
                 MaximumMag = this.MaximumMag,
@@ -167,8 +129,7 @@ namespace Easycoustics.Transition.Common
                 MinimumHorizontal = this.MinimumHorizontal,
                 MinimumMag = this.MinimumMag,
                 MinimumPhase = this.MinimumPhase,
-                MinorDivColor = this.MinorDivColor,
-                MinorDivStrokeThickness =  this.MinorDivStrokeThickness,
+                PhasePolarity = this.PhasePolarity,
                 QuantityOfdBDivs = this.QuantityOfdBDivs,
                 QuantityOfMajorDivsHorizontal = this.QuantityOfMajorDivsHorizontal,
                 QuantityOfMajorDivsVertical = this.QuantityOfMajorDivsVertical,

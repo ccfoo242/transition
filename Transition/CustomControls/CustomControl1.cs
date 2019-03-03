@@ -18,6 +18,8 @@ namespace Easycoustics.Transition.CustomControls
         public CustomControl1()
         {
             this.DefaultStyleKey = typeof(CustomControl1);
+
+            
         }
     }
 }

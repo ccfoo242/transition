@@ -4,7 +4,7 @@
     xmlns:local="using:Easycoustics.Transition"
     xmlns:local2="using:Easycoustics.Transition.CustomControls">
 
-    <Style TargetType="local2:CustomControl1">
+    <Style TargetType="local2:CustomControl1" >
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local2:CustomControl1">

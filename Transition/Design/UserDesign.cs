@@ -31,6 +31,9 @@ namespace Easycoustics.Transition.Design
 
         public static UserDesign CurrentDesign { get; set; }
 
+        public GraphParameters CurveGraphParameters { get; set; } = new GraphParameters();
+        public AnalysisParameters AnalysisParameters { get; set; } = new AnalysisParameters();
+
         public ObservableCollection<SerializableComponent> Components { get; } = new ObservableCollection<SerializableComponent>();
         public ObservableCollection<SerializableWire> Wires { get; } = new ObservableCollection<SerializableWire>();
 
@@ -45,38 +48,9 @@ namespace Easycoustics.Transition.Design
         public event ElementDelegate ElementAdded;
         public event ElementDelegate ElementRemoved;
 
-        public Color Background { get; set; } = Color.FromArgb(255, 255, 255, 255);
-
-        private decimal minimumFrequency = 10;
-        public decimal MinimumFrequency
-        {
-            get => minimumFrequency;
-            set
-            {
-                if (value > MaximumFrequency)
-                    throw new ArgumentException();
-                minimumFrequency = value;
-            }
-        }
-
-
-        private decimal maximumFrequency = 40000;
-        public decimal MaximumFrequency
-        {
-            get => maximumFrequency;
-            set
-            {
-                if (value < MinimumFrequency)
-                    throw new ArgumentException();
-                maximumFrequency = value;
-            }
-        }
-
-        public int QuantityOfFrequencyPoints { get; set; } = 400;
-
+       
+        public SchematicParameters CircuitSchematicParameters { get; set; } = new SchematicParameters();
       
-        public AxisScale FrequencyScale { get; set; } = AxisScale.Logarithmic;
-
         public CurveLibrary.LibraryFolder SystemCurves = new CurveLibrary.LibraryFolder("Design Result Curves");
         public CurveLibrary.LibraryFolder UserCurves = new CurveLibrary.LibraryFolder("User Curves");
 
@@ -844,10 +818,13 @@ namespace Easycoustics.Transition.Design
 
         public List<decimal> getFrequencyPoints()
         {
-            return getFrequencyPoints(FrequencyScale, MaximumFrequency, MinimumFrequency, QuantityOfFrequencyPoints);
+            return getFrequencyPoints(AnalysisParameters.AnalysisFrequencyScale,
+                                      AnalysisParameters.AnalysisMaximumFrequency,
+                                      AnalysisParameters.AnalysisMinimumFrequency, 
+                                      AnalysisParameters.AnalysisQuantityOfFrequencyPoints);
         }
 
-        public static List<decimal> getFrequencyPoints(AxisScale scale, decimal maximumFreq, decimal minimumFreq, int quantityOfPoints)
+        public static List<decimal> getFrequencyPoints(AxisScale scale, decimal maximumFreq, decimal minimumFreq, uint quantityOfPoints)
         {
             var output = new List<decimal>();
 

@@ -1,4 +1,5 @@
 ﻿using Easycoustics.Transition.Common;
+using Easycoustics.Transition.Design;
 using Easycoustics.Transition.Functions;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace Easycoustics.Transition.CustomControls
         private Dictionary<Function, Polyline> dictPolylinesMag = new Dictionary<Function, Polyline>();
         private Dictionary<Function, Polyline> dictPolylinesPhase = new Dictionary<Function, Polyline>();
 
-        public GraphParameters GraphParams = new GraphParameters();
+        public ScaleParameters scaleParams = new ScaleParameters();
 
         private List<Line> VerticalMajorDivs = new List<Line>();
         private List<Line> VerticalMinorDivs = new List<Line>();
@@ -47,8 +48,9 @@ namespace Easycoustics.Transition.CustomControls
         private SolidColorBrush MinorDivBrush;
 
         private Canvas CurvesCanvas = new Canvas();
-
         
+        private GraphParameters GraphParams { get => UserDesign.CurrentDesign.CurveGraphParameters; }
+
 
         public CurveVisor() : base()
         {
@@ -59,7 +61,7 @@ namespace Easycoustics.Transition.CustomControls
             CurvesCanvas.Height = CanvasHeight;
 
             Curves.CollectionChanged += CurveCollectionChanged;
-            GraphParams.PropertyChanged += GraphPropertyChanged;
+            scaleParams.PropertyChanged += GraphPropertyChanged;
 
             this.SizeChanged += cnvSizeChanged;
 
@@ -125,7 +127,7 @@ namespace Easycoustics.Transition.CustomControls
         {
             
             this.Background = new SolidColorBrush(GraphParams.FrameColor);
-            CurvesCanvas.Background = new SolidColorBrush(GraphParams.GridColor);
+            CurvesCanvas.Background = new SolidColorBrush(GraphParams.GridBackgroundColor);
 
             BorderCurves.BorderThickness = new Thickness(GraphParams.BorderThickness);
             BorderCurves.BorderBrush = new SolidColorBrush(GraphParams.BorderColor);
@@ -133,12 +135,12 @@ namespace Easycoustics.Transition.CustomControls
             MajorDivBrush = new SolidColorBrush(GraphParams.MajorDivColor);
             MinorDivBrush = new SolidColorBrush(GraphParams.MinorDivColor);
 
-            if (GraphParams.HorizontalScale == AxisScale.Logarithmic) DrawVerticalLogDivs();
-            if (GraphParams.HorizontalScale == AxisScale.Linear) DrawVerticalLinDivs();
+            if (scaleParams.HorizontalScale == AxisScale.Logarithmic) DrawVerticalLogDivs();
+            if (scaleParams.HorizontalScale == AxisScale.Linear) DrawVerticalLinDivs();
 
-            if (GraphParams.VerticalScale == AxisScale.dB) DrawHorizontaldBDivs();
-            if (GraphParams.VerticalScale == AxisScale.Logarithmic) DrawHorizontalLogDivs();
-            if (GraphParams.VerticalScale == AxisScale.Linear) DrawHorizontalLinDivs();
+            if (scaleParams.VerticalScale == AxisScale.dB) DrawHorizontaldBDivs();
+            if (scaleParams.VerticalScale == AxisScale.Logarithmic) DrawHorizontalLogDivs();
+            if (scaleParams.VerticalScale == AxisScale.Linear) DrawHorizontalLinDivs();
 
 
         }
@@ -146,10 +148,10 @@ namespace Easycoustics.Transition.CustomControls
         private void DrawHorizontaldBDivs()
         {
             
-            decimal maximum = GraphParams.MaximumdB;
+            decimal maximum = scaleParams.MaximumdB;
 
-            int QmajorDivs = GraphParams.QuantityOfdBDivs;
-            int QminorDivs = GraphParams.QuantityOfMinorDivsVertical;
+            int QmajorDivs = scaleParams.QuantityOfdBDivs;
+            int QminorDivs = scaleParams.QuantityOfMinorDivsVertical;
 
             double majorStep = CanvasHeight / QmajorDivs;
             double minorStep = majorStep / QminorDivs;
@@ -185,11 +187,11 @@ namespace Easycoustics.Transition.CustomControls
 
         private void DrawHorizontalLinDivs()
         {
-            decimal minimum = GraphParams.MinimumMag;
-            decimal maximum = GraphParams.MaximumMag;
+            decimal minimum = scaleParams.MinimumMag;
+            decimal maximum = scaleParams.MaximumMag;
 
-            int QmajorDivs = GraphParams.QuantityOfMajorDivsVertical;
-            int QminorDivs = GraphParams.QuantityOfMinorDivsVertical;
+            int QmajorDivs = scaleParams.QuantityOfMajorDivsVertical;
+            int QminorDivs = scaleParams.QuantityOfMinorDivsVertical;
 
             double majorStep = CanvasHeight / QmajorDivs;
             double minorStep = majorStep / QminorDivs;
@@ -225,14 +227,14 @@ namespace Easycoustics.Transition.CustomControls
 
         private void DrawHorizontalLogDivs()
         {
-            decimal minimum = GraphParams.MinimumMag;
+            decimal minimum = scaleParams.MinimumMag;
             int minExponent = (int)Math.Floor(Math.Log10(Math.Abs(Convert.ToDouble(minimum))));
             decimal minOneDigit = minimum / DecimalMath.PowerN(10, minExponent);
             int minOneDigitClean = (int)Math.Floor(minOneDigit);
             decimal minimumClean = minOneDigitClean * DecimalMath.PowerN(10, minExponent);
 
 
-            decimal maximum = GraphParams.MaximumMag;
+            decimal maximum = scaleParams.MaximumMag;
             int maxExponent = (int)Math.Floor(Math.Log10(Math.Abs(Convert.ToDouble(maximum))));
             decimal maxOneDigit = maximum / DecimalMath.PowerN(10, maxExponent);
             int maxOneDigitClean = (int)Math.Floor(maxOneDigit);
@@ -245,7 +247,7 @@ namespace Easycoustics.Transition.CustomControls
             decimal currentOneDigit = minOneDigitClean;
             int currentExp = minExponent;
 
-            decimal intMinorDivStep = 1m / GraphParams.QuantityOfMinorDivsVertical;
+            decimal intMinorDivStep = 1m / scaleParams.QuantityOfMinorDivsVertical;
             double domainPosition;
             double canvasPosition;
 
@@ -269,7 +271,8 @@ namespace Easycoustics.Transition.CustomControls
                         X2 = CanvasWidth,
                         Y1 = CanvasHeight - canvasPosition,
                         Y2 = CanvasHeight - canvasPosition,
-                        StrokeThickness = IsInteger(currentOneDigit) ? GraphParams.MajorDivStrokeThickness : GraphParams.MinorDivStrokeThickness,
+                        StrokeThickness = IsInteger(currentOneDigit) ? 
+                            GraphParams.MajorDivStrokeThickness : GraphParams.MinorDivStrokeThickness,
                         Stroke = IsInteger(currentOneDigit) ? MajorDivBrush : MinorDivBrush
                     }
                     );
@@ -287,14 +290,14 @@ namespace Easycoustics.Transition.CustomControls
 
         private void DrawVerticalLogDivs()
         {
-            decimal minimum = GraphParams.MinimumHorizontal;
+            decimal minimum = scaleParams.MinimumHorizontal;
             int minExponent = (int)Math.Floor(Math.Log10(Math.Abs(Convert.ToDouble(minimum))));
             decimal minOneDigit = minimum / DecimalMath.PowerN(10, minExponent);
             int minOneDigitClean = (int)Math.Floor(minOneDigit);
             decimal minimumClean = minOneDigitClean * DecimalMath.PowerN(10, minExponent);
 
 
-            decimal maximum = GraphParams.MaximumHorizontal;
+            decimal maximum = scaleParams.MaximumHorizontal;
             int maxExponent = (int)Math.Floor(Math.Log10(Math.Abs(Convert.ToDouble(maximum))));
             decimal maxOneDigit = maximum / DecimalMath.PowerN(10, maxExponent);
             int maxOneDigitClean = (int)Math.Floor(maxOneDigit);
@@ -307,7 +310,7 @@ namespace Easycoustics.Transition.CustomControls
             decimal currentOneDigit = minOneDigitClean;
             int currentExp = minExponent;
 
-            decimal intMinorDivStep = 1m / GraphParams.QuantityOfMinorDivsVertical;
+            decimal intMinorDivStep = 1m / scaleParams.QuantityOfMinorDivsVertical;
             double domainPosition;
             double canvasPosition;
 
@@ -331,7 +334,8 @@ namespace Easycoustics.Transition.CustomControls
                         X2 = canvasPosition,
                         Y1 = 0,
                         Y2 = CanvasHeight,
-                        StrokeThickness = IsInteger(currentOneDigit) ? GraphParams.MajorDivStrokeThickness : GraphParams.MinorDivStrokeThickness,
+                        StrokeThickness = IsInteger(currentOneDigit) ? 
+                            GraphParams.MajorDivStrokeThickness : GraphParams.MinorDivStrokeThickness,
                         Stroke = IsInteger(currentOneDigit) ? MajorDivBrush : MinorDivBrush
                     }
                     );
@@ -350,11 +354,11 @@ namespace Easycoustics.Transition.CustomControls
 
         private void DrawVerticalLinDivs()
         {
-            decimal minimum = GraphParams.MinimumHorizontal;
-            decimal maximum = GraphParams.MaximumHorizontal;
+            decimal minimum = scaleParams.MinimumHorizontal;
+            decimal maximum = scaleParams.MaximumHorizontal;
 
-            int QmajorDivs = GraphParams.QuantityOfMajorDivsHorizontal;
-            int QminorDivs = GraphParams.QuantityOfMinorDivsHorizontal;
+            int QmajorDivs = scaleParams.QuantityOfMajorDivsHorizontal;
+            int QminorDivs = scaleParams.QuantityOfMinorDivsHorizontal;
 
             double majorStep = CanvasWidth / QmajorDivs;
             double minorStep = majorStep / QminorDivs;
@@ -415,7 +419,9 @@ namespace Easycoustics.Transition.CustomControls
 
             double X;
 
-            foreach (var sample in func.RenderToSampledFunction.Data)
+            SampledFunction sampledFunc = (func is SampledFunction) ? (SampledFunction)func : SampledFunction.RenderFunction(func);
+                        
+            foreach (var sample in sampledFunc.Data)
             {
                 X = mapX(sample.X);
                 newPolyLineMag.Points.Add(new Point(X, mapPointMag(sample.Y)));
@@ -434,7 +440,8 @@ namespace Easycoustics.Transition.CustomControls
             var linePhase = dictPolylinesPhase[func];
             
             double X;
-            SampledFunction sampledFunc = func.RenderToSampledFunction;
+
+            SampledFunction sampledFunc = (func is SampledFunction) ? (SampledFunction)func : SampledFunction.RenderFunction(func);
 
             int originalPointQuantity = lineMag.Points.Count;
             int newQuantity = sampledFunc.Data.Count;
@@ -472,11 +479,11 @@ namespace Easycoustics.Transition.CustomControls
 
         private double mapX(decimal X)
         {
-            var Xdbl = Convert.ToDouble(X) / Math.Pow(10, GraphParams.HorizontalPrefix);
-            var maxHor = Convert.ToDouble(GraphParams.MaximumHorizontal);
-            var minHor = Convert.ToDouble(GraphParams.MinimumHorizontal);
+            var Xdbl = Convert.ToDouble(X) / Math.Pow(10, scaleParams.HorizontalPrefix);
+            var maxHor = Convert.ToDouble(scaleParams.MaximumHorizontal);
+            var minHor = Convert.ToDouble(scaleParams.MinimumHorizontal);
               
-            if (GraphParams.HorizontalScale == AxisScale.Linear)
+            if (scaleParams.HorizontalScale == AxisScale.Linear)
                 return CanvasWidth * (Xdbl - minHor) / (maxHor - minHor);
             else
             {   /* log scale*/
@@ -490,40 +497,40 @@ namespace Easycoustics.Transition.CustomControls
         {
             double Ymag;
 
-            var maxVer = Convert.ToDouble(GraphParams.MaximumMag);
-            var minVer = Convert.ToDouble(GraphParams.MinimumMag);
+            var maxVer = Convert.ToDouble(scaleParams.MaximumMag);
+            var minVer = Convert.ToDouble(scaleParams.MinimumMag);
             
-            if (GraphParams.VerticalScale == AxisScale.Linear)
+            if (scaleParams.VerticalScale == AxisScale.Linear)
             {
-                Ymag = Y.MagnitudeDouble / Math.Pow(10, GraphParams.VerticalPrefix);
+                Ymag = Y.MagnitudeDouble / Math.Pow(10, scaleParams.VerticalPrefix);
                 return CanvasHeight - (CanvasHeight * (Ymag - minVer) / (maxVer - minVer));
             }
             else
-            if (GraphParams.VerticalScale == AxisScale.Logarithmic)
+            if (scaleParams.VerticalScale == AxisScale.Logarithmic)
             {
-                Ymag = Y.MagnitudeDouble / Math.Pow(10, GraphParams.VerticalPrefix);
+                Ymag = Y.MagnitudeDouble / Math.Pow(10, scaleParams.VerticalPrefix);
                 return CanvasHeight - (CanvasHeight * Math.Log10(Ymag / minVer) / Math.Log10(maxVer / minVer));
             }
             else
             {
                 /* dB scale */
-                switch (GraphParams.DBZeroRef)
+                switch (scaleParams.DBZeroRef)
                 {
                     case dBReference.dBV: Ymag = Y.TodBV; break;
                     case dBReference.dBSPL: Ymag = Y.TodBSPL; break;
                     case dBReference.dBm: Ymag = Y.TodBm; break;
                     default: Ymag = 0; break;
                 }
-                double mindB = Convert.ToDouble(GraphParams.MaximumdB) - (GraphParams.DBPerDiv * GraphParams.QuantityOfdBDivs);
-                double maxdB = Convert.ToDouble(GraphParams.MaximumdB);
+                double mindB = Convert.ToDouble(scaleParams.MaximumdB) - (scaleParams.DBPerDiv * scaleParams.QuantityOfdBDivs);
+                double maxdB = Convert.ToDouble(scaleParams.MaximumdB);
                 return CanvasHeight - (CanvasHeight * (Ymag - mindB) / (maxdB - mindB));
             }
         }
 
         private double mapPointPhase(ComplexDecimal Y)
         {
-            var maxVer = Convert.ToDouble(GraphParams.MaximumPhase);
-            var minVer = Convert.ToDouble(GraphParams.MinimumPhase);
+            var maxVer = Convert.ToDouble(scaleParams.MaximumPhase);
+            var minVer = Convert.ToDouble(scaleParams.MinimumPhase);
             
             return CanvasHeight - (CanvasHeight * (Y.PhaseDegDouble - minVer) / (maxVer - minVer));
         }
