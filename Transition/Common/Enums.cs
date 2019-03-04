@@ -11,4 +11,5 @@ namespace Easycoustics.Transition.Common
     public enum Polarity { Bipolar, Positive, Negative };
     public enum InterpolationModes { NearestNeighbor, Linear, Quadratic, Cubic };
     public enum PhaseUnit { Degrees, Radians };
+    public enum ComplexProjectedData { MagnitudePhase, RealImag, OnlyReal, OnlyImag };
 }

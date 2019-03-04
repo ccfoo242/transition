@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,7 +29,9 @@ namespace Easycoustics.Transition.CustomControls
 
         private ScaleParameters scaleParams = new ScaleParameters();
         public ScaleParameters ScaleParams { get => scaleParams; set {
+              //  ScaleParams.PropertyChanged -= GraphPropertyChanged;
                 scaleParams = value;
+              //  scaleParams.PropertyChanged += GraphPropertyChanged;
                 ReDraw();
             } } 
 
@@ -37,6 +40,10 @@ namespace Easycoustics.Transition.CustomControls
 
         private List<Line> HorizontalMajorDivs = new List<Line>();
         private List<Line> HorizontalMinorDivs = new List<Line>();
+
+        private List<TextBlock> VerticalMagLabels = new List<TextBlock>();
+        private List<TextBlock> VerticalPhaseLabels = new List<TextBlock>();
+        private List<TextBlock> HorizontalLabels = new List<TextBlock>();
 
         private double CanvasWidth => 1800;
         private double CanvasHeight => 1000;
@@ -65,9 +72,10 @@ namespace Easycoustics.Transition.CustomControls
             CurvesCanvas.Height = CanvasHeight;
 
             Curves.CollectionChanged += CurveCollectionChanged;
-            ScaleParams.PropertyChanged += GraphPropertyChanged;
+            //ScaleParams.PropertyChanged += GraphPropertyChanged;
 
             this.SizeChanged += cnvSizeChanged;
+            BorderCurves.SizeChanged += curvesCanvasSizeChanged;
 
             ViewBoxCurves.Child = CurvesCanvas;
             ViewBoxCurves.Stretch = Stretch.Fill;
@@ -80,7 +88,13 @@ namespace Easycoustics.Transition.CustomControls
             ReDraw();
 
         }
-        
+
+        private void curvesCanvasSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ClearLabels();
+            ReDrawLabels();
+        }
+
         private void CurveCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             
@@ -125,11 +139,12 @@ namespace Easycoustics.Transition.CustomControls
             BorderCurves.Height = ((ActualHeight - CurvesCanvasMarginTop - CurvesCanvasMarginBottom) >= 0) ?
                                     (ActualHeight - CurvesCanvasMarginTop - CurvesCanvasMarginBottom) : 0;
             Canvas.SetTop(BorderCurves, CurvesCanvasMarginTop);
+            
         }
 
         private void ReDraw()
         {
-            CurvesCanvas.Children.Clear();
+            ClearAll();
             this.Background = new SolidColorBrush(GraphParams.FrameColor);
             CurvesCanvas.Background = new SolidColorBrush(GraphParams.GridBackgroundColor);
 
@@ -141,12 +156,387 @@ namespace Easycoustics.Transition.CustomControls
 
             if (scaleParams.HorizontalScale == AxisScale.Logarithmic) DrawVerticalLogDivs();
             if (scaleParams.HorizontalScale == AxisScale.Linear) DrawVerticalLinDivs();
-
-            if (scaleParams.VerticalScale == AxisScale.dB) DrawHorizontaldBDivs();
+          
             if (scaleParams.VerticalScale == AxisScale.Logarithmic) DrawHorizontalLogDivs();
             if (scaleParams.VerticalScale == AxisScale.Linear) DrawHorizontalLinDivs();
+            if (scaleParams.VerticalScale == AxisScale.dB) DrawHorizontaldBDivs();
 
 
+            ReDrawLabels();
+
+            foreach (var curve in Curves)
+                functionChanged(curve, null);
+        }
+
+        private void ReDrawLabels()
+        {
+            if (scaleParams.VerticalScale == AxisScale.dB) DrawVerticaldBLabels();
+            if (scaleParams.VerticalScale == AxisScale.Linear) DrawVerticalLinMagLabels();
+            if (scaleParams.VerticalScale == AxisScale.Logarithmic) DrawVerticalLogLabels();
+
+            if (scaleParams.HorizontalScale == AxisScale.Logarithmic) DrawHorizontalLogLabels();
+
+        }
+
+        private void DrawHorizontalLogLabels()
+        {
+            TextBlock txt;
+
+            decimal minimum = scaleParams.MinimumHorizontal;
+            int minExponent = (int)Math.Floor(Math.Log10(Math.Abs(Convert.ToDouble(minimum))));
+            decimal minOneDigit = minimum / DecimalMath.PowerN(10, minExponent);
+            int minOneDigitClean = (int)Math.Floor(minOneDigit);
+            decimal minimumClean = minOneDigitClean * DecimalMath.PowerN(10, minExponent);
+
+
+            decimal maximum = scaleParams.MaximumHorizontal;
+            int maxExponent = (int)Math.Floor(Math.Log10(Math.Abs(Convert.ToDouble(maximum))));
+            decimal maxOneDigit = maximum / DecimalMath.PowerN(10, maxExponent);
+            int maxOneDigitClean = (int)Math.Floor(maxOneDigit);
+            decimal maximumClean = maxOneDigitClean * DecimalMath.PowerN(10, maxExponent);
+
+            double expSpace = Math.Log10(Convert.ToDouble(maximumClean) / Convert.ToDouble(minimumClean));
+            var fontParams = GraphParams.HorizontalScaleFontParams;
+
+            decimal currentOneDigit = minOneDigitClean;
+            int currentExp = minExponent;
+
+            double magPosition;
+            double canvasPosition;
+
+            double cnvWidth = BorderCurves.ActualWidth;
+            double cnvHeight = BorderCurves.ActualHeight;
+
+            if ((minOneDigitClean == maxOneDigitClean) && (minExponent == maxExponent))
+            {
+                maxOneDigitClean++;
+                if (maxOneDigitClean == 10) { maxOneDigitClean = 1; maxExponent++; }
+            }
+
+            int FinalOneDigit = maxOneDigitClean;
+            int FinalExponent = maxExponent;
+
+            FinalOneDigit++;
+            if (FinalOneDigit == 10) { FinalOneDigit = 1; FinalExponent++; }
+
+
+            while ((currentOneDigit != FinalOneDigit) || (currentExp != FinalExponent))
+            {
+                magPosition = Convert.ToDouble(currentOneDigit) * Math.Pow(10, currentExp);
+                canvasPosition = Math.Log10(magPosition / Convert.ToDouble(minimumClean)) * cnvWidth / expSpace;
+
+                txt = new TextBlock()
+                {
+                    Text = ConvertDecimalString(Convert.ToDecimal(magPosition), ""),
+                    FontFamily = fontParams.FontFamily,
+                    FontSize = fontParams.FontSize,
+                    FontStyle = fontParams.FontStyle,
+                    TextDecorations = fontParams.Decoration,
+                    FontWeight = fontParams.FontWeight,
+                    Foreground = new SolidColorBrush(fontParams.FontColor),
+                    Width = CurvesCanvasMarginLeft,
+                    TextAlignment = TextAlignment.Center
+                };
+
+                Children.Add(txt);
+                VerticalMagLabels.Add(txt);
+                Canvas.SetLeft(txt, CurvesCanvasMarginLeft + canvasPosition - (CurvesCanvasMarginLeft / 2));
+                Canvas.SetTop(txt, CurvesCanvasMarginTop + cnvHeight + fontParams.FontSize);
+
+                currentOneDigit++;
+
+                if (currentOneDigit == 10)
+                {
+                    currentOneDigit = 1;
+                    currentExp++;
+                }
+            }
+        }
+
+        private void DrawVerticaldBLabels()
+        {
+            int quantityOfLabels = ScaleParams.QuantityOfdBDivs + 1;
+            double LabelStep = BorderCurves.ActualHeight / ScaleParams.QuantityOfdBDivs;
+            decimal dbPerDiv = ScaleParams.DBPerDiv;
+            decimal maximumdB = ScaleParams.MaximumdB;
+
+            var fontParams = GraphParams.VerticalScaleFontParams;
+
+            TextBlock txt;
+            for (int x = 0; x < quantityOfLabels; x++)
+            {
+                txt = new TextBlock()
+                {
+                    Text = ConvertDecimalString(maximumdB - (x * dbPerDiv), ""),
+                    FontFamily = fontParams.FontFamily,
+                    FontSize = fontParams.FontSize,
+                    FontStyle = fontParams.FontStyle,
+                    TextDecorations = fontParams.Decoration,
+                    FontWeight = fontParams.FontWeight,
+                    Foreground = new SolidColorBrush(fontParams.FontColor),
+                    Width = CurvesCanvasMarginLeft - 5,
+                    HorizontalTextAlignment = TextAlignment.Right,
+                };
+                
+                Children.Add(txt);
+                VerticalMagLabels.Add(txt);
+                Canvas.SetLeft(txt, 0);
+                Canvas.SetTop(txt, CurvesCanvasMarginTop + (x * LabelStep) - (fontParams.FontSize / 2));
+
+            }
+        }
+
+        private void DrawVerticalLogLabels()
+        {
+            TextBlock txt;
+
+            decimal minimum = scaleParams.MinimumMag;
+            int minExponent = (int)Math.Floor(Math.Log10(Math.Abs(Convert.ToDouble(minimum))));
+            decimal minOneDigit = minimum / DecimalMath.PowerN(10, minExponent);
+            int minOneDigitClean = (int)Math.Floor(minOneDigit);
+            decimal minimumClean = minOneDigitClean * DecimalMath.PowerN(10, minExponent);
+
+
+            decimal maximum = scaleParams.MaximumMag;
+            int maxExponent = (int)Math.Floor(Math.Log10(Math.Abs(Convert.ToDouble(maximum))));
+            decimal maxOneDigit = maximum / DecimalMath.PowerN(10, maxExponent);
+            int maxOneDigitClean = (int)Math.Floor(maxOneDigit);
+            decimal maximumClean = maxOneDigitClean * DecimalMath.PowerN(10, maxExponent);
+
+            double expSpace = Math.Log10(Convert.ToDouble(maximumClean) / Convert.ToDouble(minimumClean));
+            var fontParams = GraphParams.VerticalScaleFontParams;
+
+            decimal currentOneDigit = minOneDigitClean;
+            int currentExp = minExponent;
+            
+            double magPosition;
+            double canvasPosition;
+
+            double cnvHeight = BorderCurves.ActualHeight;
+
+            if ((minOneDigitClean == maxOneDigitClean) && (minExponent == maxExponent))
+            {
+                maxOneDigitClean++;
+                if (maxOneDigitClean == 10) { maxOneDigitClean = 1; maxExponent++; }
+            }
+
+            int FinalOneDigit = maxOneDigitClean;
+            int FinalExponent = maxExponent;
+
+            FinalOneDigit++;
+            if (FinalOneDigit == 10) { FinalOneDigit = 1; FinalExponent++; }
+
+
+            while ((currentOneDigit != FinalOneDigit) || (currentExp != FinalExponent))
+            {
+                magPosition = Convert.ToDouble(currentOneDigit) * Math.Pow(10, currentExp);
+                canvasPosition = Math.Log10(magPosition / Convert.ToDouble(minimumClean)) * cnvHeight / expSpace;
+
+                txt = new TextBlock()
+                {
+                    Text = ConvertDecimalString(Convert.ToDecimal(magPosition), ""),
+                    FontFamily = fontParams.FontFamily,
+                    FontSize = fontParams.FontSize,
+                    FontStyle = fontParams.FontStyle,
+                    TextDecorations = fontParams.Decoration,
+                    FontWeight = fontParams.FontWeight,
+                    Foreground = new SolidColorBrush(fontParams.FontColor),
+                    Width = CurvesCanvasMarginLeft - 5,
+                    HorizontalTextAlignment = TextAlignment.Right,
+                };
+           
+                Children.Add(txt);
+                VerticalMagLabels.Add(txt);
+                Canvas.SetLeft(txt, 0);
+                Canvas.SetTop(txt, CurvesCanvasMarginTop + cnvHeight - canvasPosition - (fontParams.FontSize / 2));
+                    
+                currentOneDigit ++;
+
+                if (currentOneDigit == 10)
+                {
+                    currentOneDigit = 1;
+                    currentExp++;
+                }
+            }
+        }
+
+        private void DrawVerticalLinMagLabels()
+        {
+            int quantityOfLabels = ScaleParams.QuantityOfMajorDivsVertical + 1;
+            double LabelStep = BorderCurves.ActualHeight / ScaleParams.QuantityOfMajorDivsVertical;
+
+            decimal maximum;
+            decimal minimum;
+            if (ScaleParams.MagnitudePolarity == Polarity.Bipolar)
+            {
+                maximum = ScaleParams.MaximumMag;
+                minimum = maximum * -1;
+            }
+            else
+            if (ScaleParams.MagnitudePolarity == Polarity.Positive)
+            {
+                maximum = ScaleParams.MaximumMag;
+                minimum = 0;
+            }
+            else
+            {
+                /* negative */
+                maximum = 0;
+                minimum = ScaleParams.MinimumMag; /* this number must be negative */
+            }
+
+            var fontParams = GraphParams.VerticalScaleFontParams;
+            decimal magStep = (maximum - minimum) / ScaleParams.QuantityOfMajorDivsVertical;
+
+            TextBlock txt;
+            for (int x = 0; x < quantityOfLabels; x++)
+            {
+                txt = new TextBlock()
+                {
+                    Text = ConvertDecimalString(maximum - (x * magStep), CultureInfo.CurrentCulture.TwoLetterISOLanguageName),
+                    FontFamily = fontParams.FontFamily,
+                    FontSize = fontParams.FontSize,
+                    FontStyle = fontParams.FontStyle,
+                    TextDecorations = fontParams.Decoration,
+                    FontWeight = fontParams.FontWeight,
+                    Foreground = new SolidColorBrush(fontParams.FontColor),
+                    Width = CurvesCanvasMarginLeft - 5,
+                    HorizontalTextAlignment = TextAlignment.Right,
+                };
+
+                Children.Add(txt);
+                VerticalMagLabels.Add(txt);
+                Canvas.SetLeft(txt, 0);
+                Canvas.SetTop(txt, CurvesCanvasMarginTop + (x * LabelStep) - (fontParams.FontSize / 2));
+
+            }
+        }
+
+        public string ConvertDecimalString(decimal value, string language)
+        {
+            //number to string
+      
+            if (value == 0m) return (0m).ToString();
+
+            decimal exponent = (int)Math.Floor(Math.Log10((double)Math.Abs(value)));
+            decimal output = 0m;
+            string prefix = "";
+            bool hasPrefix = false;
+            bool exponentOutsidePrefixes = false;
+        
+            if (exponent >= 0)
+            {
+                switch (exponent)
+                {
+                    case 0:
+                    case 1:
+                    case 2:
+                        output = value; prefix = ""; hasPrefix = false; break;
+                    case 3:
+                    case 4:
+                    case 5:
+                        output = (value / 1e3m); prefix = "K"; hasPrefix = true; break;
+                    case 6:
+                    case 7:
+                    case 8:
+                        output = (value / 1e6m); prefix = "M"; hasPrefix = true; break;
+                    case 9:
+                    case 10:
+                    case 11:
+                        output = (value / 1e9m); prefix = "G"; hasPrefix = true; break;
+                    case 12:
+                    case 13:
+                    case 14:
+                        output = (value / 1e12m); prefix = "T"; hasPrefix = true; break;
+                    case 15:
+                    case 16:
+                    case 17:
+                        output = (value / 1e15m); prefix = "P"; hasPrefix = true; break;
+                    case 18:
+                    case 19:
+                    case 20:
+                        output = (value / 1e18m); prefix = "E"; hasPrefix = true; break;
+                    case 21:
+                    case 22:
+                    case 23:
+                        output = (value / 1e21m); prefix = "Z"; hasPrefix = true; break;
+                    case 24:
+                    case 25:
+                    case 26:
+                        output = (value / 1e24m); prefix = "Y"; hasPrefix = true; break;
+                }
+
+                if (exponent >= 27)
+                {
+                    exponentOutsidePrefixes = true;
+                    output = value / (decimal)Math.Pow(10, (int)exponent);
+                }
+            }
+            else if (exponent < 0)
+            {
+                switch (exponent)
+                {
+                    case -1:
+                    case -2:
+                    case -3:
+                        output = (value * 1e3m); prefix = "m"; hasPrefix = true; break;
+                    case -4:
+                    case -5:
+                    case -6:
+                        output = (value * 1e6m); prefix = "μ"; hasPrefix = true; break;
+                    case -7:
+                    case -8:
+                    case -9:
+                        output = (value * 1e9m); prefix = "n"; hasPrefix = true; break;
+                    case -10:
+                    case -11:
+                    case -12:
+                        output = (value * 1e12m); prefix = "p"; hasPrefix = true; break;
+                    case -13:
+                    case -14:
+                    case -15:
+                        output = (value * 1e15m); prefix = "f"; hasPrefix = true; break;
+                    case -16:
+                    case -17:
+                    case -18:
+                        output = (value * 1e18m); prefix = "a"; hasPrefix = true; break;
+                    case -19:
+                    case -20:
+                    case -21:
+                        output = (value * 1e21m); prefix = "z"; hasPrefix = true; break;
+                    case -22:
+                    case -23:
+                    case -24:
+                        output = (value * 1e24m); prefix = "y"; hasPrefix = true; break;
+                }
+                if (exponent <= -25)
+                {
+                    exponentOutsidePrefixes = true;
+                    output = value * (decimal)Math.Pow(10, Math.Abs((int)exponent));
+                }
+            }
+
+            //output = decimal.Round(output, 4);
+            string stOutput;
+
+            CultureInfo culture;
+            if (language == null) culture = CultureInfo.CurrentCulture;
+            else
+                if (language == "") culture = CultureInfo.CurrentCulture;
+            else
+                culture = new CultureInfo(language);
+
+            stOutput = output.ToString("###.#", culture);
+          
+
+            if (!exponentOutsidePrefixes)
+            {
+                if (hasPrefix) stOutput += " " + prefix;
+            }
+            else
+                stOutput += "E" + exponent.ToString();
+
+            return stOutput;
         }
 
         private void DrawHorizontaldBDivs()
@@ -160,11 +550,13 @@ namespace Easycoustics.Transition.CustomControls
             double majorStep = CanvasHeight / QmajorDivs;
             double minorStep = majorStep / QminorDivs;
 
+            Line l1;
+            Line l2;
 
             for (int maj = 0; maj < QmajorDivs; maj++)
             {
-                for (int min = 1; min < QminorDivs; min++)
-                    CurvesCanvas.Children.Add(new Line()
+                for (int min = 1; min < QminorDivs; min++) {
+                    l1 = new Line()
                     {
                         X1 = 0,
                         X2 = CanvasWidth,
@@ -172,10 +564,14 @@ namespace Easycoustics.Transition.CustomControls
                         Y2 = (majorStep * maj) + (minorStep * min),
                         StrokeThickness = GraphParams.MinorDivStrokeThickness,
                         Stroke = MinorDivBrush
-                    });
+                    };
+                    CurvesCanvas.Children.Add(l1);
+                    HorizontalMinorDivs.Add(l1);
+                }
 
                 if (maj != 0)
-                    CurvesCanvas.Children.Add(new Line()
+                {
+                    l2 = new Line()
                     {
                         X1 = 0,
                         X2 = CanvasWidth,
@@ -183,10 +579,11 @@ namespace Easycoustics.Transition.CustomControls
                         Y2 = (majorStep * maj),
                         StrokeThickness = GraphParams.MajorDivStrokeThickness,
                         Stroke = MajorDivBrush
-                    });
-
+                    };
+                    CurvesCanvas.Children.Add(l2);
+                    HorizontalMajorDivs.Add(l2);
+                }
             }
-
         }
 
         private void DrawHorizontalLinDivs()
@@ -200,11 +597,14 @@ namespace Easycoustics.Transition.CustomControls
             double majorStep = CanvasHeight / QmajorDivs;
             double minorStep = majorStep / QminorDivs;
 
+            Line l1;
+            Line l2;
 
             for (int maj = 0; maj < QmajorDivs; maj++)
             {
                 for (int min = 1; min < QminorDivs; min++)
-                    CurvesCanvas.Children.Add(new Line()
+                {
+                    l1 = new Line()
                     {
                         X1 = 0,
                         X2 = CanvasWidth,
@@ -212,10 +612,14 @@ namespace Easycoustics.Transition.CustomControls
                         Y2 = (majorStep * maj) + (minorStep * min),
                         StrokeThickness = GraphParams.MinorDivStrokeThickness,
                         Stroke = MinorDivBrush
-                    });
+                    };
+                    CurvesCanvas.Children.Add(l1);
+                    HorizontalMinorDivs.Add(l1);
+                }
 
                 if (maj != 0)
-                    CurvesCanvas.Children.Add(new Line()
+                {
+                    l2 = new Line()
                     {
                         X1 = 0,
                         X2 = CanvasWidth,
@@ -223,14 +627,19 @@ namespace Easycoustics.Transition.CustomControls
                         Y2 = (majorStep * maj),
                         StrokeThickness = GraphParams.MajorDivStrokeThickness,
                         Stroke = MajorDivBrush
-                    });
+                    };
 
+                    CurvesCanvas.Children.Add(l2);
+                    HorizontalMajorDivs.Add(l2);
+                }
             }
-
         }
 
         private void DrawHorizontalLogDivs()
         {
+            /* these horizontal lines are for the vertical scale */
+            Line l1;
+
             decimal minimum = scaleParams.MinimumMag;
             int minExponent = (int)Math.Floor(Math.Log10(Math.Abs(Convert.ToDouble(minimum))));
             decimal minOneDigit = minimum / DecimalMath.PowerN(10, minExponent);
@@ -269,17 +678,21 @@ namespace Easycoustics.Transition.CustomControls
                     domainPosition = Convert.ToDouble(currentOneDigit) * Math.Pow(10, currentExp);
                     canvasPosition = Math.Log10(domainPosition / Convert.ToDouble(minimumClean)) * CanvasHeight / expSpace;
 
-                    CurvesCanvas.Children.Add(new Line()
+                    l1 = new Line()
                     {
                         X1 = 0,
                         X2 = CanvasWidth,
                         Y1 = CanvasHeight - canvasPosition,
                         Y2 = CanvasHeight - canvasPosition,
-                        StrokeThickness = IsInteger(currentOneDigit) ? 
+                        StrokeThickness = IsInteger(currentOneDigit) ?
                             GraphParams.MajorDivStrokeThickness : GraphParams.MinorDivStrokeThickness,
                         Stroke = IsInteger(currentOneDigit) ? MajorDivBrush : MinorDivBrush
-                    }
-                    );
+                    };
+                    CurvesCanvas.Children.Add(l1);
+                    if (IsInteger(currentOneDigit))
+                        HorizontalMajorDivs.Add(l1);
+                    else
+                        HorizontalMinorDivs.Add(l1);
                 }
 
                 currentOneDigit += intMinorDivStep;
@@ -294,6 +707,8 @@ namespace Easycoustics.Transition.CustomControls
 
         private void DrawVerticalLogDivs()
         {
+            Line l1;
+
             decimal minimum = scaleParams.MinimumHorizontal;
             int minExponent = (int)Math.Floor(Math.Log10(Math.Abs(Convert.ToDouble(minimum))));
             decimal minOneDigit = minimum / DecimalMath.PowerN(10, minExponent);
@@ -314,7 +729,7 @@ namespace Easycoustics.Transition.CustomControls
             decimal currentOneDigit = minOneDigitClean;
             int currentExp = minExponent;
 
-            decimal intMinorDivStep = 1m / scaleParams.QuantityOfMinorDivsVertical;
+            decimal intMinorDivStep = 1m / scaleParams.QuantityOfMinorDivsHorizontal;
             double domainPosition;
             double canvasPosition;
 
@@ -331,18 +746,23 @@ namespace Easycoustics.Transition.CustomControls
                 {
                     domainPosition = Convert.ToDouble(currentOneDigit) * Math.Pow(10, currentExp);
                     canvasPosition = Math.Log10(domainPosition / Convert.ToDouble(minimumClean)) * CanvasWidth / expSpace;
-
-                    CurvesCanvas.Children.Add(new Line()
+                    l1 = new Line()
                     {
                         X1 = canvasPosition,
                         X2 = canvasPosition,
                         Y1 = 0,
                         Y2 = CanvasHeight,
-                        StrokeThickness = IsInteger(currentOneDigit) ? 
+                        StrokeThickness = IsInteger(currentOneDigit) ?
                             GraphParams.MajorDivStrokeThickness : GraphParams.MinorDivStrokeThickness,
                         Stroke = IsInteger(currentOneDigit) ? MajorDivBrush : MinorDivBrush
-                    }
-                    );
+                    };
+
+                    CurvesCanvas.Children.Add(l1);
+
+                    if (IsInteger(currentOneDigit))
+                        VerticalMajorDivs.Add(l1);
+                    else
+                        VerticalMinorDivs.Add(l1);
                 }
 
                 currentOneDigit += intMinorDivStep;
@@ -358,6 +778,9 @@ namespace Easycoustics.Transition.CustomControls
 
         private void DrawVerticalLinDivs()
         {
+            Line l1;
+            Line l2;
+
             decimal minimum = scaleParams.MinimumHorizontal;
             decimal maximum = scaleParams.MaximumHorizontal;
 
@@ -371,7 +794,8 @@ namespace Easycoustics.Transition.CustomControls
             for (int maj = 0; maj < QmajorDivs; maj++)
             {
                 for (int min = 1; min < QminorDivs; min++)
-                    CurvesCanvas.Children.Add(new Line()
+                {
+                    l1 = new Line()
                     {
                         X1 = (majorStep * maj) + (minorStep * min),
                         X2 = (majorStep * maj) + (minorStep * min),
@@ -379,10 +803,14 @@ namespace Easycoustics.Transition.CustomControls
                         Y2 = CanvasHeight,
                         StrokeThickness = GraphParams.MinorDivStrokeThickness,
                         Stroke = MinorDivBrush
-                    });
-                
+                    };
+                    CurvesCanvas.Children.Add(l1);
+                    VerticalMinorDivs.Add(l1);
+                }
+
                 if (maj != 0)
-                    CurvesCanvas.Children.Add(new Line()
+                {
+                    l2 = new Line()
                     {
                         X1 = (majorStep * maj),
                         X2 = (majorStep * maj),
@@ -390,18 +818,40 @@ namespace Easycoustics.Transition.CustomControls
                         Y2 = CanvasHeight,
                         StrokeThickness = GraphParams.MajorDivStrokeThickness,
                         Stroke = MajorDivBrush
-                    });
+                    };
+                    CurvesCanvas.Children.Add(l2);
+                    VerticalMajorDivs.Add(l2);
+                }
                 
             }
         }
 
         private void ClearAll()
         {
-            Children.Clear();
+            CurvesCanvas.Children.Clear();
             VerticalMajorDivs.Clear();
             VerticalMinorDivs.Clear();
             HorizontalMinorDivs.Clear();
             HorizontalMajorDivs.Clear();
+            ClearLabels();
+            
+        }
+
+
+        private void ClearLabels()
+        {
+            foreach (var txtb in HorizontalLabels)
+                Children.Remove(txtb);
+
+            foreach (var txtb in VerticalMagLabels)
+                Children.Remove(txtb);
+
+            foreach (var txtb in VerticalPhaseLabels)
+                Children.Remove(txtb);
+
+            HorizontalLabels.Clear();
+            VerticalPhaseLabels.Clear();
+            VerticalMagLabels.Clear();
         }
 
         private void AddCurve(Function func)
@@ -533,8 +983,21 @@ namespace Easycoustics.Transition.CustomControls
 
         private double mapPointPhase(ComplexDecimal Y)
         {
-            var maxVer = Convert.ToDouble(scaleParams.MaximumPhase);
-            var minVer = Convert.ToDouble(scaleParams.MinimumPhase);
+            double maxVer;
+            double minVer;
+
+            if (ScaleParams.PhasePolarity == Polarity.Bipolar) {
+                maxVer = Convert.ToDouble(scaleParams.MaximumPhase);
+                minVer = maxVer * -1;
+            }
+            else if (ScaleParams.PhasePolarity == Polarity.Positive) {
+                maxVer = Convert.ToDouble(scaleParams.MaximumPhase);
+                minVer = 0;
+            }
+            else {/* Polarity.Negative */
+                maxVer = 0;
+                minVer = Convert.ToDouble(scaleParams.MinimumPhase);
+            }
             
             return CanvasHeight - (CanvasHeight * (Y.PhaseDegDouble - minVer) / (maxVer - minVer));
         }

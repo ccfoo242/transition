@@ -38,47 +38,69 @@ namespace Easycoustics.Transition.CustomControls
             scaleParams = scale;
             scale.PropertyChanged += checkVisuals;
 
+            cmbItemRef1.Visibility = Visibility.Collapsed;
+            cmbItemRef077.Visibility = Visibility.Collapsed;
+            cmbItemRef20u.Visibility = Visibility.Collapsed;
+
+            cmbItemRef1.IsEnabled = false;
+            cmbItemRef077.IsEnabled = false;
+            cmbItemRef20u.IsEnabled = false;
+
             if (physicalQuantity == "Voltage")
             {
-                cmbItemRef1.IsEnabled = true; cmbItemRef1.Content = "1 (dBV)";
-                cmbItemRef077.IsEnabled = true; cmbItemRef077.Content = "774.6m (dBm)";
-                cmbItemRef20u.IsEnabled = false; cmbItemRef20u.Content = "20u";
+                cmbItemRef1.IsEnabled = true;
+                cmbItemRef1.Visibility = Visibility.Visible;
+                cmbItemRef1.Content = "1 (dBV)";
+
+                cmbItemRef077.IsEnabled = true;
+                cmbItemRef077.Visibility = Visibility.Visible;
+                cmbItemRef077.Content = "774.6m (dBm)";
             }
             else
             if (physicalQuantity == "Pressure")
             {
-                cmbItemRef1.IsEnabled = true; cmbItemRef1.Content = "1 (dBPa)";
-                cmbItemRef077.IsEnabled = false; cmbItemRef077.Content = "774.6m";
-                cmbItemRef20u.IsEnabled = true; cmbItemRef20u.Content = "20u (dBSPL)";
+                cmbItemRef1.IsEnabled = true;
+                cmbItemRef1.Visibility = Visibility.Visible;
+                cmbItemRef1.Content = "1 (dBPa)";
+
+                cmbItemRef20u.IsEnabled = true;
+                cmbItemRef20u.Visibility = Visibility.Visible;
+                cmbItemRef20u.Content = "20u (dBSPL)";
             }
             else
             if (physicalQuantity == "Impedance")
             {
-                cmbItemRef1.IsEnabled = true; cmbItemRef1.Content = "1 (dBOhm)";
-                cmbItemRef077.IsEnabled = false; cmbItemRef077.Content = "774.6m";
-                cmbItemRef20u.IsEnabled = false; cmbItemRef20u.Content = "20u";
+                cmbItemRef1.IsEnabled = true;
+                cmbItemRef1.Visibility = Visibility.Visible;
+                cmbItemRef1.Content = "1 (dBOhm)";
+                
             }
             else
             if (physicalQuantity == "Time")
             {
-                cmbItemRef1.IsEnabled = true; cmbItemRef1.Content = "1 (dBSec)";
-                cmbItemRef077.IsEnabled = false; cmbItemRef077.Content = "774.6m";
-                cmbItemRef20u.IsEnabled = false; cmbItemRef20u.Content = "20u";
+                cmbItemRef1.IsEnabled = true;
+                cmbItemRef1.Visibility = Visibility.Visible;
+                cmbItemRef1.Content = "1 (dBSec)";
             }else
             if (physicalQuantity == "Current")
             {
-                cmbItemRef1.IsEnabled = true; cmbItemRef1.Content = "1 (dBA)";
-                cmbItemRef077.IsEnabled = false; cmbItemRef077.Content = "774.6m";
-                cmbItemRef20u.IsEnabled = false; cmbItemRef20u.Content = "20u";
+                cmbItemRef1.IsEnabled = true;
+                cmbItemRef1.Visibility = Visibility.Visible;
+                cmbItemRef1.Content = "1 (dBA)";
             }
             else
             if (physicalQuantity == "Ratio")
             {
-                cmbItemRef1.IsEnabled = true; cmbItemRef1.Content = "1 (dBR)";
-                cmbItemRef077.IsEnabled = false; cmbItemRef077.Content = "774.6m";
-                cmbItemRef20u.IsEnabled = false; cmbItemRef20u.Content = "20u";
+                cmbItemRef1.IsEnabled = true;
+                cmbItemRef1.Visibility = Visibility.Visible;
+                cmbItemRef1.Content = "1 (dBR)";
             }
-            
+            if (physicalQuantity == "Power")
+            {
+                cmbItemRef1.IsEnabled = true;
+                cmbItemRef1.Visibility = Visibility.Visible;
+                cmbItemRef1.Content = "1 (dBWatt)";
+            }
 
             checkVisuals(null, null);
 
@@ -260,6 +282,11 @@ namespace Easycoustics.Transition.CustomControls
 
                 case "Degrees": return PhaseUnit.Degrees;
                 case "Radians": return PhaseUnit.Radians;
+
+                case "MagnitudePhase": return ComplexProjectedData.MagnitudePhase;
+                case "RealImag": return ComplexProjectedData.RealImag;
+                case "OnlyReal": return ComplexProjectedData.OnlyReal;
+                case "OnlyImag": return ComplexProjectedData.OnlyImag;
             }
 
             return Enum.Parse(targetType, parameterString);

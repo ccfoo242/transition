@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Easycoustics.Transition.Design;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -44,10 +45,13 @@ namespace Easycoustics.Transition.Common
             } }
 
         public decimal NegatedMaximumPhase { get => maximumPhase * 1; }
-
+        /*
         private decimal maximumdB;
         public decimal MaximumdB { get => maximumdB; set { SetProperty(ref maximumdB, value); } }
+        */
 
+        public decimal MaximumdB => MaximumMag;
+        
         private int quantityOfMinorDivsHorizontal;
         public int QuantityOfMinorDivsHorizontal
         {
@@ -76,8 +80,10 @@ namespace Easycoustics.Transition.Common
             set { SetProperty(ref quantityOfMajorDivsVertical, value); }
         }
 
-        private int quantityOfdBDivs;
-        public int QuantityOfdBDivs { get => quantityOfdBDivs; set { SetProperty(ref quantityOfdBDivs, value); } }
+        //private int quantityOfdBDivs;
+        //public int QuantityOfdBDivs { get => quantityOfdBDivs; set { SetProperty(ref quantityOfdBDivs, value); } }
+
+        public int QuantityOfdBDivs => QuantityOfMajorDivsVertical;
 
         private decimal dBperDiv;
         public decimal DBPerDiv { get => dBperDiv; set { SetProperty(ref dBperDiv, value); } }
@@ -111,9 +117,17 @@ namespace Easycoustics.Transition.Common
                     MinimumPhase *= 180m / 3.141592654m;
                 }
 
-
                 SetProperty(ref phaseUnit, value); } }
 
+
+        private ComplexProjectedData complexProjection;
+        public ComplexProjectedData ComplexProjection
+        {
+            get => complexProjection;
+            set { SetProperty(ref complexProjection, value); }
+        }
+        
+            
         public ScaleParameters()
         {
             horizontalScale = AxisScale.Logarithmic;
@@ -128,22 +142,23 @@ namespace Easycoustics.Transition.Common
             dBperDiv = 5;
             dBZeroRef = dBReference.dBV;
 
-            maximumdB = 10;
-            quantityOfdBDivs = 12;
+            // maximumdB = 10;
+            // quantityOfdBDivs = 12;
 
             horizontalPrefix = 0;
             verticalPrefix = 0;
             
-            minimumHorizontal = 10;
-            maximumHorizontal = 40000;
+            minimumHorizontal = UserDesign.CurrentDesign.AnalysisParameters.AnalysisMinimumFrequency;
+            maximumHorizontal = UserDesign.CurrentDesign.AnalysisParameters.AnalysisMaximumFrequency;
 
             minimumMag = 1;
-            maximumMag = 100;
+            maximumMag = 10;
 
             maximumPhase = 180;
             minimumPhase = -180;
 
-            PhaseUnit = PhaseUnit.Degrees;
+            phaseUnit = PhaseUnit.Degrees;
+            complexProjection = ComplexProjectedData.MagnitudePhase;
 
             PropertyChanged += checkValues;
 
@@ -157,12 +172,13 @@ namespace Easycoustics.Transition.Common
         {
             var output = new ScaleParameters()
             {
+                ComplexProjection = this.ComplexProjection,
                 DBPerDiv = this.DBPerDiv,
                 DBZeroRef = this.DBZeroRef,
                 HorizontalPrefix = this.HorizontalPrefix,
                 HorizontalScale = this.HorizontalScale,
                 MagnitudePolarity = this.MagnitudePolarity,
-                MaximumdB = this.MaximumdB,
+               /* MaximumdB = this.MaximumdB,*/
                 MaximumHorizontal = this.MaximumHorizontal,
                 MaximumMag = this.MaximumMag,
                 MaximumPhase = this.MaximumPhase,
@@ -171,7 +187,7 @@ namespace Easycoustics.Transition.Common
                 MinimumPhase = this.MinimumPhase,
                 PhasePolarity = this.PhasePolarity,
                 PhaseUnit = this.PhaseUnit,
-                QuantityOfdBDivs = this.QuantityOfdBDivs,
+                /*QuantityOfdBDivs = this.QuantityOfdBDivs,*/
                 QuantityOfMajorDivsHorizontal = this.QuantityOfMajorDivsHorizontal,
                 QuantityOfMajorDivsVertical = this.QuantityOfMajorDivsVertical,
                 QuantityOfMinorDivsHorizontal = this.QuantityOfMinorDivsHorizontal,

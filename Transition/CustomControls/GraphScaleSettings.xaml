@@ -37,6 +37,7 @@
                         </local:GroupBox.CustomContent>
                     </local:GroupBox>
 
+                    
                     <local:GroupBox Header="Range">
                         <local:GroupBox.CustomContent>
                             <StackPanel Orientation="Vertical" Margin="4">
@@ -296,9 +297,30 @@
                     
                 </controls:WrapPanel>
             </controls:Expander>
+            <controls:Expander Header="Complex Data" IsExpanded="True" ExpandDirection="Down">
+                <local:GroupBox Header="Complex Data Projection" x:Name="grpBoxComplexProjection">
+                    <local:GroupBox.CustomContent>
+                        <StackPanel Orientation="Vertical" Margin="4">
+
+                            <RadioButton Content="Magnitude + Phase" x:Name="rdbVertComplexMagPhase"    GroupName="rdbVertComplexData" 
+                                             IsChecked="{Binding Path=ComplexProjection, Converter={StaticResource enumBoolConverter}, ConverterParameter=MagnitudePhase, Mode=TwoWay}"/>
+
+                            <RadioButton Content="Real + Imaginary" x:Name="rdbVertComplexRealImag" GroupName="rdbVertComplexData"
+                                             IsChecked="{Binding Path=ComplexProjection, Converter={StaticResource enumBoolConverter}, ConverterParameter=RealImag, Mode=TwoWay}"/>
+
+                            <RadioButton Content="Only Real part" x:Name="rdbVertComplexOnlyReal"       GroupName="rdbVertComplexData" 
+                                             IsChecked="{Binding Path=ComplexProjection, Converter={StaticResource enumBoolConverter}, ConverterParameter=OnlyReal, Mode=TwoWay}"/>
+
+                            <RadioButton Content="Only Imaginary part" x:Name="rdbVertComplexOnlyImag"  GroupName="rdbVertComplexData" 
+                                             IsChecked="{Binding Path=ComplexProjection, Converter={StaticResource enumBoolConverter}, ConverterParameter=OnlyImag, Mode=TwoWay}"/>
+
+                        </StackPanel>
+                    </local:GroupBox.CustomContent>
+                </local:GroupBox>
+            </controls:Expander>
             <StackPanel Orientation="Horizontal" Margin="4" HorizontalAlignment="Center">
-                <Button Content="Cancel" Margin="4" IsTapEnabled="True" Tapped="tapCancel"/>
-                <Button Content="OK" Margin="4" IsTapEnabled="True" Tapped="tapOK"/>
+                <Button Content="Cancel" Padding="10" Margin="4" IsTapEnabled="True" Tapped="tapCancel"/>
+                <Button Content="OK" Padding="10" Margin="4" IsTapEnabled="True" Tapped="tapOK"/>
 
             </StackPanel>
         </StackPanel>
