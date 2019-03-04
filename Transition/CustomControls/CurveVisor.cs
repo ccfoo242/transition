@@ -26,7 +26,11 @@ namespace Easycoustics.Transition.CustomControls
         private Dictionary<Function, Polyline> dictPolylinesMag = new Dictionary<Function, Polyline>();
         private Dictionary<Function, Polyline> dictPolylinesPhase = new Dictionary<Function, Polyline>();
 
-        public ScaleParameters scaleParams = new ScaleParameters();
+        private ScaleParameters scaleParams = new ScaleParameters();
+        public ScaleParameters ScaleParams { get => scaleParams; set {
+                scaleParams = value;
+                ReDraw();
+            } } 
 
         private List<Line> VerticalMajorDivs = new List<Line>();
         private List<Line> VerticalMinorDivs = new List<Line>();
@@ -61,7 +65,7 @@ namespace Easycoustics.Transition.CustomControls
             CurvesCanvas.Height = CanvasHeight;
 
             Curves.CollectionChanged += CurveCollectionChanged;
-            scaleParams.PropertyChanged += GraphPropertyChanged;
+            ScaleParams.PropertyChanged += GraphPropertyChanged;
 
             this.SizeChanged += cnvSizeChanged;
 
@@ -125,7 +129,7 @@ namespace Easycoustics.Transition.CustomControls
 
         private void ReDraw()
         {
-            
+            CurvesCanvas.Children.Clear();
             this.Background = new SolidColorBrush(GraphParams.FrameColor);
             CurvesCanvas.Background = new SolidColorBrush(GraphParams.GridBackgroundColor);
 

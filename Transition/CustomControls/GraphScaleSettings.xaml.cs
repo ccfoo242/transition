@@ -78,7 +78,7 @@ namespace Easycoustics.Transition.CustomControls
                 cmbItemRef077.IsEnabled = false; cmbItemRef077.Content = "774.6m";
                 cmbItemRef20u.IsEnabled = false; cmbItemRef20u.Content = "20u";
             }
-            dcmBoxVertMagMaximum.MinimumNumberAllowed = 1e-25m;
+            
 
             checkVisuals(null, null);
 
@@ -101,6 +101,12 @@ namespace Easycoustics.Transition.CustomControls
                 dcmBoxVertMagMinimum.IsEnabled = false;
                 cmbVerticalMagUnits.IsEnabled = false;
 
+                dcmBoxVertMagMaximum.AllowPositiveNumber = true;
+                dcmBoxVertMagMaximum.AllowNegativeNumber = true;
+
+                dcmBoxVertMagMaximum.MaximumNumberAllowed = 1E+25m;
+                dcmBoxVertMagMaximum.MinimumNumberAllowed = -1E+25m;
+               
                 dcmBoxVertMagMaximum.Visibility = Visibility.Visible;
                 dcmBoxVertMagMinimum.Visibility = Visibility.Visible;
             }
@@ -115,9 +121,17 @@ namespace Easycoustics.Transition.CustomControls
 
                 dcmBoxVertMagMinimum.AllowPositiveNumber = true;
                 dcmBoxVertMagMinimum.AllowNegativeNumber = false;
-                if (scaleParams.MinimumMag <= 0m) scaleParams.MinimumMag = scaleParams.MaximumMag / 2;
 
+                dcmBoxVertMagMaximum.AllowPositiveNumber = true;
+                dcmBoxVertMagMaximum.AllowNegativeNumber = false;
+                if (scaleParams.MaximumMag < 0) scaleParams.MaximumMag *= -1;
+                if ((scaleParams.MinimumMag <= 0m) || (scaleParams.MinimumMag > scaleParams.MaximumMag)) scaleParams.MinimumMag = scaleParams.MaximumMag / 2;
+                
+                dcmBoxVertMagMaximum.MinimumNumberAllowed = scaleParams.MinimumMag;
+                dcmBoxVertMagMaximum.MaximumNumberAllowed = 1E+25m;
+                dcmBoxVertMagMinimum.MaximumNumberAllowed = scaleParams.MaximumMag;
                 dcmBoxVertMagMinimum.MinimumNumberAllowed = 1E-25m;
+
 
                 dcmBoxVertMagMaximum.Visibility = Visibility.Visible;
                 dcmBoxVertMagMinimum.Visibility = Visibility.Visible;
@@ -130,9 +144,17 @@ namespace Easycoustics.Transition.CustomControls
                 cmbVerticalMagUnits.IsEnabled = true;
 
                 dcmBoxVertMagMinimum.MinimumNumberAllowed = -1E25m;
+                dcmBoxVertMagMinimum.MaximumNumberAllowed = 0;
+
+                dcmBoxVertMagMaximum.MinimumNumberAllowed = 0;
+                dcmBoxVertMagMaximum.MaximumNumberAllowed = 1E25m;
 
                 dcmBoxVertMagMinimum.AllowNegativeNumber = true;
                 dcmBoxVertMagMinimum.AllowPositiveNumber = false;
+
+                dcmBoxVertMagMaximum.AllowNegativeNumber = false;
+                dcmBoxVertMagMaximum.AllowPositiveNumber = true;
+
 
                 if (scaleParams.MagnitudePolarity == Polarity.Bipolar)
                 {
@@ -178,17 +200,28 @@ namespace Easycoustics.Transition.CustomControls
 
             }
 
+            if (scaleParams.HorizontalScale == AxisScale.Logarithmic)
+                iBoxHorizMajorDivs.IsEnabled = false;
+
+            if (scaleParams.HorizontalScale == AxisScale.Linear)
+                iBoxHorizMajorDivs.IsEnabled = true;
+
+            dcmBoxHorizMaximum.MaximumNumberAllowed = 1E25m;
+            dcmBoxHorizMaximum.MinimumNumberAllowed = scaleParams.MinimumHorizontal;
+            
+            dcmBoxHorizMinimum.MaximumNumberAllowed = scaleParams.MaximumHorizontal;
+            dcmBoxHorizMinimum.MinimumNumberAllowed = 1E-25m;
 
         }
 
         private void tapOK(object sender, TappedRoutedEventArgs e)
         {
-
+            WCV.acceptScaleChanges(scaleParams);
         }
 
         private void tapCancel(object sender, TappedRoutedEventArgs e)
         {
-
+            WCV.cancelScaleChanges();
         }
     }
 
@@ -224,6 +257,9 @@ namespace Easycoustics.Transition.CustomControls
                 case "Linear": return AxisScale.Linear;
                 case "Logarithmic": return AxisScale.Logarithmic;
                 case "dB": return AxisScale.dB;
+
+                case "Degrees": return PhaseUnit.Degrees;
+                case "Radians": return PhaseUnit.Radians;
             }
 
             return Enum.Parse(targetType, parameterString);

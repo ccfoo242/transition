@@ -69,7 +69,7 @@
                             HorizontalContentAlignment="Stretch"
                             VerticalContentAlignment="Stretch">
 
-                <local2:WindowCurveVisor PhysicalQuantity="Pressure"/>
+                <local2:WindowCurveVisor PhysicalQuantity="Voltage"/>
             </ContentControl>
 
         </layout:SfDockingManager>

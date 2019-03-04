@@ -23,7 +23,7 @@ namespace Easycoustics.Transition.CustomControls
     public sealed partial class WindowCurveVisor : UserControl
     {
         private ObservableCollection<Function> Curves => Visor.Curves;
-        public ScaleParameters ScaleParams => Visor.scaleParams;
+        public ScaleParameters ScaleParams => Visor.ScaleParams;
 
         public string PhysicalQuantity { get; set; }
 
@@ -72,8 +72,19 @@ namespace Easycoustics.Transition.CustomControls
 
         private void ScaleParametersClick(object sender, TappedRoutedEventArgs e)
         {
-            this.Content = new GraphScaleSettings(this, (ScaleParameters)Visor.scaleParams.Clone(), PhysicalQuantity);
+            this.Content = new GraphScaleSettings(this, (ScaleParameters)Visor.ScaleParams.Clone(), PhysicalQuantity);
 
+        }
+
+        public void acceptScaleChanges(ScaleParameters newParams)
+        {
+            Visor.ScaleParams = newParams;
+            this.Content = grdCurveDisplay;
+        }
+
+        public void cancelScaleChanges()
+        {
+            this.Content = grdCurveDisplay;
         }
     }
 }

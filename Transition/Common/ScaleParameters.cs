@@ -25,15 +25,11 @@ namespace Easycoustics.Transition.Common
 
         private decimal minimumMag;
         public decimal MinimumMag { get => minimumMag; set {
-                decimal newValue = value;
-                if (value > MaximumMag) newValue = MaximumMag / 2;
-                SetProperty(ref minimumMag, newValue); } }
+                SetProperty(ref minimumMag, value); } }
 
         private decimal maximumMag;
         public decimal MaximumMag { get => maximumMag; set {
-                decimal newValue = value;
-                if (value < MinimumMag) newValue = MinimumMag * 2;
-                SetProperty(ref maximumMag, newValue);
+                SetProperty(ref maximumMag, value);
                 OnPropertyChanged("NegatedMaximumMag");
             } }
 
@@ -102,7 +98,21 @@ namespace Easycoustics.Transition.Common
         public Polarity PhasePolarity { get => phasePolarity; set { SetProperty(ref phasePolarity, value); } }
 
         private PhaseUnit phaseUnit;
-        public PhaseUnit PhaseUnit { get => phaseUnit; set { SetProperty(ref phaseUnit, value); } }
+        public PhaseUnit PhaseUnit { get => phaseUnit; set {
+                if (phaseUnit == PhaseUnit.Degrees && value == PhaseUnit.Radians)
+                {
+                    MaximumPhase *= 3.141592654m / 180m;
+                    MinimumPhase *= 3.141592654m / 180m;
+                }
+
+                if (phaseUnit == PhaseUnit.Radians && value == PhaseUnit.Degrees)
+                {
+                    MaximumPhase *= 180m / 3.141592654m;
+                    MinimumPhase *= 180m / 3.141592654m;
+                }
+
+
+                SetProperty(ref phaseUnit, value); } }
 
         public ScaleParameters()
         {
@@ -141,10 +151,6 @@ namespace Easycoustics.Transition.Common
 
         private void checkValues(object sender, PropertyChangedEventArgs e)
         {
-            if (MinimumHorizontal > MaximumHorizontal) throw new ArgumentException("Minimum Horizontal is greater than Maximum");
-            if (MinimumMag > MaximumMag) throw new ArgumentException("Minimum Vertical is greater than Maximum");
-            if (MinimumHorizontal == MaximumHorizontal) throw new ArgumentException("Minimum Horizontal is equal than Maximum");
-            if (MinimumMag == MaximumMag) throw new ArgumentException("Minimum Vertical is equal than Maximum");
         }
 
         public object Clone()
