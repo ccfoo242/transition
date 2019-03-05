@@ -25,16 +25,19 @@ namespace Easycoustics.Transition.CustomControls
         private ObservableCollection<Function> Curves => Visor.Curves;
         public ScaleParameters ScaleParams => Visor.ScaleParams;
 
-        public string PhysicalQuantity { get; set; }
+        public string VerticalQuantity { get; set; }
+        public string HorizontalQuantity { get; set; }
 
         public WindowCurveVisor()
         {
             this.InitializeComponent();
         }
 
-        public WindowCurveVisor(string physicalQuantity)
+        public WindowCurveVisor(string verticalQuantity, string horizontalQuantity)
         {
-            PhysicalQuantity = physicalQuantity;
+            this.InitializeComponent();
+            Visor.verticalQuantity = verticalQuantity;
+            Visor.horizontalQuantity = horizontalQuantity;
         }
 
         private async void CurveLibraryClick(object sender, TappedRoutedEventArgs e)
@@ -55,7 +58,7 @@ namespace Easycoustics.Transition.CustomControls
             {
                 foreach (var curve in curveSelector.selectedCurves())
                 {
-                    if (curve.FunctionQuantity == PhysicalQuantity)
+                    if (curve.FunctionQuantity == VerticalQuantity)
                         if (!Curves.Contains(curve)) Curves.Add(curve);
                 }
 
@@ -72,7 +75,7 @@ namespace Easycoustics.Transition.CustomControls
 
         private void ScaleParametersClick(object sender, TappedRoutedEventArgs e)
         {
-            this.Content = new GraphScaleSettings(this, (ScaleParameters)Visor.ScaleParams.Clone(), PhysicalQuantity);
+            this.Content = new GraphScaleSettings(this, (ScaleParameters)Visor.ScaleParams.Clone(), VerticalQuantity);
 
         }
 
