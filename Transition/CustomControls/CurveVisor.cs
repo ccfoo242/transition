@@ -1262,7 +1262,7 @@ namespace Easycoustics.Transition.CustomControls
                 if (ScaleParams.MagnitudePolarity == Polarity.Bipolar)
                 {
                     maxVer = Convert.ToDouble(scaleParams.MaximumMag);
-                    minVer = Convert.ToDouble(scaleParams.MinimumMag);
+                    minVer = maxVer * -1;
                 }
                 else if (ScaleParams.MagnitudePolarity == Polarity.Positive)
                 {
