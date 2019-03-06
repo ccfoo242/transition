@@ -12,7 +12,14 @@ namespace Easycoustics.Transition.CurveLibrary
     {
         public Function Curve { get; set; }
 
-        public override string Title => (Curve !=null) ? Curve.Title : "";
+        public override string Title
+        {
+            get
+            {
+                return (Curve != null) ? Curve.Title : "";
+            }
+        }
+
         public override ObservableCollection<LibraryBase> Children => null;
 
         public override LibraryItem GetItem(Function func)

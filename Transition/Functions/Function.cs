@@ -18,7 +18,7 @@ namespace Easycoustics.Transition.Functions
     public abstract class Function : BindableBase, ICloneable
     {
         private string title;
-        public string Title { get => Title; set { SetProperty(ref title, value); } }
+        public string Title { get => title; set { SetProperty(ref title, value); } }
 
         public abstract ComplexDecimal Calculate(decimal point);
 

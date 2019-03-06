@@ -1131,14 +1131,22 @@ namespace Easycoustics.Transition.CustomControls
             dictPolylinesPhase.Add(func, newPolyLinePhase);
 
             double X;
+            double YMag;
+            double YPhase;
 
             SampledFunction sampledFunc = (func is SampledFunction) ? (SampledFunction)func : SampledFunction.RenderFunction(func);
                         
             foreach (var sample in sampledFunc.Data)
             {
                 X = mapX(sample.X);
-                newPolyLineMag.Points.Add(new Point(X, mapPointMag(sample.Y)));
-                newPolyLinePhase.Points.Add(new Point(X, mapPointPhase(sample.Y)));
+                if (!double.IsNaN(X))
+                {
+                    YMag = mapPointMag(sample.Y);
+                    if (!double.IsNaN(YMag)) newPolyLineMag.Points.Add(new Point(X, YMag));
+
+                    YPhase = mapPointPhase(sample.Y);
+                    if (!double.IsNaN(YPhase)) newPolyLinePhase.Points.Add(new Point(X, YPhase));
+                }
             }
 
             CurvesCanvas.Children.Add(newPolyLineMag);
@@ -1153,6 +1161,8 @@ namespace Easycoustics.Transition.CustomControls
             var linePhase = dictPolylinesPhase[func];
             
             double X;
+            double YMag;
+            double YPhase;
 
             SampledFunction sampledFunc = (func is SampledFunction) ? (SampledFunction)func : SampledFunction.RenderFunction(func);
 
@@ -1165,8 +1175,17 @@ namespace Easycoustics.Transition.CustomControls
                 foreach (var sample in sampledFunc.Data)
                 {
                     X = mapX(sample.X);
-                    lineMag.Points[sampleNumber] = new Point(X, mapPointMag(sample.Y));
-                    linePhase.Points[sampleNumber] = new Point(X, mapPointPhase(sample.Y));
+                    if (!double.IsNaN(X))
+                    {
+                        YMag = mapPointMag(sample.Y);
+                        if (!double.IsNaN(YMag)) lineMag.Points[sampleNumber] = new Point(X, YMag);
+                        
+
+                        YPhase = mapPointPhase(sample.Y);
+                        if (!double.IsNaN(YPhase)) linePhase.Points[sampleNumber] = new Point(X, YPhase);
+                        else { }
+                    } else
+                    { }
                     sampleNumber++;
                 }
             }
@@ -1177,15 +1196,31 @@ namespace Easycoustics.Transition.CustomControls
                 foreach (var sample in sampledFunc.Data)
                 {
                     X = mapX(sample.X);
-                    lineMag.Points.Add(new Point(X, mapPointMag(sample.Y)));
-                    linePhase.Points.Add(new Point(X, mapPointPhase(sample.Y)));
+                    if (!double.IsNaN(X))
+                    {
+                        YMag = mapPointMag(sample.Y);
+                        if (!double.IsNaN(YMag)) lineMag.Points.Add(new Point(X, YMag));
+
+                        YPhase = mapPointPhase(sample.Y);
+                        if (!double.IsNaN(YPhase)) linePhase.Points.Add(new Point(X, YPhase));
+                    }
                 }
             }
+
+            if (!CurvesCanvas.Children.Contains(lineMag)) CurvesCanvas.Children.Add(lineMag);
+            if (!CurvesCanvas.Children.Contains(linePhase)) CurvesCanvas.Children.Add(linePhase);
+
 
         }
 
         private void RemoveCurve(Function func)
         {
+            var lineMag = dictPolylinesMag[func];
+            var linePhase = dictPolylinesPhase[func];
+
+            if (CurvesCanvas.Children.Contains(lineMag)) CurvesCanvas.Children.Remove(lineMag);
+            if (CurvesCanvas.Children.Contains(linePhase)) CurvesCanvas.Children.Remove(linePhase);
+
             dictPolylinesMag.Remove(func);
             dictPolylinesPhase.Remove(func);
         }
@@ -1195,34 +1230,61 @@ namespace Easycoustics.Transition.CustomControls
             var Xdbl = Convert.ToDouble(X) / Math.Pow(10, scaleParams.HorizontalPrefix);
             var maxHor = Convert.ToDouble(scaleParams.MaximumHorizontal);
             var minHor = Convert.ToDouble(scaleParams.MinimumHorizontal);
-              
+
+            double XCanvas;
+
             if (scaleParams.HorizontalScale == AxisScale.Linear)
-                return CanvasWidth * (Xdbl - minHor) / (maxHor - minHor);
+                XCanvas = CanvasWidth * (Xdbl - minHor) / (maxHor - minHor);
             else
             {   /* log scale*/
-                if (Xdbl <= 0) return double.MinValue;
+                if (Xdbl <= 0) XCanvas = double.MinValue;
                 else
-                    return CanvasWidth * Math.Log10(Xdbl / minHor) / Math.Log10(maxHor / minHor);
+                    XCanvas = CanvasWidth * Math.Log10(Xdbl / minHor) / Math.Log10(maxHor / minHor);
             }
+
+            if (XCanvas < 0) return double.NaN;
+            if (XCanvas > CanvasWidth) return double.NaN;
+            return XCanvas;
         }
 
         private double mapPointMag(ComplexDecimal Y)
         {
             double Ymag;
-
-            var maxVer = Convert.ToDouble(scaleParams.MaximumMag);
-            var minVer = Convert.ToDouble(scaleParams.MinimumMag);
-            
+            double YCanvas;
+           
             if (scaleParams.VerticalScale == AxisScale.Linear)
             {
+                double maxVer;
+                double minVer;
+
                 Ymag = Y.MagnitudeDouble / Math.Pow(10, scaleParams.VerticalPrefix);
-                return CanvasHeight - (CanvasHeight * (Ymag - minVer) / (maxVer - minVer));
+
+                if (ScaleParams.MagnitudePolarity == Polarity.Bipolar)
+                {
+                    maxVer = Convert.ToDouble(scaleParams.MaximumMag);
+                    minVer = Convert.ToDouble(scaleParams.MinimumMag);
+                }
+                else if (ScaleParams.MagnitudePolarity == Polarity.Positive)
+                {
+                    maxVer = Convert.ToDouble(scaleParams.MaximumMag);
+                    minVer = 0;
+                }
+                else
+                {
+                    maxVer = 0;
+                    minVer = Convert.ToDouble(scaleParams.MinimumMag);
+                }
+
+                YCanvas = CanvasHeight - (CanvasHeight * (Ymag - minVer) / (maxVer - minVer));
             }
             else
             if (scaleParams.VerticalScale == AxisScale.Logarithmic)
             {
+                var maxVer = Convert.ToDouble(scaleParams.MaximumMag);
+                var minVer = Convert.ToDouble(scaleParams.MinimumMag);
+
                 Ymag = Y.MagnitudeDouble / Math.Pow(10, scaleParams.VerticalPrefix);
-                return CanvasHeight - (CanvasHeight * Math.Log10(Ymag / minVer) / Math.Log10(maxVer / minVer));
+                YCanvas = CanvasHeight - (CanvasHeight * Math.Log10(Ymag / minVer) / Math.Log10(maxVer / minVer));
             }
             else
             {
@@ -1236,8 +1298,13 @@ namespace Easycoustics.Transition.CustomControls
                 }
                 double mindB = Convert.ToDouble(scaleParams.MaximumdB) - Convert.ToDouble(scaleParams.DBPerDiv * scaleParams.QuantityOfdBDivs);
                 double maxdB = Convert.ToDouble(scaleParams.MaximumdB);
-                return CanvasHeight - (CanvasHeight * (Ymag - mindB) / (maxdB - mindB));
+                YCanvas = CanvasHeight - (CanvasHeight * (Ymag - mindB) / (maxdB - mindB));
             }
+
+            if (YCanvas < 0) return double.NaN;
+            if (YCanvas > CanvasHeight) return double.NaN;
+
+            return YCanvas;
         }
 
         private double mapPointPhase(ComplexDecimal Y)
@@ -1258,7 +1325,11 @@ namespace Easycoustics.Transition.CustomControls
                 minVer = Convert.ToDouble(scaleParams.MinimumPhase);
             }
             
-            return CanvasHeight - (CanvasHeight * (Y.PhaseDegDouble - minVer) / (maxVer - minVer));
+            double YCanvas = CanvasHeight - (CanvasHeight * (Y.PhaseDegDouble - minVer) / (maxVer - minVer));
+
+            if (YCanvas < 0) return double.NaN;
+            if (YCanvas > CanvasHeight) return double.NaN;
+            return YCanvas;
         }
     }
 }

@@ -30,10 +30,10 @@ namespace Easycoustics.Transition
         {
             this.InitializeComponent();
 
-            UserDesign newDesign = new UserDesign();
+         //   UserDesign newDesign = new UserDesign();
             //    CircuitEditor.CircuitEditor ce = new CircuitEditor.CircuitEditor();
             
-            circuitEditor.loadDesign(newDesign);
+            circuitEditor.loadDesign(UserDesign.CurrentDesign);
 
         }
         
