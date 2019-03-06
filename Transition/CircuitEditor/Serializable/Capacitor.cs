@@ -56,8 +56,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             set { SetProperty(ref outputCurrentThrough, value); raiseLayoutChanged(); }
         }
 
-        public SampledFunction resultVoltageCurve { get; set; } = new SampledFunction();
-        public SampledFunction resultCurrentCurve { get; set; } = new SampledFunction();
+        public SampledFunction resultVoltageCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Voltage", FunctionUnit = "Volt" };
+        public SampledFunction resultCurrentCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Current", FunctionUnit = "Amper" };
 
         private decimal ls;
         public decimal Ls

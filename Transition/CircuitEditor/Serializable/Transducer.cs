@@ -20,8 +20,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public bool OutputVoltageAcross { get => outputVoltageAcross; set { SetProperty(ref outputVoltageAcross, value); raiseLayoutChanged(); } }
         public bool OutputCurrentThrough { get => outputCurrentThrough; set { SetProperty(ref outputCurrentThrough, value); raiseLayoutChanged(); } }
         
-        public SampledFunction resultVoltageCurve { get; set; } = new SampledFunction();
-        public SampledFunction resultCurrentCurve { get; set; } = new SampledFunction();
+        public SampledFunction resultVoltageCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Voltage", FunctionUnit = "Volt" };
+        public SampledFunction resultCurrentCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Current", FunctionUnit = "Pascal" };
 
         private string description;
         public string Description

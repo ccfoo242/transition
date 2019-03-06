@@ -58,7 +58,7 @@ namespace Easycoustics.Transition.CustomControls
         private SolidColorBrush MajorDivBrush;
         private SolidColorBrush MinorDivBrush;
 
-        private Canvas CurvesCanvas = new Canvas();
+        private NonClippingCanvas CurvesCanvas = new NonClippingCanvas();
 
         private double currentLogSmallestStepHorizontal;
         private double currentLogSmallestStepVertical;
@@ -1241,9 +1241,9 @@ namespace Easycoustics.Transition.CustomControls
                 else
                     XCanvas = CanvasWidth * Math.Log10(Xdbl / minHor) / Math.Log10(maxHor / minHor);
             }
-
+            /*
             if (XCanvas < 0) return double.NaN;
-            if (XCanvas > CanvasWidth) return double.NaN;
+            if (XCanvas > CanvasWidth) return double.NaN;*/
             return XCanvas;
         }
 
@@ -1300,9 +1300,9 @@ namespace Easycoustics.Transition.CustomControls
                 double maxdB = Convert.ToDouble(scaleParams.MaximumdB);
                 YCanvas = CanvasHeight - (CanvasHeight * (Ymag - mindB) / (maxdB - mindB));
             }
-
+            /*
             if (YCanvas < 0) return double.NaN;
-            if (YCanvas > CanvasHeight) return double.NaN;
+            if (YCanvas > CanvasHeight) return double.NaN;*/
 
             return YCanvas;
         }
@@ -1326,9 +1326,9 @@ namespace Easycoustics.Transition.CustomControls
             }
             
             double YCanvas = CanvasHeight - (CanvasHeight * (Y.PhaseDegDouble - minVer) / (maxVer - minVer));
-
+            /*
             if (YCanvas < 0) return double.NaN;
-            if (YCanvas > CanvasHeight) return double.NaN;
+            if (YCanvas > CanvasHeight) return double.NaN;*/
             return YCanvas;
         }
     }

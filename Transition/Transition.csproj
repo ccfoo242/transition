@@ -213,6 +213,7 @@
     <Compile Include="Common\Enums.cs" />
     <Compile Include="Common\EventArgs.cs" />
     <Compile Include="Common\FontParameters.cs" />
+    <Compile Include="Common\NonClippingCanvas.cs" />
     <Compile Include="CustomControls\IntegerBox.xaml.cs">
       <DependentUpon>IntegerBox.xaml</DependentUpon>
     </Compile>
