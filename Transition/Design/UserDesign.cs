@@ -71,8 +71,6 @@ namespace Easycoustics.Transition.Design
 
         public UserDesign()
         {
-           
-
             Components.CollectionChanged += Components_CollectionChanged;
             Wires.CollectionChanged += Wires_CollectionChanged;
         }
@@ -706,8 +704,6 @@ namespace Easycoustics.Transition.Design
                 if (node.ConnectedComponentTerminals.Count == 0) node.hasNoComponentsConnected = true;
                 if (GetOtherNodesConnectedToThisNode(node).Count == 0) node.isIsolatedFromOtherNodes = true;
             }
-            
-
         }
 
         private ElectricNode GetComponentTerminalNode(SerializableComponent comp, byte terminal)
@@ -748,14 +744,7 @@ namespace Easycoustics.Transition.Design
             var output = Wires.Where((wire) => wire.IsWireGrounded).ToList();
 
             Func<SerializableWire, bool> isConnected =
-                (wir) =>
-                {
-                    foreach (var wire in output)
-                        if (wir.isThisWireBoundedToOtherWire(wire))
-                            return true; 
-
-                    return false;
-                };
+                (wir) => output.Exists(w => wir.isThisWireBoundedToOtherWire(w));
 
             bool wireAdded = true;
 
@@ -791,14 +780,9 @@ namespace Easycoustics.Transition.Design
             bool added = true;
 
             Func<SerializableWire, bool> isConnected =
-                (wir) =>
-                {
-                    foreach (var wire in ConnectedWires)
-                        if (wir.isThisWireBoundedToOtherWire(wire))
-                            return true; 
-                    return false;
-                };
-
+                (wir) => ConnectedWires.Exists(w => wir.isThisWireBoundedToOtherWire(w));
+            
+            
             while (added)
             {
                 added = false;
