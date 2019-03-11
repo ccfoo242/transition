@@ -437,7 +437,7 @@ namespace Easycoustics.Transition.Design
                 (component, compTerminal, frequency) =>
                 {
                     var output = new List<Tuple<ElectricNode, ComplexDecimal>>();
-                    var impedances = component.getImpedance(frequency);
+                    var impedances = component.GetImpedance(frequency);
 
                     byte otherTerminal;
                     ElectricNode otherNode;
@@ -487,7 +487,7 @@ namespace Easycoustics.Transition.Design
             foreach (var outputNode in outputVoltageNodes)
             {
                 outputNode.ResultVoltageCurve.Clear();
-                SystemCurves.AddIfNotAdded(outputNode.ResultVoltageCurve)
+                SystemCurves.AddIfNotAdded(outputNode.ResultVoltageCurve);
             }
 
             var OutputVoltagesComponents = new List<IVoltageCurrentOutput>();
@@ -498,8 +498,8 @@ namespace Easycoustics.Transition.Design
             {
                 if (outputVoltCurrComponent.OutputVoltageAcross)
                 {
-                    outputVoltCurrComponent.resultVoltageCurve.Clear();
-                    SystemCurves.AddIfNotAdded(outputVoltCurrComponent.resultVoltageCurve);
+                    outputVoltCurrComponent.ResultVoltageCurve.Clear();
+                    SystemCurves.AddIfNotAdded(outputVoltCurrComponent.ResultVoltageCurve);
                     
 
                     OutputVoltagesComponents.Add(outputVoltCurrComponent);
@@ -507,8 +507,8 @@ namespace Easycoustics.Transition.Design
 
                 if (outputVoltCurrComponent.OutputCurrentThrough)
                 {
-                    outputVoltCurrComponent.resultCurrentCurve.Clear();
-                    SystemCurves.AddIfNotAdded(outputVoltCurrComponent.resultCurrentCurve);
+                    outputVoltCurrComponent.ResultCurrentCurve.Clear();
+                    SystemCurves.AddIfNotAdded(outputVoltCurrComponent.ResultCurrentCurve);
 
                     //outputVoltCurrComponent.resultCurrentCurve.AdaptFunctionTo(MinimumFrequency, MaximumFrequency,
                     //QuantityOfFrequencyPoints, FrequencyScale);
@@ -520,7 +520,7 @@ namespace Easycoustics.Transition.Design
             foreach (var resistor in Components.OfType<Resistor>())
             {
 
-                SystemCurves.AddIfNotAdded(resistor.resultPowerCurve);
+                SystemCurves.AddIfNotAdded(resistor.ResultPowerCurve);
             //    resistor.resultPowerCurve.AdaptFunctionTo(MinimumFrequency, MaximumFrequency, QuantityOfFrequencyPoints, FrequencyScale);
                 OutputResistorsPower.Add(resistor);
             }
@@ -626,7 +626,7 @@ namespace Easycoustics.Transition.Design
 
                         totalVoltage = voltPositive - voltNegative;
                         
-                        comp.resultVoltageCurve.addSample(FreqPoint, totalVoltage);
+                        comp.ResultVoltageCurve.addSample(FreqPoint, totalVoltage);
                       
                     }
                 }
@@ -646,8 +646,8 @@ namespace Easycoustics.Transition.Design
 
                         totalVoltage = voltPositive - voltNegative;
                         
-                        var current = totalVoltage / comp.getImpedance(FreqPoint);
-                        comp.resultCurrentCurve.addSample(FreqPoint, current);
+                        var current = totalVoltage / comp.GetImpedance(FreqPoint);
+                        comp.ResultCurrentCurve.addSample(FreqPoint, current);
                     }
                 }
             }
