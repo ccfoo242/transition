@@ -56,8 +56,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             set { SetProperty(ref outputCurrentThrough, value); raiseLayoutChanged(); }
         }
 
-        public SampledFunction resultVoltageCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Voltage", FunctionUnit = "Volt" };
-        public SampledFunction resultCurrentCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Current", FunctionUnit = "Amper" };
+        public SampledFunction ResultVoltageCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Voltage", FunctionUnit = "Volt" };
+        public SampledFunction ResultCurrentCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Current", FunctionUnit = "Amper" };
 
         private decimal ls;
         public decimal Ls
@@ -105,6 +105,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public bool AnyPrecisionSelected { get { return (ComponentPrecision == Precision.Arbitrary); } }
 
         public override byte QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
+        public Tuple<byte, byte> GetImpedanceTerminals => new Tuple<byte, byte>(0, 1);
 
         public Capacitor()
         {
@@ -186,11 +187,11 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 case "OutputCurrentThrough": OutputCurrentThrough = (bool)value;break;
             }
 
-            resultVoltageCurve.Title = "Voltage Across Capacitor " + ElementName;
-            resultCurrentCurve.Title = "Current Through Capacitor " + ElementName;
+            ResultVoltageCurve.Title = "Voltage Across Capacitor " + ElementName;
+            ResultCurrentCurve.Title = "Current Through Capacitor " + ElementName;
         }
 
-        public ComplexDecimal getImpedance(decimal frequency)
+        public ComplexDecimal GetImpedance(decimal frequency)
         {
             var w = 2m * DecimalMath.Pi * frequency;
 
@@ -206,13 +207,6 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
             throw new NotImplementedException();
         }
-
-        List<Tuple<byte, byte, ComplexDecimal>> IPassive.getImpedance(decimal frequency)
-        {
-            var output = new List<Tuple<byte, byte, ComplexDecimal>>();
-            output.Add(new Tuple<byte, byte, ComplexDecimal>(0, 1, getImpedance(frequency)));
-
-            return output;
-        }
+        
     }
 }

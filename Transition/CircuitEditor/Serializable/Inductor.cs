@@ -30,8 +30,10 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             set { SetProperty(ref outputCurrentThrough, value); raiseLayoutChanged(); }
         }
 
-        public SampledFunction resultVoltageCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Voltage", FunctionUnit = "Volt" };
-        public SampledFunction resultCurrentCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Current", FunctionUnit = "Amper" };
+        public SampledFunction ResultVoltageCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Voltage", FunctionUnit = "Volt" };
+        public SampledFunction ResultCurrentCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Current", FunctionUnit = "Amper" };
+
+        public Tuple<byte, byte> GetImpedanceTerminals => new Tuple<byte, byte>(0, 1);
 
         private decimal inductorValue;
         public decimal InductorValue
@@ -170,11 +172,11 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 case "OutputCurrentThrough": OutputCurrentThrough = (bool)value; break;
             }
             
-            resultVoltageCurve.Title = "Voltage Across Inductor " + ElementName;
-            resultCurrentCurve.Title = "Current Through Inductor " + ElementName;
+            ResultVoltageCurve.Title = "Voltage Across Inductor " + ElementName;
+            ResultCurrentCurve.Title = "Current Through Inductor " + ElementName;
         }
 
-        public ComplexDecimal getImpedance(decimal frequency)
+        public ComplexDecimal GetImpedance(decimal frequency)
         {
             var w = 2m * DecimalMath.Pi * frequency;
 
@@ -190,13 +192,6 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
             throw new NotImplementedException();
         }
-
-        List<Tuple<byte, byte, ComplexDecimal>> IPassive.getImpedance(decimal frequency)
-        {
-            var output = new List<Tuple<byte, byte, ComplexDecimal>>();
-            output.Add(new Tuple<byte, byte, ComplexDecimal>(0, 1, getImpedance(frequency)));
-
-            return output;
-        }
+        
     }
 }

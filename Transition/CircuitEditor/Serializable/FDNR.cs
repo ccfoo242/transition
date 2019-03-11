@@ -81,8 +81,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
         }
 
-        public SampledFunction resultVoltageCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Voltage", FunctionUnit = "Volt" };
-        public SampledFunction resultCurrentCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Current", FunctionUnit = "Amper" };
+        public SampledFunction ResultVoltageCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Voltage", FunctionUnit = "Volt" };
+        public SampledFunction ResultCurrentCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Current", FunctionUnit = "Amper" };
 
         public override void SetProperty(string property, object value)
         {
@@ -98,11 +98,11 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
             }
 
-            resultVoltageCurve.Title = "Voltage Across FDNR " + ElementName;
-            resultCurrentCurve.Title = "Current Through FDNR " + ElementName;
+            ResultVoltageCurve.Title = "Voltage Across FDNR " + ElementName;
+            ResultCurrentCurve.Title = "Current Through FDNR " + ElementName;
         }
 
-        public ComplexDecimal getImpedance(decimal frequency)
+        public ComplexDecimal GetImpedance(decimal frequency)
         {
             /* w is angular frequency
              w= 2 * Pi * F 
@@ -111,12 +111,6 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             return -1 / (w * w * FdnrValue);
         }
 
-        List<Tuple<byte, byte, ComplexDecimal>> IPassive.getImpedance(decimal frequency)
-        {
-            var output = new List<Tuple<byte, byte, ComplexDecimal>>();
-            output.Add(new Tuple<byte, byte, ComplexDecimal>(0, 1, getImpedance(frequency)));
-
-            return output;
-        }
+        public Tuple<byte, byte> GetImpedanceTerminals => new Tuple<byte, byte>(0, 1);
     }
 }

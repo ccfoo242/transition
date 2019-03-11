@@ -11,7 +11,7 @@ using Easycoustics.Transition.Functions;
 
 namespace Easycoustics.Transition.CircuitEditor.Serializable
 {
-    public class Potentiometer : SerializableComponent, IPassive
+    public class Potentiometer : SerializableComponent
     {
         public override string ElementLetter => "P";
         public override string ElementType => "Potentiometer";
@@ -170,10 +170,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
         }
 
-        public List<Tuple<byte, byte, ComplexDecimal>> getImpedance(decimal frequency)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
     
 }

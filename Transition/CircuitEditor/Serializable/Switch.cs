@@ -8,7 +8,7 @@ using Easycoustics.Transition.Common;
 
 namespace Easycoustics.Transition.CircuitEditor.Serializable
 {
-    public class Switch : SerializableComponent, IPassive
+    public class Switch : SerializableComponent
     {
         public override string ElementLetter => "S";
         public override string ElementType => "Switch";
@@ -73,22 +73,6 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 case "COpen": COpen = (decimal)value; break;
             }
         }
-
-        public List<Tuple<byte, byte, ComplexDecimal>> getImpedance(decimal frequency)
-        {
-            var output = new List<Tuple<byte, byte, ComplexDecimal>>();
-
-            var w = 2m * DecimalMath.Pi * frequency;
-            var ZCOpen = 1 / (ComplexDecimal.ImaginaryOne * w * COpen);
-
-            for (byte x = 1; x <= (QuantityOfTerminals - 1); x++)
-            {
-                if (x == State)
-                    output.Add(new Tuple<byte, byte, ComplexDecimal>(0, x, RClosed));
-                else
-                    output.Add(new Tuple<byte, byte, ComplexDecimal>(0, x, ZCOpen));
-            }
-            return output;
-        }
+        
     }
 }

@@ -15,6 +15,10 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
         public override byte QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
 
+        public ComplexDecimal GetImpedance(decimal frequency) => RIn;
+        public Tuple<byte, byte> GetImpedanceTerminals => new Tuple<byte, byte>(0, 255);
+
+
         private decimal rIn;
         public decimal RIn
         {
@@ -62,7 +66,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
         }
 
-
+        
         public Buffer() : base()
         {
             rIn = 1e12m;
@@ -92,12 +96,6 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
         }
 
-        public List<Tuple<byte, byte, ComplexDecimal>> getImpedance(decimal frequency)
-        {
-            /* 255 means the passive load is set to ground */
-            var output = new List<Tuple<byte, byte, ComplexDecimal>>();
-            output.Add(new Tuple<byte, byte, ComplexDecimal>(0, 255, RIn));
-            return output;
-        }
+        
     }
 }

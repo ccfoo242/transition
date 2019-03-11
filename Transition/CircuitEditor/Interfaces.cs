@@ -34,20 +34,19 @@ namespace Easycoustics.Transition.CircuitEditor
 
     public interface IPassive
     {
-        /* some elements can exhibit multiple passive impedances on different terminal pairs
-         for example potentiometer and switch */
-
-        List<Tuple<byte, byte, ComplexDecimal>> getImpedance(decimal frequency); /* not angular frequency */    }
+        ComplexDecimal GetImpedance(decimal frequency); /* not angular frequency */
+        Tuple<byte,byte> GetImpedanceTerminals { get; }
+    }
 
     public interface IVoltageCurrentOutput
     {
-        SampledFunction resultVoltageCurve { get; set; } 
-        SampledFunction resultCurrentCurve { get; set; }
+        SampledFunction ResultVoltageCurve { get; set; } 
+        SampledFunction ResultCurrentCurve { get; set; }
 
         bool OutputVoltageAcross { get; set; }
         bool OutputCurrentThrough { get; set; }
 
-        ComplexDecimal getImpedance(decimal frequency);
+        ComplexDecimal GetImpedance(decimal frequency);
     }
 
     public interface IVoltageSource
@@ -58,7 +57,7 @@ namespace Easycoustics.Transition.CircuitEditor
 
     public interface IDependentVoltageSource
     {
-        ComplexDecimal getTransferFunction(decimal frequency);
+        ComplexDecimal GetTransferFunction(decimal frequency);
         byte PositiveReferenceVoltageTerminal { get; }
         byte NegativeReferenceVoltageTerminal { get; }
 
