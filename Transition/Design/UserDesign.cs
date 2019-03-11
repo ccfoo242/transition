@@ -469,7 +469,7 @@ namespace Easycoustics.Transition.Design
             
             var NodeMatrix = new Common.Matrix(QuantityOfNodes);
             /* inside this matrix we put admittances  we solve this matrix along with a vector, 
-             as a equation system of currents for getting the voltages at every node
+             as a equation system of currents for getting the voltages at every node.
              admittance is the reciprocal of impedance.
              both admittance and impedance are complex.
              */
@@ -487,9 +487,7 @@ namespace Easycoustics.Transition.Design
             foreach (var outputNode in outputVoltageNodes)
             {
                 outputNode.ResultVoltageCurve.Clear();
-                SystemCurves.AddIfNotAdded(outputNode.ResultVoltageCurve);
-             /*   outputNode.ResultVoltageCurve.AdaptFunctionTo(MinimumFrequency, MaximumFrequency,
-                    QuantityOfFrequencyPoints, FrequencyScale);*/
+                SystemCurves.AddIfNotAdded(outputNode.ResultVoltageCurve)
             }
 
             var OutputVoltagesComponents = new List<IVoltageCurrentOutput>();
@@ -502,9 +500,7 @@ namespace Easycoustics.Transition.Design
                 {
                     outputVoltCurrComponent.resultVoltageCurve.Clear();
                     SystemCurves.AddIfNotAdded(outputVoltCurrComponent.resultVoltageCurve);
-
-                    //outputVoltCurrComponent.resultVoltageCurve.AdaptFunctionTo(MinimumFrequency, MaximumFrequency,
-                    //QuantityOfFrequencyPoints, FrequencyScale);
+                    
 
                     OutputVoltagesComponents.Add(outputVoltCurrComponent);
                 }
@@ -869,6 +865,11 @@ namespace Easycoustics.Transition.Design
             var tuple = new Tuple<SerializableComponent, byte>(comp, terminal);
 
             return ConnectedComponentTerminals.Contains(tuple);
+        }
+
+        public bool HasComponent(SerializableComponent comp)
+        {
+            return ConnectedComponentTerminals.Select(tup => tup.Item1).Contains(comp);
         }
     }
 }
