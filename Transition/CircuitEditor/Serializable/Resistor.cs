@@ -19,9 +19,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         private bool outputCurrentThrough;
         private bool outputResistorPower;
 
-        public SampledFunction resultVoltageCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Voltage", FunctionUnit = "Volt" };
-        public SampledFunction resultCurrentCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Current", FunctionUnit = "Amper" };
-        public SampledFunction resultPowerCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Power", FunctionUnit = "Watt" };
+        public SampledFunction ResultVoltageCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Voltage", FunctionUnit = "Volt" };
+        public SampledFunction ResultCurrentCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Current", FunctionUnit = "Amper" };
+        public SampledFunction ResultPowerCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Power", FunctionUnit = "Watt" };
 
         public bool OutputVoltageAcross
         {
@@ -103,9 +103,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         }
 
         public bool AnyPrecisionSelected { get { return (ComponentPrecision == Precision.Arbitrary); } }
-
-
         public override byte QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
+        public Tuple<byte, byte> GetImpedanceTerminals => new Tuple<byte, byte>(0, 1);
 
         public Resistor() : base()
         {
@@ -186,11 +185,11 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 case "OutputResistorPower": OutputResistorPower = (bool)value; break;
             }
 
-            resultVoltageCurve.Title = "Voltage Across Resistance " + ElementName;
-            resultCurrentCurve.Title = "Current Through Resistance " + ElementName;
+            ResultVoltageCurve.Title = "Voltage Across Resistance " + ElementName;
+            ResultCurrentCurve.Title = "Current Through Resistance " + ElementName;
         }
 
-        public ComplexDecimal getImpedance(decimal frequency)
+        public ComplexDecimal GetImpedance(decimal frequency)
         {
             var w = 2m * DecimalMath.Pi * frequency;
 
@@ -207,12 +206,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             throw new NotImplementedException();
         }
 
-        List<Tuple<byte, byte, ComplexDecimal>> IPassive.getImpedance(decimal frequency)
-        {
-            var output = new List<Tuple<byte, byte, ComplexDecimal>>();
-            output.Add(new Tuple<byte, byte, ComplexDecimal>(0, 1, getImpedance(frequency)));
+        
 
-            return output;
-        }
     }
 }

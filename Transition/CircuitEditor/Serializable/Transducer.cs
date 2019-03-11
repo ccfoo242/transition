@@ -20,8 +20,11 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public bool OutputVoltageAcross { get => outputVoltageAcross; set { SetProperty(ref outputVoltageAcross, value); raiseLayoutChanged(); } }
         public bool OutputCurrentThrough { get => outputCurrentThrough; set { SetProperty(ref outputCurrentThrough, value); raiseLayoutChanged(); } }
         
-        public SampledFunction resultVoltageCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Voltage", FunctionUnit = "Volt" };
-        public SampledFunction resultCurrentCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Current", FunctionUnit = "Pascal" };
+        public SampledFunction ResultVoltageCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Voltage", FunctionUnit = "Volt" };
+        public SampledFunction ResultCurrentCurve { get; set; } = new SampledFunction() { FunctionQuantity = "Current", FunctionUnit = "Pascal" };
+
+        public Tuple<byte, byte> GetImpedanceTerminals => new Tuple<byte, byte>(0, 1);
+
 
         private string description;
         public string Description
@@ -150,21 +153,14 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 case "OutputCurrentThrough": OutputCurrentThrough = (bool)value; break;
             }
 
-            resultVoltageCurve.Title = "Voltage Across Transducer " + ElementName;
-            resultCurrentCurve.Title = "Current Through Transducer " + ElementName;
+            ResultVoltageCurve.Title = "Voltage Across Transducer " + ElementName;
+            ResultCurrentCurve.Title = "Current Through Transducer " + ElementName;
         }
 
-        public ComplexDecimal getImpedance(decimal frequency)
+        public ComplexDecimal GetImpedance(decimal frequency)
         {
             throw new NotImplementedException();
         }
-
-        List<Tuple<byte, byte, ComplexDecimal>> IPassive.getImpedance(decimal frequency)
-        {
-            var output = new List<Tuple<byte, byte, ComplexDecimal>>();
-            output.Add(new Tuple<byte, byte, ComplexDecimal>(0, 1, getImpedance(frequency)));
-
-            return output;
-        }
+        
     }
 }

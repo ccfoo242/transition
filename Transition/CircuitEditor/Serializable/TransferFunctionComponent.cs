@@ -15,6 +15,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public override string ElementType => "Transfer Function";
 
         public override byte QuantityOfTerminals { get => 4; set => throw new NotImplementedException(); }
+        public ComplexDecimal GetImpedance(decimal frequency) => RIn;
+        public Tuple<byte, byte> GetImpedanceTerminals => new Tuple<byte, byte>(0, 1);
 
         private decimal rIn;
         public decimal RIn
@@ -116,6 +118,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
         }
 
+        
         public LaplaceFunction laplaceTf;
         public Function customCurve;
 
@@ -163,12 +166,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
         }
 
-        public List<Tuple<byte, byte, ComplexDecimal>> getImpedance(decimal frequency)
-        {
-            var output = new List<Tuple<byte, byte, ComplexDecimal>>();
-            output.Add(new Tuple<byte, byte, ComplexDecimal>(0, 1, RIn));
-
-            return output;
-        }
+        
+            
     }
 }

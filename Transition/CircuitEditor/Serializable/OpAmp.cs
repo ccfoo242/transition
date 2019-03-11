@@ -51,6 +51,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         }
 
         public override byte QuantityOfTerminals { get => 3; set => throw new NotImplementedException(); }
+        public ComplexDecimal GetImpedance(decimal frequency) => RIn;
+        public Tuple<byte, byte> GetImpedanceTerminals => new Tuple<byte, byte>(0, 1);
 
         public OpAmp() : base()
         {
@@ -83,12 +85,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
         }
 
-        public List<Tuple<byte, byte, ComplexDecimal>> getImpedance(decimal frequency)
-        {
-            var output = new List<Tuple<byte, byte, ComplexDecimal>>();
-            output.Add(new Tuple<byte, byte, ComplexDecimal>(0, 1, RIn));
+        
 
-            return output;
-        }
     }
 }
