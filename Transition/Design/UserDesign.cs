@@ -433,33 +433,28 @@ namespace Easycoustics.Transition.Design
 
             var NodesToWork = ElectricNodes.Where(node => !node.hasNoComponentsConnected && !node.isIsolatedFromOtherNodes && !node.groundNode).ToList();
 
-            Func<IPassive, byte, decimal, List<Tuple<ElectricNode, ComplexDecimal>>> getOtherNodesInPassiveComponent =
-                (component, compTerminal, frequency) =>
+            Func<IPassive, byte, ElectricNode> getOtherNodeInPassiveComponent =
+                (component, compTerminal) =>
                 {
-                    var output = new List<Tuple<ElectricNode, ComplexDecimal>>();
-                    var impedances = component.GetImpedance(frequency);
+                    var terminals = component.GetImpedanceTerminals;
+
+                    //var impedance = component.GetImpedance(frequency);
 
                     byte otherTerminal;
-                    ElectricNode otherNode;
-
-                    foreach (var impedance in impedances)
+                    ElectricNode otherNode = null;
+                    
+                    if ((terminals.Item1 == compTerminal) || (terminals.Item2 == compTerminal))
                     {
-                        if ((impedance.Item1 == compTerminal) || (impedance.Item2 == compTerminal))
-                        {
-                            otherTerminal = (impedance.Item1 == compTerminal) ? impedance.Item2 : impedance.Item1;
+                        otherTerminal = (terminals.Item1 == compTerminal) ? terminals.Item2 : terminals.Item1;
                             /* some impedances are fixed grounded, cannot be floating, those return 255 as component terminal
                              that means connected to the node 0, that is always ground */
-                            if (otherTerminal == 255)
-                                otherNode = GetGroundNode;
-                            else
-                                otherNode = GetComponentTerminalNode((SerializableComponent)component, otherTerminal);
-
-                            if (otherNode != null)
-                                output.Add(new Tuple<ElectricNode, ComplexDecimal>(otherNode, impedance.Item3));
-                        }
+                        if (otherTerminal == 255)
+                            otherNode = GetGroundNode;
+                        else
+                            otherNode = GetComponentTerminalNode((SerializableComponent)component, otherTerminal);
                     }
-
-                    return output;
+                    
+                    return otherNode;
                 };
 
             if (NodesToWork.Count == 0) return new Tuple<bool, string>(false, "Circuit has no nodes");
@@ -557,15 +552,15 @@ namespace Easycoustics.Transition.Design
                         {
                             passive = (IPassive)component.Item1;
                             /* the impedance is calculated for a certain frequency */
-                            var impedances = getOtherNodesInPassiveComponent(passive, component.Item2, FreqPoint);
+                            var otherNode = getOtherNodeInPassiveComponent(passive, component.Item2);
+                            var impedance = passive.GetImpedance(FreqPoint);
 
-                            foreach (var impedance in impedances)
-                            {
-                                NodeMatrix.addAtCoordinate(nodeNumber, nodeNumber, impedance.Item2.Reciprocal);
+                            NodeMatrix.addAtCoordinate(nodeNumber, nodeNumber, impedance.Reciprocal);   
+                                /* reciprocal of impedance is the admittance, the matrix itself is an admittance matrix */
                                 
-                                if (impedance.Item1 != GetGroundNode) /* impedance is floating */
-                                     NodeMatrix.addAtCoordinate(nodeNumber, NodesToWork.IndexOf(impedance.Item1), -1 * impedance.Item2.Reciprocal);
-                            }
+                            if (otherNode != GetGroundNode) /* impedance is floating */
+                                     NodeMatrix.addAtCoordinate(nodeNumber, NodesToWork.IndexOf(otherNode), -1 * impedance.Reciprocal);
+                            
                         }
 
                         if (component.Item1 is VoltageSource)
