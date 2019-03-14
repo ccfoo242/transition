@@ -8,7 +8,7 @@ using Easycoustics.Transition.Common;
 
 namespace Easycoustics.Transition.CircuitEditor.Serializable
 {
-    public class Buffer : SerializableComponent, IPassive
+    public class Buffer : SerializableComponent, IPassive, IIsolateSection, IImplicitGroundedComponent
     {
         public override string ElementLetter => "B";
         public override string ElementType => "Buffer";
@@ -18,6 +18,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public ComplexDecimal GetImpedance(decimal frequency) => RIn;
         public Tuple<byte, byte> GetImpedanceTerminals => new Tuple<byte, byte>(0, 255);
 
+       
 
         private decimal rIn;
         public decimal RIn
@@ -65,8 +66,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 raiseLayoutChanged();
             }
         }
-
         
+
         public Buffer() : base()
         {
             rIn = 1e12m;
@@ -96,6 +97,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
         }
 
-        
+        public byte[] getOtherTerminalsIsolated(byte terminal)
+        {
+            return new byte[] { };
+        }
     }
 }

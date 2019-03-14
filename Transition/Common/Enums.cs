@@ -12,4 +12,5 @@ namespace Easycoustics.Transition.Common
     public enum InterpolationModes { NearestNeighbor, Linear, Quadratic, Cubic };
     public enum PhaseUnit { Degrees, Radians };
     public enum ComplexProjectedData { MagnitudePhase, RealImag, OnlyReal, OnlyImag };
+    public enum CircuitMode { Grounded, Floating, Mixed };
 }

@@ -154,12 +154,12 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
         public Dictionary<int, int> terminalsToCircuitNodes = new Dictionary<int, int>();
        
-        public List<Tuple<SerializableComponent, byte>> GetOtherTerminals(byte terminal)
+        public List<byte> GetOtherTerminals(byte terminal)
         {
-            var output = new List<Tuple<SerializableComponent, byte>>();
+            var output = new List<byte>();
 
             for (byte x = 0; x < QuantityOfTerminals; x++)
-                if (x != terminal) output.Add(new Tuple<SerializableComponent, byte>(this, x));
+                if (x != terminal) output.Add(x);
             
             return output;
         }

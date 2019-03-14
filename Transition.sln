@@ -18,6 +18,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{589E779D-09D9-4AF5-B7BF-A05EC429098A}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{589E779D-09D9-4AF5-B7BF-A05EC429098A}.Debug|Any CPU.Build.0 = Debug|x86
+		{589E779D-09D9-4AF5-B7BF-A05EC429098A}.Debug|Any CPU.Deploy.0 = Debug|x86
 		{589E779D-09D9-4AF5-B7BF-A05EC429098A}.Debug|ARM.ActiveCfg = Debug|ARM
 		{589E779D-09D9-4AF5-B7BF-A05EC429098A}.Debug|ARM.Build.0 = Debug|ARM
 		{589E779D-09D9-4AF5-B7BF-A05EC429098A}.Debug|ARM.Deploy.0 = Debug|ARM

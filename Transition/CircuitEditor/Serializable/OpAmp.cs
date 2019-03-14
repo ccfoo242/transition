@@ -8,10 +8,11 @@ using Easycoustics.Transition.Common;
 
 namespace Easycoustics.Transition.CircuitEditor.Serializable
 {
-    public class OpAmp : SerializableComponent, IPassive
+    public class OpAmp : SerializableComponent, IPassive, IIsolateSection, IImplicitGroundedComponent
     {
         public override string ElementLetter => "U";
         public override string ElementType => "OpAmp";
+
 
         private decimal dcGain;
         public decimal DcGain { get => dcGain;
@@ -54,6 +55,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public ComplexDecimal GetImpedance(decimal frequency) => RIn;
         public Tuple<byte, byte> GetImpedanceTerminals => new Tuple<byte, byte>(0, 1);
 
+     
         public OpAmp() : base()
         {
             GainBandwidth = 1e6m;
@@ -85,7 +87,16 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
         }
 
-        
-
+        public byte[] getOtherTerminalsIsolated(byte terminal)
+        {
+            if (terminal == 0) return new byte[] { 1 };
+            else if (terminal == 1) return new byte[] { 0 };
+            else
+            {
+                /* terminal == 2 */
+                return new byte[] { };
+            }
+             
+        }
     }
 }

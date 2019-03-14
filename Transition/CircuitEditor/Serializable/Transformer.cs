@@ -8,11 +8,12 @@ using Easycoustics.Transition.Common;
 
 namespace Easycoustics.Transition.CircuitEditor.Serializable
 {
-    public class Transformer : SerializableComponent
+    public class Transformer : SerializableComponent, IIsolateSection
     {
         public override string ElementLetter => "T";
         public override string ElementType => "Transformer";
 
+      
         private decimal turnsRatio;
         public decimal TurnsRatio
         {
@@ -119,6 +120,14 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 case "Lpri": Lpri = (decimal)value; break;
                 case "Lsec": Lsec = (decimal)value; break;
             }
+        }
+
+        public byte[] getOtherTerminalsIsolated(byte terminal)
+        {
+            if (terminal == 0) return new byte[] { 1 };
+            else if (terminal == 1) return new byte[] { 0 };
+            else if (terminal == 2) return new byte[] { 3 };
+            else return new byte[] { 2 };
         }
     }
 }

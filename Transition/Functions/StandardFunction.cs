@@ -34,7 +34,7 @@ namespace Easycoustics.Transition.Functions
         public decimal wz { get => 2 * DecimalMath.Pi * Fz; }
 
         
-        private List<decimal> FrequencyPoints => UserDesign.CurrentDesign.getFrequencyPoints();
+        //private List<decimal> FrequencyPoints => UserDesign.CurrentDesign.getFrequencyPoints();
 
         private string currentFunction;
         public string CurrentFunction

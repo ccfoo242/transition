@@ -49,6 +49,13 @@ namespace Easycoustics.Transition.CircuitEditor
         ComplexDecimal GetImpedance(decimal frequency);
     }
 
+    public interface IImplicitGroundedComponent { }
+
+    public interface IIsolateSection
+    {
+        byte[] getOtherTerminalsIsolated(byte terminal);
+    }
+
     public interface IVoltageSource
     {
         byte PositiveTerminal { get; }

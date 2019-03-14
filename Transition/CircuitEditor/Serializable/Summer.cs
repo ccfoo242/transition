@@ -8,11 +8,13 @@ using Easycoustics.Transition.Common;
 
 namespace Easycoustics.Transition.CircuitEditor.Serializable
 {
-    public class Summer : SerializableComponent, IPassive
+    public class Summer : SerializableComponent, IPassive, IIsolateSection, IImplicitGroundedComponent
     {
         public override string ElementLetter =>"E";
         public override string ElementType => "Summer";
-        
+
+        /* all inputs and the output, are all ground referenced. */
+
         private byte quantityOfTerminals;
         public override byte QuantityOfTerminals
         {
@@ -107,7 +109,10 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
         }
 
-        
+        public byte[] getOtherTerminalsIsolated(byte terminal)
+        {
+            return new byte[] { }; /* this element isolates sections from with ALL its terminals */
+        }
     }
 }
 

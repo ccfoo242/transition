@@ -9,7 +9,7 @@ using Easycoustics.Transition.Functions;
 
 namespace Easycoustics.Transition.CircuitEditor.Serializable
 {
-    public class TransferFunctionComponent : SerializableComponent, IPassive
+    public class TransferFunctionComponent : SerializableComponent, IPassive, IIsolateSection
     {
         public override string ElementLetter => "H";
         public override string ElementType => "Transfer Function";
@@ -118,7 +118,6 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
         }
 
-        
         public LaplaceFunction laplaceTf;
         public Function customCurve;
 
@@ -166,7 +165,13 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
         }
 
-        
-            
+        public byte[] getOtherTerminalsIsolated(byte terminal)
+        {
+            if (terminal == 0) return new byte[] { 1 };
+            else if (terminal == 1) return new byte[] { 0 };
+            else if (terminal == 2) return new byte[] { 3 };
+            else return new byte[] { 2 };
+
+        }
     }
 }
