@@ -746,7 +746,7 @@ namespace Easycoustics.Transition.CircuitEditor
         {
             RedoStack.Clear();
             command.execute();
-            TapCalculate(null, null); 
+          //  TapCalculate(null, null); 
             UndoStack.Push(command);
         }
 
@@ -756,7 +756,7 @@ namespace Easycoustics.Transition.CircuitEditor
 
             ICircuitCommand command = UndoStack.Pop();
             command.unExecute();
-            TapCalculate(null, null); 
+           // TapCalculate(null, null); 
             RedoStack.Push(command);
         }
 
@@ -766,7 +766,7 @@ namespace Easycoustics.Transition.CircuitEditor
             
             ICircuitCommand command = RedoStack.Pop();
             command.execute();
-            TapCalculate(null, null); 
+          //  TapCalculate(null, null); 
             UndoStack.Push(command);
         }
 

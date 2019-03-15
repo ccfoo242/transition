@@ -20,7 +20,11 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             { FunctionQuantity = "Voltage", FunctionUnit = "Volt" };
 
         private string description;
-        public string Description { get => description; set { SetProperty(ref description, value); raiseLayoutChanged(); } }
+        public string Description
+        {
+            get => description;
+            set { SetProperty(ref description, value); raiseLayoutChanged(); }
+        }
 
         public VoltageOutputDifferential() : base()
         {

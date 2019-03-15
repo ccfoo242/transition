@@ -30,10 +30,20 @@
         <ScrollViewer VerticalScrollBarVisibility="Visible" VerticalScrollMode="Enabled" Grid.Column="0"
                       Grid.Row="1">
             <StackPanel Orientation="Vertical">
-               
-                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
-                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
-                        x:Name="brdGround" Tag="ground" Height="50" Width="50">
+                <StackPanel.Resources>
+                    <Style TargetType="Border" x:Key="stlButtons">
+                        <Setter Property="Background" Value="AntiqueWhite"/>
+                        <Setter Property="CanDrag" Value="True"/>
+                        <Setter Property="Height" Value="50"/>
+                        <Setter Property="Width" Value="50"/>
+                        <Setter Property="IsTapEnabled" Value="True"/>
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </StackPanel.Resources>
+                <Button Content="Perform your energy, become your matter"
+                        IsTapEnabled="True" Tapped="TapCalculate"/>
+                <Border DragStarting="dragElement" Tapped="tapElement"
+                        x:Name="brdGround" Tag="ground" Style="{StaticResource stlButtons}">
                     <Viewbox>
                         <ContentControl ContentTemplate="{StaticResource symbolGround}" 
                                     HorizontalAlignment="Center" Margin="5" 
@@ -41,9 +51,8 @@
                     </Viewbox>
                 </Border>
 
-                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
-                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
-                        x:Name="brdWire" Tag="wire" Height="50" Width="50" >
+                <Border DragStarting="dragElement" Tapped="tapElement"
+                        x:Name="brdWire" Tag="wire" Style="{StaticResource stlButtons}">
                     <Viewbox>
                         <ContentControl ContentTemplate="{StaticResource symbolWire}" 
                                     HorizontalAlignment="Center" Margin="5" 
@@ -51,9 +60,8 @@
                     </Viewbox>
                 </Border>
 
-                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
-                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
-                        x:Name="brdVoltageNode" Tag="voltagenode" Height="50" Width="50" >
+                <Border DragStarting="dragElement" Tapped="tapElement"
+                        x:Name="brdVoltageNode" Tag="voltagenode"  Style="{StaticResource stlButtons}">
                     <Viewbox>
                         <ContentControl ContentTemplate="{StaticResource symbolVoltageNode}" 
                                     HorizontalAlignment="Center" Margin="5" 
@@ -61,9 +69,8 @@
                     </Viewbox>
                 </Border>
                 
-                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
-                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
-                        x:Name="brdVoltageDiff" Tag="voltagediff" Height="50" Width="50" >
+                <Border DragStarting="dragElement" Tapped="tapElement"
+                        x:Name="brdVoltageDiff" Tag="voltagediff" Style="{StaticResource stlButtons}">
                     <Viewbox>
                         <ContentControl ContentTemplate="{StaticResource symbolVoltmeter}" 
                                     HorizontalAlignment="Center" Margin="5" 
@@ -71,10 +78,9 @@
                     </Viewbox>
                 </Border>
 
-                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
-                        Background="AntiqueWhite" Tag="resistor"
-                        x:Name="brdResistor" IsTapEnabled="True" Tapped="tapElement"
-                         Height="50" Width="50">
+                <Border DragStarting="dragElement" Tag="resistor"
+                        x:Name="brdResistor" Tapped="tapElement" 
+                        Style="{StaticResource stlButtons}">
                     <Viewbox>
                         <ContentControl ContentTemplate="{StaticResource symbolResistor}" 
                                     HorizontalAlignment="Center"  Margin="5"
@@ -82,9 +88,9 @@
                     </Viewbox>
                 </Border>
 
-                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
-                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
-                        x:Name="brdCapacitor" Tag="capacitor" Height="50" Width="50">
+                <Border DragStarting="dragElement" Tapped="tapElement"
+                        x:Name="brdCapacitor" Tag="capacitor"
+                         Style="{StaticResource stlButtons}">
                     <Viewbox>
                         <ContentControl ContentTemplate="{StaticResource symbolCapacitor}" 
                                     HorizontalAlignment="Center"  Margin="5"
@@ -93,9 +99,8 @@
 
                 </Border>
 
-                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
-                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
-                        x:Name="brdInductor" Tag="inductor" Height="50" Width="50">
+                <Border DragStarting="dragElement" Tapped="tapElement"
+                        x:Name="brdInductor" Tag="inductor" Style="{StaticResource stlButtons}">
 
                     <Viewbox>
                         <ContentControl ContentTemplate="{StaticResource symbolInductor}" 
@@ -104,9 +109,8 @@
                     </Viewbox>
                 </Border>
 
-                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
-                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
-                        x:Name="brdFdnr" Tag="fdnr" Height="50" Width="50" >
+                <Border DragStarting="dragElement" Tapped="tapElement"
+                        x:Name="brdFdnr" Tag="fdnr" Style="{StaticResource stlButtons}">
                     <Viewbox>
                         <ContentControl ContentTemplate="{StaticResource symbolFdnr}" 
                                     HorizontalAlignment="Center"  Margin="5"
@@ -114,9 +118,8 @@
                     </Viewbox>
                 </Border>
 
-                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
-                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
-                        x:Name="brdPotentiometer" Tag="potentiometer" Height="50" Width="50">
+                <Border DragStarting="dragElement" Tapped="tapElement"
+                        x:Name="brdPotentiometer" Tag="potentiometer" Style="{StaticResource stlButtons}">
                     <Viewbox>
                         <ContentControl ContentTemplate="{StaticResource symbolPotentiometer}" 
                                     HorizontalAlignment="Center"  Margin="5"
@@ -124,9 +127,8 @@
                     </Viewbox>
                 </Border>
 
-                <Border CornerRadius="5" DragStarting="dragElement" CanDrag="True"
-                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
-                        x:Name="brdSwitch" Tag="switch" Height="50" Width="50">
+                <Border DragStarting="dragElement" Tapped="tapElement"
+                        x:Name="brdSwitch" Tag="switch" Style="{StaticResource stlButtons}">
                     <Viewbox>
                         <ContentControl ContentTemplate="{StaticResource symbolSwitch}"
                                         HorizontalAlignment="Center" Margin="5"
@@ -134,9 +136,8 @@
                     </Viewbox>
                 </Border>
                 
-                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
-                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
-                        x:Name="brdTransformer" Tag="transformer" Height="50" Width="50">
+                <Border DragStarting="dragElement" Tapped="tapElement"
+                        x:Name="brdTransformer" Tag="transformer" Style="{StaticResource stlButtons}">
                     <Viewbox>
                         <ContentControl ContentTemplate="{StaticResource symbolTransformer}" 
                                     HorizontalAlignment="Center"  Margin="5"
@@ -144,9 +145,8 @@
                     </Viewbox>
                 </Border>
 
-                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
-                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
-                        x:Name="brdGenerator" Tag="generator" Height="50" Width="50">
+                <Border DragStarting="dragElement" Tapped="tapElement"
+                        x:Name="brdGenerator" Tag="generator"  Style="{StaticResource stlButtons}">
                     <Viewbox>
                         <ContentControl ContentTemplate="{StaticResource symbolGenerator}" 
                                     HorizontalAlignment="Center"  Margin="5"
@@ -154,28 +154,25 @@
                     </Viewbox>
                 </Border>
 
-                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
-                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
-                        x:Name="brdImpedance" Tag="impedance" Height="50" Width="50">
+                <Border DragStarting="dragElement" Tapped="tapElement"
+                        x:Name="brdImpedance" Tag="impedance" Style="{StaticResource stlButtons}">
                     <Viewbox>
                         <ContentControl ContentTemplate="{StaticResource symbolImpedanceWithZ}" 
                                     HorizontalAlignment="Center"  Margin="5"
                                     VerticalAlignment="Center"/>
                     </Viewbox>
                 </Border>
-                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
-                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
-                        x:Name="brdSCN" Tag="scn" Height="50" Width="50">
+                <!--<Border DragStarting="dragElement" Tapped="tapElement"
+                        x:Name="brdSCN" Tag="scn">
                     <Viewbox>
                         <ContentControl ContentTemplate="{StaticResource symbolSCNWithSCNLegend}" 
                                     HorizontalAlignment="Center"  Margin="5"
                                     VerticalAlignment="Center"/>
                     </Viewbox>
-                </Border>
+                </Border>-->
 
-                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
-                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
-                        x:Name="brdOpAmp" Tag="opamp" Height="50" Width="50">
+                <Border DragStarting="dragElement" Tapped="tapElement"
+                        x:Name="brdOpAmp" Tag="opamp" Style="{StaticResource stlButtons}">
                     <Viewbox>
                         <ContentControl ContentTemplate="{StaticResource symbolOpAmp}" 
                                     HorizontalAlignment="Center"  Margin="5"
@@ -183,9 +180,8 @@
                     </Viewbox>
                 </Border>
 
-                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
-                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
-                        x:Name="brdTF" Tag="transferfunction" Width="50" Height="50">
+                <Border DragStarting="dragElement" Tapped="tapElement"
+                        x:Name="brdTF" Tag="transferfunction" Style="{StaticResource stlButtons}">
                     <Viewbox>
                         <ContentControl ContentTemplate="{StaticResource symbolTF}" 
                                     HorizontalAlignment="Center" Margin="5"
@@ -193,9 +189,8 @@
                     </Viewbox>
                 </Border>
 
-                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
-                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
-                        x:Name="brdSummer" Tag="summer" Width="50" Height="50">
+                <Border DragStarting="dragElement" Tapped="tapElement"
+                        x:Name="brdSummer" Tag="summer" Style="{StaticResource stlButtons}">
                     <Viewbox>
                         <ContentControl ContentTemplate="{StaticResource symbolSummer2Input}" 
                                     HorizontalAlignment="Center"  Margin="5"
@@ -203,9 +198,8 @@
                     </Viewbox>
                 </Border>
 
-                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
-                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
-                        x:Name="brdBuffer" Tag="buffer"  Width="50" Height="50">
+                <Border DragStarting="dragElement" Tapped="tapElement"
+                        x:Name="brdBuffer" Tag="buffer" Style="{StaticResource stlButtons}">
                     <Viewbox>
                         <ContentControl ContentTemplate="{StaticResource symbolBuffer}" 
                                     HorizontalAlignment="Center"  Margin="5"
@@ -213,9 +207,8 @@
                     </Viewbox>
                 </Border>
 
-                <Border CornerRadius="5"  DragStarting="dragElement" CanDrag="True"
-                        Background="AntiqueWhite" IsTapEnabled="True" Tapped="tapElement"
-                        x:Name="brdSpeaker" Tag="transducer" Width="50" Height="50">
+                <Border DragStarting="dragElement" Tapped="tapElement"
+                        x:Name="brdSpeaker" Tag="transducer" Style="{StaticResource stlButtons}">
                     <Viewbox>
                         <ContentControl ContentTemplate="{StaticResource symbolSpeaker}" 
                                     HorizontalAlignment="Center"  Margin="5"

@@ -81,17 +81,17 @@ namespace Easycoustics.Transition
                 {
                     node2 = GetComponentTerminalNode(component.Item1, other);
                     if (node2 != null)
-                        if (!output.Contains(node2) && (node2 != node) && (node2 != GroundNode)) output.Add(node2);
-
-                    if (component.Item1 is IImplicitGroundedComponent)
-                        if (component.Item1 is OpAmp)
-                        {
-                            if (component.Item2 == 2)
-                                if (!output.Contains(GroundNode)) output.Add(GroundNode);
-                        } else
-                                if (!output.Contains(GroundNode)) output.Add(GroundNode);
-
+                        if (!output.Contains(node2) && (node2 != node)) output.Add(node2);
                 }
+
+                if (component.Item1 is IImplicitGroundedComponent)
+                    if (component.Item1 is OpAmp)
+                    {
+                        if (component.Item2 == 2)
+                            if (!output.Contains(GroundNode)) output.Add(GroundNode);
+                    }
+                    else
+                            if (!output.Contains(GroundNode)) output.Add(GroundNode);
             }
 
             return output;
@@ -104,6 +104,7 @@ namespace Easycoustics.Transition
             ElectricNodes.Clear();
 
             GroundNode.NodeWires.Clear();
+            GroundNode.ConnectedComponentTerminals.Clear();
             GroundNode.NodeWires.AddRange(GetGroundedWires());
 
             ElectricNodes.Add(GroundNode);
@@ -118,11 +119,13 @@ namespace Easycoustics.Transition
                 };
 
             ElectricNode newNode;
+            int nodeNumber = 1;
 
             foreach (var wire in GetNonGroundedWires())
                 if (wireBelongsTo(wire) == null)
                 {
-                    newNode = new ElectricNode() { groundNode = false };
+                    newNode = new ElectricNode() { groundNode = false, NodeNumber = nodeNumber };
+                    nodeNumber++;
                     ElectricNodes.Add(newNode);
                     newNode.NodeWires.AddRange(WireGroup(wire));
                 }
@@ -151,7 +154,7 @@ namespace Easycoustics.Transition
 
             Circuit currentCircuit;
 
-            foreach (var node in ElectricNodes)
+            foreach (var node in ElectricNodes.Where(node => !node.groundNode))
             {
                 currentCircuit = nodeBelongsToCircuit(node);
                 if (currentCircuit == null)
@@ -194,7 +197,7 @@ namespace Easycoustics.Transition
 
             visit(startingNode);
             
-            output.Nodes.AddRange(output.Nodes);
+            //output.Nodes.AddRange(output.Nodes);
 
             return output;
         }
@@ -208,6 +211,7 @@ namespace Easycoustics.Transition
             
             visit = (node) => {
                 output.Nodes.Add(node);
+                if (node == GroundNode) return;
                 foreach (var nextNode in GetOtherNodesConnectedToThisNode(node))
                     if (!output.Nodes.Contains(nextNode)) visit(nextNode);
             };
@@ -240,7 +244,7 @@ namespace Easycoustics.Transition
             while (added)
             {
                 added = false;
-                foreach (var wire in CurrentDesign.Wires)
+                foreach (var wire in CurrentDesign.Wires.Where(wire => !ConnectedWires.Contains(wire)))
                     if (isConnected(wire))
                     {
                         added = true;
@@ -563,6 +567,12 @@ namespace Easycoustics.Transition
         {
             return ConnectedComponentTerminals.Select(tup => tup.Item1).Contains(comp);
         }
+
+        public override string ToString()
+        {
+            if (groundNode) return "Ground Node"; else
+            return "Node " + NodeNumber.ToString();
+        }
     }
 
 
@@ -595,6 +605,12 @@ namespace Easycoustics.Transition
     {
         public List<ElectricNode> Nodes { get; } = new List<ElectricNode>();
         public bool IsGrounded => Nodes.Where(node => node.groundNode).Count() > 0;
+
+        public override string ToString()
+        {
+            return "Circuit section: " + Nodes.Count.ToString() + " nodes, " +
+                (IsGrounded ? "Grounded" : "Floating");
+        }
     }
     
 }
