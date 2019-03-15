@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Easycoustics.Transition.Analyzer
+namespace Easycoustics.Transition
 {
     public class Analyzer
     {
@@ -422,7 +422,7 @@ namespace Easycoustics.Transition.Analyzer
 
 
 
-            var freqPoints = getFrequencyPoints();
+            var freqPoints = UserDesign.CurrentDesign.getFrequencyPoints();
             foreach (var FreqPoint in freqPoints)
             {
                 /* whole circuit is solved for each frequency point */

@@ -10,7 +10,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 {
     public class Summer : SerializableComponent, IPassive, IIsolateSection, IImplicitGroundedComponent
     {
-        public override string ElementLetter =>"E";
+        public override string ElementLetter => "E";
         public override string ElementType => "Summer";
 
         /* all inputs and the output, are all ground referenced. */

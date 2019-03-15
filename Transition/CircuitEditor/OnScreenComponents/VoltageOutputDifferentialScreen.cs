@@ -25,12 +25,57 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
 
         public TextBlock txtComponentName;
         public TextBlock txtDescription;
+        public TextBlock txtV;
 
         private ContentControl SymbolVoltmeter;
 
         public override void setPositionTextBoxes(SerializableElement element)
         {
-            
+            double leftCN; double topCN;
+            double leftD; double topD;
+
+            if (ActualRotation == 0)
+            {
+                leftCN = 90;
+                topCN = 20;
+
+                leftD = 90;
+                topD = 40;
+            }
+            else if (ActualRotation == 90)
+            {
+                leftCN = (SchematicWidth / 2) - (txtComponentName.ActualWidth / 2);
+                topCN = 10;
+
+                leftD = (SchematicWidth / 2) - (txtDescription.ActualWidth / 2);
+                topD = 90;
+
+            }
+            else if (ActualRotation == 180)
+            {
+                leftCN = 90;
+                topCN = 20;
+
+                leftD = 90;
+                topD = 40;
+
+            }
+            else
+            {
+                leftCN = (SchematicWidth / 2) - (txtComponentName.ActualWidth / 2);
+                topCN = 10;
+
+                leftD = (SchematicWidth / 2) - (txtDescription.ActualWidth / 2);
+                topD = 90;
+
+            }
+
+            ((TranslateTransform)txtComponentName.RenderTransform).X = leftCN;
+            ((TranslateTransform)txtComponentName.RenderTransform).Y = topCN;
+
+            ((TranslateTransform)txtDescription.RenderTransform).X = leftD;
+            ((TranslateTransform)txtDescription.RenderTransform).Y = topD;
+
         }
 
         public VoltageOutputDifferentialScreen(VoltageOutputDifferential vod) : base(vod)
@@ -57,9 +102,7 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
             txtComponentName.RenderTransform = new TranslateTransform() { };
             txtComponentName.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
 
-            ((TranslateTransform)txtComponentName.RenderTransform).X = 20;
-            ((TranslateTransform)txtComponentName.RenderTransform).Y = 0;
-
+         
             Children.Add(txtComponentName);
 
 
@@ -75,21 +118,21 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
             txtDescription.RenderTransform = new TranslateTransform() { };
             txtDescription.SizeChanged += delegate { setPositionTextBoxes(SerializableComponent); };
 
-            ((TranslateTransform)txtDescription.RenderTransform).X = 20;
-            ((TranslateTransform)txtDescription.RenderTransform).Y = 20;
-
+          
             Children.Add(txtDescription);
 
-
-
-            var rect = new Rectangle()
+            txtV = new TextBlock()
             {
-                Width = 10,
-                Height = 10,
-                Fill = new SolidColorBrush(Colors.Black)
+                FontWeight = FontWeights.Bold,
+                Text = "V",
+                RenderTransform = new TranslateTransform()
             };
-            //rect.RenderTransform = new TranslateTransform() { X = 15, Y = 15 };
-            Children.Add(rect);
+            ((TranslateTransform)txtV.RenderTransform).X = 55;
+            ((TranslateTransform)txtV.RenderTransform).Y = 50;
+
+            Children.Add(txtV);
+            
+
             postConstruct();
 
         }

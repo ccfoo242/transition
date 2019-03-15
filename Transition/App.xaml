@@ -360,7 +360,6 @@
                          Canvas.Top="24"
                          Fill="Black"/>
 
-                <TextBlock Text="V" Canvas.Left="20" Canvas.Top="25"/>
             </Canvas>
         </DataTemplate>
 

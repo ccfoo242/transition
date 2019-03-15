@@ -11,13 +11,13 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 {
     public class VoltageOutputDifferential : SerializableComponent
     {
-        public override string ElementLetter => "V";
+        public override string ElementLetter => "F";
         public override string ElementType => "Voltage Curve Output between Nodes";
 
         public override byte QuantityOfTerminals { get => 2; set => throw new NotImplementedException(); }
 
         public SampledFunction ResultVoltageCurve { get; set; } = new SampledFunction()
-        { FunctionQuantity = "Voltage", FunctionUnit = "Volt" };
+            { FunctionQuantity = "Voltage", FunctionUnit = "Volt" };
 
         private string description;
         public string Description { get => description; set { SetProperty(ref description, value); raiseLayoutChanged(); } }

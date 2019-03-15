@@ -715,6 +715,7 @@ namespace Easycoustics.Transition.CircuitEditor
                 case "buffer":           return new Serializable.Buffer();
                 case "transducer":       return new Transducer();
                 case "voltagenode":      return new VoltageOutputNode();
+                case "voltagediff":      return new VoltageOutputDifferential();
             }
 
             throw new NotSupportedException();
@@ -817,8 +818,8 @@ namespace Easycoustics.Transition.CircuitEditor
 
         private async void Calculate()
         {
-            var result = await CurrentDesign.Calculate();
-
+            var result = await Analyzer.CurrentInstance.Calculate();
+            
             if (result.Item1)
                 CurrentDesign.SystemCurves.submitCurvesChange();
             
