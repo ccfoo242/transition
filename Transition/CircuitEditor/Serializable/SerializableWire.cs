@@ -90,8 +90,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public bool IsIndependent => (!IsOtherWireBoundedAtTerminal0 && !IsOtherWireBoundedAtTerminal1);
 
         public delegate void WireBindDelegate(SerializableWire wire, byte terminal, 
-                                            Tuple<SerializableElement, byte> previousValue,
-                                            Tuple<SerializableElement, byte> newValue);
+                                              Tuple<SerializableElement, byte> previousValue,
+                                              Tuple<SerializableElement, byte> newValue);
         public event WireBindDelegate WireBindingChanged;
 
         public List<Tuple<SerializableComponent, byte>> GetBoundedComponents
@@ -114,6 +114,31 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
         }
 
+        public List<SerializableWire> GetBoundedWires
+        {
+            get
+            {
+                var output = new List<SerializableWire>();
+
+                if (AttachedWires.ContainsKey(0))
+                foreach (var wire in AttachedWires[0])
+                    output.Add(wire);
+
+                if (AttachedWires.ContainsKey(1))
+                    foreach (var wire in AttachedWires[1])
+                    output.Add(wire);
+
+
+                if (IsOtherWireBoundedAtTerminal0)
+                        output.Add((SerializableWire)Bind0.Item1);
+
+                if (IsOtherWireBoundedAtTerminal1)
+                        output.Add((SerializableWire)Bind1.Item1);
+
+                return output;
+            }
+        }
+
         public WireScreen OnScreenWire { get; }
         
         public delegate void ComponentLayoutChanged();
@@ -124,7 +149,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             OnScreenElement = OnScreenWire;
         }
 
-        public Tuple<SerializableElement,byte> bnd(byte terminal)
+        public Tuple<SerializableElement, byte> bnd(byte terminal)
         {
             return (terminal == 0) ? bind0 : bind1;
         }
@@ -137,6 +162,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 previousValue.Item1.LayoutChanged -= BindedElementLayoutChanged;
                 previousValue.Item1.ElementDeleted -= BindedElementDeleted;
                 previousValue.Item1.ElementTerminalDeleted -= BindedElementTerminalDeleted;
+                //previousValue.Item1.AttachedWires[previousValue.Item2]
+                previousValue.Item1.AttachedWires[previousValue.Item2].Remove(this);
             }
 
             if (newValue != null)
@@ -144,6 +171,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 newValue.Item1.LayoutChanged += BindedElementLayoutChanged;
                 newValue.Item1.ElementDeleted += BindedElementDeleted;
                 newValue.Item1.ElementTerminalDeleted += BindedElementTerminalDeleted;
+                //newValue.Item1.AttachedWires.Add(new Tuple<SerializableWire, byte>(this, terminal));
+                newValue.Item1.PutAttachedWire(newValue.Item2, this);
             }
 
             WireBindingChanged?.Invoke(this, terminal, previousValue, newValue);

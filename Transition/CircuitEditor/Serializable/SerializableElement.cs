@@ -57,9 +57,10 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         /* QuantityOfTerminals is a get; set; 
          * because it can be modified at runtime,
          * some components can change their terminals at runtime,
-           examples of that are Transducer, Potentiometer and Summer */
+           those are Transducer, Switch, Potentiometer and Summer */
         public abstract byte QuantityOfTerminals { get; set; }
-    
+
+        public Dictionary<byte, List<SerializableWire>> AttachedWires { get; } = new Dictionary<byte, List<SerializableWire>>();
 
         // OnScreenComponent is the class that has responsability
         // for showing the component on screen of the CircuitEditor
@@ -105,6 +106,14 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             return "Element: " + ElementName;
         }
 
+        public void PutAttachedWire(byte thisElementTerminal, SerializableWire wire)
+        {
+            if (!AttachedWires.Keys.Contains(thisElementTerminal))
+                AttachedWires[thisElementTerminal] = new List<SerializableWire>();
+
+            if (!AttachedWires[thisElementTerminal].Contains(wire))
+                AttachedWires[thisElementTerminal].Add(wire);
+        }
     }
 
     public abstract class SerializableComponent : SerializableElement
@@ -152,7 +161,6 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         // configure the component parameters
         public UserControl ParametersControl { get; set; }
 
-        public Dictionary<int, int> terminalsToCircuitNodes = new Dictionary<int, int>();
        
         public List<byte> GetOtherTerminals(byte terminal)
         {
@@ -178,6 +186,43 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                                   QuantityOfTerminals = (byte)value; break;
             }
         }
+
+        public bool IsTerminalGrounded(byte terminal) {
+                return GetOtherConnectedComponents(terminal).Select(tup => tup.Item1).Where(comp => comp is Ground).Count() > 0;
+            } 
         
+
+        public List<Tuple<SerializableComponent, byte>> GetOtherConnectedComponents(byte terminal)
+        {
+             /* the way to traverse a graph is with a recursive and feedback algorithm */
+
+            var output = new List<Tuple<SerializableComponent, byte>>();
+
+            var visitedWires = new List<SerializableWire>();
+
+            Action<SerializableWire> visit = null;
+
+            visit = (wire) =>
+            {
+                visitedWires.Add(wire);
+                foreach (var item in wire.GetBoundedComponents)
+                    if (!output.Contains(item)) output.Add(item);
+            
+                foreach (var nextWire in wire.GetBoundedWires)
+                     if (!visitedWires.Contains(nextWire)) visit(nextWire);
+            };
+
+            if (AttachedWires.ContainsKey(terminal))
+            {
+                foreach (var wire in AttachedWires[terminal])
+                    visit(wire);
+            }
+
+            return output;
+            
+        }
+
+        
+
     }
 }

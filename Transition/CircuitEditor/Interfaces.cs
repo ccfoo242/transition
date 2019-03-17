@@ -62,6 +62,8 @@ namespace Easycoustics.Transition.CircuitEditor
         byte NegativeTerminal { get; }
     }
 
+    public interface IMeterComponent { }
+
     public interface IDependentVoltageSource
     {
         ComplexDecimal GetTransferFunction(decimal frequency);

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Easycoustics.Transition.CircuitEditor.Serializable
 {
-    public class VoltageOutputDifferential : SerializableComponent
+    public class VoltageOutputDifferential : SerializableComponent, IMeterComponent
     {
         public override string ElementLetter => "F";
         public override string ElementType => "Voltage Curve Output between Nodes";

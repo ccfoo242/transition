@@ -84,9 +84,10 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
         private SampledFunction taperFunction;
         public SampledFunction TaperFunction
-            { get { return taperFunction; }
-              set { taperFunction = value;
-                    TaperChanged?.Invoke();
+        {
+            get { return taperFunction; }
+            set { taperFunction = value;
+                  TaperChanged?.Invoke();
             }
         }
         
