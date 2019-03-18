@@ -111,7 +111,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
         public byte[] getOtherTerminalsIsolated(byte terminal)
         {
-            return new byte[] { }; /* this element isolates sections from with ALL its terminals */
+            return new byte[] { }; /* this component isolates sections from with ALL its terminals */
         }
     }
 }
