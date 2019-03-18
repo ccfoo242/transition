@@ -46,7 +46,7 @@ namespace Easycoustics.Transition
             List<byte> otherTerminals;
             ElectricNode node2;
 
-            foreach (var component in node.ConnectedComponentTerminals)
+            foreach (var component in node.ConnectedComponentTerminals.Where(tup => !(tup.Item1 is IMeterComponent)))
             {
                 otherTerminals = component.Item1.GetOtherTerminals(component.Item2);
                 foreach (var other in otherTerminals)
@@ -70,7 +70,7 @@ namespace Easycoustics.Transition
             List<byte> otherTerminals;
             ElectricNode node2;
 
-            foreach (var component in node.ConnectedComponentTerminals)
+            foreach (var component in node.ConnectedComponentTerminals.Where(tup => !(tup.Item1 is IMeterComponent)))
             {
                 if (component.Item1 is IIsolateSection)
                     otherTerminals = ((IIsolateSection)component.Item1).getOtherTerminalsIsolated(component.Item2).ToList();
@@ -86,7 +86,7 @@ namespace Easycoustics.Transition
 
                 if (component.Item1 is IImplicitGroundedComponent)
                     if (component.Item1 is OpAmp)
-                    {
+                    {/* opamp is floating at input, and grounded at output */
                         if (component.Item2 == 2)
                             if (!output.Contains(GroundNode)) output.Add(GroundNode);
                     }
@@ -100,35 +100,13 @@ namespace Easycoustics.Transition
 
         public void MakeUpNodesSectionsCircuits()
         {
-            //var output = new List<ElectricNode>();
             ElectricNodes.Clear();
 
             GroundNode.NodeWires.Clear();
             GroundNode.ConnectedComponentTerminals.Clear();
-            GroundNode.NodeWires.AddRange(GetGroundedWires());
+            //GroundNode.NodeWires.AddRange(GetGroundedWires());
 
             ElectricNodes.Add(GroundNode);
-            /* Func<SerializableWire, ElectricNode> wireBelongsTo =
-                (wire) =>
-                {
-                    foreach (var node in ElectricNodes)
-                        if (node.NodeWires.Contains(wire)) return node;
-
-                    return null;
-                };
-
-            ElectricNode newNode;
-            int nodeNumber = 1;
-
-            foreach (var wire in GetNonGroundedWires())
-                if (wireBelongsTo(wire) == null)
-                {
-                    newNode = new ElectricNode() { groundNode = false, NodeNumber = nodeNumber };
-                    nodeNumber++;
-                    ElectricNodes.Add(newNode);
-                    newNode.NodeWires.AddRange(WireGroup(wire));
-                }
-            */
 
             Func<SerializableComponent, byte, ElectricNode> compTerminalBelongsToNode =
                 (comp, terminal) =>
@@ -161,30 +139,17 @@ namespace Easycoustics.Transition
                 }
                 else
                     if (node2 == GroundNode)
-                    GroundNode.ConnectedComponentTerminals.Add(compTerm);
+                        GroundNode.ConnectedComponentTerminals.Add(compTerm);
             }
-
-            /*
-
-            foreach (var node in ElectricNodes)
-                foreach (var wire in node.NodeWires)
-                    foreach (var tuple in wire.GetBoundedComponents)
-                        if (!node.ConnectedComponentTerminals.Contains(tuple))
-                            node.ConnectedComponentTerminals.Add(tuple);
-                            */
 
 
             foreach (var node in ElectricNodes)
-            {
-                if (GetOtherNodesConnectedToThisNode(node).Count == 0) node.isIsolatedFromOtherNodes = true;
-            }
+                if (GetOtherNodesConnectedToThisNode(node).Count == 0)
+                    node.isIsolatedFromOtherNodes = true;
+            
 
             Circuits.Clear();
-            /*
-            Func<ElectricNode, Circuit> nodeBelongsToCircuit = (node) => {
-                return Circuits.Find(circuit => circuit.Nodes.Contains(node));
-            };
-            */
+           
             Circuit currentCircuit;
 
             foreach (var node in ElectricNodes.Where(node => !node.groundNode))
@@ -193,13 +158,7 @@ namespace Easycoustics.Transition
                 if (currentCircuit == null)
                     Circuits.Add(getCircuit(node));
             }
-
-            /*
-            Func<ElectricNode, Circuit, CircuitSection> nodeBelongsToSection = (node, circuit) =>
-            {
-                return circuit.Sections.Find(section => section.Nodes.Contains(node));
-            };*/
-
+            
             CircuitSection currentSection;
 
             foreach (var circuit in Circuits)
@@ -210,7 +169,6 @@ namespace Easycoustics.Transition
                         circuit.Sections.Add(getSection(node));
                 }
             
-
         }
 
         private CircuitSection getSection(ElectricNode startingNode)
@@ -228,8 +186,6 @@ namespace Easycoustics.Transition
 
             visit(startingNode);
             
-            //output.Nodes.AddRange(output.Nodes);
-
             return output;
         }
 
@@ -251,57 +207,7 @@ namespace Easycoustics.Transition
             
             return output;
         }
-
-
-
-
-
-        private List<SerializableWire> WireGroup(SerializableWire w1)
-        {
-            var ConnectedWires = new List<SerializableWire>();
-
-            ConnectedWires.Add(w1);
-            bool added = true;
-
-            Func<SerializableWire, bool> isConnected =
-                (wir) =>
-                {
-                    foreach (var wire in ConnectedWires)
-                        if (wir.isThisWireBoundedToOtherWire(wire))
-                            return true;
-                    return false;
-                };
-
-            while (added)
-            {
-                added = false;
-                foreach (var wire in CurrentDesign.Wires.Where(wire => !ConnectedWires.Contains(wire)))
-                    if (isConnected(wire))
-                    {
-                        added = true;
-                        if (!ConnectedWires.Contains(wire))
-                            ConnectedWires.Add(wire);
-                        break;
-                    }
-            }
-
-            return ConnectedWires;
-        }
-
-
-
-      
-
-
-
-
-        private bool areTwoWiresConnected(SerializableWire w1, SerializableWire w2)
-        {
-            if (w1 == null || w2 == null) throw new NullReferenceException();
-            var groupW1 = WireGroup(w1);
-
-            return groupW1.Contains(w2);
-        }
+        
 
         public List<Tuple<SerializableComponent, byte>> GetAllComponentsTerminals()
         {
@@ -314,61 +220,18 @@ namespace Easycoustics.Transition
             return output;
         }
 
-        public List<SerializableWire> GetNonGroundedWires()
-        {
-            var grounded = GetGroundedWires();
-
-            return CurrentDesign.Wires.Where(wire => !grounded.Contains(wire)).ToList();
-        }
-
-        public List<SerializableWire> GetGroundedWires()
-        {
-            var output = CurrentDesign.Wires.Where((wire) => wire.IsWireGrounded).ToList();
-
-            Func<SerializableWire, bool> isConnected =
-                (wir) =>
-                {
-                    foreach (var wire in output)
-                        if (wir.isThisWireBoundedToOtherWire(wire))
-                            return true;
-
-                    return false;
-                };
-
-            bool wireAdded = true;
-
-            while (wireAdded)
-            {
-                wireAdded = false;
-
-                foreach (var wire in CurrentDesign.Wires)
-                    if (!output.Contains(wire))
-                        if (isConnected(wire))
-                        {
-                            output.Add(wire);
-                            wireAdded = true;
-                        }
-            }
-
-            return output;
-        }
-
-
 
         public async Task<Tuple<bool, string>> Calculate()
         {
 
             MakeUpNodesSectionsCircuits();
 
-            var NodesToWork = ElectricNodes.Where(node => !node.HasNoComponentsConnected && !node.isIsolatedFromOtherNodes && !node.groundNode).ToList();
-
+         
             Func<IPassive, byte, ElectricNode> getOtherNodeInPassiveComponent =
                 (component, compTerminal) =>
                 {
                     var terminals = component.GetImpedanceTerminals;
-
-                    //var impedance = component.GetImpedance(frequency);
-
+                    
                     byte otherTerminal;
                     ElectricNode otherNode = null;
 
@@ -385,11 +248,13 @@ namespace Easycoustics.Transition
 
                     return otherNode;
                 };
+            
+            if (Circuits.Count == 0) return new Tuple<bool, string>(false, "There is no circuit");
 
-            if (NodesToWork.Count == 0) return new Tuple<bool, string>(false, "Circuit has no nodes");
-
-            int QuantityOfNodes = NodesToWork.Count;
-
+            foreach (var circuit in Circuits)
+                foreach (var section in circuit.Sections)
+                    if (section.HasGroundReferenceVoltageOutput && !section.IsGrounded)
+                        return new Tuple<bool, string>(false, "There is a floating section with a grounded voltage output node, use the differential voltage output");
 
             var NodeMatrix = new Common.Matrix(QuantityOfNodes);
             /* 
@@ -594,6 +459,8 @@ namespace Easycoustics.Transition
         public bool isIsolatedFromOtherNodes;
         public bool groundNode;
 
+        public bool HasGroundReferenceVoltageOutput => MeterComponents.Where(comp => comp is VoltageOutputNode).Count() > 0;
+
         public bool IsEssential { get => NonMeterComponents.Count > 2; }
 
         public bool HasNoComponentsConnected { get => NonMeterComponents.Count > 0; }
@@ -601,6 +468,9 @@ namespace Easycoustics.Transition
 
         public List<SerializableComponent> NonMeterComponents => 
             ConnectedComponentTerminals.Select(tup => tup.Item1).Where(comp => !(comp is IMeterComponent)).ToList();
+
+        public List<SerializableComponent> MeterComponents =>
+            ConnectedComponentTerminals.Select(tup => tup.Item1).Where(comp => (comp is IMeterComponent)).ToList();
 
         public bool HasComponentTerminal(SerializableComponent comp, byte terminal)
         {
@@ -644,7 +514,14 @@ namespace Easycoustics.Transition
             } }
 
         public List<ElectricNode> Nodes { get; } = new List<ElectricNode>();
+
+        public override string ToString()
+        {
+            return "Circuit, Mode: " + this.CircuitMode.ToString() + ", " + Sections.Count.ToString() + " Sections, " + Nodes.Count.ToString() + " Nodes";
+        }
     }
+
+
 
     public class CircuitSection
     {
@@ -656,6 +533,10 @@ namespace Easycoustics.Transition
             return "Circuit section: " + Nodes.Count.ToString() + " nodes, " +
                 (IsGrounded ? "Grounded" : "Floating");
         }
+
+        public bool HasGroundReferenceVoltageOutput => Nodes.Where(node => node.HasGroundReferenceVoltageOutput).Count() > 0;
+
+
     }
     
 }

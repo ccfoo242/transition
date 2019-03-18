@@ -218,6 +218,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                     visit(wire);
             }
 
+            if (!output.Contains(new Tuple<SerializableComponent, byte>(this,terminal)))
+                output.Add(new Tuple<SerializableComponent, byte>(this, terminal));
+
             return output;
             
         }

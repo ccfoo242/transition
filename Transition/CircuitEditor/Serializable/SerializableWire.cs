@@ -64,24 +64,12 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public bool IsTerminal0Bounded => Bind0 != null;
         public bool IsTerminal1Bounded => Bind1 != null;
 
-        public bool IsOtherWireBoundedAtTerminal0
-        {
-            get
-            {
-                if (IsTerminal0Bounded) return Bind0.Item1 is SerializableWire;
-                else return false;
-            }
-        }
+        public bool IsOtherWireBoundedAtTerminal0 => IsTerminal0Bounded ? (Bind0.Item1 is SerializableWire) : false;
+        public bool IsOtherWireBoundedAtTerminal1 => IsTerminal1Bounded ? (Bind1.Item1 is SerializableWire) : false;
 
-        public bool IsOtherWireBoundedAtTerminal1
-        {
-            get
-            {
-                if (IsTerminal1Bounded) return Bind1.Item1 is SerializableWire;
-                else return false;
-            }
-        }
-
+        public bool IsComponentBoundedAtTerminal0 => IsTerminal0Bounded ? (Bind0.Item1 is SerializableComponent) : false;
+        public bool IsComponentBoundedAtTerminal1 => IsTerminal1Bounded ? (Bind1.Item1 is SerializableComponent) : false;
+        
         public bool IsWireGroundedAtTerminal0 { get { if (Bind0 != null) return Bind0.Item1 is Ground; else return false; } }
         public bool IsWireGroundedAtTerminal1 { get { if (Bind1 != null) return Bind1.Item1 is Ground; else return false; } }
 
@@ -130,10 +118,24 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
 
                 if (IsOtherWireBoundedAtTerminal0)
-                        output.Add((SerializableWire)Bind0.Item1);
-
+                    output.Add((SerializableWire)Bind0.Item1);
+                
                 if (IsOtherWireBoundedAtTerminal1)
-                        output.Add((SerializableWire)Bind1.Item1);
+                    output.Add((SerializableWire)Bind1.Item1);
+
+                if (IsTerminal0Bounded)
+                {
+                    var otherWires = Bind0.Item1.AttachedWires[Bind0.Item2];
+                    if (otherWires != null) output.AddRange(otherWires);
+                }
+
+                if (IsTerminal1Bounded)
+                {
+                    var otherWires = Bind1.Item1.AttachedWires[Bind1.Item2];
+                    if (otherWires != null) output.AddRange(otherWires);
+                }
+
+
 
                 return output;
             }
