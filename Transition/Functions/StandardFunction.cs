@@ -43,7 +43,7 @@ namespace Easycoustics.Transition.Functions
             {
                 currentFunction = value;
                 RaiseFunctionChanged(new FunctionChangedEventArgs()
-                { Action=FunctionChangedEventArgs.FunctionChangeAction.Reset });
+                { Action = FunctionChangedEventArgs.FunctionChangeAction.Reset });
             }
         }
        
@@ -58,10 +58,10 @@ namespace Easycoustics.Transition.Functions
             currentFunction = "LP1";
         }
         
-        public override ComplexDecimal Calculate(decimal f)
+        public override ComplexDecimal Calculate(decimal freq)
         {
             /* s = jw */
-            return CalculateFromS(ComplexDecimal.ImaginaryOne * f * 2 * DecimalMath.Pi);
+            return CalculateFromS(ComplexDecimal.ImaginaryOne * freq * 2 * DecimalMath.Pi);
         }
 
         public ComplexDecimal CalculateFromS(ComplexDecimal s)

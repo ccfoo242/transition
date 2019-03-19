@@ -10,6 +10,8 @@ namespace Easycoustics.Transition.Commands
 {
     public class CommandMoveGroup : ICircuitCommand
     {
+        public bool AlterSchematic => false;
+
         public string Title => "Move Group of selectable elements";
 
         public List<ICircuitMovable> Elements { get; set; } = new List<ICircuitMovable>();

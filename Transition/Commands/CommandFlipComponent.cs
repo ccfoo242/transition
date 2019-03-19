@@ -12,6 +12,8 @@ namespace Easycoustics.Transition.Commands
     {
         public string Title => (IsFlipY ? "FlipY" : "FlipX") + " " + NewValue.ToString() + " Component " + Component.ToString();
 
+        public bool AlterSchematic => false;
+
         public SerializableComponent Component { get; set; }
         public bool IsFlipY { get; set; }
         public bool NewValue { get; set; }

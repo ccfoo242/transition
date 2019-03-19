@@ -18,6 +18,7 @@ namespace Easycoustics.Transition.Commands
 
         private List<SerializableWire> wiresForComponents = new List<SerializableWire>();
         private Dictionary<byte, ElementTerminal> binds;
+        public bool AlterSchematic => true;
 
         public void execute()
         {

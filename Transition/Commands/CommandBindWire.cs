@@ -14,6 +14,8 @@ namespace Easycoustics.Transition.Commands
     {
         public string Title => "Bind " + Wire.ToString() + " terminal: " + WireTerminalNumber.ToString() + " Element: " + BoundedObject.ToString() + " Element Terminal: " + BoundedTerminal.ToString();
 
+        public bool AlterSchematic => true;
+
         public SerializableWire Wire { get; set; }
         public byte WireTerminalNumber { get; set; }
 

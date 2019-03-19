@@ -16,6 +16,8 @@ namespace Easycoustics.Transition.CircuitEditor
         void unExecute();
 
         string Title { get; }
+
+        bool AlterSchematic { get; }
     }
 
     public interface ICircuitSelectable
@@ -50,7 +52,7 @@ namespace Easycoustics.Transition.CircuitEditor
     }
 
     public interface IImplicitGroundedComponent { }
-
+    public interface IAlterSchematicCommand { }
     public interface IIsolateSection
     {
         byte[] getOtherTerminalsIsolated(byte terminal);

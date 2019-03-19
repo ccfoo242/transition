@@ -11,6 +11,8 @@ namespace Easycoustics.Transition.Commands
 {
     public class CommandRemoveWire : ICircuitCommand
     {
+        public bool AlterSchematic => true;
+
         public string Title => "Remove Wire Command: " + Wire.ToString();
         public override string ToString() => Title;
 

@@ -14,7 +14,12 @@ namespace Easycoustics.Transition.Commands
         public SerializableComponent Component { get; set; }
 
         public string Title => "Add Component Command: " + Component.ToString();
+
+        public bool AlterSchematic => true;
+
         public override string ToString() => Title;
+
+        
 
         public void execute()
         {

@@ -10,6 +10,7 @@ namespace Easycoustics.Transition.Commands
 {
     public class CommandRotateComponent : ICircuitCommand
     {
+        public bool AlterSchematic => false;
         public string Title => "Rotate Component " + Component.ToString() + " From rotation " + oldValue.ToString() + " to " + newValue.ToString();
 
         public double oldValue { get; set; }

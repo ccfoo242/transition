@@ -11,6 +11,8 @@ namespace Easycoustics.Transition.Commands
 {
     class CommandRemoveComponent : ICircuitCommand
     {
+        public bool AlterSchematic => true;
+
         public string Title => "Remove Component: " + Component.ToString();
        
         public SerializableComponent Component { get; }

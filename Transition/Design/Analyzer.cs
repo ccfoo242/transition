@@ -26,6 +26,11 @@ namespace Easycoustics.Transition
 
         private readonly List<Circuit> Circuits = new List<Circuit>();
 
+        private Dictionary<Circuit, Common.Matrix> MatrixDict = new Dictionary<Circuit, Common.Matrix>();
+        private Dictionary<Circuit, Common.Matrix> CVDict = new Dictionary<Circuit, Common.Matrix>();
+        private Dictionary<Circuit, Common.Matrix> ResultDict = new Dictionary<Circuit, Common.Matrix>();
+        public bool CircuitHasChanged = false;
+
         public Analyzer()
         {
 
@@ -168,7 +173,21 @@ namespace Easycoustics.Transition
                     if (currentSection == null)
                         circuit.Sections.Add(getSection(node));
                 }
-            
+
+            MatrixDict.Clear();
+            CVDict.Clear();
+
+            foreach (var circuit in Circuits)
+            {
+                MatrixDict.Add(circuit, new Common.Matrix(circuit.Nodes.Count));
+                CVDict.Add(circuit, new Common.Matrix(circuit.Nodes.Count, 1));
+                
+            }
+
+
+            CircuitHasChanged = false;
+
+
         }
 
         private CircuitSection getSection(ElectricNode startingNode)
@@ -239,26 +258,26 @@ namespace Easycoustics.Transition
         }
 
         public bool IsNodeGroundRefereced(ElectricNode node) => NodeBelongsToSection(node).IsGrounded;
-        
+
+
+        private ElectricNode getOtherNodeInPassiveComponent(IPassive component, byte compTerminal)
+        {
+            var terminals = component.GetImpedanceTerminals;
+
+            byte otherTerminal = (terminals.Item1 == compTerminal) ? terminals.Item2 : terminals.Item1;
+            /* some impedances are fixed grounded, cannot be floating, those return 255 as component terminal
+             that means connected to the node 0, that is always ground */
+
+            return (otherTerminal == 255) ? GroundNode : GetComponentTerminalNode((SerializableComponent)component, otherTerminal);
+
+        }
 
         public async Task<Tuple<bool, string>> Calculate()
         {
 
-            MakeUpNodesSectionsCircuits();
+            if (CircuitHasChanged) MakeUpNodesSectionsCircuits();
 
          
-            Func<IPassive, byte, ElectricNode> getOtherNodeInPassiveComponent =
-                (component, compTerminal) =>
-                {
-                    var terminals = component.GetImpedanceTerminals;
-                    
-                    byte otherTerminal = (terminals.Item1 == compTerminal) ? terminals.Item2 : terminals.Item1;
-                    /* some impedances are fixed grounded, cannot be floating, those return 255 as component terminal
-                     that means connected to the node 0, that is always ground */
-                   
-                    return (otherTerminal == 255) ? GroundNode : GetComponentTerminalNode((SerializableComponent)component, otherTerminal);
-
-                };
             
             if (Circuits.Count == 0) return new Tuple<bool, string>(false, "There is no circuit");
 
@@ -301,9 +320,7 @@ namespace Easycoustics.Transition
 
             }
 
-            var MatrixDict = new Dictionary<Circuit, Common.Matrix>();
-            var CVDict = new Dictionary<Circuit, Common.Matrix>();
-
+         
             // var NodeMatrix = new Common.Matrix(QuantityOfNodes);
             /* 
              * inside this matrix we put admittances we solve this matrix along with a vector, 
@@ -314,11 +331,6 @@ namespace Easycoustics.Transition
 
             // var CVMatrix = new Common.Matrix(QuantityOfNodes, 1);
 
-            foreach (var circuit in Circuits)
-            {
-                MatrixDict.Add(circuit, new Common.Matrix(circuit.Nodes.Count));
-                CVDict.Add(circuit, new Common.Matrix(circuit.Nodes.Count));
-            }
 
             Common.Matrix nodeVoltages;
             //node 0 is always the ground
@@ -334,6 +346,12 @@ namespace Easycoustics.Transition
             {
                 outputNode.ResultVoltageCurve.Clear();
                 SystemCurves.AddIfNotAdded(outputNode.ResultVoltageCurve);
+            }
+
+            foreach (var outputNodeDiff in outputVoltageDiff)
+            {
+                outputNodeDiff.ResultVoltageCurve.Clear();
+                SystemCurves.AddIfNotAdded(outputNodeDiff.ResultVoltageCurve);
             }
 
             var OutputVoltagesComponents = new List<IVoltageCurrentOutput>();
@@ -365,9 +383,7 @@ namespace Easycoustics.Transition
 
             foreach (var resistor in Components.OfType<Resistor>())
             {
-
                 SystemCurves.AddIfNotAdded(resistor.ResultPowerCurve);
-                //    resistor.resultPowerCurve.AdaptFunctionTo(MinimumFrequency, MaximumFrequency, QuantityOfFrequencyPoints, FrequencyScale);
                 OutputResistorsPower.Add(resistor);
             }
 
@@ -391,61 +407,63 @@ namespace Easycoustics.Transition
             var freqPoints = UserDesign.CurrentDesign.getFrequencyPoints();
             foreach (var FreqPoint in freqPoints)
             {
-                /* whole circuit is solved for each frequency point */
-                NodeMatrix.Clear();
-                CVMatrix.Clear();
-                /* here we populate the node matrix */
-                for (int nodeNumber = 0; nodeNumber < QuantityOfNodes; nodeNumber++)
-                {
-                    foreach (var component in NodesToWork[nodeNumber].ConnectedComponentTerminals)
+                foreach (var circuit in Circuits)
+                {/* whole circuit is solved for each frequency point */
+                    MatrixDict[circuit].Clear();
+                    CVDict[circuit].Clear(); 
+                    /* here we populate the node matrix */
+                    for (int nodeNumber = 0; nodeNumber < circuit.Nodes.Count; nodeNumber++)
                     {
-                        if (component.Item1 is IPassive)
+                        foreach (var component in circuit.Nodes[nodeNumber].ConnectedComponentTerminals)
                         {
-                            passive = (IPassive)component.Item1;
-                            /* the impedance is calculated for a certain frequency */
-                            var otherNode = getOtherNodeInPassiveComponent(passive, component.Item2);
-                            var impedance = passive.GetImpedance(FreqPoint);
-
-                            NodeMatrix.addAtCoordinate(nodeNumber, nodeNumber, impedance.Reciprocal);
-                            /* reciprocal of impedance is the admittance, the matrix itself is an admittance matrix */
-
-                            if (otherNode != GroundNode) /* impedance is floating */
-                                NodeMatrix.addAtCoordinate(nodeNumber, NodesToWork.IndexOf(otherNode), -1 * impedance.Reciprocal);
-
-                        }
-
-                        if (component.Item1 is VoltageSource)
-                        {
-                            var source = (VoltageSource)component.Item1;
-                            sourceAdmittance = source.getSourceImpedance(FreqPoint).Reciprocal;
-
-                            voltage = source.getSourceVoltage(FreqPoint);
-
-                            positiveTerminal = (component.Item2 == 0);
-                            voltagePolarity = positiveTerminal ? 1 : -1;
-
-                            byte otherTerminal = positiveTerminal ? source.NegativeTerminal : source.PositiveTerminal;
-                            var otherNode = GetComponentTerminalNode(source, otherTerminal);
-
-                            if (otherNode != null)
+                            if (component.Item1 is IPassive)
                             {
-                                CVMatrix.addAtCoordinate(nodeNumber, 0, voltage * sourceAdmittance * voltagePolarity);
-                                NodeMatrix.addAtCoordinate(nodeNumber, nodeNumber, sourceAdmittance);
+                                passive = (IPassive)component.Item1;
+                                /* the impedance is calculated for a certain frequency */
+                                var otherNode = getOtherNodeInPassiveComponent(passive, component.Item2);
+                                var impedance = passive.GetImpedance(FreqPoint);
 
-                                if (otherNode != GroundNode)
-                                    NodeMatrix.addAtCoordinate(nodeNumber, NodesToWork.IndexOf(otherNode), -1 * sourceAdmittance);
+                                MatrixDict[circuit].addAtCoordinate(nodeNumber, nodeNumber, impedance.Reciprocal);
+                                /* reciprocal of impedance is the admittance, the matrix itself is an admittance matrix */
+
+                                if (otherNode != GroundNode) /* impedance is floating */
+                                    MatrixDict[circuit].addAtCoordinate(nodeNumber, circuit.Nodes.IndexOf(otherNode), -1 * impedance.Reciprocal);
+
+                            }
+
+                            if (component.Item1 is VoltageSource)
+                            {
+                                var source = (VoltageSource)component.Item1;
+                                sourceAdmittance = source.getSourceImpedance(FreqPoint).Reciprocal;
+
+                                voltage = source.getSourceVoltage(FreqPoint);
+
+                                positiveTerminal = (component.Item2 == 0);
+                                voltagePolarity = positiveTerminal ? 1 : -1;
+
+                                byte otherTerminal = positiveTerminal ? source.NegativeTerminal : source.PositiveTerminal;
+                                var otherNode = GetComponentTerminalNode(source, otherTerminal);
+
+                                if (otherNode != null)
+                                {
+                                    CVDict[circuit].addAtCoordinate(nodeNumber, 0, voltage * sourceAdmittance * voltagePolarity);
+                                    MatrixDict[circuit].addAtCoordinate(nodeNumber, nodeNumber, sourceAdmittance);
+
+                                    if (otherNode != GroundNode)
+                                        MatrixDict[circuit].addAtCoordinate(nodeNumber, circuit.Nodes.IndexOf(otherNode), -1 * sourceAdmittance);
+                                }
                             }
                         }
                     }
-                }
 
-                try
-                {
-                    nodeVoltages = NodeMatrix.Solve(CVMatrix);
-                }
-                catch (Exception e)
-                {
-                    return new Tuple<bool, string>(false, "Voltage Matrix solving failed: " + Environment.NewLine + e.ToString());
+                    try
+                    {
+                        ResultDict[circuit] = MatrixDict[circuit].Solve(CVDict[circuit]);
+                    }
+                    catch (Exception e)
+                    {
+                        return new Tuple<bool, string>(false, "Voltage Matrix solving failed: " + Environment.NewLine + e.ToString());
+                    }
                 }
 
                 foreach (var nodeV in outputVoltageNodes)

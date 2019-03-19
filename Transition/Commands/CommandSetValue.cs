@@ -12,6 +12,8 @@ namespace Easycoustics.Transition.Commands
     {
         public SerializableComponent Component { get; set; }
 
+        public bool AlterSchematic => false;
+
         public object OldValue { get; set; }
         public object NewValue { get; set; }
 

@@ -65,8 +65,8 @@ namespace Easycoustics.Transition.CircuitEditor
         public Grid grdNoSelectedElement;
         public Grid grdWiresHaveNoParameters;
 
-        public ObservableStack<ICircuitCommand> UndoStack = new ObservableStack<ICircuitCommand>();
-        public ObservableStack<ICircuitCommand> RedoStack = new ObservableStack<ICircuitCommand>();
+        public ObservableStack<ICircuitCommand> UndoStack = new ObservableStack<ICircuitCommand>() { MaximumElements = 25 };
+        public ObservableStack<ICircuitCommand> RedoStack = new ObservableStack<ICircuitCommand>() { MaximumElements = 25 };
 
         public CircuitEditor()
         {
@@ -746,6 +746,8 @@ namespace Easycoustics.Transition.CircuitEditor
         {
             RedoStack.Clear();
             command.execute();
+
+            if (command.AlterSchematic) Analyzer.CurrentInstance.CircuitHasChanged = true;
           //  TapCalculate(null, null); 
             UndoStack.Push(command);
         }
@@ -754,9 +756,12 @@ namespace Easycoustics.Transition.CircuitEditor
         {
             if (UndoStack.Count == 0) return;
 
-            ICircuitCommand command = UndoStack.Pop();
+            var command = UndoStack.Pop();
             command.unExecute();
-           // TapCalculate(null, null); 
+            // TapCalculate(null, null); 
+
+            if (command.AlterSchematic) Analyzer.CurrentInstance.CircuitHasChanged = true;
+
             RedoStack.Push(command);
         }
 
@@ -764,9 +769,12 @@ namespace Easycoustics.Transition.CircuitEditor
         {
             if (RedoStack.Count == 0) return;
             
-            ICircuitCommand command = RedoStack.Pop();
+            var command = RedoStack.Pop();
             command.execute();
-          //  TapCalculate(null, null); 
+            //  TapCalculate(null, null); 
+
+            if (command.AlterSchematic) Analyzer.CurrentInstance.CircuitHasChanged = true;
+
             UndoStack.Push(command);
         }
 

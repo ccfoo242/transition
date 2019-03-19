@@ -11,6 +11,8 @@ namespace Easycoustics.Transition.Commands
 {
     public class CommandUnBindWire : ICircuitCommand
     {
+        public bool AlterSchematic => true;
+
         public string Title => "UnBindWire " + Wire.ToString() + " Terminal number" + WireTerminalNumber.ToString() + 
             " From " + BoundedObject.ToString() + " Terminal number " + ObjectTerminalNumber.ToString() ;
 

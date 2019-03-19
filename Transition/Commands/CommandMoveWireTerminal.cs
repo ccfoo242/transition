@@ -11,6 +11,8 @@ namespace Easycoustics.Transition.Commands
 {
     public class CommandMoveWireTerminal : ICircuitCommand
     {
+        public bool AlterSchematic => false;
+
         public string Title => "Move WireTerminal " + Wire.ToString() + " terminal number " + WireTerminalNumber.ToString() + ", from " + OldPosition.ToString() + " to " + NewPosition.ToString();
 
         public SerializableWire Wire { get; set; }

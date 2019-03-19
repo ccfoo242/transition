@@ -14,6 +14,7 @@ namespace Easycoustics.Transition.Commands
         public string Title => "Add Wire Command: " + Wire.ToString();
 
         public SerializableWire Wire { get; set; }
+        public bool AlterSchematic => true;
 
         public override string ToString() => Title;
 

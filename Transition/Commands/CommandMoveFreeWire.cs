@@ -11,6 +11,8 @@ namespace Easycoustics.Transition.Commands
 {
     public class CommandMoveFreeWire : ICircuitCommand
     {
+        public bool AlterSchematic => false;
+
         public string Title => "Command Move Free Wire ";
 
         public SerializableWire Wire { get; set; }
