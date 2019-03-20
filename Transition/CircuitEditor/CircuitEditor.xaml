@@ -18,6 +18,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <CommandBar Background="Transparent" IsOpen="False"
                     DefaultLabelPosition="Right"
@@ -26,7 +27,9 @@
             <AppBarButton Icon="Redo" Label="Redo" Tapped="tapRedo" IsTapEnabled="True" x:Name="btnRedo"/>
 
         </CommandBar>
-       
+
+        <TextBlock x:Name="txtStatus" Height="50" Grid.Row="2" Grid.Column="1"/>
+
         <ScrollViewer VerticalScrollBarVisibility="Visible" VerticalScrollMode="Enabled" Grid.Column="0"
                       Grid.Row="1">
             <StackPanel Orientation="Vertical">
@@ -40,7 +43,7 @@
                         <Setter Property="CornerRadius" Value="5"/>
                     </Style>
                 </StackPanel.Resources>
-                <Button Content="Perform your energy, become your matter"
+                <Button Content="Perform your energy, create your matter"
                         IsTapEnabled="True" Tapped="TapCalculate"/>
                 <Border DragStarting="dragElement" Tapped="tapElement"
                         x:Name="brdGround" Tag="ground" Style="{StaticResource stlButtons}">
@@ -297,6 +300,7 @@
                           HorizontalScrollBarVisibility="Auto"
                           VerticalScrollMode="Auto" 
                           VerticalScrollBarVisibility="Auto">
+                    
                     <Canvas HorizontalAlignment="Stretch" x:Name="cnvGeneral"
                         VerticalAlignment="Stretch" Width="1080" Height="720"
                         SizeChanged="reDrawCanvas">
