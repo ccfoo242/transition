@@ -1223,6 +1223,8 @@ namespace Easycoustics.Transition.CustomControls
 
             dictPolylinesMag.Remove(func);
             dictPolylinesPhase.Remove(func);
+
+            func.FunctionChanged -= functionChanged;
         }
 
         private double mapX(decimal X)

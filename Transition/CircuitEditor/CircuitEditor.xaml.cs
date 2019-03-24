@@ -748,7 +748,7 @@ namespace Easycoustics.Transition.CircuitEditor
             command.execute();
 
             if (command.AlterSchematic) Analyzer.CircuitHasChanged();
-            //  TapCalculate(null, null); 
+            Calculate();
             UndoStack.Push(command);
         }
 
@@ -758,7 +758,7 @@ namespace Easycoustics.Transition.CircuitEditor
 
             var command = UndoStack.Pop();
             command.unExecute();
-            // TapCalculate(null, null); 
+            Calculate();
 
             if (command.AlterSchematic) Analyzer.CircuitHasChanged();
 
@@ -771,7 +771,7 @@ namespace Easycoustics.Transition.CircuitEditor
             
             var command = RedoStack.Pop();
             command.execute();
-            //  TapCalculate(null, null); 
+            Calculate(); 
 
             if (command.AlterSchematic) Analyzer.CircuitHasChanged(); 
 
