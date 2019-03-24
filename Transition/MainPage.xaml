@@ -50,6 +50,15 @@
 
         <layout:SfDockingManager x:Name="dockingManager"  Grid.Row="1">
 
+            <ContentControl x:Name="voltageGraph" 
+                            layout:SfDockingManager.Header="Voltage Graph SF"
+                            layout:SfDockingManager.DockState="Document"
+                        
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch">
+
+                <local2:WindowCurveVisor VerticalQuantity="Voltage"/>
+            </ContentControl>
 
             <ContentControl x:Name="circuit" 
                             layout:SfDockingManager.Header="Circuit"
@@ -62,16 +71,6 @@
 
             </ContentControl>
             
-            <ContentControl x:Name="voltageGraph" 
-                            layout:SfDockingManager.Header="Voltage Graph SF"
-                            layout:SfDockingManager.DockState="Document"
-                        
-                            HorizontalContentAlignment="Stretch"
-                            VerticalContentAlignment="Stretch">
-
-                <local2:WindowCurveVisor VerticalQuantity="Voltage"/>
-            </ContentControl>
-
         </layout:SfDockingManager>
 
     </Grid>

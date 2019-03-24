@@ -123,6 +123,13 @@ namespace Easycoustics.Transition.Common
 
         public static decimal Argument(ComplexDecimal number)
         {
+            if (number.RealPart == 0m)
+            {
+                if (number.ImaginaryPart > 0) return DecimalMath.PIdiv2;
+                else if (number.ImaginaryPart == 0) return 0m;
+                else return -1 * DecimalMath.PIdiv2; /* number.ImaginaryPart < 0 */
+            }
+
             return DecimalMath.Atan2(number.ImaginaryPart, number.RealPart);
         }
 

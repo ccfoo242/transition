@@ -29,7 +29,7 @@ namespace Easycoustics.Transition.Common
         /// <summary>
         /// represents PI/2
         /// </summary>
-        private const decimal PIdiv2 = 1.570796326794896619231321691639751442098584699687552910487M;
+        public const decimal PIdiv2 = 1.570796326794896619231321691639751442098584699687552910487M;
 
         /// <summary>
         /// represents PI/4

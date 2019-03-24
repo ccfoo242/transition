@@ -43,7 +43,7 @@
                         <Setter Property="CornerRadius" Value="5"/>
                     </Style>
                 </StackPanel.Resources>
-                <Button Content="Perform your energy, create your matter"
+                <Button Content="Perform"
                         IsTapEnabled="True" Tapped="TapCalculate"/>
                 <Border DragStarting="dragElement" Tapped="tapElement"
                         x:Name="brdGround" Tag="ground" Style="{StaticResource stlButtons}">
