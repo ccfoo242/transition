@@ -247,7 +247,7 @@ namespace Easycoustics.Transition.Common
 
             /* and thank you Ward Cheney and David Kincaid
              * for your wonderful book of Numeric Methods
-             Sixth Edition !*/
+               Sixth Edition !*/
 
             return X;
         }
