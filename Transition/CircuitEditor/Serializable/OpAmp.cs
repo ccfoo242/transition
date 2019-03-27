@@ -34,10 +34,14 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             set { SetProperty(ref rIn, value); }
         }
 
+       
         private decimal rOut;
         public decimal ROut { get => rOut;
             set { SetProperty(ref rOut, value); }
         }
+
+        private decimal GIn => (1 / RIn);
+        private decimal GOut => (1 / ROut);
 
         private string modelName;
         public string ModelName { get => modelName;
@@ -103,9 +107,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         {
             switch (terminal)
             {
-                case 0: return new ComplexDecimal[3] { 1 / RIn, -1 / RIn, 0 };
-                case 1: return new ComplexDecimal[3] { -1 / RIn, 1 / RIn, 0 };
-                case 2: return new ComplexDecimal[3] { (-1 / ROut) * DcGain, (1 / ROut) * DcGain, 1 / ROut };
+                case 0: return new ComplexDecimal[3] { GIn, -GIn, 0 };
+                case 1: return new ComplexDecimal[3] { -GIn, GIn, 0 };
+                case 2: return new ComplexDecimal[3] { -GOut * DcGain, GOut * DcGain, GOut };
             }
 
             return new ComplexDecimal[3] { 0, 0, 0 };

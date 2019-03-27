@@ -86,6 +86,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             return ConstantOutputVoltage;
         }
 
+        private ComplexDecimal getSourceAdmittance(decimal frequency) => getSourceImpedance(frequency).Reciprocal;
+
+
         public override void SetProperty(string property, object value)
         {
             base.SetProperty(property, value);
@@ -99,6 +102,18 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 case "ConstantOutputImpedance": ConstantOutputImpedance= (decimal)value; break;
                 case "FunctionOutputImpedance": FunctionOutputImpedance = (Function)value; break;
             }
+        }
+
+        public override ComplexDecimal[] GetAdmittancesForTerminal(byte terminal, decimal frequency)
+        {
+            var output = new ComplexDecimal[2];
+
+            byte otherTerminal = (terminal == 0) ? (byte)1 : (byte)0;
+
+            output[terminal] = getSourceAdmittance(frequency);
+            output[otherTerminal] = -getSourceAdmittance(frequency);
+
+            return output;
         }
 
         public string VoltageString

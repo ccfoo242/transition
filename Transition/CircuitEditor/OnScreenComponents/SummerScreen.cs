@@ -17,7 +17,7 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
         public override int[,] TerminalPositions
         {
             get
-            {
+            {   /* terminal 0 is the output , others terminals are the inputs */
                 if (QuantityOfTerminals == 3)
                 { return new int[,] { { 140, 80 }, { 80, 20 }, { 80, 140 } }; }
                 else

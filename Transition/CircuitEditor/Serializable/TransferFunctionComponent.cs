@@ -20,18 +20,26 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
         private decimal rIn;
         public decimal RIn
-            { get => rIn;
-              set { SetProperty(ref rIn, value); } }
+        {
+            get => rIn;
+            set { SetProperty(ref rIn, value); } }
 
         private decimal rOut;
         public decimal ROut
-            { get => rOut; set { SetProperty(ref rOut, value); } }
+        {
+            get => rOut; set { SetProperty(ref rOut, value); }
+        }
 
-        private Function tf;
-        public Function Tf
-            { get => tf;
-              set { SetProperty(ref tf, value);
-                raiseLayoutChanged(); } }
+        private decimal GIn => 1 / RIn;
+        private decimal GOut => 1 / ROut;
+
+        private Function customTF;
+        public Function CustomTF
+        {
+            get => customTF;
+            set { SetProperty(ref customTF, value);
+                raiseLayoutChanged(); }
+        }
 
         private int functionType;   /* 0=standard, 1=custom curve, 2=laplace expression */
         public int FunctionType { get => functionType;
@@ -41,7 +49,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
         }
 
-        public StandardTransferFunction standardTf = new StandardTransferFunction();
+        public StandardTransferFunction StandardTf = new StandardTransferFunction();
 
         public string TFString { get {
                 if (FunctionType == 0) return StandardFunction;
@@ -50,13 +58,13 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 else
                     return "Laplace";
             } }
-        
+
         public string StandardFunction
         {
-            get => standardTf.CurrentFunction;
+            get => StandardTf.CurrentFunction;
             set
             {
-                standardTf.CurrentFunction = value;
+                StandardTf.CurrentFunction = value;
                 OnPropertyChanged("StandardFunction");
                 OnPropertyChanged("TFString");
                 raiseLayoutChanged();
@@ -66,61 +74,60 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
         public decimal Ao
         {
-            get => standardTf.Ao; set
+            get => StandardTf.Ao; set
             {
-                standardTf.Ao = value;
+                StandardTf.Ao = value;
                 OnPropertyChanged("Ao");
             }
         }
 
         public decimal Fp
         {
-            get => standardTf.Fp; set
+            get => StandardTf.Fp; set
             {
-                standardTf.Fp = value;
+                StandardTf.Fp = value;
                 OnPropertyChanged("Fp");
             }
         }
 
         public decimal Fz
         {
-            get => standardTf.Fz; set
+            get => StandardTf.Fz; set
             {
-                standardTf.Fz = value;
+                StandardTf.Fz = value;
                 OnPropertyChanged("Fz");
             }
         }
 
         public decimal Qp
         {
-            get => standardTf.Qp; set
+            get => StandardTf.Qp; set
             {
-                standardTf.Qp = value;
+                StandardTf.Qp = value;
                 OnPropertyChanged("Qp");
             }
         }
-        
+
         public bool Invert
         {
-            get => standardTf.Invert; set
+            get => StandardTf.Invert; set
             {
-                standardTf.Invert = value;
+                StandardTf.Invert = value;
                 OnPropertyChanged("Invert");
             }
         }
 
         public bool Reverse
         {
-            get => standardTf.Reverse; set
+            get => StandardTf.Reverse; set
             {
-                standardTf.Reverse = value;
+                StandardTf.Reverse = value;
                 OnPropertyChanged("Reverse");
             }
         }
 
         public LaplaceFunction laplaceTf;
-        public Function customCurve;
-
+      
         public TransferFunctionComponent() : base()
         {
             rIn = 1e12m;
@@ -157,11 +164,12 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 case "Fz": Fz = (decimal)value; break;
                 case "Qp": Qp = (decimal)value; break;
 
-                case "Invert": Invert = (bool)value;break;
-                case "Reverse": Reverse = (bool)value;break;
+                case "Invert": Invert = (bool)value; break;
+                case "Reverse": Reverse = (bool)value; break;
 
-                case "FunctionType": FunctionType = (int)value;break;
-                case "StandardFunction": StandardFunction = (string)value;break;
+                case "FunctionType": FunctionType = (int)value; break;
+                case "StandardFunction": StandardFunction = (string)value; break;
+
             }
         }
 
@@ -170,7 +178,30 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             if (terminal == 0) return new byte[] { 1 };
             else if (terminal == 1) return new byte[] { 0 };
             else if (terminal == 2) return new byte[] { 3 };
-            else return new byte[] { 2 };
+            else /* terminal == 3*/ return new byte[] { 2 };
+
+        }
+
+        public Function SelectedTransferFunction { get
+            {
+                if (FunctionType == 0) return StandardTf;
+                if (FunctionType == 1) return CustomTF;
+                return null;
+            }
+        }
+
+        public override ComplexDecimal[] GetAdmittancesForTerminal(byte terminal, decimal frequency)
+        {
+            ComplexDecimal H = SelectedTransferFunction.Calculate(frequency);
+
+            if (terminal == 0)
+            { return new ComplexDecimal[4] { GIn, -GIn, 0, 0 }; }
+            else if (terminal == 1)
+            { return new ComplexDecimal[4] { -GIn, GIn, 0, 0 }; }
+            else if (terminal == 2)
+            { return new ComplexDecimal[4] { -GOut * H, GOut * H, GOut, -GOut }; }
+            else /*  terminal == 3 */
+            { return new ComplexDecimal[4] { GOut * H, -GOut * H, -GOut, GOut }; }
 
         }
     }

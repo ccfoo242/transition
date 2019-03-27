@@ -34,6 +34,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             set { SetProperty(ref rOut, value); }
         }
 
+        private decimal GIn => (1 / RIn);   //admitance
+        private decimal GOut => (1 / ROut);
+
         private bool inverterInput;
         public bool InverterInput
         {
@@ -99,8 +102,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
         private ComplexDecimal TF(decimal frequency)
         {
-            return Gain * ComplexDecimal.Exp(ComplexDecimal.ImaginaryOne * (2m * DecimalMath.Pi * frequency * Delay));
-            
+            return Gain * ComplexDecimal.Exp(-1 * ComplexDecimal.ImaginaryOne * (2m * DecimalMath.Pi * frequency * Delay));
         }
 
         public byte[] getOtherTerminalsIsolated(byte terminal)
@@ -112,8 +114,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         {
             switch (terminal)
             {
-                case 0: return new ComplexDecimal[2] { 1m / RIn, 0 };
-                case 1: return new ComplexDecimal[2] { (-1m / ROut) * TF(frequency), 1m / ROut };
+                case 0: return new ComplexDecimal[2] { GIn, 0 };
+                case 1: return new ComplexDecimal[2] { GOut * TF(frequency), GOut };
             }
 
             return new ComplexDecimal[2] { 0, 0 };

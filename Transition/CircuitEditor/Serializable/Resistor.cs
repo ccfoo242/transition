@@ -206,14 +206,16 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             throw new NotImplementedException();
         }
 
+        public ComplexDecimal GetAdmittance(decimal frequency) => GetImpedance(frequency).Reciprocal;
+
         public override ComplexDecimal[] GetAdmittancesForTerminal(byte terminal, decimal frequency)
         {
             var output = new ComplexDecimal[2];
 
             byte otherTerminal = (terminal == 0) ? (byte)1 : (byte)0;
 
-            output[terminal] = GetImpedance(frequency).Reciprocal;
-            output[otherTerminal] = -1 * (GetImpedance(frequency).Reciprocal);
+            output[terminal] = GetAdmittance(frequency);
+            output[otherTerminal] = -GetAdmittance(frequency);
 
             return output;
         }

@@ -47,6 +47,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             set { SetProperty(ref rOut, value); }
         }
 
+        private decimal GIn => 1 / RIn; /* G is Admittance, reciprocal of impedance */
+        private decimal GOut => 1 / ROut;
+        
         private bool inAInverterInput;
         public bool InAInverterInput
         {
@@ -77,6 +80,10 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 raiseLayoutChanged();
             }
         }
+
+        public decimal InAPolarity => InAInverterInput ? -1 : 1;
+        public decimal InBPolarity => InBInverterInput ? -1 : 1;
+        public decimal InCPolarity => InCInverterInput ? -1 : 1;
 
         public Tuple<byte, byte> GetImpedanceTerminals => new Tuple<byte, byte>(0, 255);
         public ComplexDecimal GetImpedance(decimal frequency) => RIn;
@@ -112,6 +119,30 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public byte[] getOtherTerminalsIsolated(byte terminal)
         {
             return new byte[] { }; /* this component isolates sections from with ALL its terminals */
+        }
+
+        public override ComplexDecimal[] GetAdmittancesForTerminal(byte terminal, decimal frequency)
+        {
+            if (QuantityOfTerminals == 3)
+            {
+                switch (terminal)
+                {
+                    case 0: return new ComplexDecimal[3] { GOut, -InAPolarity, -InBPolarity };
+                    case 1: return new ComplexDecimal[3] { 0, GIn, 0 };
+                    case 2: return new ComplexDecimal[3] { 0, 0, GIn };
+                }
+            }
+            else
+            {
+                switch (terminal)
+                {
+                    case 0: return new ComplexDecimal[4] { GOut, -InAPolarity * GOut, -InBPolarity * GOut, -InCPolarity * GOut };
+                    case 1: return new ComplexDecimal[4] { 0, GIn, 0, 0 };
+                    case 2: return new ComplexDecimal[4] { 0, 0, GIn, 0 };
+                    case 3: return new ComplexDecimal[4] { 0, 0, 0, GIn };
+                }
+            }
+            return new ComplexDecimal[1] { 0 };
         }
     }
 }

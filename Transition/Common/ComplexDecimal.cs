@@ -174,7 +174,9 @@ namespace Easycoustics.Transition.Common
 
         public static ComplexDecimal operator |(ComplexDecimal n1, ComplexDecimal n2) { return Parallel(n1, n2); }
 
-        
+        public static ComplexDecimal operator -(ComplexDecimal n1) { return n1 * -1; }
+        public static ComplexDecimal operator +(ComplexDecimal n1) { return n1; }
+
         public static bool operator ==(ComplexDecimal n1, ComplexDecimal n2)
         { return (n1.RealPart == n2.RealPart) && (n1.ImaginaryPart == n2.ImaginaryPart); }
 

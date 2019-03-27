@@ -129,5 +129,10 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             else if (terminal == 2) return new byte[] { 3 };
             else return new byte[] { 2 };
         }
+
+        public override ComplexDecimal[] GetAdmittancesForTerminal(byte terminal, decimal frequency)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
