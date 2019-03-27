@@ -82,7 +82,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
         public bool AnyPrecisionSelected { get { return (ComponentPrecision == Precision.Arbitrary); } }
 
-        private SampledFunction taperFunction;
+        private SampledFunction taperFunction; /* this function MUST be monothonic */
         public SampledFunction TaperFunction
         {
             get { return taperFunction; }
@@ -91,6 +91,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
         }
         
+        private List<Tuple<byte, decimal>> OrderedResistances { get; set; }
+
 
         /* Potentiometer allows to change the quantity
          of terminals, because it can have taps at determined points
@@ -125,7 +127,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
             QuantityOfTerminals = 3;
 
-            ResistanceValue = 1;
+            ResistanceValue = 1e3m;
             PositionValue = 50;
 
             TaperFunction = new SampledFunction();
@@ -160,23 +162,93 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
             switch (property)
             {
-                case "ResistanceValue"     : ResistanceValue = (decimal)value; break;
-                case "PositionValue"       : PositionValue = (double)value; break;
-                case "ComponentPrecision"  : ComponentPrecision = (Precision)value; break;
-                case "TapAPositionValue"   : TapAPositionValue = (double)value; break;
-                case "TapBPositionValue"   : TapBPositionValue = (double)value; break;
-                case "TapCPositionValue"   : TapCPositionValue = (double)value; break;
-                case "TaperFunction"       : TaperFunction = (SampledFunction)value; break;
-             
+                case "ResistanceValue"    : ResistanceValue    = (decimal)value;         break;
+                case "PositionValue"      : PositionValue      = (double)value;          break;
+                case "ComponentPrecision" : ComponentPrecision = (Precision)value;       break;
+                case "TapAPositionValue"  : TapAPositionValue  = (double)value;          break;
+                case "TapBPositionValue"  : TapBPositionValue  = (double)value;          break;
+                case "TapCPositionValue"  : TapCPositionValue  = (double)value;          break;
+                case "TaperFunction"      : TaperFunction      = (SampledFunction)value; break;
             }
+
+            updateResistances();
+            
+        }
+
+        private void updateResistances()
+        {
+          
+            Func<double, decimal> getResistance = (position) => {
+
+                var ResistancePercent = TaperFunction.Calculate((decimal)position);
+                return ResistancePercent.RealPart / 100 * ResistanceValue;
+            };
+
+            var list = new List<Tuple<byte,decimal>>();
+
+            list.Add(new Tuple<byte, decimal>(0, 0));
+            list.Add(new Tuple<byte, decimal>(1, getResistance(100d)));
+            list.Add(new Tuple<byte, decimal>(2, getResistance(PositionValue)));
+
+            if (QuantityOfTerminals == 3) { }
+            else if (QuantityOfTerminals == 4)
+            {
+                list.Add(new Tuple<byte, decimal>(3, getResistance(TapBPositionValue)));
+            }
+            else if (QuantityOfTerminals == 5)
+            {
+                list.Add(new Tuple<byte, decimal>(3, getResistance(TapAPositionValue)));
+                list.Add(new Tuple<byte, decimal>(4, getResistance(TapCPositionValue)));
+            }
+            else
+            { /* QuantityOfTerminals == 6 */
+                list.Add(new Tuple<byte, decimal>(3, getResistance(TapAPositionValue)));
+                list.Add(new Tuple<byte, decimal>(4, getResistance(TapBPositionValue)));
+                list.Add(new Tuple<byte, decimal>(5, getResistance(TapCPositionValue)));
+            }
+
+            OrderedResistances = list.OrderBy(t => t.Item2).ToList();
+           
         }
 
         public override ComplexDecimal[] GetAdmittancesForTerminal(byte terminal, decimal frequency)
         {
             var output = new ComplexDecimal[QuantityOfTerminals];
 
+            if (terminal == 0)
+            {
+                var res = OrderedResistances[1];
+                output[0] = 1 / res.Item2; // admittance
+                output[res.Item1] = -1 / res.Item2;
+            }
+            else if (terminal == 1)
+            {
+                var resAbove = OrderedResistances[QuantityOfTerminals - 2];
+                var resBelow = OrderedResistances[QuantityOfTerminals - 1];
+                var resistance = resBelow.Item2 - resAbove.Item2;
 
+                output[terminal] = (1 / resistance);
+                output[resAbove.Item1] = -1 / resistance;
 
+            } else
+            {
+                /* selected terminal has two resistances attached, one above and one below */
+
+                var res = OrderedResistances.Find(tup => (tup.Item1 == terminal));
+                var index = OrderedResistances.IndexOf(res);
+
+                var resAbove = OrderedResistances[index - 1];
+                var resBelow = OrderedResistances[index + 1];
+
+                var resistance1 = res.Item2 - resAbove.Item2;
+                var resistance2 = resBelow.Item2 - res.Item2;
+
+                output[terminal] = (1 / resistance1) + (1 / resistance2);
+                output[resAbove.Item1] = -1 * (1 / resistance1);
+                output[resBelow.Item1] = -1 * (1 / resistance2);
+            }
+            
+            
             return output;
         }
     }

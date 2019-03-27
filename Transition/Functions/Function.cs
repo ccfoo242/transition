@@ -413,9 +413,9 @@ namespace Easycoustics.Transition.Functions
         private ComplexDecimal InterpolateQuadratic(decimal x)
         {
             if (Data.Count < 3) throw new InvalidOperationException();
-
+            
             if (isPointOutsideRange(x)) return getValueOutsideRange(x);
-
+            /*
             var t0 = GetPreviuosAbscissa(x).X;
             var t1 = GetNextAbscissa(x).X;
             var y0 = GetPreviuosAbscissa(x).Y; 
@@ -444,7 +444,9 @@ namespace Easycoustics.Transition.Functions
             output += z0 * (x - t0);
             output += y0;
 
-            return output;
+            return output;*/
+
+
         }
 
         private ComplexDecimal InterpolateCubic(decimal point)
