@@ -171,7 +171,14 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
         }
 
-        
+        public override ComplexDecimal[] GetAdmittancesForTerminal(byte terminal, decimal frequency)
+        {
+            var output = new ComplexDecimal[QuantityOfTerminals];
+
+
+
+            return output;
+        }
     }
     
 }

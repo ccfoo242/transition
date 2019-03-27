@@ -190,8 +190,20 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 case 2: return (InductorValue * DecimalMath.Power(w, Ew)) * ComplexDecimal.ImaginaryOne * w;
             }
 
-            throw new NotImplementedException();
+            return 0;
         }
-        
+
+        public override ComplexDecimal[] GetAdmittancesForTerminal(byte terminal, decimal frequency)
+        {
+            var output = new ComplexDecimal[2];
+
+            byte otherTerminal = (terminal == 0) ? (byte)1 : (byte)0;
+
+            output[terminal] = GetImpedance(frequency).Reciprocal;
+            output[otherTerminal] = -1 * (GetImpedance(frequency).Reciprocal);
+
+            return output;
+        }
+
     }
 }

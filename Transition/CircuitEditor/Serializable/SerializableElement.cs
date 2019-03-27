@@ -16,10 +16,10 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
        component are things that performs a function in a circuit
        things like resistors, opamps, transformers, etc */
        /* wires and components are very different in their UI operation
-        but they share a few properties , they all have terminals */
+        but they share a few properties , the two types have terminals */
 
 
-     /* these SerializableElements are the instances that have the responsability
+     /* these SerializableComponent object are the instances that have the responsability
       * of storing the components information, they do not perform nothing but that
       * , to store the component data, and to save the integrity of that information.
       * the purpose of this class is to serialize and deserialize it, so it can be
@@ -161,16 +161,18 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         // configure the component parameters
         public UserControl ParametersControl { get; set; }
 
-       
+
         public List<byte> GetOtherTerminals(byte terminal)
         {
             var output = new List<byte>();
 
             for (byte x = 0; x < QuantityOfTerminals; x++)
                 if (x != terminal) output.Add(x);
-            
+
             return output;
         }
+
+        public abstract ComplexDecimal[] GetAdmittancesForTerminal(byte terminal, decimal frequency);
 
         public override void SetProperty(string property, object value)
         {

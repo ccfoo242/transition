@@ -16,7 +16,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
         private decimal dcGain;
         public decimal DcGain { get => dcGain;
-            set { SetProperty(ref dcGain, value); }
+            set { SetProperty(ref dcGain, value); } /* in Times (not dB) */
         }
 
         private decimal phaseMargin;
@@ -59,7 +59,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public OpAmp() : base()
         {
             GainBandwidth = 1e6m;
-            DcGain = 100;
+            DcGain = 100000;
             PhaseMargin = 45;
             RIn = 100e3m;
             ROut = 100;
@@ -97,6 +97,18 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 return new byte[] { };
             }
              
+        }
+
+        public override ComplexDecimal[] GetAdmittancesForTerminal(byte terminal, decimal frequency)
+        {
+            switch (terminal)
+            {
+                case 0: return new ComplexDecimal[3] { 1 / RIn, -1 / RIn, 0 };
+                case 1: return new ComplexDecimal[3] { -1 / RIn, 1 / RIn, 0 };
+                case 2: return new ComplexDecimal[3] { (-1 / ROut) * DcGain, (1 / ROut) * DcGain, 1 / ROut };
+            }
+
+            return new ComplexDecimal[3] { 0, 0, 0 };
         }
     }
 }

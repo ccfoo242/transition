@@ -111,6 +111,18 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             return -1 / (w * w * FdnrValue);
         }
 
+        public override ComplexDecimal[] GetAdmittancesForTerminal(byte terminal, decimal frequency)
+        {
+            var output = new ComplexDecimal[2];
+
+            byte otherTerminal = (terminal == 0) ? (byte)1 : (byte)0;
+
+            output[terminal] = GetImpedance(frequency).Reciprocal;
+            output[otherTerminal] = -1 * (GetImpedance(frequency).Reciprocal);
+
+            return output;
+        }
+
         public Tuple<byte, byte> GetImpedanceTerminals => new Tuple<byte, byte>(0, 1);
     }
 }

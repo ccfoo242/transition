@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Easycoustics.Transition.CircuitEditor.Components;
 using Easycoustics.Transition.CircuitEditor.OnScreenComponents;
+using Easycoustics.Transition.Common;
 
 namespace Easycoustics.Transition.CircuitEditor.Serializable
 {
@@ -19,6 +20,11 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         {
             OnScreenElement = new GroundScreen(this);
             ParametersControl = new GroundParameters(this);
+        }
+
+        public override ComplexDecimal[] GetAdmittancesForTerminal(byte terminal, decimal frequency)
+        {
+            throw new NotImplementedException();
         }
     }
 }

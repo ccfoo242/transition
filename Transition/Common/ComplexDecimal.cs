@@ -18,7 +18,7 @@ namespace Easycoustics.Transition.Common
 
         public decimal Magnitude { get => Modulus(this); }
         public decimal Phase { get => Argument(this); }
-        public decimal PhaseDeg { get => (Argument(this) * 180) / DecimalMath.Pi ; }
+        public decimal PhaseDeg { get => (Argument(this) * 180) / DecimalMath.Pi; }
 
         public ComplexDecimal Reciprocal { get => One / this; }
         public ComplexDecimal Conjugate { get => new ComplexDecimal(RealPart, -1m * ImaginaryPart); }
@@ -48,7 +48,7 @@ namespace Easycoustics.Transition.Common
         }
 
         public double TodBRef(double reference)
-            { return TodBRef(this, reference); }
+        { return TodBRef(this, reference); }
 
         public static double TodBRef(ComplexDecimal number, double reference)
         {
@@ -115,7 +115,7 @@ namespace Easycoustics.Transition.Common
 
             return new ComplexDecimal(real, imag);
         }
-        
+
         public static decimal Modulus(ComplexDecimal number)
         {
             return DecimalMath.Sqrt((number.RealPart * number.RealPart) + (number.ImaginaryPart * number.ImaginaryPart));
@@ -171,9 +171,10 @@ namespace Easycoustics.Transition.Common
         public static ComplexDecimal operator -(ComplexDecimal n1, ComplexDecimal n2) { return Substract(n1, n2); }
         public static ComplexDecimal operator *(ComplexDecimal n1, ComplexDecimal n2) { return Product(n1, n2); }
         public static ComplexDecimal operator /(ComplexDecimal n1, ComplexDecimal n2) { return Divide(n1, n2); }
-        
+
         public static ComplexDecimal operator |(ComplexDecimal n1, ComplexDecimal n2) { return Parallel(n1, n2); }
 
+        
         public static bool operator ==(ComplexDecimal n1, ComplexDecimal n2)
         { return (n1.RealPart == n2.RealPart) && (n1.ImaginaryPart == n2.ImaginaryPart); }
 

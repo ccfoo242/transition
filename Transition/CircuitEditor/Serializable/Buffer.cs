@@ -97,9 +97,27 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
         }
 
+        private ComplexDecimal TF(decimal frequency)
+        {
+            return Gain * ComplexDecimal.Exp(ComplexDecimal.ImaginaryOne * (2m * DecimalMath.Pi * frequency * Delay));
+            
+        }
+
         public byte[] getOtherTerminalsIsolated(byte terminal)
         {
             return new byte[] { };
+        }
+
+        public override ComplexDecimal[] GetAdmittancesForTerminal(byte terminal, decimal frequency)
+        {
+            switch (terminal)
+            {
+                case 0: return new ComplexDecimal[2] { 1m / RIn, 0 };
+                case 1: return new ComplexDecimal[2] { (-1m / ROut) * TF(frequency), 1m / ROut };
+            }
+
+            return new ComplexDecimal[2] { 0, 0 };
+
         }
     }
 }

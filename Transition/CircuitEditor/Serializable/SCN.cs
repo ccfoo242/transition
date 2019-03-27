@@ -85,5 +85,10 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 case "PositivePolarity": PositivePolarity = (bool)value; break;
             }
         }
+
+        public override ComplexDecimal[] GetAdmittancesForTerminal(byte terminal, decimal frequency)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
