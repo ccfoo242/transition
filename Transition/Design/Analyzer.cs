@@ -26,9 +26,9 @@ namespace Easycoustics.Transition
 
         private readonly List<Circuit> Circuits = new List<Circuit>();
 
-        private Dictionary<Circuit, Common.Matrix> MatrixDict = new Dictionary<Circuit, Common.Matrix>();
-        private Dictionary<Circuit, Common.Matrix> CVDict = new Dictionary<Circuit, Common.Matrix>();
-        private Dictionary<Circuit, Common.Matrix> ResultDict = new Dictionary<Circuit, Common.Matrix>();
+      //  private Dictionary<Circuit, Common.Matrix> MatrixDict = new Dictionary<Circuit, Common.Matrix>();
+     //   private Dictionary<Circuit, Common.Matrix> CVDict = new Dictionary<Circuit, Common.Matrix>();
+     //   private Dictionary<Circuit, Common.Matrix> ResultDict = new Dictionary<Circuit, Common.Matrix>();
         private bool CircuitChanged = false;
 
         public Analyzer()
@@ -146,9 +146,7 @@ namespace Easycoustics.Transition
                 if (compMeter.IsTerminalGrounded(0))
                     GroundNode.ConnectedComponentTerminals.Add(new Tuple<SerializableComponent, byte>(compMeter, 0));
                 if (compMeter.IsTerminalGrounded(1))
-                    GroundNode.ConnectedComponentTerminals.Add(new Tuple<SerializableComponent, byte>(compMeter, 1));
-
-
+                    GroundNode.ConnectedComponentTerminals.Add(new Tuple<SerializableComponent, byte>(compMeter, 1));  
             }
 
             /*
@@ -178,8 +176,8 @@ namespace Easycoustics.Transition
                         circuit.Sections.Add(buildSection(node));
                 }
 
-            MatrixDict.Clear();
-            CVDict.Clear();
+           // MatrixDict.Clear();
+            //CVDict.Clear();
 
             foreach (var circuit in Circuits)
             {
@@ -189,9 +187,12 @@ namespace Easycoustics.Transition
                     circuit.NonReferenceNodes.Remove(section.ReferenceNode);
                 }
 
-                MatrixDict.Add(circuit, new Common.Matrix(circuit.NonReferenceNodes.Count));
-                CVDict.Add(circuit, new Common.Matrix(circuit.NonReferenceNodes.Count, 1));
-                
+                //  MatrixDict.Add(circuit, new Common.Matrix(circuit.NonReferenceNodes.Count));
+                //   CVDict.Add(circuit, new Common.Matrix(circuit.NonReferenceNodes.Count, 1));
+
+                circuit.CurrentMatrix = new Common.Matrix(circuit.NonReferenceNodes.Count);
+                circuit.ConstValueMatrix = new Common.Matrix(circuit.NonReferenceNodes.Count, 1);
+
             }
 
 
@@ -400,10 +401,10 @@ namespace Easycoustics.Transition
                 OutputResistorsPower.Add(resistor);
             }
 
-
+            ElectricNode node;
+            ElectricNode node2;
             ElectricNode nodePositive;
             ElectricNode nodeNegative;
-            ElectricNode node2;
             int nodePositiveNumber;
             int nodeNegativeNumber;
             ComplexDecimal voltPositive;
@@ -423,8 +424,9 @@ namespace Easycoustics.Transition
                 foreach (var circuit in Circuits)
                 {
                     /* circuit is solved for each frequency point */
-                    MatrixDict[circuit].Clear();
-                    CVDict[circuit].Clear(); 
+                    circuit.CurrentMatrix.Clear();
+                    circuit.ConstValueMatrix.Clear();
+                    
                     /* here we populate the node matrix */
                     for (int nodeNumber = 0; nodeNumber < circuit.NonReferenceNodes.Count; nodeNumber++)
                     {
@@ -432,20 +434,29 @@ namespace Easycoustics.Transition
 
                         foreach (var component in circuit.NonReferenceNodes[nodeNumber].ConnectedComponentTerminals)
                         {
+                            var admittances = component.Item1.GetAdmittancesForTerminal(component.Item2, FreqPoint);
+
+                            for (byte z = 0; z < admittances.Count(); z++)
+                            {
+                                node = GetComponentTerminalNode(component.Item1, z);
+                                if (node != currentSection.ReferenceNode)
+                                    circuit.CurrentMatrix.addAtCoordinate(nodeNumber, circuit.NonReferenceNodes.IndexOf(node), admittances[z]);
+                            }
+                            /*
                             if (component.Item1 is IPassive)
                             {
                                 passive = (IPassive)component.Item1;
-                                /* the impedance is calculated for a certain frequency */
+
                                 var otherNode = getOtherNodeInPassiveComponent(passive, component.Item2);
                                 var impedance = passive.GetImpedance(FreqPoint);
 
                                 MatrixDict[circuit].addAtCoordinate(nodeNumber, nodeNumber, impedance.Reciprocal);
-                                /* reciprocal of impedance is the admittance, the matrix itself is an admittance matrix */
-
-                                if (otherNode != currentSection.ReferenceNode) /* impedance is floating */
+                               
+                                if (otherNode != currentSection.ReferenceNode) 
                                     MatrixDict[circuit].addAtCoordinate(nodeNumber, circuit.NonReferenceNodes.IndexOf(otherNode), -1 * impedance.Reciprocal);
 
                             }
+                            */
 
                             if (component.Item1 is VoltageSource)
                             {
@@ -457,16 +468,16 @@ namespace Easycoustics.Transition
                                 positiveTerminal = (component.Item2 == source.PositiveTerminal);
                                 voltagePolarity = positiveTerminal ? 1 : -1;
 
-                                byte otherTerminal = positiveTerminal ? source.NegativeTerminal : source.PositiveTerminal;
-                                var otherNode = GetComponentTerminalNode(source, otherTerminal);
+                               // byte otherTerminal = positiveTerminal ? source.NegativeTerminal : source.PositiveTerminal;
+                               // var otherNode = GetComponentTerminalNode(source, otherTerminal);
                                 
                                 /* if (otherNode != null) */
                                 
-                                CVDict[circuit].addAtCoordinate(nodeNumber, 0, voltage * sourceAdmittance * voltagePolarity);
-                                MatrixDict[circuit].addAtCoordinate(nodeNumber, nodeNumber, sourceAdmittance);
+                                 circuit.ConstValueMatrix.addAtCoordinate(nodeNumber, 0, voltage * sourceAdmittance * voltagePolarity);
+                             //   MatrixDict[circuit].addAtCoordinate(nodeNumber, nodeNumber, sourceAdmittance);
 
-                                if (otherNode != currentSection.ReferenceNode)
-                                     MatrixDict[circuit].addAtCoordinate(nodeNumber, circuit.NonReferenceNodes.IndexOf(otherNode), -1 * sourceAdmittance);
+                           //     if (otherNode != currentSection.ReferenceNode)
+                            //         MatrixDict[circuit].addAtCoordinate(nodeNumber, circuit.NonReferenceNodes.IndexOf(otherNode), -1 * sourceAdmittance);
                                 
                             }
                         }
@@ -474,7 +485,8 @@ namespace Easycoustics.Transition
 
                     try
                     {
-                        ResultDict[circuit] = MatrixDict[circuit].Solve(CVDict[circuit]);
+                        circuit.VoltageResultMatrix = circuit.CurrentMatrix.Solve(circuit.ConstValueMatrix);
+                        // ResultDict[circuit] = MatrixDict[circuit].Solve(CVDict[circuit]);
                     }
                     catch (Exception e)
                     {
@@ -489,7 +501,7 @@ namespace Easycoustics.Transition
                     if (node2 != null)
                     {
                         var circuit = GetCircuitForNode(node2);
-                        nodeV.ResultVoltageCurve.addSample(FreqPoint, ResultDict[circuit].Data[circuit.NonReferenceNodes.IndexOf(node2), 0]);
+                        nodeV.ResultVoltageCurve.addSample(FreqPoint, circuit.VoltageResultMatrix.Data[circuit.NonReferenceNodes.IndexOf(node2), 0]);
                     }
                 }
 
@@ -510,8 +522,8 @@ namespace Easycoustics.Transition
                         nodePositiveNumber = circPos.NonReferenceNodes.IndexOf(nodePositive);
                         nodeNegativeNumber = circNeg.NonReferenceNodes.IndexOf(nodeNegative);
 
-                        voltPositive = (nodePositive != sectPos.ReferenceNode) ? ResultDict[circPos].Data[nodePositiveNumber, 0] : 0;
-                        voltNegative = (nodeNegative != sectNeg.ReferenceNode) ? ResultDict[circNeg].Data[nodeNegativeNumber, 0] : 0;
+                        voltPositive = (nodePositive != sectPos.ReferenceNode) ? circPos.VoltageResultMatrix.Data[nodePositiveNumber, 0] : 0;
+                        voltNegative = (nodeNegative != sectNeg.ReferenceNode) ? circNeg.VoltageResultMatrix.Data[nodeNegativeNumber, 0] : 0;
 
                         totalVoltage = voltPositive - voltNegative;
 
@@ -543,8 +555,8 @@ namespace Easycoustics.Transition
                         nodePositiveNumber = circuit.NonReferenceNodes.IndexOf(nodePositive);
                         nodeNegativeNumber = circuit.NonReferenceNodes.IndexOf(nodeNegative);
 
-                        voltPositive = (nodePositive != section.ReferenceNode) ? ResultDict[circuit].Data[nodePositiveNumber, 0] : 0;
-                        voltNegative = (nodeNegative != section.ReferenceNode) ? ResultDict[circuit].Data[nodeNegativeNumber, 0] : 0;
+                        voltPositive = (nodePositive != section.ReferenceNode) ? circuit.VoltageResultMatrix.Data[nodePositiveNumber, 0] : 0;
+                        voltNegative = (nodeNegative != section.ReferenceNode) ? circuit.VoltageResultMatrix.Data[nodeNegativeNumber, 0] : 0;
 
                         totalVoltage = voltPositive - voltNegative;
 
@@ -577,8 +589,8 @@ namespace Easycoustics.Transition
                         nodePositiveNumber = circuit.NonReferenceNodes.IndexOf(nodePositive);
                         nodeNegativeNumber = circuit.NonReferenceNodes.IndexOf(nodeNegative);
 
-                        voltPositive = (nodePositive != section.ReferenceNode) ? ResultDict[circuit].Data[nodePositiveNumber, 0] : 0;
-                        voltNegative = (nodeNegative != section.ReferenceNode) ? ResultDict[circuit].Data[nodeNegativeNumber, 0] : 0;
+                        voltPositive = (nodePositive != section.ReferenceNode) ? circuit.VoltageResultMatrix.Data[nodePositiveNumber, 0] : 0;
+                        voltNegative = (nodeNegative != section.ReferenceNode) ? circuit.VoltageResultMatrix.Data[nodeNegativeNumber, 0] : 0;
 
                         totalVoltage = voltPositive - voltNegative;
 
@@ -641,6 +653,10 @@ namespace Easycoustics.Transition
     public class Circuit
     {
         public List<CircuitSection> Sections { get; } = new List<CircuitSection>();   
+
+        public Matrix CurrentMatrix { get; set; }
+        public Matrix ConstValueMatrix { get; set; }
+        public Matrix VoltageResultMatrix { get; set; }
 
         public CircuitMode CircuitMode { get {
                 int quantityFloating = 0;

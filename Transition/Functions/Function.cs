@@ -261,7 +261,7 @@ namespace Easycoustics.Transition.Functions
                 return InterpolateCubic(point);
         }
 
-        public DataPoint GetNextAbscissa(decimal point)
+        public DataPoint GetNextPoint(decimal point)
         {
        
             var current = decimal.MaxValue;
@@ -281,7 +281,7 @@ namespace Easycoustics.Transition.Functions
             return output;
         }
 
-        public DataPoint GetPreviuosAbscissa(decimal point)
+        public DataPoint GetPreviuosPoint(decimal point)
         {
             var current = decimal.MinValue;
             var output = new DataPoint();
@@ -301,16 +301,16 @@ namespace Easycoustics.Transition.Functions
             return output;
         }
         
-        public bool isThereNextAbscissa(decimal point)
+        public bool isThereNextPoint(decimal point)
         {
-            try { var x = GetNextAbscissa(point); }
+            try { var x = GetNextPoint(point); }
             catch { return false; }
             return true;
         }
 
-        public bool isTherePreviousAbscissa(decimal point)
+        public bool isTherePreviousPoint(decimal point)
         {
-            try { var x = GetPreviuosAbscissa(point); }
+            try { var x = GetPreviuosPoint(point); }
             catch { return false; }
             return true;
         }
@@ -318,8 +318,8 @@ namespace Easycoustics.Transition.Functions
         public bool isPointOutsideRange(decimal point)
         {
             if (Data.Count == 0) return true;
-            if (!isThereNextAbscissa(point)) return true;
-            if (!isTherePreviousAbscissa(point)) return true;
+            if (!isThereNextPoint(point)) return true;
+            if (!isTherePreviousPoint(point)) return true;
 
             return false;
         }
@@ -328,13 +328,13 @@ namespace Easycoustics.Transition.Functions
         {
             if (Data.Count == 0) throw new InvalidOperationException();
             
-            bool ThereIsNextAbscissa = isThereNextAbscissa(point);
-            bool ThereIsPreviousAbscissa = isTherePreviousAbscissa(point);
+            bool ThereIsNextAbscissa = isThereNextPoint(point);
+            bool ThereIsPreviousAbscissa = isTherePreviousPoint(point);
             
             if (!ThereIsPreviousAbscissa)
-                return GetNextAbscissa(point).Y;
+                return GetNextPoint(point).Y;
             else
-                return GetPreviuosAbscissa(point).Y;
+                return GetPreviuosPoint(point).Y;
                 
 
         }
@@ -345,13 +345,13 @@ namespace Easycoustics.Transition.Functions
 
             if (isPointOutsideRange(point)) return getValueOutsideRange(point);
           
-            var distanceToNext = GetNextAbscissa(point).X - point;
-            var distanceToPrevious = point - GetPreviuosAbscissa(point).X;
+            var distanceToNext = GetNextPoint(point).X - point;
+            var distanceToPrevious = point - GetPreviuosPoint(point).X;
 
             if (distanceToNext < distanceToPrevious)
-                return GetNextAbscissa(point).Y;
+                return GetNextPoint(point).Y;
             else
-                return GetPreviuosAbscissa(point).Y;
+                return GetPreviuosPoint(point).Y;
         }
 
         private ComplexDecimal InterpolateLinear(decimal x)
@@ -360,11 +360,11 @@ namespace Easycoustics.Transition.Functions
 
             if (isPointOutsideRange(x)) return getValueOutsideRange(x);
 
-            var x1 = GetPreviuosAbscissa(x).X;
-            var x2 = GetNextAbscissa(x).X;
+            var x1 = GetPreviuosPoint(x).X;
+            var x2 = GetNextPoint(x).X;
            
-            var y1 = GetPreviuosAbscissa(x).Y;
-            var y2 = GetNextAbscissa(x).Y;
+            var y1 = GetPreviuosPoint(x).Y;
+            var y2 = GetNextPoint(x).Y;
 
             return y1 + ((x - x1) * (y2 - y1) / (x2 - x1));
         }
@@ -415,10 +415,32 @@ namespace Easycoustics.Transition.Functions
             if (Data.Count < 3) throw new InvalidOperationException();
             
             if (isPointOutsideRange(x)) return getValueOutsideRange(x);
-            /*
-            var t0 = GetPreviuosAbscissa(x).X;
-            var t1 = GetNextAbscissa(x).X;
-            var y0 = GetPreviuosAbscissa(x).Y; 
+
+            var p1 = GetPreviuosPoint(x);
+            var p2 = GetNextPoint(x);
+
+
+           /* var b = ComplexDecimal.Log(p2.Y / p1.Y) / ComplexDecimal.Log(p2.X / p1.X);
+              var a = p1.Y / (ComplexDecimal.Pow(p1.X, b));
+
+            output = a * ComplexDecimal.Pow(x,b);
+            */
+
+            return (p1.Y / (ComplexDecimal.Pow(p1.X, ComplexDecimal.Log(p2.Y / p1.Y) / ComplexDecimal.Log(p2.X / p1.X)))) * ComplexDecimal.Pow(x, ComplexDecimal.Log(p2.Y / p1.Y) / ComplexDecimal.Log(p2.X / p1.X));
+
+           
+
+        }
+
+        private ComplexDecimal InterpolateSpline(decimal x)
+        {
+            if (Data.Count < 3) throw new InvalidOperationException();
+
+            if (isPointOutsideRange(x)) return getValueOutsideRange(x);
+            
+            var t0 = GetPreviuosPoint(x).X;
+            var t1 = GetNextPoint(x).X;
+            var y0 = GetPreviuosPoint(x).Y; 
            
             var index0 = getPointIndex(t0);
             var index1 = getPointIndex(t1);
@@ -444,9 +466,7 @@ namespace Easycoustics.Transition.Functions
             output += z0 * (x - t0);
             output += y0;
 
-            return output;*/
-
-
+            return output;
         }
 
         private ComplexDecimal InterpolateCubic(decimal point)

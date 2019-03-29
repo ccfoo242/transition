@@ -1,5 +1,6 @@
 ﻿using Easycoustics.Transition.CircuitEditor.OnScreenComponents;
 using Easycoustics.Transition.CircuitEditor.ParametersControls;
+using Easycoustics.Transition.Common;
 using Easycoustics.Transition.Functions;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,11 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
             ResultVoltageCurve.Title = "Voltage at " + ElementName;
 
+        }
+
+        public override ComplexDecimal[] GetAdmittancesForTerminal(byte terminal, decimal frequency)
+        {
+             return new ComplexDecimal[1] { 0 };
         }
     }
 }

@@ -132,7 +132,31 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
         public override ComplexDecimal[] GetAdmittancesForTerminal(byte terminal, decimal frequency)
         {
-            throw new NotImplementedException();
+            decimal w = 2 * DecimalMath.Pi * frequency;
+            var denom = w * ((MutualL * MutualL) - (Lpri * Lsec));
+            var j = ComplexDecimal.ImaginaryOne;
+
+            switch (terminal)
+            {
+                case 0:
+                    return new ComplexDecimal[4] 
+                { j * Lsec / denom, -j * Lsec / denom, -j * MutualL / denom, j * MutualL / denom };
+
+                case 1:
+                    return new ComplexDecimal[4]
+                { -j * Lsec / denom, j * Lsec / denom, j * MutualL / denom, -j * MutualL / denom };
+
+                case 2:
+                    return new ComplexDecimal[4]
+                { -j * MutualL / denom, j * MutualL / denom, j * Lpri / denom, -j * Lpri / denom };
+
+                case 3:
+                    return new ComplexDecimal[4]
+                { j * MutualL / denom, -j * MutualL / denom, -j * Lpri / denom, j * Lpri / denom };
+
+            }
+
+            return null;
         }
     }
 }

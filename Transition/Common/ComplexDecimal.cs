@@ -127,7 +127,7 @@ namespace Easycoustics.Transition.Common
             {
                 if (number.ImaginaryPart > 0) return DecimalMath.PIdiv2;
                 else if (number.ImaginaryPart == 0) return 0m;
-                else return -1 * DecimalMath.PIdiv2; /* number.ImaginaryPart < 0 */
+                else /*  number.ImaginaryPart < 0 */ return -1 * DecimalMath.PIdiv2; 
             }
 
             return DecimalMath.Atan2(number.ImaginaryPart, number.RealPart);
@@ -135,6 +135,8 @@ namespace Easycoustics.Transition.Common
 
         public static ComplexDecimal Parallel(ComplexDecimal z1, ComplexDecimal z2)
         {
+            /* this is used for paralleling impedances */
+
             if (z1.Magnitude == 0m || z2.Magnitude == 0m) return 0m;
 
             return (z1.Reciprocal + z2.Reciprocal).Reciprocal;
@@ -156,8 +158,8 @@ namespace Easycoustics.Transition.Common
             decimal c = power.RealPart;
             decimal d = power.ImaginaryPart;
 
-            decimal p = DecimalMath.Power((a * a) + (b * b), c / 2) * DecimalMath.Exp(-d * ComplexDecimal.Argument(value));
-            decimal q = (c * ComplexDecimal.Argument(value)) + (0.5m * d * DecimalMath.Log((a * a) + (b * b)));
+            decimal p = DecimalMath.Power((a * a) + (b * b), c / 2) * DecimalMath.Exp(-d * Argument(value));
+            decimal q = (c * Argument(value)) + (0.5m * d * DecimalMath.Log((a * a) + (b * b)));
 
             return new ComplexDecimal(p * DecimalMath.Cos(q), p * DecimalMath.Sin(q));
         }
@@ -165,6 +167,12 @@ namespace Easycoustics.Transition.Common
         public static ComplexDecimal Sqrt(ComplexDecimal value)
         {
             return ComplexDecimal.Pow(value, .5m);
+        }
+
+        public static ComplexDecimal Log(ComplexDecimal value)
+        {
+            /* e base logarithm */
+            return DecimalMath.Log(value.Magnitude) + (ImaginaryOne * value.Phase);
         }
 
         public static ComplexDecimal operator +(ComplexDecimal n1, ComplexDecimal n2) { return Add(n1, n2); }
@@ -291,24 +299,26 @@ namespace Easycoustics.Transition.Common
 
         public Complex ToComplex => new Complex(Convert.ToDouble(RealPart), Convert.ToDouble(ImaginaryPart));
         
+
         public static ComplexDecimal Parse(string input, IFormatProvider formatProvider, string imaginarySymbol)
         {
             /* this can ONLY parse first real part, and secondly imaginary part 
              the other order is NOT allowed.
              but it is possible to enter only the imaginary part, or only real part. 
              only ONE number each, this method cannot perform a sum 
-             */
-
-            /* examples of supported input:
+            
+             examples of supported input:
              2+2i
              +30-20i
              +0.3i
              i
              3
              -5
+             -.08i
              .23+.45i
              0.97-0.15i
              -.78000E0003 - 6625.0200678E-0013i 
+
              */
 
             var numberFormat = NumberFormatInfo.GetInstance(formatProvider);
@@ -482,7 +492,7 @@ namespace Easycoustics.Transition.Common
                 (currentState == 5) ||
                 (currentState == 8)))
             /* string finished in a invalid moment */
-            { throw new FormatException("Complex number invalid formatted"); }
+            { throw new FormatException("Complex number invalid format"); }
 
             if ((currentState == 1) ||
                 (currentState == 4) ||
