@@ -405,6 +405,7 @@ namespace Easycoustics.Transition
             ElectricNode node2;
             ElectricNode nodePositive;
             ElectricNode nodeNegative;
+            ElectricNode currentNode;
             int nodePositiveNumber;
             int nodeNegativeNumber;
             ComplexDecimal voltPositive;
@@ -430,16 +431,17 @@ namespace Easycoustics.Transition
                     /* here we populate the node matrix */
                     for (int nodeNumber = 0; nodeNumber < circuit.NonReferenceNodes.Count; nodeNumber++)
                     {
-                        currentSection = GetSectionForNode(circuit.NonReferenceNodes[nodeNumber]);
+                        currentNode = circuit.NonReferenceNodes[nodeNumber];
+                        //currentSection = GetSectionForNode(circuit.NonReferenceNodes[nodeNumber]);
 
-                        foreach (var component in circuit.NonReferenceNodes[nodeNumber].ConnectedComponentTerminals)
+                        foreach (var component in currentNode.ConnectedComponentTerminals)
                         {
                             var admittances = component.Item1.GetAdmittancesForTerminal(component.Item2, FreqPoint);
 
                             for (byte z = 0; z < admittances.Count(); z++)
                             {
                                 node = GetComponentTerminalNode(component.Item1, z);
-                                if (node != currentSection.ReferenceNode)
+                                if (node != GetSectionForNode(node).ReferenceNode)
                                     circuit.CurrentMatrix.addAtCoordinate(nodeNumber, circuit.NonReferenceNodes.IndexOf(node), admittances[z]);
                             }
                             /*
