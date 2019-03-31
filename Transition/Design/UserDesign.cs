@@ -401,7 +401,7 @@ namespace Easycoustics.Transition.Design
                     if (t1.ScreenElement != component)
                         if (t1.getAbsoluteTerminalPosition().getDistance(component.getAbsoluteTerminalPosition(i)) < RadiusNear)
                         { if (!areTwoElementsTerminalsBounded(component.SerializableComponent, i, t1.ScreenElement.Serializable, t1.TerminalNumber))
-                                output.Add(i, t1); }
+                                output[i] = t1; }
 
             return output;
         }

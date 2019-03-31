@@ -127,7 +127,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             {
                 switch (terminal)
                 {
-                    case 0: return new ComplexDecimal[3] { GOut, -InAPolarity, -InBPolarity };
+                    case 0: return new ComplexDecimal[3] { GOut, -InAPolarity * GOut, -InBPolarity * GOut };
                     case 1: return new ComplexDecimal[3] { 0, GIn, 0 };
                     case 2: return new ComplexDecimal[3] { 0, 0, GIn };
                 }

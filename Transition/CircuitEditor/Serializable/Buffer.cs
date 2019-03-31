@@ -48,6 +48,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
         }
 
+        private int Polarity => (InverterInput) ? -1 : 1;
+
         private decimal gain; /* times */
         public decimal Gain
         {
@@ -115,7 +117,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             switch (terminal)
             {
                 case 0: return new ComplexDecimal[2] { GIn, 0 };
-                case 1: return new ComplexDecimal[2] { GOut * TF(frequency), GOut };
+                case 1: return new ComplexDecimal[2] { -GOut * Polarity * TF(frequency), GOut };
             }
 
             return new ComplexDecimal[2] { 0, 0 };
