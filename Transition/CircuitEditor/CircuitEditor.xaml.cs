@@ -824,14 +824,18 @@ namespace Easycoustics.Transition.CircuitEditor
             
         }
 
-        private async void Calculate()
+        private void Calculate()
         {
-            var result = await Analyzer.CurrentInstance.Calculate();
-            
+            txtStatus.Text = "Solving Circuit...";
+            Analyzer.CurrentInstance.Calculate();
+        }
+
+        public void FinishedSolvingCircuit(Tuple<bool,string> result)
+        {
             if (result.Item1) CurrentDesign.SystemCurves.submitCurvesChange();
             txtStatus.Text = result.Item2;
         }
 
-       
+
     }
 }

@@ -76,7 +76,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         public Buffer() : base()
         {
             rIn = 1e12m;
-            rOut = 12-6m;
+            rOut = 1e-6m;
 
             inverterInput = false;
             delay = 0;

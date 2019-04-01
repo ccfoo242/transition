@@ -125,17 +125,19 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             // later can be changed by the user to 4, 5 or 6 terminal
             // ( added terminals are tap connections )
 
-            QuantityOfTerminals = 3;
+            quantityOfTerminals = 3;
 
-            ResistanceValue = 1e3m;
-            PositionValue = 50;
+            resistanceValue = 1e3m;
+            positionValue = 50;
 
-            TaperFunction = new SampledFunction();
-            TaperFunction.addSample(0, 0);
-            TaperFunction.addSample(100, 100);
+            taperFunction = new SampledFunction();
+            taperFunction.addSample(0, 0);
+            taperFunction.addSample(100, 100);
             
             OnScreenElement = new PotentiometerScreen(this);
             ParametersControl = new PotentiometerParametersControl(this);
+
+            updateResistances();
         }
 
         public string ResistanceString

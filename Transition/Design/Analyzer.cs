@@ -31,6 +31,9 @@ namespace Easycoustics.Transition
      //   private Dictionary<Circuit, Common.Matrix> ResultDict = new Dictionary<Circuit, Common.Matrix>();
         private bool CircuitChanged = false;
 
+        private Task<Tuple<bool, string>> CalculateTask;
+        public Tuple<bool, string> ResultStatus;
+
         public Analyzer()
         {
 
@@ -284,7 +287,21 @@ namespace Easycoustics.Transition
 
         }
 
-        public async Task<Tuple<bool, string>> Calculate()
+        public async void Calculate()
+        {
+            if (CalculateTask != null)
+                if (!CalculateTask.IsCompleted) return;
+
+            CalculateTask = Task.Run(Calculate2);
+
+            await CalculateTask;
+
+            ResultStatus = CalculateTask.Result;
+            CircuitEditor.CircuitEditor.currentInstance.FinishedSolvingCircuit(ResultStatus);
+
+        }
+
+        private async Task<Tuple<bool, string>> Calculate2()
         {
 
             if (CircuitChanged) MakeUpNodesSectionsCircuits();

@@ -78,6 +78,9 @@ namespace Easycoustics.Transition.CircuitEditor.ParametersControls
             boxDelay.Value = SerializableBuffer.Delay;
             boxGain.Value = SerializableBuffer.Gain;
 
+            boxRIn.Value = SerializableBuffer.RIn;
+            boxROut.Value = SerializableBuffer.ROut;
+
             SerializableBuffer.PropertyChanged += handleChangeOfControls;
         }
 
