@@ -828,6 +828,7 @@ namespace Easycoustics.Transition.CircuitEditor
         {
             txtStatus.Text = "Solving Circuit...";
             Analyzer.CurrentInstance.Calculate();
+            
         }
 
         public void FinishedSolvingCircuit(Tuple<bool,string> result)

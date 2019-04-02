@@ -297,8 +297,8 @@ namespace Easycoustics.Transition
             await CalculateTask;
 
             ResultStatus = CalculateTask.Result;
-            CircuitEditor.CircuitEditor.currentInstance.FinishedSolvingCircuit(ResultStatus);
 
+            CircuitEditor.CircuitEditor.currentInstance.FinishedSolvingCircuit(ResultStatus);
         }
 
         private async Task<Tuple<bool, string>> Calculate2()
