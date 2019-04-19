@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Easycoustics.Transition.CircuitEditor;
 using Easycoustics.Transition.CircuitEditor.Serializable;
+using Easycoustics.Transition.Common;
 
 namespace Easycoustics.Transition.Commands
 {
@@ -12,13 +13,13 @@ namespace Easycoustics.Transition.Commands
     {
         public SerializableComponent Component { get; set; }
 
-        public bool AlterSchematic => false;
+        public CommandType CommandType { get; set; } = CommandType.ReCalculate;
+
 
         public object OldValue { get; set; }
         public object NewValue { get; set; }
 
         public string Property { get; set; }
-
 
         public string Title => "Change " + Property + " from " + OldValue.ToString() + " to " + NewValue.ToString();
 
@@ -46,7 +47,7 @@ namespace Easycoustics.Transition.Commands
             output += "Property: " + Property + Environment.NewLine;
             output += "Old Value: " + OldValue.ToString() + Environment.NewLine;
             output += "New Value: " + NewValue.ToString() + Environment.NewLine;
-
+            output += "Command type: " + CommandType.ToString() + Environment.NewLine;
             return output;
         }
 

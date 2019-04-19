@@ -5,13 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Easycoustics.Transition.CircuitEditor;
 using Easycoustics.Transition.CircuitEditor.Serializable;
+using Easycoustics.Transition.Common;
 using Easycoustics.Transition.Design;
 
 namespace Easycoustics.Transition.Commands
 {
     class CommandRemoveComponent : ICircuitCommand
     {
-        public bool AlterSchematic => true;
+        public CommandType CommandType => CommandType.ReBuild;
 
         public string Title => "Remove Component: " + Component.ToString();
        

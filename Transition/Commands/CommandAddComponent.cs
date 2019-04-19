@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Easycoustics.Transition.CircuitEditor;
 using Easycoustics.Transition.CircuitEditor.Serializable;
+using Easycoustics.Transition.Common;
 using Easycoustics.Transition.Design;
 
 namespace Easycoustics.Transition.Commands
@@ -15,7 +16,9 @@ namespace Easycoustics.Transition.Commands
 
         public string Title => "Add Component Command: " + Component.ToString();
 
-        public bool AlterSchematic => true;
+       // public bool AlterSchematic => true;
+
+        public CommandType CommandType => CommandType.ReBuild;
 
         public override string ToString() => Title;
 

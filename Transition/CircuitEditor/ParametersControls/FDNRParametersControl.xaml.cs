@@ -81,7 +81,8 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Component = SerializableFDNR,
                 Property = "ComponentPrecision",
                 OldValue = args.oldValue,
-                NewValue = args.newValue
+                NewValue = args.newValue,
+                CommandType = CommandType.DontCalculate
             };
 
             executeCommand(command);
@@ -119,7 +120,8 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Component = SerializableFDNR,
                 Property = "OutputVoltageAcross",
                 OldValue = SerializableFDNR.OutputVoltageAcross,
-                NewValue = true
+                NewValue = true,
+                CommandType = CommandType.ReBuild
             };
 
             executeCommand(command);
@@ -133,7 +135,8 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Component = SerializableFDNR,
                 Property = "OutputVoltageAcross",
                 OldValue = SerializableFDNR.OutputVoltageAcross,
-                NewValue = false
+                NewValue = false,
+                CommandType = CommandType.ReBuild
             };
 
             executeCommand(command);
@@ -146,7 +149,8 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Component = SerializableFDNR,
                 Property = "OutputCurrentThrough",
                 OldValue = SerializableFDNR.OutputVoltageAcross,
-                NewValue = true
+                NewValue = true,
+                CommandType = CommandType.ReBuild
             };
 
             executeCommand(command);
@@ -160,7 +164,8 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Component = SerializableFDNR,
                 Property = "OutputCurrentThrough",
                 OldValue = SerializableFDNR.OutputVoltageAcross,
-                NewValue = false
+                NewValue = false,
+                CommandType = CommandType.ReBuild
             };
 
             executeCommand(command);

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Easycoustics.Transition.CircuitEditor;
 using Easycoustics.Transition.CircuitEditor.Serializable;
+using Easycoustics.Transition.Common;
 
 namespace Easycoustics.Transition.Commands
 {
@@ -12,7 +13,7 @@ namespace Easycoustics.Transition.Commands
     {
         public string Title => (IsFlipY ? "FlipY" : "FlipX") + " " + NewValue.ToString() + " Component " + Component.ToString();
 
-        public bool AlterSchematic => false;
+        public CommandType CommandType => CommandType.DontCalculate;
 
         public SerializableComponent Component { get; set; }
         public bool IsFlipY { get; set; }

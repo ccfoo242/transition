@@ -19,27 +19,6 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
         but they share a few properties , the two types have terminals */
 
 
-     /* these SerializableComponent object are the instances that have the responsability
-      * of storing the components information, they do not perform nothing but that
-      * , to store the component data, and to save the integrity of that information.
-      * the purpose of this class is to serialize and deserialize it, so it can be
-      * saved on design file.
-      * Also is to be said, SerializableElements are the instances stored in the
-      * Component collection, of the UserDesign class.
-      * On the other hand. There are two classes that have the responsability to show the component
-      * data on screen, 1) Screen and 2) ParametersControl, these two classes query
-      * the data stored in SerializableElement directly.
-      * Screen class shows the component data in the electric circuit canvas
-      * ParametersControl allows to user to input data, and stores the data
-      * in SerializableElement.
-      * as soon a SerializableComponent object is created, the Screen and ParametersControl
-      * instances are created, and tied up to the original Serializable object.
-      * so the three clases are strongly coupled together.
-      * All data changes must be done via Command objects, so these changes can be
-      * undone via undo & redo functionality. (This is called commanding pattern,
-      * using the Undo & Redo stacks)
-      
-         */
     public abstract class SerializableElement : BindableBase
     {
         private string elementName = "";
@@ -115,6 +94,31 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 AttachedWires[thisElementTerminal].Add(wire);
         }
     }
+
+
+
+
+    /* these SerializableComponent object are the instances that have the responsability
+     * of storing the components information, they do not perform nothing but that
+     * , to store the component data, and to save the integrity of that information.
+     * the purpose of this class is to serialize and deserialize it, so it can be
+     * saved on design file.
+     * Also is to be said, SerializableElements are the instances stored in the
+     * Component collection, of the UserDesign class.
+     * On the other hand. There are two classes that have the responsability to show the component
+     * data on screen, 1) Screen and 2) ParametersControl, these two classes query
+     * the data stored in SerializableElement directly.
+     * Screen class shows the component data in the electric circuit canvas
+     * ParametersControl allows to user to input data, and stores the data
+     * in SerializableElement.
+     * as soon a SerializableComponent object is created, the Screen and ParametersControl
+     * instances are created, and tied up to the original Serializable object.
+     * so the three clases are strongly coupled together.
+     * All data changes must be done via Command objects, so these changes can be
+     * undone via undo & redo functionality. (This is called commanding pattern,
+     * using the Undo & Redo stacks)
+
+        */
 
     public abstract class SerializableComponent : SerializableElement
     {

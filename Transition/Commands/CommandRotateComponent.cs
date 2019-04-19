@@ -5,12 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Easycoustics.Transition.CircuitEditor;
 using Easycoustics.Transition.CircuitEditor.Serializable;
+using Easycoustics.Transition.Common;
 
 namespace Easycoustics.Transition.Commands
 {
     public class CommandRotateComponent : ICircuitCommand
     {
-        public bool AlterSchematic => false;
+        public CommandType CommandType => CommandType.DontCalculate;
+
         public string Title => "Rotate Component " + Component.ToString() + " From rotation " + oldValue.ToString() + " to " + newValue.ToString();
 
         public double oldValue { get; set; }

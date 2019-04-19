@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Easycoustics.Transition.CircuitEditor;
 using Easycoustics.Transition.CircuitEditor.OnScreenComponents;
 using Easycoustics.Transition.CircuitEditor.Serializable;
+using Easycoustics.Transition.Common;
 using Easycoustics.Transition.Design;
 
 namespace Easycoustics.Transition.Commands
@@ -18,7 +19,7 @@ namespace Easycoustics.Transition.Commands
 
         private List<SerializableWire> wiresForComponents = new List<SerializableWire>();
         private Dictionary<byte, ElementTerminal> binds;
-        public bool AlterSchematic => true;
+        public CommandType CommandType => CommandType.ReBuild;
 
         public void execute()
         {

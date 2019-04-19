@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Easycoustics.Transition.CircuitEditor.Serializable;
 using Easycoustics.Transition.Commands;
+using Easycoustics.Transition.Common;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -122,7 +123,8 @@ namespace Easycoustics.Transition.CircuitEditor.ParametersControls
                 Component = SerializableImpedance,
                 Property = "OutputVoltageAcross",
                 OldValue = SerializableImpedance.OutputVoltageAcross,
-                NewValue = true
+                NewValue = true,
+                CommandType = CommandType.ReBuild
             };
 
             executeCommand(command);
@@ -136,7 +138,8 @@ namespace Easycoustics.Transition.CircuitEditor.ParametersControls
                 Component = SerializableImpedance,
                 Property = "OutputVoltageAcross",
                 OldValue = SerializableImpedance.OutputVoltageAcross,
-                NewValue = false
+                NewValue = false,
+                CommandType = CommandType.ReBuild
             };
 
             executeCommand(command);
@@ -149,7 +152,8 @@ namespace Easycoustics.Transition.CircuitEditor.ParametersControls
                 Component = SerializableImpedance,
                 Property = "OutputCurrentThrough",
                 OldValue = SerializableImpedance.OutputVoltageAcross,
-                NewValue = true
+                NewValue = true,
+                CommandType = CommandType.ReBuild
             };
 
             executeCommand(command);
@@ -163,7 +167,8 @@ namespace Easycoustics.Transition.CircuitEditor.ParametersControls
                 Component = SerializableImpedance,
                 Property = "OutputCurrentThrough",
                 OldValue = SerializableImpedance.OutputVoltageAcross,
-                NewValue = false
+                NewValue = false,
+                CommandType = CommandType.ReBuild
             };
 
             executeCommand(command);

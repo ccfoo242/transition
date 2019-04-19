@@ -20,7 +20,7 @@ namespace Easycoustics.Transition.Common
         public decimal Phase { get => Argument(this); }
         public decimal PhaseDeg { get => (Argument(this) * 180) / DecimalMath.Pi; }
 
-        public ComplexDecimal Reciprocal { get => One / this; }
+        public ComplexDecimal Reciprocal { get => GetReciprocal(this); }
         public ComplexDecimal Conjugate { get => new ComplexDecimal(RealPart, -1m * ImaginaryPart); }
 
         public double TodBV { get => TodBRef(1); }
@@ -34,6 +34,8 @@ namespace Easycoustics.Transition.Common
         public static readonly ComplexDecimal Zero = new ComplexDecimal(0, 0);
         public static readonly ComplexDecimal One = new ComplexDecimal(1m, 0);
         public static readonly ComplexDecimal ImaginaryOne = new ComplexDecimal(0, 1m);
+
+        public bool IsZero { get => (ImaginaryPart == 0m) && (RealPart == 0); }
 
         public ComplexDecimal(decimal real, decimal imag)
         {
@@ -79,10 +81,14 @@ namespace Easycoustics.Transition.Common
             ImaginaryPart = 0m;
         }
 
-        public static ComplexDecimal GetReciprocal(ComplexDecimal input) => One / input;
+        public static ComplexDecimal GetReciprocal(ComplexDecimal input)
+        {
+            if (input.IsZero)
+                return new ComplexDecimal(decimal.MaxValue, 0m);
+            else return One / input;
+        }
 
         public static ComplexDecimal Negate(ComplexDecimal input) => -1 * input;
-
         public static ComplexDecimal Add(ComplexDecimal n1, ComplexDecimal n2)
         {
             return new ComplexDecimal(n1.RealPart + n2.RealPart, n1.ImaginaryPart + n2.ImaginaryPart);

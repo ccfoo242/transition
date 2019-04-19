@@ -17,7 +17,8 @@ namespace Easycoustics.Transition.CircuitEditor
 
         string Title { get; }
 
-        bool AlterSchematic { get; }
+        CommandType CommandType { get; }
+
     }
 
     public interface ICircuitSelectable

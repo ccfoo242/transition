@@ -77,7 +77,8 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Component = SerializableCapacitor,
                 Property = "ComponentPrecision",
                 OldValue = args.oldValue,
-                NewValue = args.newValue
+                NewValue = args.newValue,
+                CommandType = CommandType.DontCalculate
             };
 
             executeCommand(command);
@@ -257,7 +258,8 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Component = SerializableCapacitor,
                 Property = "OutputVoltageAcross",
                 OldValue = SerializableCapacitor.OutputVoltageAcross,
-                NewValue = true
+                NewValue = true,
+                CommandType = CommandType.ReBuild
             };
 
             executeCommand(command);
@@ -271,7 +273,8 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Component = SerializableCapacitor,
                 Property = "OutputVoltageAcross",
                 OldValue = SerializableCapacitor.OutputVoltageAcross,
-                NewValue = false
+                NewValue = false,
+                CommandType = CommandType.ReBuild
             };
 
             executeCommand(command);
@@ -284,7 +287,8 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Component = SerializableCapacitor,
                 Property = "OutputCurrentThrough",
                 OldValue = SerializableCapacitor.OutputVoltageAcross,
-                NewValue = true
+                NewValue = true,
+                CommandType = CommandType.ReBuild
             };
 
             executeCommand(command);
@@ -298,7 +302,8 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Component = SerializableCapacitor,
                 Property = "OutputCurrentThrough",
                 OldValue = SerializableCapacitor.OutputVoltageAcross,
-                NewValue = false
+                NewValue = false,
+                CommandType = CommandType.ReBuild
             };
 
             executeCommand(command);

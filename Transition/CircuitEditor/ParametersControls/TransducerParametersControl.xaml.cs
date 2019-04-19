@@ -162,7 +162,8 @@ namespace Easycoustics.Transition.CircuitEditor.ParametersControls
                 Component = SerializableTransducer,
                 Property = "OutputVoltageAcross",
                 OldValue = SerializableTransducer.OutputVoltageAcross,
-                NewValue = true
+                NewValue = true,
+                CommandType = CommandType.ReBuild
             };
 
             executeCommand(command);
@@ -176,7 +177,8 @@ namespace Easycoustics.Transition.CircuitEditor.ParametersControls
                 Component = SerializableTransducer,
                 Property = "OutputVoltageAcross",
                 OldValue = SerializableTransducer.OutputVoltageAcross,
-                NewValue = false
+                NewValue = false,
+                CommandType = CommandType.ReBuild
             };
 
             executeCommand(command);
@@ -189,7 +191,8 @@ namespace Easycoustics.Transition.CircuitEditor.ParametersControls
                 Component = SerializableTransducer,
                 Property = "OutputCurrentThrough",
                 OldValue = SerializableTransducer.OutputVoltageAcross,
-                NewValue = true
+                NewValue = true,
+                CommandType = CommandType.ReBuild
             };
 
             executeCommand(command);
@@ -203,7 +206,8 @@ namespace Easycoustics.Transition.CircuitEditor.ParametersControls
                 Component = SerializableTransducer,
                 Property = "OutputCurrentThrough",
                 OldValue = SerializableTransducer.OutputVoltageAcross,
-                NewValue = false
+                NewValue = false,
+                CommandType = CommandType.ReBuild
             };
 
             executeCommand(command);

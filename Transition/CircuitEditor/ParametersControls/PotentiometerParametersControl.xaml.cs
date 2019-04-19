@@ -227,7 +227,8 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Component = SerializablePotentiometer,
                 Property = "ComponentPrecision",
                 OldValue = args.oldValue,
-                NewValue = args.newValue
+                NewValue = args.newValue,
+                CommandType = CommandType.DontCalculate
             };
 
             executeCommand(command);

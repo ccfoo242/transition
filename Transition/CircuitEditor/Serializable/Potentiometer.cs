@@ -90,8 +90,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                   TaperChanged?.Invoke();
             }
         }
-        
-        private List<Tuple<byte, decimal>> OrderedResistances { get; set; }
+
+        private List<Tuple<byte, decimal>> OrderedResistances { get; set; } = new List<Tuple<byte, decimal>>();
 
 
         /* Potentiometer allows to change the quantity
@@ -112,6 +112,16 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
                 raiseLayoutChanged();
             } }
+
+        /*
+         terminal 0: CW Extreme
+         terminal 1: CCW Extreme
+         terminal 2: Cursor
+         terminal 3: midpoint
+         terminal 4: midpoint
+         terminal 5: midpoint
+         (midpoints are always ordered and monothonic)
+             */
 
         public delegate void DelegateTerminalsChanged(byte oldQuantity, byte newQuantity);
         public event DelegateTerminalsChanged TerminalsChanged;
@@ -188,8 +198,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
             var list = new List<Tuple<byte,decimal>>();
 
-            list.Add(new Tuple<byte, decimal>(0, 0));
-            list.Add(new Tuple<byte, decimal>(1, getResistance(100d)));
+            //list.Add(new Tuple<byte, decimal>(0, 0));
+            //list.Add(new Tuple<byte, decimal>(1, getResistance(100d)));
             list.Add(new Tuple<byte, decimal>(2, getResistance(PositionValue)));
 
             if (QuantityOfTerminals == 3) { }
@@ -209,7 +219,11 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 list.Add(new Tuple<byte, decimal>(5, getResistance(TapCPositionValue)));
             }
 
-            OrderedResistances = list.OrderBy(t => t.Item2).ToList();
+
+            OrderedResistances.Clear();
+            OrderedResistances.Add(new Tuple<byte, decimal>(0, 0));
+            OrderedResistances.AddRange(list.OrderBy(t => t.Item2).ToList());
+            OrderedResistances.Add(new Tuple<byte, decimal>(1, getResistance(100d)));
            
         }
 
@@ -218,22 +232,23 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             var output = new ComplexDecimal[QuantityOfTerminals];
 
             if (terminal == 0)
-            {
+            {   /* CW extreme */
                 var res = OrderedResistances[1];
-                output[0] = 1 / res.Item2; // admittance
-                output[res.Item1] = -1 / res.Item2;
+
+                output[0] = new ComplexDecimal(res.Item2).Reciprocal;
+                output[res.Item1] = -1 * new ComplexDecimal(res.Item2).Reciprocal;
             }
             else if (terminal == 1)
-            {
+            {   /* CCW extreme */
                 var resAbove = OrderedResistances[QuantityOfTerminals - 2];
-                var resBelow = OrderedResistances[QuantityOfTerminals - 1];
-                var resistance = resBelow.Item2 - resAbove.Item2;
+                var resistance = ResistanceValue - resAbove.Item2;
 
-                output[terminal] = (1 / resistance);
-                output[resAbove.Item1] = -1 / resistance;
+                output[1] = new ComplexDecimal(resistance).Reciprocal;
+                output[resAbove.Item1] = -1 * new ComplexDecimal(resistance).Reciprocal;
 
             } else
             {
+                /* cursor or midpoint terminal*/
                 /* selected terminal has two resistances attached, one above and one below */
 
                 var res = OrderedResistances.Find(tup => (tup.Item1 == terminal));
@@ -244,10 +259,14 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
                 var resistance1 = res.Item2 - resAbove.Item2;
                 var resistance2 = resBelow.Item2 - res.Item2;
-
+                /*
                 output[terminal] = (1 / resistance1) + (1 / resistance2);
                 output[resAbove.Item1] = -1 * (1 / resistance1);
                 output[resBelow.Item1] = -1 * (1 / resistance2);
+                */
+                output[terminal] = new ComplexDecimal(resistance1).Reciprocal + new ComplexDecimal(resistance2).Reciprocal;
+                output[resAbove.Item1] = -1 * new ComplexDecimal(resistance1).Reciprocal;
+                output[resBelow.Item1] = -1 * new ComplexDecimal(resistance2).Reciprocal;
             }
             
             

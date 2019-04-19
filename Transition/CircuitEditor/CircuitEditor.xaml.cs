@@ -37,8 +37,8 @@ namespace Easycoustics.Transition.CircuitEditor
     {
         public static CircuitEditor currentInstance;
         public static UserDesign CurrentDesign => UserDesign.CurrentDesign;
-        
-      //  public UserDesign CurrentDesign { get; set; }
+
+        //  public UserDesign CurrentDesign { get; set; }
 
         public ObservableCollection<ICircuitSelectable> selectedElements = new ObservableCollection<ICircuitSelectable>();
         public List<Line> gridLines;
@@ -81,7 +81,7 @@ namespace Easycoustics.Transition.CircuitEditor
 
             UndoStack.StackChanged += HandleUndoStack;
             RedoStack.StackChanged += HandleRedoStack;
-            
+
         }
 
         private void HandleUndoStack(object sender, NotifyCollectionChangedEventArgs e)
@@ -118,7 +118,7 @@ namespace Easycoustics.Transition.CircuitEditor
 
         public void loadDesign(UserDesign design)
         {
-           // CurrentDesign = design;
+            // CurrentDesign = design;
 
             design.CanvasCircuit.PointerPressed += cnvPointerPressed;
             design.CanvasCircuit.PointerMoved += cnvPointerMoved;
@@ -142,9 +142,9 @@ namespace Easycoustics.Transition.CircuitEditor
 
             foreach (WireTerminal wt in selectedElements.OfType<WireTerminal>())
                 executeCommand(new CommandRemoveWire()
-                     { Wire = wt.WireScreen.serializableWire });
+                { Wire = wt.WireScreen.serializableWire });
         }
-        
+
         public void refreshSelectedElements(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
@@ -188,7 +188,7 @@ namespace Easycoustics.Transition.CircuitEditor
                     break;
             }
         }
-        
+
 
         private void enableComponentEdit()
         {
@@ -213,7 +213,7 @@ namespace Easycoustics.Transition.CircuitEditor
         {
             selectedElements.Clear();
             selectedElements.Add(element);
-          
+
         }
 
         public void addElement(string element)
@@ -255,7 +255,7 @@ namespace Easycoustics.Transition.CircuitEditor
 
         private void bindComponentTerminalPair(ElementTerminal et1, ElementTerminal et2)
         {
-           
+
             SerializableWire wire = CurrentDesign.bindComponentTerminal(
                 ((ScreenComponentBase)et1.ScreenElement).SerializableComponent, et1.TerminalNumber,
                 ((ScreenComponentBase)et2.ScreenElement).SerializableComponent, et2.TerminalNumber);
@@ -377,7 +377,7 @@ namespace Easycoustics.Transition.CircuitEditor
                 SnapToGrid ? Statics.round20(coordinate.Y) : coordinate.Y);
         }
 
-        
+
         private void cnvPointerPressed(object sender, PointerRoutedEventArgs e)
         {
             clickedPoint = new Point2D(e.GetCurrentPoint(cnvGeneral).Position.X,
@@ -416,7 +416,7 @@ namespace Easycoustics.Transition.CircuitEditor
                     }
 
                     if (clickedElement is WireTerminal)
-                         ((WireTerminal)clickedElement).selected(); 
+                        ((WireTerminal)clickedElement).selected();
                 }
 
             if (e.GetCurrentPoint(cnvGeneral).Properties.IsRightButtonPressed)
@@ -538,7 +538,7 @@ namespace Easycoustics.Transition.CircuitEditor
                 groupSelect = false;
 
                 selectedElements.Clear();
-                
+
                 /* thanks to MS folks, ObservableCollection does not support the
                  AddRange method, and I do not want to implement one myself */
                 foreach (ICircuitSelectable item in CurrentDesign.enclosingElementsForGroupSelect(rectGroupSelect))
@@ -683,7 +683,7 @@ namespace Easycoustics.Transition.CircuitEditor
                 }
 
             movingComponents = false;
-            
+
         }
 
         public void showParameters(ScreenComponentBase component)
@@ -698,24 +698,24 @@ namespace Easycoustics.Transition.CircuitEditor
         {
             switch (element)
             {
-                case "resistor":         return new Resistor();
-                case "capacitor":        return new Capacitor();
-                case "inductor":         return new Inductor();
-                case "fdnr":             return new FDNR();
-                case "ground":           return new Ground();
-                case "potentiometer":    return new Potentiometer();
-                case "transformer":      return new Transformer();
-                case "generator":        return new VoltageSource();
-                case "opamp":            return new OpAmp();
-                case "switch":           return new Switch();
-                case "impedance":        return new Impedance();
-                case "scn":              return new SCN();
+                case "resistor": return new Resistor();
+                case "capacitor": return new Capacitor();
+                case "inductor": return new Inductor();
+                case "fdnr": return new FDNR();
+                case "ground": return new Ground();
+                case "potentiometer": return new Potentiometer();
+                case "transformer": return new Transformer();
+                case "generator": return new VoltageSource();
+                case "opamp": return new OpAmp();
+                case "switch": return new Switch();
+                case "impedance": return new Impedance();
+                case "scn": return new SCN();
                 case "transferfunction": return new TransferFunctionComponent();
-                case "summer":           return new Summer();
-                case "buffer":           return new Serializable.Buffer();
-                case "transducer":       return new Transducer();
-                case "voltagenode":      return new VoltageOutputNode();
-                case "voltagediff":      return new VoltageOutputDifferential();
+                case "summer": return new Summer();
+                case "buffer": return new Serializable.Buffer();
+                case "transducer": return new Transducer();
+                case "voltagenode": return new VoltageOutputNode();
+                case "voltagediff": return new VoltageOutputDifferential();
             }
 
             throw new NotSupportedException();
@@ -747,8 +747,13 @@ namespace Easycoustics.Transition.CircuitEditor
             RedoStack.Clear();
             command.execute();
 
-            if (command.AlterSchematic) Analyzer.CircuitHasChanged();
-            Calculate();
+            switch (command.CommandType)
+            {
+                case CommandType.DontCalculate: break;
+                case CommandType.ReBuild: BuildAndCalculate(); break;
+                case CommandType.ReCalculate: Calculate(); break;
+            }
+            
             UndoStack.Push(command);
         }
 
@@ -758,23 +763,31 @@ namespace Easycoustics.Transition.CircuitEditor
 
             var command = UndoStack.Pop();
             command.unExecute();
-            Calculate();
-
-            if (command.AlterSchematic) Analyzer.CircuitHasChanged();
-
+            
+            switch (command.CommandType)
+            {
+                case CommandType.DontCalculate: break;
+                case CommandType.ReBuild: BuildAndCalculate(); break;
+                case CommandType.ReCalculate: Calculate(); break;
+            }
+            
             RedoStack.Push(command);
         }
 
         public void redo()
         {
             if (RedoStack.Count == 0) return;
-            
+
             var command = RedoStack.Pop();
             command.execute();
-            Calculate(); 
-
-            if (command.AlterSchematic) Analyzer.CircuitHasChanged(); 
-
+            
+            switch (command.CommandType)
+            {
+                case CommandType.DontCalculate: break;
+                case CommandType.ReBuild: BuildAndCalculate(); break;
+                case CommandType.ReCalculate: Calculate(); break;
+            }
+            
             UndoStack.Push(command);
         }
 
@@ -820,8 +833,21 @@ namespace Easycoustics.Transition.CircuitEditor
 
         private void TapCalculate(object sender, TappedRoutedEventArgs e)
         {
-             Calculate();
-            
+            Calculate();
+
+        }
+
+        private void BuildAndCalculate()
+        {
+            txtStatus.Text = "Building Circuit...";
+            var buildResult = Analyzer.CurrentInstance.Build();
+
+            txtStatus.Text = buildResult.Item2;
+
+            if (buildResult.Item1 == false)
+                return;
+
+            Calculate();
         }
 
         private void Calculate()
@@ -831,12 +857,11 @@ namespace Easycoustics.Transition.CircuitEditor
             
         }
 
-        public void FinishedSolvingCircuit(Tuple<bool,string> result)
-        {
-            if (result.Item1) CurrentDesign.SystemCurves.submitCurvesChange();
-            txtStatus.Text = result.Item2;
-        }
 
+        public void SetStatusText(string statusText)
+        {
+            txtStatus.Text = statusText;
+        }
 
     }
 }

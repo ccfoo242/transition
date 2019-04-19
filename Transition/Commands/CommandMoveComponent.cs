@@ -12,7 +12,7 @@ namespace Easycoustics.Transition.Commands
 {
     public class CommandMoveComponent : ICircuitCommand
     {
-        public bool AlterSchematic => false;
+        public CommandType CommandType => CommandType.DontCalculate;
 
         public string Title => "Move component " + Component.ToString() + " from Position " + 
               OldPosition.ToString() + " to position " +
