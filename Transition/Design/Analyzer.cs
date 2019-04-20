@@ -98,9 +98,7 @@ namespace Easycoustics.Transition
 
         public async void Calculate()
         {
-            /*  if (semaphoreRed)
-                  return; 
-                  */
+            
 
             semaphoreRed = true;
             CalculateTask = Task.Run(Calculate2);
@@ -120,7 +118,7 @@ namespace Easycoustics.Transition
 
         private ElectricNode GetComponentTerminalNode(SerializableComponent comp, byte terminal)
         {
-            if (comp.IsTerminalGrounded(terminal)) return GroundNode;
+          //  if (comp.IsTerminalGrounded(terminal)) return GroundNode;
 
             return ElectricNodes.Find(node => node.HasComponentTerminal(comp, terminal));
         }
@@ -199,9 +197,11 @@ namespace Easycoustics.Transition
             ElectricNode node2;
             int nodeNumber = 1;
 
-            var compTerminals = GetAllComponentsTerminals();
+            foreach (var ground in CurrentDesign.Components.OfType<Ground>())
+                GroundNode.UnionComponentTerminals(ground.GetOtherConnectedComponents(0));
+            
 
-            foreach (var compTerm in compTerminals)
+            foreach (var compTerm in GetAllComponentsTerminals())
             {
                 node2 = GetComponentTerminalNode(compTerm.Item1, compTerm.Item2);
 
@@ -213,9 +213,8 @@ namespace Easycoustics.Transition
                     newNode.ConnectedComponentTerminals.AddRange(compTerm.Item1.GetOtherConnectedComponents(compTerm.Item2));
                     ElectricNodes.Add(newNode);
                 }
-                else
-                    if (node2 == GroundNode)
-                    GroundNode.ConnectedComponentTerminals.Add(compTerm);
+               /* else
+                    if (node2 == GroundNode) GroundNode.ConnectedComponentTerminals.Add(compTerm);*/
             }
 
             foreach (var compMeter in CurrentDesign.Components.Where(comp => comp is VoltageOutputDifferential))
@@ -225,6 +224,45 @@ namespace Easycoustics.Transition
                 if (compMeter.IsTerminalGrounded(1))
                     GroundNode.ConnectedComponentTerminals.Add(new Tuple<SerializableComponent, byte>(compMeter, 1));
             }
+
+            /* potentiometer cursor obfuscated nodes are eliminated, compterminals of the eliminated node
+               are transferred to colliding node */
+            foreach (var pot in CurrentDesign.Components.OfType<Potentiometer>())
+            {
+                if (pot.isCursorObfuscated() != 255)
+                {
+                    var nodeCursor = GetComponentTerminalNode(pot, 2); /* terminal 2 is the cursor of the pot */
+                    var nodeColliding = GetComponentTerminalNode(pot, pot.isCursorObfuscated());
+
+                    if (nodeCursor == nodeColliding)
+                    {
+                        nodeCursor.ConnectedComponentTerminals.Remove(new Tuple<SerializableComponent, byte>(pot, 2));
+                        continue;
+                    }
+
+                    if (nodeCursor == GroundNode)
+                    {
+                        GroundNode.ConnectedComponentTerminals.Remove(new Tuple<SerializableComponent, byte>(pot, 2));
+                        GroundNode.UnionComponentTerminals(nodeColliding.ConnectedComponentTerminals);
+                        ElectricNodes.Remove(nodeColliding);
+                        continue;
+                    }
+
+                    if (nodeColliding == GroundNode)
+                    {
+                        GroundNode.ConnectedComponentTerminals.Remove(new Tuple<SerializableComponent, byte>(pot, 2));
+                        GroundNode.UnionComponentTerminals(nodeCursor.ConnectedComponentTerminals);
+                        ElectricNodes.Remove(nodeCursor);
+                        continue;
+                    }
+
+                    nodeCursor.ConnectedComponentTerminals.Remove(new Tuple<SerializableComponent, byte>(pot, 2));
+                    nodeColliding.UnionComponentTerminals(nodeCursor.ConnectedComponentTerminals);
+                    ElectricNodes.Remove(nodeCursor);
+
+                }
+            }
+
 
             /*
             foreach (var node in ElectricNodes)
@@ -412,7 +450,7 @@ namespace Easycoustics.Transition
             
             visit = (node) => {
                 output.Nodes.Add(node);
-                if (node == GroundNode) return;
+                if (node == GroundNode) return; /* do not analyze ground node because it can lead to other circuit */
                 foreach (var nextNode in GetOtherNodesConnectedToThisNode(node))
                     if (!output.Nodes.Contains(nextNode)) visit(nextNode);
             };
@@ -427,7 +465,7 @@ namespace Easycoustics.Transition
         {
             var output = new List<Tuple<SerializableComponent, byte>>();
             
-            foreach (var comp in CurrentDesign.Components.Where(comp => !(comp is IMeterComponent)))
+            foreach (var comp in CurrentDesign.Components.Where(comp => !(comp is IMeterComponent) && !(comp is Ground) ))
                 for (byte i = 0; i < comp.QuantityOfTerminals; i++)
                     output.Add(new Tuple<SerializableComponent, byte>(comp, i));
             
@@ -530,8 +568,9 @@ namespace Easycoustics.Transition
                             for (byte z = 0; z < admittances.Count(); z++)
                             {
                                 node = GetComponentTerminalNode(componentTerminal.Item1, z);
-                                if (node != GetSectionForNode(node).ReferenceNode)
-                                    circuit.CurrentMatrix.addAtCoordinate(nodeNumber, circuit.NonReferenceNodes.IndexOf(node), admittances[z]);
+                                if (node!=null)
+                                    if (node != GetSectionForNode(node).ReferenceNode)
+                                        circuit.CurrentMatrix.addAtCoordinate(nodeNumber, circuit.NonReferenceNodes.IndexOf(node), admittances[z]);
                             }
                         
                             if (componentTerminal.Item1 is VoltageSource)
@@ -667,6 +706,11 @@ namespace Easycoustics.Transition
         public bool HasComponent(SerializableComponent comp)
         {
             return ConnectedComponentTerminals.Select(tup => tup.Item1).Contains(comp);
+        }
+
+        public void UnionComponentTerminals(List<Tuple<SerializableComponent, byte>> otherList)
+        {
+            ConnectedComponentTerminals = ConnectedComponentTerminals.Union(otherList).ToList();
         }
 
         public override string ToString()

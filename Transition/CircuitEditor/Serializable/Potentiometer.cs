@@ -113,6 +113,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                 raiseLayoutChanged();
             } }
 
+        private byte PracticalQuantityOfTerminals => (isCursorObfuscated() == 255) ? QuantityOfTerminals : (byte)(QuantityOfTerminals - 1);
+
         /*
          terminal 0: CCW Extreme
          terminal 1: CW Extreme
@@ -201,7 +203,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             //list.Add(new Tuple<byte, decimal>(0, 0));
             //list.Add(new Tuple<byte, decimal>(1, getResistance(100d)));
 
-            if (isCursorObfuscated() != 255) list.Add(new Tuple<byte, decimal>(2, getResistance(CursorPositionValue)));
+            if (isCursorObfuscated() == 255) list.Add(new Tuple<byte, decimal>(2, getResistance(CursorPositionValue)));
 
             if (QuantityOfTerminals == 3) { }
             else if (QuantityOfTerminals == 4)
@@ -230,8 +232,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
         public override ComplexDecimal[] GetAdmittancesForTerminal(byte terminal, decimal frequency)
         {
+           
             var output = new ComplexDecimal[QuantityOfTerminals];
-
+            
             if (terminal == 0)
             {   /* CCW extreme */
                 var res = OrderedResistances[1];
@@ -241,7 +244,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
             else if (terminal == 1)
             {   /* CW extreme */
-                var resAbove = OrderedResistances[QuantityOfTerminals - 2];
+                var resAbove = OrderedResistances[OrderedResistances.Count - 2];
                 var resistance = ResistanceValue - resAbove.Item2;
 
                 output[1] = new ComplexDecimal(resistance).Reciprocal;

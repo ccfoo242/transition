@@ -258,6 +258,8 @@ namespace Easycoustics.Transition.CircuitEditor.Components
             
             CommandType commType = (isCursorObfuscated ^ willBeObfuscated) ? CommandType.ReBuildAndCalculate : CommandType.ReCalculate;
 
+            if (commType == CommandType.ReBuildAndCalculate)
+                System.Diagnostics.Debug.WriteLine("Pot summoned rebuild!");
 
             var command = new CommandSetValue()
             {

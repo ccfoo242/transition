@@ -200,7 +200,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
         public List<Tuple<SerializableComponent, byte>> GetOtherConnectedComponents(byte terminal)
         {
-             /* the way to traverse a graph is with a recursive and feedback algorithm */
+             /* the way to traverse a graph is with a recursive and with feedback, algorithm */
 
             var output = new List<Tuple<SerializableComponent, byte>>();
 
@@ -224,7 +224,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
                     visit(wire);
             }
 
-            if (!output.Contains(new Tuple<SerializableComponent, byte>(this,terminal)))
+            if (!output.Contains(new Tuple<SerializableComponent, byte>(this, terminal)))
                 output.Add(new Tuple<SerializableComponent, byte>(this, terminal));
 
             return output;
