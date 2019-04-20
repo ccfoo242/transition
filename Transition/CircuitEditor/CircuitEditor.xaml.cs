@@ -68,6 +68,7 @@ namespace Easycoustics.Transition.CircuitEditor
         public ObservableStack<ICircuitCommand> UndoStack = new ObservableStack<ICircuitCommand>() { MaximumElements = 25 };
         public ObservableStack<ICircuitCommand> RedoStack = new ObservableStack<ICircuitCommand>() { MaximumElements = 25 };
 
+     
         public CircuitEditor()
         {
             InitializeComponent();
@@ -745,6 +746,9 @@ namespace Easycoustics.Transition.CircuitEditor
         public void executeCommand(ICircuitCommand command)
         {
             RedoStack.Clear();
+
+            Analyzer.CurrentInstance.dispatchCommand(command.execute, command);
+            /*
             command.execute();
 
             switch (command.CommandType)
@@ -753,7 +757,8 @@ namespace Easycoustics.Transition.CircuitEditor
                 case CommandType.ReBuild: BuildAndCalculate(); break;
                 case CommandType.ReCalculate: Calculate(); break;
             }
-            
+            */
+
             UndoStack.Push(command);
         }
 
@@ -762,14 +767,16 @@ namespace Easycoustics.Transition.CircuitEditor
             if (UndoStack.Count == 0) return;
 
             var command = UndoStack.Pop();
-            command.unExecute();
+
+            Analyzer.CurrentInstance.dispatchCommand(command.unExecute, command);
+            /*command.unExecute();
             
             switch (command.CommandType)
             {
                 case CommandType.DontCalculate: break;
                 case CommandType.ReBuild: BuildAndCalculate(); break;
                 case CommandType.ReCalculate: Calculate(); break;
-            }
+            }*/
             
             RedoStack.Push(command);
         }
@@ -779,17 +786,20 @@ namespace Easycoustics.Transition.CircuitEditor
             if (RedoStack.Count == 0) return;
 
             var command = RedoStack.Pop();
-            command.execute();
+
+            Analyzer.CurrentInstance.dispatchCommand(command.execute, command);
+            /*command.execute();
             
             switch (command.CommandType)
             {
                 case CommandType.DontCalculate: break;
                 case CommandType.ReBuild: BuildAndCalculate(); break;
                 case CommandType.ReCalculate: Calculate(); break;
-            }
+            }*/
             
             UndoStack.Push(command);
         }
+
 
         private void tapUndo(object sender, TappedRoutedEventArgs e)
         {
@@ -833,10 +843,11 @@ namespace Easycoustics.Transition.CircuitEditor
 
         private void TapCalculate(object sender, TappedRoutedEventArgs e)
         {
-            Calculate();
+          //  Calculate();
 
         }
 
+        /*
         private void BuildAndCalculate()
         {
             txtStatus.Text = "Building Circuit...";
@@ -856,7 +867,7 @@ namespace Easycoustics.Transition.CircuitEditor
             Analyzer.CurrentInstance.Calculate();
             
         }
-
+        */
 
         public void SetStatusText(string statusText)
         {

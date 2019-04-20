@@ -28,11 +28,11 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             }
         }
         
-        private double positionValue;
-        public double PositionValue
+        private double cursorPositionValue; /* 0 is CCW, 100 is CW */
+        public double CursorPositionValue
         {
-            get { return positionValue; }
-            set { SetProperty(ref positionValue, value); raiseLayoutChanged(); }
+            get { return cursorPositionValue; }
+            set { SetProperty(ref cursorPositionValue, value); raiseLayoutChanged(); }
         }
 
         private double tapAPositionValue;
@@ -114,8 +114,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             } }
 
         /*
-         terminal 0: CW Extreme
-         terminal 1: CCW Extreme
+         terminal 0: CCW Extreme
+         terminal 1: CW Extreme
          terminal 2: Cursor
          terminal 3: midpoint
          terminal 4: midpoint
@@ -138,9 +138,9 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             quantityOfTerminals = 3;
 
             resistanceValue = 1e3m;
-            positionValue = 50;
+            cursorPositionValue = 50;
 
-            taperFunction = new SampledFunction();
+            taperFunction = new SampledFunction() { InterpolationMode = InterpolationModes.Linear};
             taperFunction.addSample(0, 0);
             taperFunction.addSample(100, 100);
             
@@ -174,13 +174,13 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
             switch (property)
             {
-                case "ResistanceValue"    : ResistanceValue    = (decimal)value;         break;
-                case "PositionValue"      : PositionValue      = (double)value;          break;
-                case "ComponentPrecision" : ComponentPrecision = (Precision)value;       break;
-                case "TapAPositionValue"  : TapAPositionValue  = (double)value;          break;
-                case "TapBPositionValue"  : TapBPositionValue  = (double)value;          break;
-                case "TapCPositionValue"  : TapCPositionValue  = (double)value;          break;
-                case "TaperFunction"      : TaperFunction      = (SampledFunction)value; break;
+                case "ResistanceValue"    : ResistanceValue     = (decimal)value;         break;
+                case "PositionValue"      : CursorPositionValue = (double)value;          break;
+                case "ComponentPrecision" : ComponentPrecision  = (Precision)value;       break;
+                case "TapAPositionValue"  : TapAPositionValue   = (double)value;          break;
+                case "TapBPositionValue"  : TapBPositionValue   = (double)value;          break;
+                case "TapCPositionValue"  : TapCPositionValue   = (double)value;          break;
+                case "TaperFunction"      : TaperFunction       = (SampledFunction)value; break;
             }
 
             updateResistances();
@@ -200,7 +200,8 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
             //list.Add(new Tuple<byte, decimal>(0, 0));
             //list.Add(new Tuple<byte, decimal>(1, getResistance(100d)));
-            list.Add(new Tuple<byte, decimal>(2, getResistance(PositionValue)));
+
+            if (isCursorObfuscated() != 255) list.Add(new Tuple<byte, decimal>(2, getResistance(CursorPositionValue)));
 
             if (QuantityOfTerminals == 3) { }
             else if (QuantityOfTerminals == 4)
@@ -232,14 +233,14 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             var output = new ComplexDecimal[QuantityOfTerminals];
 
             if (terminal == 0)
-            {   /* CW extreme */
+            {   /* CCW extreme */
                 var res = OrderedResistances[1];
 
                 output[0] = new ComplexDecimal(res.Item2).Reciprocal;
                 output[res.Item1] = -1 * new ComplexDecimal(res.Item2).Reciprocal;
             }
             else if (terminal == 1)
-            {   /* CCW extreme */
+            {   /* CW extreme */
                 var resAbove = OrderedResistances[QuantityOfTerminals - 2];
                 var resistance = ResistanceValue - resAbove.Item2;
 
@@ -248,7 +249,7 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
 
             } else
             {
-                /* cursor or midpoint terminal*/
+                /* cursor or midpoint terminal */
                 /* selected terminal has two resistances attached, one above and one below */
 
                 var res = OrderedResistances.Find(tup => (tup.Item1 == terminal));
@@ -271,6 +272,36 @@ namespace Easycoustics.Transition.CircuitEditor.Serializable
             
             
             return output;
+        }
+
+        public byte isCursorObfuscated()
+        {
+            /* this is weird.
+             
+            a huge problem arose with potentiometers, when the cursor is in the exact position
+            of other terminal, like a tap, or one of the extremes (CW or CCW)
+            resistance between the cursor and the colliding terminal becomes zero, and admittance
+            goes to infinity, breaking up the calculations in the matrix
+            so we need a solution for this particular condition.
+
+            when the cursor is in the same position of a fixed terminal, we say the cursor is obfuscated
+            and the electric node of the cursor must be tied up with the node of the other colliding fixed terminal
+             */
+            return cursorWillBeObfuscated(CursorPositionValue);
+           
+        }
+
+        public byte cursorWillBeObfuscated(double newValue)
+        {
+            if (newValue == 0) return 0;
+            else if (newValue == 100) return 1;
+            else if (QuantityOfTerminals == 4 && newValue == TapBPositionValue) return 3;
+            else if (QuantityOfTerminals == 5 && newValue == TapAPositionValue) return 3;
+            else if (QuantityOfTerminals == 5 && newValue == TapCPositionValue) return 4;
+            else if (QuantityOfTerminals == 6 && newValue == TapAPositionValue) return 3;
+            else if (QuantityOfTerminals == 6 && newValue == TapBPositionValue) return 4;
+            else if (QuantityOfTerminals == 6 && newValue == TapCPositionValue) return 5;
+            else return 255;
         }
     }
     

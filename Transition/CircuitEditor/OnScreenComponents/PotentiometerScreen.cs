@@ -22,15 +22,15 @@ namespace Easycoustics.Transition.CircuitEditor.OnScreenComponents
             get
             {
                 if (QuantityOfTerminals == 3)
-                    { return new int[,] { { 40, 20 }, { 40, 140 }, { 100, 80 } }; }
+                    { return new int[,] { { 40, 140 }, { 40, 20 }, { 100, 80 } }; }
                 else
                 if (QuantityOfTerminals == 4)
-                    { return new int[,] { { 40, 20 }, { 40, 140 }, { 100, 80 }, { 20, 80 } }; }
+                    { return new int[,] { { 40, 140 }, { 40, 20 }, { 100, 80 }, { 20, 80 } }; }
                 else
                 if (QuantityOfTerminals == 5)
-                    { return new int[,] { { 40, 20 }, { 40, 140 }, { 100, 80 }, { 20, 60 }, { 20, 100 } }; }
+                    { return new int[,] { { 40, 140 }, { 40, 20 }, { 100, 80 }, { 20, 100 }, { 20, 60 } }; }
                 else /* 6 */
-                    { return new int[,] { { 40, 20 }, { 40, 140 }, { 100, 80 }, { 20, 60 }, { 20, 80 }, { 20, 100 } }; }
+                    { return new int[,] { { 40, 140 }, { 40, 20 }, { 100, 80 }, { 20, 100 }, { 20, 80 }, { 20, 60 } }; }
             }
         }
 

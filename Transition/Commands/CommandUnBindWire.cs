@@ -11,7 +11,7 @@ namespace Easycoustics.Transition.Commands
 {
     public class CommandUnBindWire : ICircuitCommand
     {
-        public CommandType CommandType => CommandType.ReBuild;
+        public CommandType CommandType => CommandType.ReBuildAndCalculate;
 
 
         public string Title => "UnBindWire " + Wire.ToString() + " Terminal number" + WireTerminalNumber.ToString() + 

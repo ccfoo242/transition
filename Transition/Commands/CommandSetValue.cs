@@ -28,15 +28,12 @@ namespace Easycoustics.Transition.Commands
         {
             //this method is extremely complex
             Component.SetProperty(Property, NewValue);
-            System.Diagnostics.Debug.WriteLine("EXECUTE COMMAND!");
-            System.Diagnostics.Debug.WriteLine(ToString());
+          
         }
 
         public void unExecute()
         {
             Component.SetProperty(Property, OldValue);
-            System.Diagnostics.Debug.WriteLine("UN-EXECUTE COMMAND!");
-            System.Diagnostics.Debug.WriteLine(ToString());
         }
 
         public override string ToString()

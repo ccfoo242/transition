@@ -18,7 +18,7 @@ namespace Easycoustics.Transition.Commands
 
        // public bool AlterSchematic => true;
 
-        public CommandType CommandType => CommandType.ReBuild;
+        public CommandType CommandType => CommandType.ReBuildAndCalculate;
 
         public override string ToString() => Title;
 

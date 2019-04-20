@@ -130,7 +130,7 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 case 1: newQuantity = 4; break;
                 case 2: newQuantity = 5; break;
                 case 3: newQuantity = 6; break;
-                default: newQuantity = 3;break;
+                default: newQuantity = 3; break;
             }
 
             var command = new CommandSetValue()
@@ -138,7 +138,8 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Component = SerializablePotentiometer,
                 Property = "QuantityOfTerminals",
                 OldValue = SerializablePotentiometer.QuantityOfTerminals,
-                NewValue = newQuantity
+                NewValue = newQuantity,
+                CommandType = CommandType.ReBuildAndCalculate
             };
 
             executeCommand(command);
@@ -213,7 +214,7 @@ namespace Easycoustics.Transition.CircuitEditor.Components
             sldTapCPosition.ValueChanged += sldTapCPositionValueChanged;
 
             sldPosition.ValueChanged -= sldPositionValueChanged;
-            sldPosition.Value = SerializablePotentiometer.PositionValue;
+            sldPosition.Value = SerializablePotentiometer.CursorPositionValue;
             sldPosition.ValueChanged += sldPositionValueChanged;
 
             SerializablePotentiometer.PropertyChanged += handleChangeOfControls;
@@ -251,13 +252,20 @@ namespace Easycoustics.Transition.CircuitEditor.Components
 
         private void sldPositionValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
+            
+            bool isCursorObfuscated = SerializablePotentiometer.isCursorObfuscated() != 255;
+            bool willBeObfuscated = SerializablePotentiometer.cursorWillBeObfuscated(sldPosition.Value) != 255;
+            
+            CommandType commType = (isCursorObfuscated ^ willBeObfuscated) ? CommandType.ReBuildAndCalculate : CommandType.ReCalculate;
+
 
             var command = new CommandSetValue()
             {
                 Component = SerializablePotentiometer,
                 Property = "PositionValue",
-                OldValue = SerializablePotentiometer.PositionValue,
-                NewValue = sldPosition.Value
+                OldValue = SerializablePotentiometer.CursorPositionValue,
+                NewValue = sldPosition.Value,
+                CommandType = commType
             };
 
             executeCommand(command);

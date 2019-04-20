@@ -121,7 +121,7 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Property = "OutputVoltageAcross",
                 OldValue = SerializableFDNR.OutputVoltageAcross,
                 NewValue = true,
-                CommandType = CommandType.ReBuild
+                CommandType = CommandType.ReBuildAndCalculate
             };
 
             executeCommand(command);
@@ -136,7 +136,7 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Property = "OutputVoltageAcross",
                 OldValue = SerializableFDNR.OutputVoltageAcross,
                 NewValue = false,
-                CommandType = CommandType.ReBuild
+                CommandType = CommandType.ReBuildAndCalculate
             };
 
             executeCommand(command);
@@ -150,7 +150,7 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Property = "OutputCurrentThrough",
                 OldValue = SerializableFDNR.OutputVoltageAcross,
                 NewValue = true,
-                CommandType = CommandType.ReBuild
+                CommandType = CommandType.ReBuildAndCalculate
             };
 
             executeCommand(command);
@@ -165,7 +165,7 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Property = "OutputCurrentThrough",
                 OldValue = SerializableFDNR.OutputVoltageAcross,
                 NewValue = false,
-                CommandType = CommandType.ReBuild
+                CommandType = CommandType.ReBuildAndCalculate
             };
 
             executeCommand(command);

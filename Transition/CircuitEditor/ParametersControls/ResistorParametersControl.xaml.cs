@@ -236,7 +236,7 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Property = "OutputVoltageAcross",
                 OldValue = SerializableResistor.OutputVoltageAcross,
                 NewValue = true,
-                CommandType = CommandType.ReBuild
+                CommandType = CommandType.ReBuildAndCalculate
             };
 
             executeCommand(command);
@@ -251,7 +251,7 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Property = "OutputVoltageAcross",
                 OldValue = SerializableResistor.OutputVoltageAcross,
                 NewValue = false,
-                CommandType = CommandType.ReBuild
+                CommandType = CommandType.ReBuildAndCalculate
             };
 
             executeCommand(command);
@@ -265,7 +265,7 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Property = "OutputCurrentThrough",
                 OldValue = SerializableResistor.OutputVoltageAcross,
                 NewValue = true,
-                CommandType = CommandType.ReBuild
+                CommandType = CommandType.ReBuildAndCalculate
             };
 
             executeCommand(command);
@@ -280,7 +280,7 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Property = "OutputCurrentThrough",
                 OldValue = SerializableResistor.OutputVoltageAcross,
                 NewValue = false,
-                CommandType = CommandType.ReBuild
+                CommandType = CommandType.ReBuildAndCalculate
             };
 
             executeCommand(command);
@@ -294,7 +294,7 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Property = "OutputResistorPower",
                 OldValue = SerializableResistor.OutputVoltageAcross,
                 NewValue = true,
-                CommandType = CommandType.ReBuild
+                CommandType = CommandType.ReBuildAndCalculate
             };
 
             executeCommand(command);
@@ -308,7 +308,7 @@ namespace Easycoustics.Transition.CircuitEditor.Components
                 Property = "OutputResistorPower",
                 OldValue = SerializableResistor.OutputVoltageAcross,
                 NewValue = false,
-                CommandType = CommandType.ReBuild
+                CommandType = CommandType.ReBuildAndCalculate
             };
 
             executeCommand(command);

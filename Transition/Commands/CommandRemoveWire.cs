@@ -12,7 +12,7 @@ namespace Easycoustics.Transition.Commands
 {
     public class CommandRemoveWire : ICircuitCommand
     {
-        public CommandType CommandType => CommandType.ReBuild;
+        public CommandType CommandType => CommandType.ReBuildAndCalculate;
 
         public string Title => "Remove Wire Command: " + Wire.ToString();
         public override string ToString() => Title;

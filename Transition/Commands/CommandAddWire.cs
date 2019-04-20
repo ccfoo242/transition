@@ -15,7 +15,7 @@ namespace Easycoustics.Transition.Commands
         public string Title => "Add Wire Command: " + Wire.ToString();
 
         public SerializableWire Wire { get; set; }
-        public CommandType CommandType => CommandType.ReBuild;
+        public CommandType CommandType => CommandType.ReBuildAndCalculate;
 
         public override string ToString() => Title;
 

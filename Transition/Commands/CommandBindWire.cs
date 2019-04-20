@@ -14,7 +14,7 @@ namespace Easycoustics.Transition.Commands
     {
         public string Title => "Bind " + Wire.ToString() + " terminal: " + WireTerminalNumber.ToString() + " Element: " + BoundedObject.ToString() + " Element Terminal: " + BoundedTerminal.ToString();
 
-        public CommandType CommandType => CommandType.ReBuild;
+        public CommandType CommandType => CommandType.ReBuildAndCalculate;
 
         public SerializableWire Wire { get; set; }
         public byte WireTerminalNumber { get; set; }

@@ -39,13 +39,84 @@ namespace Easycoustics.Transition
         private List<IVoltageCurrentOutput> PassivesVoltageCurrOutputs = new List<IVoltageCurrentOutput>();
         private List<Resistor> ResistorPowerOutputs = new List<Resistor>();
 
+        public Queue<Tuple<Action,ICircuitCommand>> CommandQueue = new Queue<Tuple<Action, ICircuitCommand>>();
+
         private bool semaphoreRed;
 
         public Analyzer()
         {
 
         }
-        
+
+        private void SetStatusText(string text)
+        {
+            CircuitEditor.CircuitEditor.currentInstance.SetStatusText(text);
+        }
+
+        public void dispatchCommand(Action action, ICircuitCommand command)
+        {
+            CommandQueue.Enqueue(new Tuple<Action, ICircuitCommand>(action,command));
+
+            handleCommandQueue();
+        }
+
+        private void handleCommandQueue()
+        {
+            if (semaphoreRed) return;
+
+            bool doBuild = false;
+            bool doCalculate = false;
+
+            Tuple<Action, ICircuitCommand> tup;
+
+            while (CommandQueue.Count > 0)
+            {
+                tup = CommandQueue.Dequeue();
+                tup.Item1();
+                switch (tup.Item2.CommandType)
+                {
+                    case CommandType.DontCalculate: break;
+                    case CommandType.ReBuildAndCalculate: doBuild = true; break;
+                    case CommandType.ReCalculate: doCalculate = true; break;
+                }
+            }
+
+            if (doBuild)
+            {
+                SetStatusText("Building Circuit...");
+                var buildResult = Build();
+                SetStatusText(buildResult.Item2);
+
+                if (!buildResult.Item1) return; else doCalculate = true;
+            }
+
+            if (doCalculate)
+                Calculate();
+            
+        }
+
+
+        public async void Calculate()
+        {
+            /*  if (semaphoreRed)
+                  return; 
+                  */
+
+            semaphoreRed = true;
+            CalculateTask = Task.Run(Calculate2);
+
+            await CalculateTask;
+
+            var result = CalculateTask.Result;
+
+            if (result.Item1) CurrentDesign.SystemCurves.submitCurvesChange();
+
+            SetStatusText(result.Item2);
+            semaphoreRed = false;
+
+            handleCommandQueue();
+        }
+
 
         private ElectricNode GetComponentTerminalNode(SerializableComponent comp, byte terminal)
         {
@@ -399,31 +470,9 @@ namespace Easycoustics.Transition
 
         
 
-        public async void Calculate()
-        {
-            /*   if (CalculateTask != null)
-                   if (!CalculateTask.IsCompleted)
-                       return;
-                       */
-
-            if (semaphoreRed)
-                return;
-
-            semaphoreRed = true;
-            CalculateTask = Task.Run(Calculate2);
-
-            await CalculateTask;
-
-            if (CalculateTask.Result.Item1) CurrentDesign.SystemCurves.submitCurvesChange();
-
-            CircuitEditor.CircuitEditor.currentInstance.SetStatusText(CalculateTask.Result.Item2);
-            semaphoreRed = false;
-
-        }
-
         private async Task<Tuple<bool, string>> Calculate2()
         {
-            
+
             ElectricNode node;
             ElectricNode node2;
             ElectricNode nodePositive;
@@ -578,12 +627,12 @@ namespace Easycoustics.Transition
                 }
                 
             }
-
+               
             return new Tuple<bool, string>(true, "Circuit solved OK");
+          
+
         }
-
-
-
+          
     }
 
 

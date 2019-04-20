@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Easycoustics.Transition.CircuitEditor.Serializable;
 using Easycoustics.Transition.Commands;
+using Easycoustics.Transition.Common;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -178,7 +179,8 @@ namespace Easycoustics.Transition.CircuitEditor.ParametersControls
                     Component = SerializableSwitch,
                     Property = "State",
                     OldValue = SerializableSwitch.State,
-                    NewValue = newPositionsValue
+                    NewValue = newPositionsValue,
+                    CommandType = CommandType.DontCalculate
                 });
             
             
@@ -189,7 +191,8 @@ namespace Easycoustics.Transition.CircuitEditor.ParametersControls
                 Component = SerializableSwitch,
                 Property = "QuantityOfTerminals",
                 OldValue = (byte)(oldPositionsValue + 1),
-                NewValue = (byte)(newPositionsValue + 1)
+                NewValue = (byte)(newPositionsValue + 1),
+                CommandType = CommandType.ReBuildAndCalculate
             };
 
             executeCommand(command);

@@ -19,7 +19,7 @@ namespace Easycoustics.Transition.Commands
 
         private List<SerializableWire> wiresForComponents = new List<SerializableWire>();
         private Dictionary<byte, ElementTerminal> binds;
-        public CommandType CommandType => CommandType.ReBuild;
+        public CommandType CommandType => CommandType.ReBuildAndCalculate;
 
         public void execute()
         {

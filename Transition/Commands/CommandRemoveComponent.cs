@@ -12,7 +12,7 @@ namespace Easycoustics.Transition.Commands
 {
     class CommandRemoveComponent : ICircuitCommand
     {
-        public CommandType CommandType => CommandType.ReBuild;
+        public CommandType CommandType => CommandType.ReBuildAndCalculate;
 
         public string Title => "Remove Component: " + Component.ToString();
        

@@ -13,5 +13,5 @@ namespace Easycoustics.Transition.Common
     public enum PhaseUnit { Degrees, Radians };
     public enum ComplexProjectedData { MagnitudePhase, RealImag, OnlyReal, OnlyImag };
     public enum CircuitMode { Grounded, Floating, Mixed };
-    public enum CommandType { ReBuild, ReCalculate, DontCalculate };
+    public enum CommandType { ReBuildAndCalculate, ReCalculate, DontCalculate };
 }
