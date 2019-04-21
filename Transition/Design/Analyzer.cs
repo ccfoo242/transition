@@ -213,17 +213,17 @@ namespace Easycoustics.Transition
                     newNode.ConnectedComponentTerminals.AddRange(compTerm.Item1.GetOtherConnectedComponents(compTerm.Item2));
                     ElectricNodes.Add(newNode);
                 }
-               /* else
-                    if (node2 == GroundNode) GroundNode.ConnectedComponentTerminals.Add(compTerm);*/
+            
             }
-
+            /*
             foreach (var compMeter in CurrentDesign.Components.Where(comp => comp is VoltageOutputDifferential))
             {
                 if (compMeter.IsTerminalGrounded(0))
                     GroundNode.ConnectedComponentTerminals.Add(new Tuple<SerializableComponent, byte>(compMeter, 0));
                 if (compMeter.IsTerminalGrounded(1))
                     GroundNode.ConnectedComponentTerminals.Add(new Tuple<SerializableComponent, byte>(compMeter, 1));
-            }
+            }*/
+
 
             /* potentiometer cursor obfuscated nodes are eliminated, compterminals of the eliminated node
                are transferred to colliding node */
@@ -305,7 +305,7 @@ namespace Easycoustics.Transition
 
             }
 
-            
+            /* now all nodes, sections and circuits are built, we do some checks  */
             if (Circuits.Count == 0) return new Tuple<bool, string>(false, "There is no circuit");
 
             foreach (var circuit in Circuits)
@@ -601,25 +601,37 @@ namespace Easycoustics.Transition
                     node2 = GetComponentTerminalNode(nodeV, 0);
 
                     if (node2 != null)
-                    {
-                        var circuit = GetCircuitForNode(node2);
-                        nodeV.ResultVoltageCurve.addSample(FreqPoint, circuit.VoltageResultMatrix.Data[circuit.NonReferenceNodes.IndexOf(node2), 0]);
-                    }
+                        if (node2 != GroundNode)
+                        {
+                            var circuit = GetCircuitForNode(node2);
+                            nodeV.ResultVoltageCurve.addSample(FreqPoint, circuit.VoltageResultMatrix.Data[circuit.NonReferenceNodes.IndexOf(node2), 0]);
+                        }
+                        else
+                            nodeV.ResultVoltageCurve.addSample(FreqPoint, 0);
                 }
 
                 foreach (var nodeVD in VoltageOutputDiffs)
                 {
                     nodePositive = GetComponentTerminalNode(nodeVD, 0);
                     nodeNegative = GetComponentTerminalNode(nodeVD, 1);
-                    
-                    var circPos = GetCircuitForNode(nodePositive);
-                    var circNeg = GetCircuitForNode(nodeNegative);
-                    
-                    nodePositiveNumber = circPos.NonReferenceNodes.IndexOf(nodePositive);
-                    nodeNegativeNumber = circNeg.NonReferenceNodes.IndexOf(nodeNegative);
 
-                    voltPositive = (nodePositive != GetSectionForNode(nodePositive).ReferenceNode) ? circPos.VoltageResultMatrix.Data[nodePositiveNumber, 0] : 0;
-                    voltNegative = (nodeNegative != GetSectionForNode(nodeNegative).ReferenceNode) ? circNeg.VoltageResultMatrix.Data[nodeNegativeNumber, 0] : 0;
+                    if (nodePositive != GroundNode)
+                    {
+                        var circPos = GetCircuitForNode(nodePositive);
+                        nodePositiveNumber = circPos.NonReferenceNodes.IndexOf(nodePositive);
+                        voltPositive = (nodePositive != GetSectionForNode(nodePositive).ReferenceNode) ? circPos.VoltageResultMatrix.Data[nodePositiveNumber, 0] : 0;
+                    }
+                    else
+                        voltPositive = 0;
+
+                    if (nodeNegative != GroundNode)
+                    {
+                        var circNeg = GetCircuitForNode(nodeNegative);
+                        nodeNegativeNumber = circNeg.NonReferenceNodes.IndexOf(nodeNegative);
+                        voltNegative = (nodeNegative != GetSectionForNode(nodeNegative).ReferenceNode) ? circNeg.VoltageResultMatrix.Data[nodeNegativeNumber, 0] : 0;
+                    }
+                    else
+                        voltNegative = 0;
 
                     totalVoltage = voltPositive - voltNegative;
 
@@ -634,6 +646,18 @@ namespace Easycoustics.Transition
 
                     Circuit circuit;
                     CircuitSection section;
+
+                    if (nodePositive == GroundNode && nodeNegative == GroundNode)
+                    {
+                        comp.ResultVoltageCurve.addSample(FreqPoint, 0);
+                        continue;
+                    }
+
+                    if (nodePositive == nodeNegative)
+                    {
+                        comp.ResultVoltageCurve.addSample(FreqPoint, 0);
+                        continue;
+                    }
 
                     if (nodePositive != GroundNode)
                     {
