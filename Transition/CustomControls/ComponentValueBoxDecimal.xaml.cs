@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -25,6 +26,9 @@ namespace Easycoustics.Transition.CustomControls
         public ComponentValueBoxDecimal()
         {
             this.InitializeComponent();
+
+            txtBox.Text = (string)Converter.Convert(ComponentValue, null, null, CultureInfo.CurrentCulture.TwoLetterISOLanguageName); ;
+
         }
 
         private string unit;
@@ -38,8 +42,11 @@ namespace Easycoustics.Transition.CustomControls
             }
         }
 
-        public string UnitShort { get; set; }
+        public static DecimalEngrConverter Converter { get; } = new DecimalEngrConverter();
 
+
+        public string UnitShort { get; set; }
+        private bool txtChanged = false;
 
         public decimal ComponentValue
         {
@@ -71,6 +78,9 @@ namespace Easycoustics.Transition.CustomControls
                 };
 
                 ValueChanged?.Invoke(this, args);
+                
+                txtBox.Text = (string)Converter.Convert(ComponentValue, null, null, CultureInfo.CurrentCulture.TwoLetterISOLanguageName); ;
+                
             }
         }
         
@@ -300,112 +310,7 @@ namespace Easycoustics.Transition.CustomControls
         {
 
         }
-
-        private async void TapChangeValue(object sender, TappedRoutedEventArgs e)
-        {
-            var stk2 = new StackPanel() { Orientation = Orientation.Vertical };
-            var stk = new StackPanel() { Orientation = Orientation.Horizontal };
-            var converter = new DecimalEngrConverter();
-
-            stk.Children.Add(new TextBlock()
-            {
-                Text = "Component Value:",
-                Margin = new Thickness(4),
-                VerticalAlignment = VerticalAlignment.Center
-            });
-
-
-            var txtResource = Application.Current.Resources["EngrNumberBoxStyle"];
-            InputScope inp = new InputScope();
-            InputScopeName inpn = new InputScopeName();
-            inpn.NameValue = InputScopeNameValue.AlphanumericFullWidth;
-            inp.Names.Add(inpn);
-
-            var txtValue = new TextBox()
-            {
-                Style = (Style)txtResource,
-                IsSpellCheckEnabled = false,
-                IsTextPredictionEnabled = false,
-                AllowDrop = false,
-                InputScope = inp,
-                Text = (string)converter.Convert(ComponentValue, null, null, null),
-                Margin = new Thickness(4)
-            };
-
-            stk.Children.Add(txtValue);
-            stk.Children.Add(new TextBlock()
-            {
-                Text = UnitShort ,
-                VerticalAlignment = VerticalAlignment.Center
-            });
-
-            stk2.Children.Add(stk);
-            stk2.Children.Add(new TextBlock()
-            {
-                Text = "Engineering and Scientific notations are allowed"
-            });
-
-            stk2.Children.Add(new TextBlock()
-            {
-                Text = "Only positive number allowed",
-                FontStyle = Windows.UI.Text.FontStyle.Italic
-            });
-
-            stk2.Children.Add(new TextBlock()
-            {
-                Text = "Zero value is not allowed",
-                FontStyle = Windows.UI.Text.FontStyle.Italic
-            });
-
-            var dialog = new ContentDialog()
-            {
-                Title = "Enter new Component Value (" + unit + ")",
-                Content = stk2,
-                CloseButtonText = "Cancel",
-                PrimaryButtonText = "OK"
-            };
-            
-            var result = await dialog.ShowAsync();
-
-            if (result == ContentDialogResult.Primary)
-            {
-                decimal result2 = 0;
-                decimal NewValue = 0m;
-
-                bool didConvert = false;
-                try
-                {
-                    result2 = (decimal)converter.ConvertBack(txtValue.Text, null, null, null);
-                    didConvert = true;
-                }
-                catch { }
-
-                if (!didConvert)
-                {
-                    var invdialog = new Windows.UI.Popups.MessageDialog("Incorrect format value");
-                    await invdialog.ShowAsync();
-                    return;
-                }
-
-                if (result2 <= 0m) return;
-                
-                if (!AnyPrecisionSelected)
-                    NewValue = getNextOrEqualValue(result2);
-                else
-                    NewValue = result2;
-
-                var args = new ValueChangedEventArgs
-                {
-                    oldValue = ComponentValue,
-                    newValue = NewValue,
-                    PropertyName = "Value"
-                };
-
-                ComponentValue = NewValue;
-                ValueManuallyChanged?.Invoke(this, args);
-            }
-        }
-
+        
 
         //standard values por every precision
         //the M suffix is for decimal number type
@@ -491,6 +396,52 @@ namespace Easycoustics.Transition.CustomControls
               9.31M, 9.42M, 9.53M, 9.65M, 9.76M, 9.88M
             };
 
+        private void txtLostFocus(object sender, RoutedEventArgs e)
+        {
+            if (!txtChanged) return;
+
+            string txt = txtBox.Text;
+            bool didConvert = true;
+            decimal ConvertedValue = 0m;
+            try
+            {
+                ConvertedValue = (decimal)Converter.ConvertBack(txt, null, null, CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
+            }
+            catch { didConvert = false; }
+
+            if (didConvert)
+            {
+                if (ConvertedValue <= 0m)
+                {
+                    txtBox.Text = (string)Converter.Convert(ComponentValue, null, null, CultureInfo.CurrentCulture.TwoLetterISOLanguageName); ;
+                    return;
+                }
+
+                decimal NewValue = AnyPrecisionSelected ? ConvertedValue : getNextOrEqualValue(ConvertedValue);
+
+                decimal oldValue2 = ComponentValue;
+                ComponentValue = ConvertedValue;
+
+                ValueManuallyChanged?.Invoke(this, new ValueChangedEventArgs()
+                {
+                    oldValue = oldValue2,
+                    newValue = ConvertedValue,
+                    PropertyName = "Value"
+                });
+            }
+            else
+            {
+                txtBox.Text = (string)Converter.Convert(ComponentValue, null, null, CultureInfo.CurrentCulture.TwoLetterISOLanguageName); ;
+
+            }
+
+
+        }
+
+        private void textChanged(object sender, TextChangedEventArgs e)
+        {
+            txtChanged = true;
+        }
     }
 
 

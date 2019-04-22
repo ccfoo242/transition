@@ -43,6 +43,7 @@
                 <RowDefinition Height="40"/>
             </Grid.RowDefinitions>
 
+            <!--
             <TextBox Style="{StaticResource EngrNumberBoxStyle}" 
                  x:Name="numberBoxShort"  
                  Visibility="{x:Bind AnyPrecisionSelected, Mode=OneWay, Converter = {StaticResource boolVisibilityConverter}, ConverterParameter=Reverse}"
@@ -60,7 +61,14 @@
                  Width="100" IsReadOnly="True"
                  AllowDrop="False"  InputScope="AlphanumericFullWidth"
                  Text="{x:Bind ComponentValue, Mode=TwoWay, Converter = {StaticResource engrDecimalConverterShort}}" />
+            -->
 
+            <TextBox Style="{StaticResource EngrNumberBoxStyle}"
+                 x:Name="txtBox" Grid.Column="0"
+                 IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" Width="100"
+                 AllowDrop="False" InputScope="AlphanumericFullWidth"
+                 LostFocus="txtLostFocus" TextChanged="textChanged"/>
+            
             <StackPanel Orientation="Vertical" Grid.Column="2"
                         x:Name="stkButtonsIncDec" HorizontalAlignment="Left"
                         Visibility="{x:Bind AnyPrecisionSelected, Mode=OneWay, Converter = {StaticResource boolVisibilityConverter}, ConverterParameter=Reverse}" >
@@ -83,7 +91,7 @@
                     </RepeatButton.Content>
                 </RepeatButton>
             </StackPanel>
-            <Button Content="..." IsTapEnabled="True" Tapped="TapChangeValue"  Grid.Column="1"/>
+            <!-- <Button Content="..." IsTapEnabled="True" Tapped="TapChangeValue"  Grid.Column="1"/> -->
             <!-- Visibility="{x:Bind AnyPrecisionSelected, Mode=OneWay, Converter = {StaticResource boolVisibilityConverter}}"/> -->
         </Grid>
 

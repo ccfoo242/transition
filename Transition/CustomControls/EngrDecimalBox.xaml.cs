@@ -110,7 +110,7 @@ namespace Easycoustics.Transition.CustomControls
                 if (ConvertedValue < MinimumNumberAllowed) ConvertedValue = MinimumNumberAllowed;
 
                 if (MinimumNumberAllowed >= MaximumNumberAllowed)
-                    throw new InvalidOperationException("Minimum allowed number is greather or equal than maximum allowed");
+                    throw new InvalidOperationException("Minimum allowed number is greater or equal than maximum allowed");
 
                 decimal oldValue = Value;
                 Value = ConvertedValue;
