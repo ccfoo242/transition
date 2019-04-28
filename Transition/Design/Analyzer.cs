@@ -42,6 +42,7 @@ namespace Easycoustics.Transition
         public Queue<Tuple<Action,ICircuitCommand>> CommandQueue = new Queue<Tuple<Action, ICircuitCommand>>();
 
         private bool semaphoreRed;
+        private bool buildState = false;
 
         public Analyzer()
         {
@@ -87,7 +88,16 @@ namespace Easycoustics.Transition
                 var buildResult = Build();
                 SetStatusText(buildResult.Item2);
 
-                if (!buildResult.Item1) return; else doCalculate = true;
+                if (!buildResult.Item1)
+                {
+                    buildState = false;
+                    return;
+                }
+                else
+                {
+                    buildState = true;
+                    doCalculate = true;
+                }
             }
 
             if (doCalculate)
@@ -98,7 +108,8 @@ namespace Easycoustics.Transition
 
         public async void Calculate()
         {
-            
+
+            if (buildState == false) return;
 
             semaphoreRed = true;
             CalculateTask = Task.Run(Calculate2);

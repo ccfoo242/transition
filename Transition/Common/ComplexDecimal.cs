@@ -36,6 +36,8 @@ namespace Easycoustics.Transition.Common
         public static readonly ComplexDecimal ImaginaryOne = new ComplexDecimal(0, 1m);
 
         public bool IsZero { get => (ImaginaryPart == 0m) && (RealPart == 0); }
+        public bool IsReal { get => ImaginaryPart == 0m; }
+        public bool IsImag { get => RealPart == 0m; }
 
         public ComplexDecimal(decimal real, decimal imag)
         {
@@ -105,7 +107,7 @@ namespace Easycoustics.Transition.Common
             decimal b = n1.ImaginaryPart;
             decimal c = n2.RealPart;
             decimal d = n2.ImaginaryPart;
-
+            
             return new ComplexDecimal((a * c) - (b * d), (a * d) + (b * c));
         }
 
