@@ -5,15 +5,15 @@
 Transition is an electric-circuit simulator oriented for audio crossover design.
 
 I started this project intended to be as a commercial software for selling. Years later I just decided to give everything up.
-It is supposed to be a reborn of the defunct LinearX CrossoverShop
+It is supposed to be a rebirth of the defunct LinearX CrossoverShop
 
 This is a UWP Windows app. The project is not 100% complete.
 
 ## Features
 
 ### Current features:
-- Full electric circuit design
-- Animated simulation, live circuit simulation while tweaking components with a spinner.
+- Full circuit editor
+- Animated simulation, live circuit response while tweaking components with a spinner.
 - All passive RLC components, and custom Impedance.
 - FDNR, Potentiomenter, Transformer and Switch components
 - Active components like OpAmp, H block, Summer and buffer
