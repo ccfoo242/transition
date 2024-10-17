@@ -13,6 +13,7 @@ The project is not 100% complete.
 
 ### Current features:
 - Full electric circuit design
+- Animated simulation, live circuit simulation while tweaking components with a spinner.
 - All passive RLC components, and custom Impedance.
 - FDNR, Potentiomenter, Transformer and Switch components
 - Active components like OpAmp, H block, Summer and buffer
@@ -26,6 +27,8 @@ The project is not 100% complete.
 - Full support for floating sections or totally floating circuit.
 - Data import via text files
 - Opening/Saving files in JSON format
+- Ideal, parasitic and exponential models for RLC components
+- Engineering notation for all controls.
 
 ### Features Yet to Be Implemented:
 - Digital FIR and IIR filters
