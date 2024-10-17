@@ -44,13 +44,31 @@ This is a UWP Windows app. The project is not 100% complete.
 - Delay Phase Transform.
 - Fast Fourier Transform.
 
-## Getting Started
+## Getting Started with the code
 
 1. Clone this repository.
 2. Clone the ECDockingManager project repository published at [ECDockingManager](https://gitlab.com/alsinaleandro/ecdockingmanager). 
 3. Open the Transition solution. Add or fix the ECDockingManager reference.
 4. The only dependency for this project is the ECDockingManager. All other dependencies are available via NuGet.
 5. Run the project.
+
+## Installing the program
+
+Being this an UWP app, installing is a bit complicated.
+
+1. Download installer from Release folder
+2. In your Windows 10 OS, activate Developer Mode.
+3. Unzip installer program.
+4. Open an explorer window. Navigate to installer folder
+5. Right click on installer EXE file.
+6. Go to digital sign tab
+7. Double click on certificate.
+8. Install Certificate at a CA trusted root certificates storage.
+9. Run the installer.
+
+## Sample video
+
+[Here](https://youtu.be/QITHt56Fe7s) is a sample video about how to use the program. In this example a two-way passive crossover is designed.
 
 ## Donate
 
