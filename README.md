@@ -7,7 +7,7 @@ Transition is an electric-circuit simulator oriented for audio crossover design.
 I started this project intended to be as a commercial software for selling. Years later I just decided to give everything up.
 It is supposed to be a reborn of the defunct LinearX CrossoverShop
 
-The project is not 100% complete.
+This is a UWP Windows app. The project is not 100% complete.
 
 ## Features
 
