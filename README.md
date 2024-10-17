@@ -46,11 +46,10 @@ This is a UWP Windows app. The project is not 100% complete.
 
 ## Getting Started with the code
 
-1. Clone this repository.
+1. Clone this repository from master2 branch.
 2. Clone the ECDockingManager project repository published at [ECDockingManager](https://gitlab.com/alsinaleandro/ecdockingmanager). 
-3. Open the Transition solution. Add or fix the ECDockingManager reference.
-4. The only dependency for this project is the ECDockingManager. All other dependencies are available via NuGet.
-5. Run the project.
+3. Open the Transition solution. Add or fix the ECDockingManager reference. The only dependency for this project is the ECDockingManager. All other dependencies are available via NuGet.
+4. Run the project.
 
 ## Installing the program
 
