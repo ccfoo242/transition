@@ -45,7 +45,12 @@ The project is not 100% complete.
 
 ## Getting Started
 
-Clone the repository and open the solution. Only dependence for this project is the ECDockingManager which is a separate project. All other dependences are available via NuGet. Run the project.
+1. Clone this repository.
+2. Clone the ECDockingManager project repository published at [ECDockingManager](https://gitlab.com/alsinaleandro/ecdockingmanager).
+3. Open the solution.
+4. Include or fix the ECDockingManager project in Transition as a reference.
+5. The only dependency for this project is the ECDockingManager. All other dependencies are available via NuGet.
+6. Run the project.
 
 ## Donate
 
